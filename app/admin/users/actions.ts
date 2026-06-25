@@ -2,38 +2,42 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireRole } from "@/lib/auth";
-import { APP_ROLES } from "@/lib/roles";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+const allowedRoles = ["student", "speaker", "manager", "admin"] as const;
+type AppRole = (typeof allowedRoles)[number];
+
+function isValidRole(role: string): role is AppRole {
+  return allowedRoles.includes(role as AppRole);
+}
 
 export async function updateUserRole(formData: FormData) {
-  const { user } = await requireRole(["admin"]);
-  const supabase = await createClient();
+  const { user: currentUser } = await requireAdmin();
 
-  const id = String(formData.get("id") ?? "");
-  const role = String(formData.get("role") ?? "student");
+  const userId = String(formData.get("user_id") ?? "");
+  const role = String(formData.get("role") ?? "");
 
-  if (!id) {
-    redirect("/admin/users?message=Missing user id");
+  if (!userId || !isValidRole(role)) {
+    redirect("/admin/users?message=Invalid user or role");
   }
 
-  if (!APP_ROLES.includes(role as any)) {
-    redirect("/admin/users?message=Invalid role");
+  // Safety: do not accidentally remove your own admin access
+  if (userId === currentUser.id && role !== "admin") {
+    redirect("/admin/users?message=You cannot remove your own admin role");
   }
 
-  const { error } = await supabase
+  const supabaseAdmin = createAdminClient();
+
+  const { error } = await supabaseAdmin
     .from("profiles")
-    .update({
-      role,
-      role_changed_at: new Date().toISOString(),
-      role_changed_by: user.id
-    })
-    .eq("id", id);
+    .update({ role })
+    .eq("id", userId);
 
   if (error) {
     redirect(`/admin/users?message=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/admin/users");
-  redirect("/admin/users?message=Role updated");
+  redirect("/admin/users?message=Role updated successfully");
 }

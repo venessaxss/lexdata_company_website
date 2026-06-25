@@ -1,97 +1,127 @@
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { requireRole } from "@/lib/auth";
-import { APP_ROLES, ROLE_DESCRIPTIONS, ROLE_LABELS, normalizeRole } from "@/lib/roles";
+import { requireAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { updateUserRole } from "./actions";
 
-export default async function AdminUsersPage({
-  searchParams
-}: {
-  searchParams?: Promise<{ message?: string }>;
-}) {
-  await requireRole(["admin"]);
-  const params = await searchParams;
-  const supabase = await createClient();
+const roles = ["student", "speaker", "manager", "admin"];
 
-  const { data: profiles, error } = await supabase
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string }>;
+}) {
+  await requireAdmin();
+
+  const { message } = await searchParams;
+  const supabaseAdmin = createAdminClient();
+
+  const {
+    data: { users },
+    error: usersError,
+  } = await supabaseAdmin.auth.admin.listUsers({
+    page: 1,
+    perPage: 100,
+  });
+
+  if (usersError) {
+    throw new Error(usersError.message);
+  }
+
+  const userIds = users.map((user) => user.id);
+
+  const { data: profiles } = await supabaseAdmin
     .from("profiles")
-    .select("id,full_name,avatar_url,role,created_at,role_changed_at")
-    .order("created_at", { ascending: false })
-    .limit(200);
+    .select("id, full_name, role")
+    .in("id", userIds);
+
+  const profileMap = new Map(
+    (profiles ?? []).map((profile) => [profile.id, profile])
+  );
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div>
-          <p className="badge w-fit">Admin</p>
-          <h1 className="mt-4 text-3xl font-bold">Users and roles</h1>
-          <p className="mt-2 max-w-2xl text-slate-600">
-            Assign who is a student, speaker, manager, or admin. This controls which dashboard and management pages they can open.
-          </p>
-        </div>
-        <Link href="/dashboard" className="btn-light w-fit">Back to dashboard</Link>
+    <main className="mx-auto max-w-6xl px-4 py-10">
+      <div className="mb-8">
+        <p className="text-sm font-semibold text-slate-500">Admin</p>
+        <h1 className="mt-2 text-3xl font-bold text-slate-900">
+          Users and Roles
+        </h1>
+        <p className="mt-2 text-slate-600">
+          Assign students, speakers, managers, and admins from this page.
+        </p>
       </div>
 
-      {params?.message ? (
-        <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-          {params.message}
+      {message ? (
+        <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          {message}
         </div>
       ) : null}
 
-      <div className="mt-8 grid gap-4 md:grid-cols-4">
-        {APP_ROLES.map((role) => (
-          <div key={role} className="card p-5">
-            <h2 className="font-semibold">{ROLE_LABELS[role]}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{ROLE_DESCRIPTIONS[role]}</p>
-          </div>
-        ))}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead className="bg-slate-50 text-slate-600">
+            <tr>
+              <th className="px-4 py-3">Email</th>
+              <th className="px-4 py-3">Full name</th>
+              <th className="px-4 py-3">Current role</th>
+              <th className="px-4 py-3">Change role</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {users.map((user) => {
+              const profile = profileMap.get(user.id);
+              const currentRole = profile?.role ?? "student";
+
+              return (
+                <tr key={user.id} className="border-t border-slate-100">
+                  <td className="px-4 py-4">
+                    <div className="font-medium text-slate-900">
+                      {user.email}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {user.id}
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-4 text-slate-700">
+                    {profile?.full_name ?? "-"}
+                  </td>
+
+                  <td className="px-4 py-4">
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      {currentRole}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4">
+                    <form action={updateUserRole} className="flex items-center gap-2">
+                      <input type="hidden" name="user_id" value={user.id} />
+
+                      <select
+                        name="role"
+                        defaultValue={currentRole}
+                        className="rounded-xl border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="submit"
+                        className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+                      >
+                        Update
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
-
-      <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <div className="grid grid-cols-12 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-          <div className="col-span-4">User</div>
-          <div className="col-span-2">Current role</div>
-          <div className="col-span-3">Created</div>
-          <div className="col-span-3">Change role</div>
-        </div>
-
-        {error ? (
-          <div className="p-4 text-sm text-red-700">{error.message}</div>
-        ) : null}
-
-        {(profiles ?? []).map((profile: any) => {
-          const role = normalizeRole(profile.role);
-          return (
-            <div key={profile.id} className="grid grid-cols-12 items-center gap-2 border-b border-slate-100 px-4 py-4 text-sm last:border-b-0">
-              <div className="col-span-4">
-                <p className="font-semibold">{profile.full_name ?? "Unnamed user"}</p>
-                <p className="mt-1 font-mono text-xs text-slate-500">{profile.id}</p>
-              </div>
-              <div className="col-span-2">
-                <span className="badge">{ROLE_LABELS[role]}</span>
-              </div>
-              <div className="col-span-3 text-slate-600">
-                {profile.created_at ? new Date(profile.created_at).toLocaleString() : "—"}
-              </div>
-              <div className="col-span-3">
-                <form action={updateUserRole} className="flex gap-2">
-                  <input type="hidden" name="id" value={profile.id} />
-                  <select name="role" defaultValue={role === "instructor" ? "speaker" : role} className="input">
-                    {APP_ROLES.map((option) => (
-                      <option key={option} value={option}>{ROLE_LABELS[option]}</option>
-                    ))}
-                  </select>
-                  <button className="btn-primary" type="submit">Save</button>
-                </form>
-              </div>
-            </div>
-          );
-        })}
-
-        {(!profiles || profiles.length === 0) ? (
-          <div className="p-6 text-sm text-slate-600">No users found yet.</div>
-        ) : null}
-      </div>
-    </section>
+    </main>
   );
 }

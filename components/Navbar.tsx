@@ -15,7 +15,7 @@ export default async function Navbar() {
   let fullName: string | null = null;
 
   if (user) {
-    const { data: profile } = await supabase
+    const { data: profile } =  await supabase
       .from("profiles")
       .select("full_name,role")
       .eq("id", user.id)
