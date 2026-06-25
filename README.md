@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # LexData Learning Platform MVP
 
 A Coursera/Datawhale-style learning platform customized for LexData.
@@ -168,3 +169,7 @@ supabase/schema.sql
 - Add certificate generation
 - Add comments/Q&A
 - Add payment only after the free MVP works
+=======
+# lexdata_company_website
+this is a github page about the development of official lexdata website
+>>>>>>> 134315a3e0213a4067448c9ba428134425f92020
