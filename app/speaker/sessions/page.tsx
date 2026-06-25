@@ -3,7 +3,8 @@ import { requireSpeakerOrAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function SpeakerSessionsPage() {
-  const { user, role } = await requireSpeakerOrAdmin();
+  const { user, profile } = await requireSpeakerOrAdmin();
+  const role = profile.role;
   const supabase = await createClient();
 
   let query = supabase
