@@ -131,13 +131,19 @@ export async function loginWithGithub() {
 
 // Keep this as backup only. Magic links are useful, but they hit Supabase email limits quickly.
 export async function loginWithMagicLink(formData: FormData) {
-  const email = normalizeEmail(formData.get("email"));
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
 
   if (!email) {
-    redirect("/login?message=Please enter an email address");
+    redirect("/login?message=Please enter your email");
   }
 
-  const origin = await getOrigin();
+  const headerStore = await headers();
+
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    headerStore.get("origin") ||
+    "http://localhost:3000";
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithOtp({
@@ -145,17 +151,14 @@ export async function loginWithMagicLink(formData: FormData) {
     options: {
       shouldCreateUser: true,
       emailRedirectTo: `${origin}/auth/callback?next=/dashboard`,
-      data: {
-        full_name: email.split("@")[0]
-      }
-    }
+    },
   });
 
   if (error) {
     redirect(`/login?message=${encodeURIComponent(error.message)}`);
   }
 
-  redirect("/login?message=Check your email for the login link");
+  redirect("/login?message=Check your email for the magic login link");
 }
 
 export async function signOut() {
