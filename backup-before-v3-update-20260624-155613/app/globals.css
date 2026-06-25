@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-slate-50 text-slate-950; }
+a { @apply transition; }
+.card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+.btn-primary { @apply rounded-xl bg-indigo-950 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50; }
+.btn-light { @apply rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-100; }
+.btn-soft { @apply rounded-xl bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-950 hover:bg-indigo-100; }
+.input { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-900; }
+.textarea { @apply min-h-32 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-900; }
+.label { @apply text-sm font-medium text-slate-700; }
+.badge { @apply rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-800; }
+.section-title { @apply text-3xl font-bold tracking-tight md:text-4xl; }
+.muted { @apply text-slate-600; }

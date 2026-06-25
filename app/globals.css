@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root { color-scheme: light; }
+body { @apply bg-slate-50 text-slate-950; }
+a { @apply transition; }
+.card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+.btn-primary { @apply rounded-xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50; }
+.btn-light { @apply rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-100; }
+.btn-danger { @apply rounded-xl border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50; }
+.input { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-900; }
+.textarea { @apply min-h-32 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-900; }
+.label { @apply text-sm font-medium text-slate-700; }
+.badge { @apply rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600; }
+.nav-link { @apply rounded-lg px-2 py-1 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-950; }
+.nav-section { @apply text-xs font-semibold uppercase tracking-wide text-slate-400; }
