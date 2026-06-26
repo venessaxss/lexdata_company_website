@@ -46,14 +46,14 @@ export default async function HomePage() {
   .order("sort_order", { ascending: true });
 
   const highlights = highlightsData || [];
-  const featuredTeam = teamData || [];
+  
 
   return (
     <main>
       <PromoCarousel promotions={promotions} />
       <SessionHighlights highlights={highlights} />
 
-      <TeamShowcase members={featuredTeam} />
+      <TeamShowcase />
 
       <section className="bg-white py-20">
         <div className="mx-auto max-w-6xl px-6">
