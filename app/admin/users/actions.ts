@@ -13,7 +13,7 @@ function isValidRole(role: string): role is AppRole {
 }
 
 export async function updateUserRole(formData: FormData) {
-  const { user: currentUser } = await requireAdmin();
+  const currentUser = await requireAdmin();
 
   const userId = String(formData.get("user_id") ?? "");
   const role = String(formData.get("role") ?? "");
