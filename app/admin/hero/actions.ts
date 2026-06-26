@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminOrManager } from "@/lib/requireAdminOrManager";
+import { requireAdminOrManager } from "@/lib/require-admin-or-manager";
 
 async function uploadHeroMedia(file: File | null) {
   if (!file || file.size === 0) return null;

@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminOrManager } from "@/lib/requireAdminOrManager";
+import { requireAdminOrManager } from "@/lib/require-admin-or-manager";
 import {
   createHeroSlide,
   deleteHeroSlide,
