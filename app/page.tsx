@@ -2,6 +2,7 @@ import Link from "next/link";
 import PromoCarousel from "@/components/PromoCarousel";
 import MediaGallery from "@/components/MediaGallery";
 import { createClient } from "@/lib/supabase/server";
+import HomeHero from "@/components/HomeHero";
 
 import SessionHighlights from "@/components/SessionHighlights";
 import TeamShowcase from "@/components/TeamShowcase";
@@ -51,6 +52,7 @@ export default async function HomePage() {
   return (
     <main>
       <PromoCarousel promotions={promotions} />
+      <HomeHero />
       <SessionHighlights highlights={highlights} />
 
       <TeamShowcase />
@@ -110,6 +112,7 @@ export default async function HomePage() {
             <h2 className="mt-3 text-3xl font-bold text-slate-950">
               Python for Language Sciences and Social Sciences
             </h2>
+  
 
             <p className="mt-4 leading-7 text-slate-600">
               Learn how to collect textual data, clean datasets, build research

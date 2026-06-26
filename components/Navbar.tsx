@@ -90,11 +90,13 @@ export default async function Navbar() {
                         <Link href="/admin/workshops" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage workshops</Link>
                         <Link href="/admin/users" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Users and roles</Link>
                         <Link href="/admin/team" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage team</Link>
+                        <Link href="/admin/hero" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Homepage hero</Link>
                       </>
                     ) : null}
 
                     <Link href="/manager/payments" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Payment management</Link>
                     <Link href="/manager/registrations" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Registration records</Link>
+                    <Link href="/manager/team" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage team</Link>
                   </div>
                 </details>
               ) : null}
