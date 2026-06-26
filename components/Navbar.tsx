@@ -52,6 +52,7 @@ export default async function Navbar() {
           <Link href="/" className="nav-link">Home</Link>
           <Link href="/courses" className="nav-link">Courses</Link>
           <Link href="/workshops" className="nav-link">Workshops</Link>
+          <Link href="/team" className="nav-link">Team</Link>
 
           {user ? (
             <>
@@ -88,6 +89,7 @@ export default async function Navbar() {
                         <Link href="/admin/courses" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage courses</Link>
                         <Link href="/admin/workshops" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage workshops</Link>
                         <Link href="/admin/users" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Users and roles</Link>
+                        <Link href="/admin/team" className="block rounded-lg px-3 py-2 hover:bg-slate-100">Manage team</Link>
                       </>
                     ) : null}
 
