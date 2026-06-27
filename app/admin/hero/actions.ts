@@ -3,7 +3,37 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminOrManager } from "@/lib/require-admin-or-manager";
+import { createClient } from "@/lib/supabase/server";
+
+
+async function requireAdminOrManager() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (
+    profileError ||
+    !profile ||
+    !["admin", "manager"].includes(profile.role)
+  ) {
+    redirect("/dashboard");
+  }
+
+  return { user, profile };
+}
 
 async function uploadHeroMedia(file: File | null) {
   if (!file || file.size === 0) return null;
