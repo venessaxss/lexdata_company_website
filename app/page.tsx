@@ -1,194 +1,188 @@
 import Link from "next/link";
-import PromoCarousel from "@/components/PromoCarousel";
-import MediaGallery from "@/components/MediaGallery";
-import { createClient } from "@/lib/supabase/server";
 import HomeHero from "@/components/HomeHero";
-
-import SessionHighlights from "@/components/SessionHighlights";
 import TeamShowcase from "@/components/TeamShowcase";
 
-export default async function HomePage() {
-  const supabase = await createClient();
+const featureCards = [
+  {
+    title: "Python & Data Skills",
+    description:
+      "Learn practical Python, data cleaning, visualization, automation, and applied research workflows.",
+  },
+  {
+    title: "Corpus & NLP Research",
+    description:
+      "Build, clean, annotate, and analyze text corpora for language sciences and social science research.",
+  },
+  {
+    title: "AI-assisted Research",
+    description:
+      "Use modern AI tools for literature review, coding support, analysis planning, and academic reporting.",
+  },
+];
 
-  const { data: promotionsData } = await supabase
-    .from("promotions")
-    .select("*")
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true });
+const programCards = [
+  {
+    label: "Courses",
+    title: "Structured learning paths",
+    description:
+      "Follow organized courses designed for students, researchers, teachers, and professionals.",
+    href: "/courses",
+    button: "Explore Courses",
+  },
+  {
+    label: "Workshops",
+    title: "Live practical training",
+    description:
+      "Join focused workshops on Python, AI, NLP, corpus research, academic writing, and digital methods.",
+    href: "/workshops",
+    button: "Explore Workshops",
+  },
+  {
+    label: "Services",
+    title: "Research support services",
+    description:
+      "Get support for data preparation, analysis workflows, training design, and research reporting.",
+    href: "/services",
+    button: "View Services",
+  },
+];
 
-  const { data: mediaData } = await supabase
-    .from("media_items")
-    .select("*")
-    .eq("is_active", true)
-    .eq("page_area", "home_gallery")
-    .order("sort_order", { ascending: true });
-
-  const now = new Date();
-
-  const promotions = (promotionsData || []).filter((item) => {
-    const startsOk = !item.starts_at || new Date(item.starts_at) <= now;
-    const endsOk = !item.ends_at || new Date(item.ends_at) >= now;
-    return startsOk && endsOk;
-  });
-
-  const mediaItems = mediaData || [];
-
-  const { data: highlightsData } = await supabase
-  .from("session_highlights")
-  .select("*")
-  .eq("is_active", true)
-  .order("sort_order", { ascending: true });
-
-  const { data: teamData } = await supabase
-  .from("team_members")
-  .select("*")
-  .eq("is_active", true)
-  .eq("is_featured", true)
-  .order("sort_order", { ascending: true });
-
-  const highlights = highlightsData || [];
-  
-
+export default function HomePage() {
   return (
-    <main>
-      <PromoCarousel promotions={promotions} />
+    <>
+      {/* Only one homepage hero. Do not add another old/static hero below this. */}
       <HomeHero />
-      <SessionHighlights highlights={highlights} />
 
-      <TeamShowcase />
-
+      {/* Highlights */}
       <section className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-12 text-center">
-            <p className="font-semibold text-blue-700">LexData Academy</p>
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+              LexData Academy
+            </p>
 
-            <h2 className="mt-3 text-3xl font-bold text-slate-950">
-              Built for research, education, and real-world data practice
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
+              Practical research, AI, Python, and data skills for modern
+              learners.
             </h2>
 
-            <p className="mx-auto mt-4 max-w-3xl text-slate-600">
-              LexData helps students, teachers, researchers, and institutions
-              develop practical data skills for language sciences, translation,
-              education, ELT, and social sciences.
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              LexData helps researchers, students, educators, and professionals
+              learn applied digital research skills through courses, workshops,
+              and hands-on training.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="rounded-3xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="text-xl font-bold">Corpus Development</h3>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {featureCards.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-3xl border border-slate-200 bg-slate-50 p-7 shadow-sm"
+              >
+                <h3 className="text-xl font-black text-slate-950">
+                  {item.title}
+                </h3>
 
-              <p className="mt-3 text-slate-600">
-                Build, clean, organize, annotate, and analyze language and
-                social data for academic and institutional projects.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="text-xl font-bold">Workshops & Training</h3>
-
-              <p className="mt-3 text-slate-600">
-                Practical training in Python, NLP, data visualization, research
-                methods, AI tools, and academic writing.
-              </p>
-            </div>
-
-            <div className="rounded-3xl border p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-              <h3 className="text-xl font-bold">Research Consulting</h3>
-
-              <p className="mt-3 text-slate-600">
-                Support for data analysis, publication preparation, research
-                design, reporting, and digital research workflows.
-              </p>
-            </div>
+                <p className="mt-4 leading-7 text-slate-600">
+                  {item.description}
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Programs */}
       <section className="bg-slate-50 py-20">
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 md:grid-cols-2 md:items-center">
-          <div>
-            <p className="font-semibold text-blue-700">Featured Training</p>
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+                Programs
+              </p>
 
-            <h2 className="mt-3 text-3xl font-bold text-slate-950">
-              Python for Language Sciences and Social Sciences
+              <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
+                Learn through courses, workshops, and guided research support.
+              </h2>
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {programCards.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              >
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-700">
+                  {item.label}
+                </p>
+
+                <h3 className="mt-4 text-2xl font-black text-slate-950">
+                  {item.title}
+                </h3>
+
+                <p className="mt-4 leading-7 text-slate-600">
+                  {item.description}
+                </p>
+
+                <Link
+                  href={item.href}
+                  className="mt-7 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+                >
+                  {item.button}
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team section synced with Supabase */}
+      <TeamShowcase />
+
+      {/* CTA */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="rounded-3xl bg-slate-950 px-8 py-14 text-white shadow-xl md:px-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">
+              Start Learning
+            </p>
+
+            <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight md:text-5xl">
+              Build practical research, AI, Python, and data skills with
+              LexData.
             </h2>
-  
 
-            <p className="mt-4 leading-7 text-slate-600">
-              Learn how to collect textual data, clean datasets, build research
-              corpora, perform basic NLP, visualize findings, and prepare
-              research reports.
+            <p className="mt-5 max-w-2xl text-slate-300">
+              Explore our courses and workshops designed for language sciences,
+              social sciences, education, translation, and digital research.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/courses"
-                className="rounded-xl bg-slate-950 px-6 py-3 font-semibold text-white"
+                className="rounded-xl bg-white px-6 py-3 font-bold text-slate-950 hover:bg-slate-100"
               >
-                View Courses
+                Explore Courses
               </Link>
 
               <Link
                 href="/workshops"
-                className="rounded-xl border px-6 py-3 font-semibold text-slate-950"
+                className="rounded-xl border border-white/20 px-6 py-3 font-bold text-white hover:bg-white/10"
               >
-                View Workshops
+                Explore Workshops
+              </Link>
+
+              <Link
+                href="/contact"
+                className="rounded-xl border border-white/20 px-6 py-3 font-bold text-white hover:bg-white/10"
+              >
+                Contact LexData
               </Link>
             </div>
           </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-xl">
-            <div className="grid gap-4">
-              <div className="rounded-2xl bg-blue-50 p-5">
-                Python + Research Data
-              </div>
-
-              <div className="rounded-2xl bg-slate-100 p-5">
-                Corpus Building + NLP
-              </div>
-
-              <div className="rounded-2xl bg-slate-100 p-5">
-                SPSS, R, Power BI
-              </div>
-
-              <div className="rounded-2xl bg-slate-100 p-5">
-                Academic Writing + Publication Support
-              </div>
-            </div>
-          </div>
         </div>
       </section>
-
-      <MediaGallery items={mediaItems} />
-
-      <section className="bg-slate-950 py-20 text-white">
-        <div className="mx-auto max-w-6xl px-6 text-center">
-          <h2 className="text-3xl font-bold">
-            Start building real research data skills with LexData
-          </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Explore courses, workshops, consulting support, and dynamic learning
-            resources for research and education.
-          </p>
-
-          <div className="mt-8 flex justify-center gap-4">
-            <Link
-              href="/courses"
-              className="rounded-xl bg-white px-6 py-3 font-semibold text-slate-950"
-            >
-              Browse Courses
-            </Link>
-
-            <Link
-              href="/contact"
-              className="rounded-xl border border-white/30 px-6 py-3 font-semibold text-white"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+    </>
   );
 }
