@@ -83,6 +83,7 @@ function getWorkshopPayload(formData: FormData) {
       nullableField(formData, "file_url"),
 
     is_featured: checkboxField(formData, "is_featured"),
+
     is_published:
       checkboxField(formData, "is_published") ||
       checkboxField(formData, "is_active"),
@@ -115,6 +116,7 @@ export async function createWorkshop(formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/workshops");
+  revalidatePath(`/workshops/${payload.slug}`);
   revalidatePath("/admin/workshops");
 
   redirect("/admin/workshops?message=Workshop created");
@@ -176,4 +178,58 @@ export async function deleteWorkshop(formData: FormData) {
   revalidatePath("/admin/workshops");
 
   redirect("/admin/workshops?message=Workshop deleted");
+}
+
+export async function createWorkshopSession(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const workshopId = field(formData, "workshop_id");
+  const title =
+    field(formData, "title") ||
+    field(formData, "session_title") ||
+    "Workshop Session";
+
+  if (!workshopId) {
+    redirect("/admin/workshops?message=Missing workshop ID");
+  }
+
+  const { error } = await supabase.from("workshop_sessions").insert({
+    workshop_id: workshopId,
+    title,
+    session_date:
+      nullableField(formData, "session_date") ||
+      nullableField(formData, "date"),
+    start_time: nullableField(formData, "start_time"),
+    end_time: nullableField(formData, "end_time"),
+    location: nullableField(formData, "location"),
+    meeting_url:
+      nullableField(formData, "meeting_url") ||
+      nullableField(formData, "zoom_url"),
+    recording_url: nullableField(formData, "recording_url"),
+    material_url:
+      nullableField(formData, "material_url") ||
+      nullableField(formData, "materials_url") ||
+      nullableField(formData, "resource_url") ||
+      nullableField(formData, "file_url"),
+    display_order: numberField(formData, "display_order", 0),
+    is_active:
+      formData.has("is_active") || formData.has("is_published")
+        ? checkboxField(formData, "is_active") ||
+          checkboxField(formData, "is_published")
+        : true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+
+  redirect("/admin/workshops?message=Workshop session created");
 }
