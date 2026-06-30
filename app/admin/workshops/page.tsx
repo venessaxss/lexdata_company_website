@@ -3,6 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createWorkshop, createWorkshopSession } from "./actions";
+import SessionMediaUploader from "@/components/SessionMediaUploader";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -65,7 +66,7 @@ export default async function AdminWorkshopsPage({
 
         <p className="mt-4 max-w-2xl text-slate-600">
           Create, modify, publish, feature, edit levels, manage materials, add
-          sessions, or delete workshops.
+          sessions, add Jianying video links, or delete workshops.
         </p>
       </div>
 
@@ -312,8 +313,9 @@ export default async function AdminWorkshopsPage({
         </h2>
 
         <p className="mt-2 text-sm text-slate-600">
-          Use this to add class dates, Zoom links, recordings, or session
-          materials to an existing workshop.
+          Add class dates, Zoom links, recordings, session materials, local
+          pictures, small local videos, or Jianying / 剪映 links for large
+          workshop videos.
         </p>
 
         <form action={createWorkshopSession} className="mt-6 grid gap-5">
@@ -399,6 +401,25 @@ export default async function AdminWorkshopsPage({
             className="w-full rounded-xl border px-4 py-3"
           />
 
+          <SessionMediaUploader />
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">
+              Jianying / 剪映 external video link
+            </label>
+
+            <input
+              name="external_video_url"
+              placeholder="Paste Jianying / 剪映 share link here"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+
+            <p className="mt-2 text-xs text-slate-500">
+              For large videos, paste your Jianying share link here instead of
+              uploading the video file.
+            </p>
+          </div>
+
           <label className="flex items-center gap-2">
             <input name="is_active" type="checkbox" defaultChecked />
             <span>Show this session</span>
@@ -446,6 +467,7 @@ export default async function AdminWorkshopsPage({
                         <div className="font-bold text-slate-950">
                           {workshop.title}
                         </div>
+
                         <div className="mt-1 line-clamp-2 max-w-md text-xs text-slate-500">
                           {workshop.short_description ||
                             workshop.summary ||

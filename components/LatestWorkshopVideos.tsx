@@ -43,7 +43,7 @@ export default async function LatestWorkshopVideos() {
     .from("workshop_sessions")
     .select("*")
     .eq("is_active", true)
-    .eq("media_type", "video")
+    .in("media_type", ["video", "external_video"])
     .not("media_url", "is", null)
     .order("created_at", { ascending: false })
     .limit(6);
@@ -122,7 +122,7 @@ export default async function LatestWorkshopVideos() {
             </h2>
 
             <p className="mt-5 max-w-2xl text-slate-300">
-              Watch the newest workshop introduction videos, session previews,
+              Watch the newest workshop introduction videos, Jianying previews,
               and learning highlights from LexData.
             </p>
           </div>
@@ -150,6 +150,9 @@ export default async function LatestWorkshopVideos() {
               ? `/workshops/${workshop.slug}`
               : "/workshops";
 
+            const isExternalVideo = session.media_type === "external_video";
+            const isUploadedVideo = session.media_type === "video";
+
             return (
               <article
                 key={session.id}
@@ -160,20 +163,38 @@ export default async function LatestWorkshopVideos() {
                 }
               >
                 <div className={index === 0 ? "h-[420px]" : "h-72"}>
-                  <video
-                    src={session.media_url ?? ""}
-                    className="h-full w-full object-cover"
-                    controls
-                    muted
-                    playsInline
-                    preload="metadata"
-                  />
+                  {isUploadedVideo ? (
+                    <video
+                      src={session.media_url ?? ""}
+                      className="h-full w-full object-cover"
+                      controls
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 p-8 text-center">
+                      <div>
+                        <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-white/10 text-3xl">
+                          ▶
+                        </div>
+
+                        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-200">
+                          External Video
+                        </p>
+
+                        <p className="mt-3 text-lg font-bold text-white">
+                          Open Jianying workshop introduction
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-6">
                   <div className="mb-4 flex flex-wrap gap-2">
                     <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-bold text-blue-100">
-                      Video Preview
+                      {isExternalVideo ? "Jianying Preview" : "Video Preview"}
                     </span>
 
                     {workshop?.level ? (
@@ -211,12 +232,29 @@ export default async function LatestWorkshopVideos() {
                     ) : null}
                   </div>
 
-                  <Link
-                    href={href}
-                    className="mt-6 inline-flex rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 hover:bg-slate-100"
-                  >
-                    View workshop
-                  </Link>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {isExternalVideo && session.media_url ? (
+                      <a
+                        href={session.media_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 hover:bg-slate-100"
+                      >
+                        Open video
+                      </a>
+                    ) : null}
+
+                    <Link
+                      href={href}
+                      className={
+                        isExternalVideo
+                          ? "inline-flex rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"
+                          : "inline-flex rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 hover:bg-slate-100"
+                      }
+                    >
+                      View workshop
+                    </Link>
+                  </div>
                 </div>
               </article>
             );

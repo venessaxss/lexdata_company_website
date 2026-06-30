@@ -200,6 +200,16 @@ export async function createWorkshopSession(formData: FormData) {
     redirect("/admin/workshops?message=Missing workshop ID");
   }
 
+  const externalVideoUrl = nullableField(formData, "external_video_url");
+  const uploadedSessionMediaUrl = nullableField(formData, "session_media_url");
+  const uploadedSessionMediaType = field(formData, "session_media_type");
+
+  const finalMediaType = externalVideoUrl
+    ? "external_video"
+    : uploadedSessionMediaType || "none";
+
+  const finalMediaUrl = externalVideoUrl || uploadedSessionMediaUrl;
+
   const { error } = await supabase.from("workshop_sessions").insert({
     workshop_id: workshopId,
 
@@ -227,9 +237,9 @@ export async function createWorkshopSession(formData: FormData) {
       nullableField(formData, "resource_url") ||
       nullableField(formData, "file_url"),
 
-    media_type: field(formData, "session_media_type") || "none",
+    media_type: finalMediaType,
 
-    media_url: nullableField(formData, "session_media_url"),
+    media_url: finalMediaUrl,
 
     display_order: numberField(formData, "display_order", 0),
 
