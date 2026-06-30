@@ -66,7 +66,7 @@ export default async function AdminWorkshopsPage({
 
         <p className="mt-4 max-w-2xl text-slate-600">
           Create, modify, publish, feature, edit levels, manage materials, add
-          sessions, add Jianying video links, or delete workshops.
+          sessions, add YouTube/Jianying video links, or delete workshops.
         </p>
       </div>
 
@@ -314,8 +314,8 @@ export default async function AdminWorkshopsPage({
 
         <p className="mt-2 text-sm text-slate-600">
           Add class dates, Zoom links, recordings, session materials, local
-          pictures, small local videos, or Jianying / 剪映 links for large
-          workshop videos.
+          pictures, small local videos, YouTube videos, or Jianying / 剪映 links
+          for large workshop videos.
         </p>
 
         <form action={createWorkshopSession} className="mt-6 grid gap-5">
@@ -405,18 +405,19 @@ export default async function AdminWorkshopsPage({
 
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700">
-              Jianying / 剪映 external video link
+              YouTube / Jianying / external video link
             </label>
 
             <input
               name="external_video_url"
-              placeholder="Paste Jianying / 剪映 share link here"
+              placeholder="Paste YouTube, Jianying / 剪映, or external video link here"
               className="w-full rounded-xl border px-4 py-3"
             />
 
             <p className="mt-2 text-xs text-slate-500">
-              For large videos, paste your Jianying share link here instead of
-              uploading the video file.
+              For YouTube links, the homepage will embed and play the video.
+              For Jianying links, the homepage will show an external video
+              button because Jianying share pages usually cannot be embedded.
             </p>
           </div>
 
