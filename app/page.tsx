@@ -1,9 +1,7 @@
 import Link from "next/link";
 import HomeHero from "@/components/HomeHero";
+import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 const featureCards = [
   {
@@ -50,13 +48,16 @@ const programCards = [
   },
 ];
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function HomePage() {
   return (
     <>
-      {/* Only one homepage hero. Do not add another old/static hero below this. */}
       <HomeHero />
 
-      {/* Highlights */}
+      <LatestWorkshopVideos />
+
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-3xl">
@@ -95,7 +96,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Programs */}
       <section className="bg-slate-50 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -140,10 +140,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Team section synced with Supabase */}
       <TeamShowcase />
 
-      {/* CTA */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="rounded-3xl bg-slate-950 px-8 py-14 text-white shadow-xl md:px-12">

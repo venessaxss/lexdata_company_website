@@ -44,6 +44,7 @@ function getWorkshopPayload(formData: FormData) {
   return {
     title,
     slug,
+
     level: field(formData, "level") || "Beginner",
 
     short_description:
@@ -57,6 +58,7 @@ function getWorkshopPayload(formData: FormData) {
       nullableField(formData, "speaker"),
 
     location: nullableField(formData, "location"),
+
     format: field(formData, "format") || "Online",
 
     start_date:
@@ -64,9 +66,11 @@ function getWorkshopPayload(formData: FormData) {
       nullableField(formData, "date"),
 
     end_date: nullableField(formData, "end_date"),
+
     duration: nullableField(formData, "duration"),
 
     price: numberField(formData, "price", 0),
+
     currency: field(formData, "currency") || "USD",
 
     capacity: numberField(formData, "capacity", 0),
@@ -100,7 +104,7 @@ export async function createWorkshop(formData: FormData) {
   const title = field(formData, "title");
 
   if (!title) {
-    redirect("/admin/workshops/new?message=Workshop title is required");
+    redirect("/admin/workshops?message=Workshop title is required");
   }
 
   const payload = getWorkshopPayload(formData);
@@ -111,7 +115,7 @@ export async function createWorkshop(formData: FormData) {
   });
 
   if (error) {
-    redirect(`/admin/workshops/new?message=${encodeURIComponent(error.message)}`);
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/");
@@ -186,6 +190,7 @@ export async function createWorkshopSession(formData: FormData) {
   const supabase = createAdminClient();
 
   const workshopId = field(formData, "workshop_id");
+
   const title =
     field(formData, "title") ||
     field(formData, "session_title") ||
@@ -197,29 +202,45 @@ export async function createWorkshopSession(formData: FormData) {
 
   const { error } = await supabase.from("workshop_sessions").insert({
     workshop_id: workshopId,
+
     title,
+
     session_date:
       nullableField(formData, "session_date") ||
       nullableField(formData, "date"),
+
     start_time: nullableField(formData, "start_time"),
+
     end_time: nullableField(formData, "end_time"),
+
     location: nullableField(formData, "location"),
+
     meeting_url:
       nullableField(formData, "meeting_url") ||
       nullableField(formData, "zoom_url"),
+
     recording_url: nullableField(formData, "recording_url"),
+
     material_url:
       nullableField(formData, "material_url") ||
       nullableField(formData, "materials_url") ||
       nullableField(formData, "resource_url") ||
       nullableField(formData, "file_url"),
+
+    media_type: field(formData, "session_media_type") || "none",
+
+    media_url: nullableField(formData, "session_media_url"),
+
     display_order: numberField(formData, "display_order", 0),
+
     is_active:
       formData.has("is_active") || formData.has("is_published")
         ? checkboxField(formData, "is_active") ||
           checkboxField(formData, "is_published")
         : true,
+
     created_at: new Date().toISOString(),
+
     updated_at: new Date().toISOString(),
   });
 
