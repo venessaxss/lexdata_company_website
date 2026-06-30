@@ -2,6 +2,9 @@ import Link from "next/link";
 import HomeHero from "@/components/HomeHero";
 import TeamShowcase from "@/components/TeamShowcase";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const featureCards = [
   {
     title: "Python & Data Skills",

@@ -59,11 +59,10 @@ async function uploadHeroMedia(file: File | null) {
 
   const ext = file.name.split(".").pop() || "bin";
   const filePath = `${crypto.randomUUID()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
 
   const { error } = await supabase.storage
     .from("home-hero-media")
-    .upload(filePath, buffer, {
+    .upload(filePath, file, {
       contentType: file.type || "application/octet-stream",
       upsert: false,
     });
@@ -88,6 +87,7 @@ async function createHeroSlide(formData: FormData) {
   const returnTo = field(formData, "return_to") || "/admin/hero";
 
   const title = field(formData, "title");
+
   if (!title) {
     redirect(`${returnTo}?message=Title is required`);
   }
@@ -188,6 +188,10 @@ async function deleteHeroSlide(formData: FormData) {
   const returnTo = field(formData, "return_to") || "/admin/hero";
   const id = field(formData, "id");
 
+  if (!id) {
+    redirect(`${returnTo}?message=Missing slide ID`);
+  }
+
   const { error } = await supabase
     .from("home_hero_slides")
     .delete()
@@ -218,7 +222,8 @@ export default async function HeroAdminPanel({
   const { data, error } = await supabase
     .from("home_hero_slides")
     .select("*")
-    .order("display_order", { ascending: true });
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
 
   const slides = (data ?? []) as HeroSlide[];
 
@@ -229,9 +234,7 @@ export default async function HeroAdminPanel({
           Homepage Management
         </p>
 
-        <h1 className="mt-2 text-3xl font-black text-slate-950">
-          {title}
-        </h1>
+        <h1 className="mt-2 text-3xl font-black text-slate-950">{title}</h1>
 
         <p className="mt-2 text-slate-600">
           Upload homepage background photos or videos, create multiple slides,
@@ -281,24 +284,28 @@ export default async function HeroAdminPanel({
             <input
               name="primary_button_text"
               defaultValue="Join the Course"
+              placeholder="Primary button text"
               className="rounded-xl border px-4 py-3"
             />
 
             <input
               name="primary_button_href"
               defaultValue="/courses"
+              placeholder="Primary button link"
               className="rounded-xl border px-4 py-3"
             />
 
             <input
               name="secondary_button_text"
               defaultValue="Contact LexData"
+              placeholder="Secondary button text"
               className="rounded-xl border px-4 py-3"
             />
 
             <input
               name="secondary_button_href"
               defaultValue="/contact"
+              placeholder="Secondary button link"
               className="rounded-xl border px-4 py-3"
             />
           </div>
@@ -334,6 +341,7 @@ export default async function HeroAdminPanel({
               min="0"
               max="1"
               defaultValue="0.68"
+              placeholder="Overlay opacity"
               className="rounded-xl border px-4 py-3"
             />
 
@@ -341,6 +349,7 @@ export default async function HeroAdminPanel({
               name="display_order"
               type="number"
               defaultValue="0"
+              placeholder="Display order"
               className="rounded-xl border px-4 py-3"
             />
           </div>
@@ -360,6 +369,17 @@ export default async function HeroAdminPanel({
       </section>
 
       <section className="space-y-6">
+        {slides.length === 0 ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+            <h2 className="text-xl font-black text-slate-900">
+              No hero slides yet
+            </h2>
+            <p className="mt-2 text-slate-600">
+              Add one slide above. Active slides will appear on the homepage.
+            </p>
+          </div>
+        ) : null}
+
         {slides.map((slide) => (
           <div
             key={slide.id}
@@ -403,6 +423,7 @@ export default async function HeroAdminPanel({
               <input
                 name="badge"
                 defaultValue={slide.badge ?? ""}
+                placeholder="Badge"
                 className="rounded-xl border px-4 py-3"
               />
 
@@ -410,12 +431,14 @@ export default async function HeroAdminPanel({
                 name="title"
                 required
                 defaultValue={slide.title ?? ""}
+                placeholder="Hero title"
                 className="rounded-xl border px-4 py-3"
               />
 
               <textarea
                 name="subtitle"
                 defaultValue={slide.subtitle ?? ""}
+                placeholder="Subtitle"
                 rows={3}
                 className="rounded-xl border px-4 py-3"
               />
@@ -424,24 +447,28 @@ export default async function HeroAdminPanel({
                 <input
                   name="primary_button_text"
                   defaultValue={slide.primary_button_text ?? ""}
+                  placeholder="Primary button text"
                   className="rounded-xl border px-4 py-3"
                 />
 
                 <input
                   name="primary_button_href"
                   defaultValue={slide.primary_button_href ?? ""}
+                  placeholder="Primary button link"
                   className="rounded-xl border px-4 py-3"
                 />
 
                 <input
                   name="secondary_button_text"
                   defaultValue={slide.secondary_button_text ?? ""}
+                  placeholder="Secondary button text"
                   className="rounded-xl border px-4 py-3"
                 />
 
                 <input
                   name="secondary_button_href"
                   defaultValue={slide.secondary_button_href ?? ""}
+                  placeholder="Secondary button link"
                   className="rounded-xl border px-4 py-3"
                 />
               </div>
@@ -453,9 +480,7 @@ export default async function HeroAdminPanel({
               >
                 <option value="image">Image background</option>
                 <option value="video">Video background</option>
-                <option value="recommended">
-                  System recommended background
-                </option>
+                <option value="recommended">System recommended background</option>
               </select>
 
               <input
@@ -480,6 +505,7 @@ export default async function HeroAdminPanel({
                   min="0"
                   max="1"
                   defaultValue={slide.overlay_opacity ?? 0.68}
+                  placeholder="Overlay opacity"
                   className="rounded-xl border px-4 py-3"
                 />
 
@@ -487,6 +513,7 @@ export default async function HeroAdminPanel({
                   name="display_order"
                   type="number"
                   defaultValue={slide.display_order ?? 0}
+                  placeholder="Display order"
                   className="rounded-xl border px-4 py-3"
                 />
               </div>
