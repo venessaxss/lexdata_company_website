@@ -4,33 +4,18 @@ import { requireAdmin } from "@/lib/auth";
 const adminCards = [
   {
     title: "Courses",
-    description: "Create, edit, and manage course content.",
+    description: "Create, edit, publish, and manage course content.",
     href: "/admin/courses",
   },
   {
     title: "Workshops",
-    description: "Manage workshops, live sessions, and training programs.",
+    description: "Create, edit, publish, and manage workshops and sessions.",
     href: "/admin/workshops",
   },
   {
     title: "Homepage Hero",
     description: "Edit homepage background photos, videos, and carousel slides.",
     href: "/admin/hero",
-  },
-  {
-    title: "Homepage Highlights",
-    description: "Manage homepage highlight blocks and promotional sections.",
-    href: "/admin/highlights",
-  },
-  {
-    title: "Media Library",
-    description: "Manage uploaded images, banners, and website media.",
-    href: "/admin/media",
-  },
-  {
-    title: "Promotions",
-    description: "Manage homepage promotions and featured content.",
-    href: "/admin/promotions",
   },
   {
     title: "Team Management",
@@ -43,9 +28,9 @@ const adminCards = [
     href: "/admin/users",
   },
   {
-    title: "Content Management",
-    description: "Manage general website content and editable sections.",
-    href: "/admin/content",
+    title: "Media Library",
+    description: "Manage uploaded images, banners, and website media.",
+    href: "/admin/media",
   },
 ];
 
@@ -65,7 +50,7 @@ export default async function AdminPage() {
 
         <p className="mt-4 max-w-2xl text-slate-600">
           Manage LexData courses, workshops, homepage content, users, team
-          members, media, and promotional sections from one place.
+          members, media, and website sections from one place.
         </p>
       </div>
 
