@@ -34,6 +34,40 @@ type Workshop = {
   is_active?: boolean | null;
 };
 
+function getYouTubeEmbedUrl(url?: string | null) {
+  if (!url) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.hostname.replace("www.", "");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (parsedUrl.pathname === "/watch") {
+        const videoId = parsedUrl.searchParams.get("v");
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      }
+
+      if (parsedUrl.pathname.startsWith("/shorts/")) {
+        const videoId = parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0];
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      }
+
+      if (parsedUrl.pathname.startsWith("/embed/")) {
+        return url;
+      }
+    }
+
+    if (host === "youtu.be") {
+      const videoId = parsedUrl.pathname.replace("/", "").split("?")[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function LatestWorkshopVideos() {
   noStore();
 
@@ -122,8 +156,8 @@ export default async function LatestWorkshopVideos() {
             </h2>
 
             <p className="mt-5 max-w-2xl text-slate-300">
-              Watch the newest workshop introduction videos, Jianying previews,
-              and learning highlights from LexData.
+              Watch the newest workshop introduction videos, YouTube previews,
+              Jianying previews, and learning highlights from LexData.
             </p>
           </div>
 
@@ -150,8 +184,9 @@ export default async function LatestWorkshopVideos() {
               ? `/workshops/${workshop.slug}`
               : "/workshops";
 
-            const isExternalVideo = session.media_type === "external_video";
             const isUploadedVideo = session.media_type === "video";
+            const isExternalVideo = session.media_type === "external_video";
+            const youtubeEmbedUrl = getYouTubeEmbedUrl(session.media_url);
 
             return (
               <article
@@ -172,6 +207,14 @@ export default async function LatestWorkshopVideos() {
                       playsInline
                       preload="metadata"
                     />
+                  ) : youtubeEmbedUrl ? (
+                    <iframe
+                      src={youtubeEmbedUrl}
+                      title={workshopTitle}
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 p-8 text-center">
                       <div>
@@ -184,7 +227,7 @@ export default async function LatestWorkshopVideos() {
                         </p>
 
                         <p className="mt-3 text-lg font-bold text-white">
-                          Open Jianying workshop introduction
+                          Open workshop introduction
                         </p>
                       </div>
                     </div>
@@ -194,7 +237,11 @@ export default async function LatestWorkshopVideos() {
                 <div className="p-6">
                   <div className="mb-4 flex flex-wrap gap-2">
                     <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-bold text-blue-100">
-                      {isExternalVideo ? "Jianying Preview" : "Video Preview"}
+                      {youtubeEmbedUrl
+                        ? "YouTube Preview"
+                        : isExternalVideo
+                          ? "External Preview"
+                          : "Video Preview"}
                     </span>
 
                     {workshop?.level ? (
@@ -246,11 +293,7 @@ export default async function LatestWorkshopVideos() {
 
                     <Link
                       href={href}
-                      className={
-                        isExternalVideo
-                          ? "inline-flex rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"
-                          : "inline-flex rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 hover:bg-slate-100"
-                      }
+                      className="inline-flex rounded-xl border border-white/20 px-5 py-3 text-sm font-bold text-white hover:bg-white/10"
                     >
                       View workshop
                     </Link>
