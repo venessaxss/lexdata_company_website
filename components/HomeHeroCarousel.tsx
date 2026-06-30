@@ -39,6 +39,45 @@ const fallbackSlides: HomeHeroSlide[] = [
   },
 ];
 
+function getYouTubeVideoId(url?: string | null) {
+  if (!url) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.hostname.replace("www.", "");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (parsedUrl.pathname === "/watch") {
+        return parsedUrl.searchParams.get("v");
+      }
+
+      if (parsedUrl.pathname.startsWith("/shorts/")) {
+        return parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0] || null;
+      }
+
+      if (parsedUrl.pathname.startsWith("/embed/")) {
+        return parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || null;
+      }
+    }
+
+    if (host === "youtu.be") {
+      return parsedUrl.pathname.replace("/", "").split("?")[0] || null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getYouTubeBackgroundEmbedUrl(url?: string | null) {
+  const videoId = getYouTubeVideoId(url);
+
+  if (!videoId) return null;
+
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${videoId}`;
+}
+
 export default function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
   const safeSlides = useMemo(
     () => (slides.length > 0 ? slides : fallbackSlides),
@@ -65,6 +104,7 @@ export default function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
       {safeSlides.map((slide, index) => {
         const isActive = index === activeIndex;
         const mediaUrl = slide.media_url;
+        const youtubeEmbedUrl = getYouTubeBackgroundEmbedUrl(mediaUrl);
 
         return (
           <div
@@ -73,7 +113,15 @@ export default function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
               isActive ? "opacity-100" : "opacity-0"
             }`}
           >
-            {slide.media_type === "video" && mediaUrl ? (
+            {youtubeEmbedUrl && slide.media_type === "video" ? (
+              <iframe
+                src={youtubeEmbedUrl}
+                title={slide.title}
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-[130%] -translate-x-1/2 -translate-y-1/2"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : slide.media_type === "video" && mediaUrl ? (
               <video
                 src={mediaUrl}
                 className="h-full w-full object-cover"
@@ -96,7 +144,6 @@ export default function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
               className="absolute inset-0 bg-slate-950"
               style={{ opacity: overlayOpacity }}
             />
-
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/65 to-transparent" />
           </div>
         );

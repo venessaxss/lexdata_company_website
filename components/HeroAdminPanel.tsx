@@ -52,6 +52,43 @@ function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function getYouTubePreviewEmbedUrl(url?: string | null) {
+  if (!url) return null;
+
+  try {
+    const parsedUrl = new URL(url);
+    const host = parsedUrl.hostname.replace("www.", "");
+
+    let videoId: string | null = null;
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      if (parsedUrl.pathname === "/watch") {
+        videoId = parsedUrl.searchParams.get("v");
+      }
+
+      if (parsedUrl.pathname.startsWith("/shorts/")) {
+        videoId =
+          parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0] || null;
+      }
+
+      if (parsedUrl.pathname.startsWith("/embed/")) {
+        videoId =
+          parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || null;
+      }
+    }
+
+    if (host === "youtu.be") {
+      videoId = parsedUrl.pathname.replace("/", "").split("?")[0] || null;
+    }
+
+    return videoId
+      ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 async function uploadHeroMedia(file: File | null) {
   if (!file || file.size === 0) return null;
 
@@ -237,8 +274,8 @@ export default async function HeroAdminPanel({
         <h1 className="mt-2 text-3xl font-black text-slate-950">{title}</h1>
 
         <p className="mt-2 text-slate-600">
-          Upload homepage background photos or videos, create multiple slides,
-          and control the auto-scrolling hero banner.
+          Upload homepage background photos, videos, or paste YouTube links.
+          YouTube links will be embedded automatically.
         </p>
       </div>
 
@@ -316,7 +353,7 @@ export default async function HeroAdminPanel({
             className="rounded-xl border px-4 py-3"
           >
             <option value="image">Image background</option>
-            <option value="video">Video background</option>
+            <option value="video">Video background / YouTube link</option>
             <option value="recommended">System recommended background</option>
           </select>
 
@@ -329,7 +366,7 @@ export default async function HeroAdminPanel({
 
           <input
             name="media_url"
-            placeholder="Or paste image/video URL"
+            placeholder="Or paste image/video/YouTube URL"
             className="rounded-xl border px-4 py-3"
           />
 
@@ -374,180 +411,194 @@ export default async function HeroAdminPanel({
             <h2 className="text-xl font-black text-slate-900">
               No hero slides yet
             </h2>
+
             <p className="mt-2 text-slate-600">
               Add one slide above. Active slides will appear on the homepage.
             </p>
           </div>
         ) : null}
 
-        {slides.map((slide) => (
-          <div
-            key={slide.id}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-          >
-            {slide.media_url ? (
-              <div className="mb-5 overflow-hidden rounded-2xl bg-slate-100">
-                {slide.media_type === "video" ? (
-                  <video
-                    src={slide.media_url}
-                    className="h-64 w-full object-cover"
-                    controls
-                  />
-                ) : (
-                  <img
-                    src={slide.media_url}
-                    alt={slide.title ?? "Hero slide"}
-                    className="h-64 w-full object-cover"
-                  />
-                )}
-              </div>
-            ) : (
-              <div className="mb-5 flex h-64 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 text-white">
-                System recommended background
-              </div>
-            )}
+        {slides.map((slide) => {
+          const youtubePreviewUrl = getYouTubePreviewEmbedUrl(slide.media_url);
 
-            <form
-              action={updateHeroSlide}
-              encType="multipart/form-data"
-              className="grid gap-4"
+          return (
+            <div
+              key={slide.id}
+              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <input type="hidden" name="return_to" value={returnTo} />
-              <input type="hidden" name="id" value={slide.id} />
-              <input
-                type="hidden"
-                name="current_media_url"
-                value={slide.media_url ?? ""}
-              />
+              {slide.media_url ? (
+                <div className="mb-5 overflow-hidden rounded-2xl bg-slate-100">
+                  {slide.media_type === "video" && youtubePreviewUrl ? (
+                    <iframe
+                      src={youtubePreviewUrl}
+                      title={slide.title ?? "Hero video"}
+                      className="h-64 w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  ) : slide.media_type === "video" ? (
+                    <video
+                      src={slide.media_url}
+                      className="h-64 w-full object-cover"
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={slide.media_url}
+                      alt={slide.title ?? "Hero slide"}
+                      className="h-64 w-full object-cover"
+                    />
+                  )}
+                </div>
+              ) : (
+                <div className="mb-5 flex h-64 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 text-white">
+                  System recommended background
+                </div>
+              )}
 
-              <input
-                name="badge"
-                defaultValue={slide.badge ?? ""}
-                placeholder="Badge"
-                className="rounded-xl border px-4 py-3"
-              />
-
-              <input
-                name="title"
-                required
-                defaultValue={slide.title ?? ""}
-                placeholder="Hero title"
-                className="rounded-xl border px-4 py-3"
-              />
-
-              <textarea
-                name="subtitle"
-                defaultValue={slide.subtitle ?? ""}
-                placeholder="Subtitle"
-                rows={3}
-                className="rounded-xl border px-4 py-3"
-              />
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  name="primary_button_text"
-                  defaultValue={slide.primary_button_text ?? ""}
-                  placeholder="Primary button text"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="primary_button_href"
-                  defaultValue={slide.primary_button_href ?? ""}
-                  placeholder="Primary button link"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="secondary_button_text"
-                  defaultValue={slide.secondary_button_text ?? ""}
-                  placeholder="Secondary button text"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="secondary_button_href"
-                  defaultValue={slide.secondary_button_href ?? ""}
-                  placeholder="Secondary button link"
-                  className="rounded-xl border px-4 py-3"
-                />
-              </div>
-
-              <select
-                name="media_type"
-                defaultValue={slide.media_type ?? "image"}
-                className="rounded-xl border px-4 py-3"
+              <form
+                action={updateHeroSlide}
+                encType="multipart/form-data"
+                className="grid gap-4"
               >
-                <option value="image">Image background</option>
-                <option value="video">Video background</option>
-                <option value="recommended">System recommended background</option>
-              </select>
+                <input type="hidden" name="return_to" value={returnTo} />
+                <input type="hidden" name="id" value={slide.id} />
 
-              <input
-                name="media_file"
-                type="file"
-                accept="image/*,video/mp4,video/webm,video/quicktime"
-                className="rounded-xl border px-4 py-3"
-              />
-
-              <input
-                name="media_url"
-                defaultValue={slide.media_url ?? ""}
-                placeholder="Or paste image/video URL"
-                className="rounded-xl border px-4 py-3"
-              />
-
-              <div className="grid gap-4 md:grid-cols-2">
                 <input
-                  name="overlay_opacity"
-                  type="number"
-                  step="0.05"
-                  min="0"
-                  max="1"
-                  defaultValue={slide.overlay_opacity ?? 0.68}
-                  placeholder="Overlay opacity"
+                  type="hidden"
+                  name="current_media_url"
+                  value={slide.media_url ?? ""}
+                />
+
+                <input
+                  name="badge"
+                  defaultValue={slide.badge ?? ""}
+                  placeholder="Badge"
                   className="rounded-xl border px-4 py-3"
                 />
 
                 <input
-                  name="display_order"
-                  type="number"
-                  defaultValue={slide.display_order ?? 0}
-                  placeholder="Display order"
+                  name="title"
+                  required
+                  defaultValue={slide.title ?? ""}
+                  placeholder="Hero title"
                   className="rounded-xl border px-4 py-3"
                 />
-              </div>
 
-              <label className="flex items-center gap-2">
-                <input
-                  name="is_active"
-                  type="checkbox"
-                  defaultChecked={Boolean(slide.is_active)}
+                <textarea
+                  name="subtitle"
+                  defaultValue={slide.subtitle ?? ""}
+                  placeholder="Subtitle"
+                  rows={3}
+                  className="rounded-xl border px-4 py-3"
                 />
-                <span>Show this slide</span>
-              </label>
 
-              <button
-                type="submit"
-                className="rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-              >
-                Update Slide
-              </button>
-            </form>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    name="primary_button_text"
+                    defaultValue={slide.primary_button_text ?? ""}
+                    placeholder="Primary button text"
+                    className="rounded-xl border px-4 py-3"
+                  />
 
-            <form action={deleteHeroSlide} className="mt-3">
-              <input type="hidden" name="return_to" value={returnTo} />
-              <input type="hidden" name="id" value={slide.id} />
+                  <input
+                    name="primary_button_href"
+                    defaultValue={slide.primary_button_href ?? ""}
+                    placeholder="Primary button link"
+                    className="rounded-xl border px-4 py-3"
+                  />
 
-              <button
-                type="submit"
-                className="rounded-xl border border-red-200 px-5 py-3 font-bold text-red-600 hover:bg-red-50"
-              >
-                Delete Slide
-              </button>
-            </form>
-          </div>
-        ))}
+                  <input
+                    name="secondary_button_text"
+                    defaultValue={slide.secondary_button_text ?? ""}
+                    placeholder="Secondary button text"
+                    className="rounded-xl border px-4 py-3"
+                  />
+
+                  <input
+                    name="secondary_button_href"
+                    defaultValue={slide.secondary_button_href ?? ""}
+                    placeholder="Secondary button link"
+                    className="rounded-xl border px-4 py-3"
+                  />
+                </div>
+
+                <select
+                  name="media_type"
+                  defaultValue={slide.media_type ?? "image"}
+                  className="rounded-xl border px-4 py-3"
+                >
+                  <option value="image">Image background</option>
+                  <option value="video">Video background / YouTube link</option>
+                  <option value="recommended">System recommended background</option>
+                </select>
+
+                <input
+                  name="media_file"
+                  type="file"
+                  accept="image/*,video/mp4,video/webm,video/quicktime"
+                  className="rounded-xl border px-4 py-3"
+                />
+
+                <input
+                  name="media_url"
+                  defaultValue={slide.media_url ?? ""}
+                  placeholder="Or paste image/video/YouTube URL"
+                  className="rounded-xl border px-4 py-3"
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <input
+                    name="overlay_opacity"
+                    type="number"
+                    step="0.05"
+                    min="0"
+                    max="1"
+                    defaultValue={slide.overlay_opacity ?? 0.68}
+                    placeholder="Overlay opacity"
+                    className="rounded-xl border px-4 py-3"
+                  />
+
+                  <input
+                    name="display_order"
+                    type="number"
+                    defaultValue={slide.display_order ?? 0}
+                    placeholder="Display order"
+                    className="rounded-xl border px-4 py-3"
+                  />
+                </div>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    name="is_active"
+                    type="checkbox"
+                    defaultChecked={Boolean(slide.is_active)}
+                  />
+                  <span>Show this slide</span>
+                </label>
+
+                <button
+                  type="submit"
+                  className="rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
+                >
+                  Update Slide
+                </button>
+              </form>
+
+              <form action={deleteHeroSlide} className="mt-3">
+                <input type="hidden" name="return_to" value={returnTo} />
+                <input type="hidden" name="id" value={slide.id} />
+
+                <button
+                  type="submit"
+                  className="rounded-xl border border-red-200 px-5 py-3 font-bold text-red-600 hover:bg-red-50"
+                >
+                  Delete Slide
+                </button>
+              </form>
+            </div>
+          );
+        })}
       </section>
     </main>
   );
