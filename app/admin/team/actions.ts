@@ -2,22 +2,72 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-async function uploadTeamPhoto(file: File | null) {
+async function requireAdminOrManager() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    redirect("/login");
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (
+    profileError ||
+    !profile ||
+    !["admin", "manager"].includes(profile.role)
+  ) {
+    redirect("/dashboard");
+  }
+
+  return { user, profile };
+}
+
+function field(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/dr\.|professor\.|prof\./g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function initialsFromName(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+async function uploadTeamMedia(file: File | null, folder: string) {
   if (!file || file.size === 0) return null;
 
   const supabase = createAdminClient();
 
-  const ext = file.name.split(".").pop() || "jpg";
-  const filePath = `${crypto.randomUUID()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const ext = file.name.split(".").pop() || "bin";
+  const filePath = `${folder}/${crypto.randomUUID()}.${ext}`;
 
   const { error } = await supabase.storage
-    .from("team-photos")
-    .upload(filePath, buffer, {
-      contentType: file.type || "image/jpeg",
+    .from("team-media")
+    .upload(filePath, file, {
+      contentType: file.type || "application/octet-stream",
       upsert: false,
     });
 
@@ -25,111 +75,201 @@ async function uploadTeamPhoto(file: File | null) {
     throw new Error(error.message);
   }
 
-  const { data } = supabase.storage
-    .from("team-photos")
-    .getPublicUrl(filePath);
+  const { data } = supabase.storage.from("team-media").getPublicUrl(filePath);
 
   return data.publicUrl;
 }
 
 export async function createTeamMember(formData: FormData) {
-  await requireAdmin();
+  await requireAdminOrManager();
 
   const supabase = createAdminClient();
+  const returnTo = field(formData, "return_to") || "/admin/team";
 
-  const full_name = String(formData.get("full_name") ?? "").trim();
-  const role_title = String(formData.get("role_title") ?? "").trim();
-  const bio = String(formData.get("bio") ?? "").trim();
-  const display_order = Number(formData.get("display_order") ?? 0);
-  const is_active = formData.get("is_active") === "on";
+  const fullName = field(formData, "full_name") || field(formData, "name");
+  const roleTitle =
+    field(formData, "position_title") ||
+    field(formData, "role_title") ||
+    field(formData, "role");
 
-  const photoFile = formData.get("photo") as File | null;
-  const uploadedPhotoUrl = await uploadTeamPhoto(photoFile);
-
-  const manualPhotoUrl = String(formData.get("photo_url") ?? "").trim();
-
-  if (!full_name) {
-    redirect("/admin/team/new?message=Name is required");
+  if (!fullName) {
+    redirect(`${returnTo}?message=Name is required`);
   }
 
+  const imageFile =
+    (formData.get("media_file") as File | null) ||
+    (formData.get("photo") as File | null);
+
+  const videoFile = formData.get("video_file") as File | null;
+
+  const uploadedImageUrl = await uploadTeamMedia(imageFile, "images");
+  const uploadedVideoUrl = await uploadTeamMedia(videoFile, "videos");
+
+  const manualMediaUrl =
+    field(formData, "media_url") ||
+    field(formData, "photo_url") ||
+    field(formData, "profile_image_url");
+
+  const manualVideoUrl = field(formData, "video_url");
+
+  const finalMediaUrl = uploadedImageUrl || manualMediaUrl || null;
+  const finalVideoUrl = uploadedVideoUrl || manualVideoUrl || null;
+
+  const profileSlug = field(formData, "profile_slug") || slugify(fullName);
+  const displayOrder = Number(field(formData, "display_order") || field(formData, "sort_order") || 0);
+
   const { error } = await supabase.from("team_members").insert({
-    full_name,
-    role_title,
-    bio,
-    photo_url: uploadedPhotoUrl || manualPhotoUrl || null,
-    display_order,
-    is_active,
+    name: fullName,
+    full_name: fullName,
+    role: roleTitle || "Team Member",
+    role_title: roleTitle || "Team Member",
+    position_title: roleTitle || "Team Member",
+    section: field(formData, "section") || "Core Team",
+    institution: field(formData, "institution") || null,
+    organization: field(formData, "organization") || null,
+    bio: field(formData, "bio") || null,
+    photo_url: finalMediaUrl,
+    profile_image_url: finalMediaUrl,
+    media_type: field(formData, "media_type") || "image",
+    media_url: finalMediaUrl,
+    video_url: finalVideoUrl,
+    style_preset: field(formData, "style_preset") || "navy",
+    profile_highlight: field(formData, "profile_highlight") || null,
+    profile_cta: field(formData, "profile_cta") || "View Profile",
+    profile_slug: profileSlug,
+    initials: field(formData, "initials") || initialsFromName(fullName),
+    display_order: displayOrder,
+    sort_order: displayOrder,
+    is_active: formData.get("is_active") === "on",
+    is_featured: formData.get("is_featured") === "on",
   });
 
   if (error) {
-    redirect(`/admin/team/new?message=${encodeURIComponent(error.message)}`);
+    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
   }
 
+  revalidatePath("/");
   revalidatePath("/team");
   revalidatePath("/admin/team");
-  redirect("/admin/team?message=Team member created");
+  revalidatePath("/manager/team");
+
+  redirect(`${returnTo}?message=Team member created`);
 }
 
 export async function updateTeamMember(formData: FormData) {
-  await requireAdmin();
+  await requireAdminOrManager();
 
   const supabase = createAdminClient();
+  const returnTo = field(formData, "return_to") || "/admin/team";
 
-  const id = String(formData.get("id") ?? "");
-  const full_name = String(formData.get("full_name") ?? "").trim();
-  const role_title = String(formData.get("role_title") ?? "").trim();
-  const bio = String(formData.get("bio") ?? "").trim();
-  const display_order = Number(formData.get("display_order") ?? 0);
-  const is_active = formData.get("is_active") === "on";
+  const id = field(formData, "id");
+  const fullName = field(formData, "full_name") || field(formData, "name");
+  const roleTitle =
+    field(formData, "position_title") ||
+    field(formData, "role_title") ||
+    field(formData, "role");
 
-  const currentPhotoUrl = String(formData.get("current_photo_url") ?? "").trim();
-  const manualPhotoUrl = String(formData.get("photo_url") ?? "").trim();
-
-  const photoFile = formData.get("photo") as File | null;
-  const uploadedPhotoUrl = await uploadTeamPhoto(photoFile);
-
-  if (!id || !full_name) {
-    redirect("/admin/team?message=Missing member ID or name");
+  if (!id || !fullName) {
+    redirect(`${returnTo}?message=Missing member ID or name`);
   }
+
+  const imageFile =
+    (formData.get("media_file") as File | null) ||
+    (formData.get("photo") as File | null);
+
+  const videoFile = formData.get("video_file") as File | null;
+
+  const uploadedImageUrl = await uploadTeamMedia(imageFile, "images");
+  const uploadedVideoUrl = await uploadTeamMedia(videoFile, "videos");
+
+  const currentMediaUrl =
+    field(formData, "current_media_url") ||
+    field(formData, "current_photo_url") ||
+    field(formData, "photo_url") ||
+    field(formData, "profile_image_url");
+
+  const currentVideoUrl = field(formData, "current_video_url");
+
+  const manualMediaUrl =
+    field(formData, "media_url") ||
+    field(formData, "photo_url") ||
+    field(formData, "profile_image_url");
+
+  const manualVideoUrl = field(formData, "video_url");
+
+  const finalMediaUrl =
+    uploadedImageUrl || manualMediaUrl || currentMediaUrl || null;
+
+  const finalVideoUrl =
+    uploadedVideoUrl || manualVideoUrl || currentVideoUrl || null;
+
+  const profileSlug = field(formData, "profile_slug") || slugify(fullName);
+  const displayOrder = Number(field(formData, "display_order") || field(formData, "sort_order") || 0);
 
   const { error } = await supabase
     .from("team_members")
     .update({
-      full_name,
-      role_title,
-      bio,
-      photo_url: uploadedPhotoUrl || manualPhotoUrl || currentPhotoUrl || null,
-      display_order,
-      is_active,
+      name: fullName,
+      full_name: fullName,
+      role: roleTitle || "Team Member",
+      role_title: roleTitle || "Team Member",
+      position_title: roleTitle || "Team Member",
+      section: field(formData, "section") || "Core Team",
+      institution: field(formData, "institution") || null,
+      organization: field(formData, "organization") || null,
+      bio: field(formData, "bio") || null,
+      photo_url: finalMediaUrl,
+      profile_image_url: finalMediaUrl,
+      media_type: field(formData, "media_type") || "image",
+      media_url: finalMediaUrl,
+      video_url: finalVideoUrl,
+      style_preset: field(formData, "style_preset") || "navy",
+      profile_highlight: field(formData, "profile_highlight") || null,
+      profile_cta: field(formData, "profile_cta") || "View Profile",
+      profile_slug: profileSlug,
+      initials: field(formData, "initials") || initialsFromName(fullName),
+      display_order: displayOrder,
+      sort_order: displayOrder,
+      is_active: formData.get("is_active") === "on",
+      is_featured: formData.get("is_featured") === "on",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
 
   if (error) {
-    redirect(`/admin/team/${id}/edit?message=${encodeURIComponent(error.message)}`);
+    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
   }
 
+  revalidatePath("/");
   revalidatePath("/team");
+  revalidatePath(`/team/${profileSlug}`);
   revalidatePath("/admin/team");
-  redirect("/admin/team?message=Team member updated");
+  revalidatePath("/manager/team");
+
+  redirect(`${returnTo}?message=Team member updated`);
 }
 
 export async function deleteTeamMember(formData: FormData) {
-  await requireAdmin();
+  await requireAdminOrManager();
 
-  const id = String(formData.get("id") ?? "");
   const supabase = createAdminClient();
+  const returnTo = field(formData, "return_to") || "/admin/team";
+  const id = field(formData, "id");
 
-  const { error } = await supabase
-    .from("team_members")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    redirect(`/admin/team?message=${encodeURIComponent(error.message)}`);
+  if (!id) {
+    redirect(`${returnTo}?message=Missing member ID`);
   }
 
+  const { error } = await supabase.from("team_members").delete().eq("id", id);
+
+  if (error) {
+    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
   revalidatePath("/team");
   revalidatePath("/admin/team");
-  redirect("/admin/team?message=Team member deleted");
+  revalidatePath("/manager/team");
+
+  redirect(`${returnTo}?message=Team member deleted`);
 }

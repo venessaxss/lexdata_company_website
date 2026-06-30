@@ -1,6 +1,6 @@
 import { createTeamMember } from "@/app/admin/team/actions";
 
-export default async function NewTeamMemberPage({
+export default async function NewManagerTeamMemberPage({
   searchParams,
 }: {
   searchParams: Promise<{ message?: string }>;
@@ -12,7 +12,7 @@ export default async function NewTeamMemberPage({
       <h1 className="text-3xl font-bold text-slate-900">Add Team Member</h1>
 
       {message ? (
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
           {message}
         </div>
       ) : null}
@@ -22,7 +22,7 @@ export default async function NewTeamMemberPage({
         encType="multipart/form-data"
         className="mt-8 space-y-5"
       >
-        <input type="hidden" name="return_to" value="/admin/team" />
+        <input type="hidden" name="return_to" value="/manager/team" />
 
         <input
           name="full_name"
@@ -73,29 +73,19 @@ export default async function NewTeamMemberPage({
           <option value="recommended">System recommended style</option>
         </select>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Upload image
-          </label>
-          <input
-            name="media_file"
-            type="file"
-            accept="image/*"
-            className="w-full rounded-xl border px-4 py-3"
-          />
-        </div>
+        <input
+          name="media_file"
+          type="file"
+          accept="image/*"
+          className="w-full rounded-xl border px-4 py-3"
+        />
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Upload short video
-          </label>
-          <input
-            name="video_file"
-            type="file"
-            accept="video/mp4,video/webm,video/quicktime"
-            className="w-full rounded-xl border px-4 py-3"
-          />
-        </div>
+        <input
+          name="video_file"
+          type="file"
+          accept="video/mp4,video/webm,video/quicktime"
+          className="w-full rounded-xl border px-4 py-3"
+        />
 
         <input
           name="media_url"
@@ -124,7 +114,7 @@ export default async function NewTeamMemberPage({
 
         <input
           name="profile_highlight"
-          placeholder="Short highlight, e.g. Founder · AI Research · Training Strategy"
+          placeholder="Short highlight"
           className="w-full rounded-xl border px-4 py-3"
         />
 
