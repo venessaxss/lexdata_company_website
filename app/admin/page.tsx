@@ -9,13 +9,27 @@ const adminCards = [
   },
   {
     title: "Workshops",
-    description: "Create, edit, publish, and manage workshops and sessions.",
+    description:
+      "Create, edit, publish, delete, and manage workshops, sessions, levels, materials, YouTube links, and Jianying links.",
     href: "/admin/workshops",
   },
   {
     title: "Homepage Hero",
-    description: "Edit homepage background photos, videos, and carousel slides.",
+    description:
+      "Edit homepage hero background images, uploaded videos, YouTube hero videos, buttons, and carousel slides.",
     href: "/admin/hero",
+  },
+  {
+    title: "Homepage Video Spotlight",
+    description:
+      "Managed through Homepage Hero. Active video slides can appear as the separate autoplay homepage video section.",
+    href: "/admin/hero",
+  },
+  {
+    title: "Latest Workshop Videos",
+    description:
+      "Managed through Workshops. Add session videos or YouTube/Jianying links to show them in the homepage latest video section.",
+    href: "/admin/workshops",
   },
   {
     title: "Team Management",
@@ -49,15 +63,16 @@ export default async function AdminPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-slate-600">
-          Manage LexData courses, workshops, homepage content, users, team
-          members, media, and website sections from one place.
+          Manage LexData courses, workshops, homepage hero slides, homepage
+          video sections, team members, users, roles, and uploaded media from
+          one place.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {adminCards.map((card) => (
           <Link
-            key={card.href}
+            key={`${card.title}-${card.href}`}
             href={card.href}
             className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
           >

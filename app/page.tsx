@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HomeHero from "@/components/HomeHero";
+import HomeVideoSpotlight from "@/components/HomeVideoSpotlight";
 import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
 
@@ -55,6 +56,8 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
+
+      <HomeVideoSpotlight />
 
       <LatestWorkshopVideos />
 
