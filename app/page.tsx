@@ -65,7 +65,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
-              LexData Academy
+              LexData Offers
             </p>
 
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
