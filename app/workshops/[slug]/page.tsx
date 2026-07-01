@@ -57,6 +57,16 @@ type WorkshopSession = {
   is_active?: boolean | null;
 };
 
+type Registration = {
+  id: string;
+  user_id?: string | null;
+  workshop_id?: string | null;
+  status?: string | null;
+  payment_status?: string | null;
+  payment_link?: string | null;
+  created_at?: string | null;
+};
+
 function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
@@ -66,11 +76,14 @@ function nullableField(formData: FormData, key: string) {
   return value.length > 0 ? value : null;
 }
 
-
 async function registerForWorkshop(formData: FormData) {
   "use server";
 
-  const supabase = createAdminClient();
+  const authSupabase = await createClient();
+
+  const {
+    data: { user },
+  } = await authSupabase.auth.getUser();
 
   const workshopId = field(formData, "workshop_id");
   const workshopSlug = field(formData, "workshop_slug");
@@ -81,23 +94,55 @@ async function registerForWorkshop(formData: FormData) {
     redirect("/workshops?message=Missing workshop information");
   }
 
+  if (!user) {
+    redirect(
+      `/workshops/${workshopSlug}?message=${encodeURIComponent(
+        "Please register or login as a member first"
+      )}`
+    );
+  }
+
   if (!fullName || !email) {
-    redirect(`/workshops/${workshopSlug}?message=Name and email are required`);
+    redirect(
+      `/workshops/${workshopSlug}?message=${encodeURIComponent(
+        "Name and email are required"
+      )}`
+    );
+  }
+
+  const supabase = createAdminClient();
+
+  const { data: existing } = await supabase
+    .from("workshop_registrations")
+    .select("id")
+    .eq("workshop_id", workshopId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existing) {
+    redirect(
+      `/workshops/${workshopSlug}?message=${encodeURIComponent(
+        "You have already registered for this workshop"
+      )}`
+    );
   }
 
   const { error } = await supabase.from("workshop_registrations").insert({
-  workshop_id: workshopId,
-  workshop_slug: workshopSlug,
-  session_id: null,
-  user_id: null,
-  full_name: fullName,
-  email,
-  phone: nullableField(formData, "phone"),
-  organization: nullableField(formData, "organization"),
-  message: nullableField(formData, "message"),
-  status: "pending",
-  created_at: new Date().toISOString(),
-});
+    workshop_id: workshopId,
+    workshop_slug: workshopSlug,
+    session_id: null,
+    user_id: user.id,
+    full_name: fullName,
+    email,
+    phone: nullableField(formData, "phone"),
+    organization: nullableField(formData, "organization"),
+    message: nullableField(formData, "message"),
+    status: "registered",
+    payment_status: "pending",
+    payment_link: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
 
   if (error) {
     redirect(
@@ -105,7 +150,18 @@ async function registerForWorkshop(formData: FormData) {
     );
   }
 
+  await supabase.from("user_messages").insert({
+    user_id: user.id,
+    title: "Workshop registration received",
+    body:
+      "Your workshop registration has been received. Our team will review it and send you the next payment step here. After payment is confirmed, the full workshop session links will be unlocked.",
+    link_url: `/workshops/${workshopSlug}`,
+    is_read: false,
+    created_at: new Date().toISOString(),
+  });
+
   revalidatePath(`/workshops/${workshopSlug}`);
+  revalidatePath("/dashboard/messages");
   revalidatePath("/admin/registrations");
   revalidatePath("/manager/registrations");
 
@@ -178,10 +234,22 @@ function formatPrice(workshop: Workshop) {
   const price = Number(workshop.price ?? 0);
 
   if (!price) {
-    return "Free / Contact us";
+    return "Contact us";
   }
 
   return `${price} ${workshop.currency || "USD"}`;
+}
+
+function hasPaidAccess(registration: Registration | null) {
+  if (!registration) return false;
+
+  return (
+    registration.payment_status === "confirmed" ||
+    registration.payment_status === "paid" ||
+    registration.status === "approved" ||
+    registration.status === "confirmed" ||
+    registration.status === "paid"
+  );
 }
 
 export default async function WorkshopDetailPage({
@@ -189,10 +257,7 @@ export default async function WorkshopDetailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{
-    message?: string;
-    registered?: string;
-  }>;
+  searchParams: Promise<{ message?: string; registered?: string }>;
 }) {
   noStore();
 
@@ -200,6 +265,10 @@ export default async function WorkshopDetailPage({
   const { message, registered } = await searchParams;
 
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data: workshopData, error } = await supabase
     .from("workshops")
@@ -230,10 +299,25 @@ export default async function WorkshopDetailPage({
 
   const sessions = (sessionsData ?? []) as WorkshopSession[];
 
+  let registration: Registration | null = null;
+
+  if (user) {
+    const { data: registrationData } = await supabase
+      .from("workshop_registrations")
+      .select("*")
+      .eq("workshop_id", workshop.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    registration = registrationData as Registration | null;
+  }
+
+  const paidAccess = hasPaidAccess(registration);
+  const canSeeWorkshopCost = Boolean(registration);
+
   const coverImage = getCoverImage(workshop);
   const materialUrl = getMaterialUrl(workshop);
   const description = getWorkshopDescription(workshop);
-  const price = Number(workshop.price ?? 0);
 
   return (
     <main className="bg-slate-50">
@@ -271,7 +355,13 @@ export default async function WorkshopDetailPage({
               </p>
             ) : null}
 
-            <div className="mt-8 grid gap-4 md:grid-cols-4">
+            <div
+              className={
+                canSeeWorkshopCost
+                  ? "mt-8 grid gap-4 md:grid-cols-4"
+                  : "mt-8 grid gap-4 md:grid-cols-3"
+              }
+            >
               <div className="rounded-2xl bg-slate-50 p-4">
                 <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
                   Format
@@ -299,14 +389,16 @@ export default async function WorkshopDetailPage({
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                  Price
-                </p>
-                <p className="mt-2 font-bold text-slate-900">
-                  {formatPrice(workshop)}
-                </p>
-              </div>
+              {canSeeWorkshopCost ? (
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
+                    Cost
+                  </p>
+                  <p className="mt-2 font-bold text-slate-900">
+                    {formatPrice(workshop)}
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -325,8 +417,34 @@ export default async function WorkshopDetailPage({
 
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-3xl font-black text-slate-950">
-                Available sessions
+                Session arrangement
               </h2>
+
+              {!user ? (
+                <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
+                  Please register or login as a member first. After registration
+                  and payment confirmation, full session links will be unlocked.
+                </div>
+              ) : registration && !paidAccess ? (
+                <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
+                  You have registered for this workshop. Please check your
+                  message box for the payment step. Session links will be
+                  unlocked after payment is confirmed.
+
+                  <div className="mt-4">
+                    <Link
+                      href="/dashboard/messages"
+                      className="font-bold text-blue-700 hover:underline"
+                    >
+                      Open message box
+                    </Link>
+                  </div>
+                </div>
+              ) : paidAccess ? (
+                <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
+                  Payment confirmed. Full session links are unlocked.
+                </div>
+              ) : null}
 
               {sessions.length === 0 ? (
                 <p className="mt-6 text-lg text-slate-600">
@@ -366,7 +484,7 @@ export default async function WorkshopDetailPage({
                           ) : null}
                         </div>
 
-                        {session.media_url ? (
+                        {paidAccess && session.media_url ? (
                           <div className="mt-5 overflow-hidden rounded-2xl bg-slate-950">
                             {session.media_type === "video" ? (
                               <video
@@ -398,40 +516,47 @@ export default async function WorkshopDetailPage({
                           </div>
                         ) : null}
 
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          {session.meeting_url ? (
-                            <a
-                              href={session.meeting_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
-                            >
-                              Join session
-                            </a>
-                          ) : null}
+                        {paidAccess ? (
+                          <div className="mt-5 flex flex-wrap gap-3">
+                            {session.meeting_url ? (
+                              <a
+                                href={session.meeting_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                              >
+                                Join session
+                              </a>
+                            ) : null}
 
-                          {session.recording_url ? (
-                            <a
-                              href={session.recording_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-                            >
-                              Recording
-                            </a>
-                          ) : null}
+                            {session.recording_url ? (
+                              <a
+                                href={session.recording_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
+                              >
+                                Recording
+                              </a>
+                            ) : null}
 
-                          {session.material_url ? (
-                            <a
-                              href={session.material_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-                            >
-                              Materials
-                            </a>
-                          ) : null}
-                        </div>
+                            {session.material_url ? (
+                              <a
+                                href={session.material_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
+                              >
+                                Materials
+                              </a>
+                            ) : null}
+                          </div>
+                        ) : (
+                          <div className="mt-5 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-600">
+                            Session links are locked until registration and
+                            payment confirmation.
+                          </div>
+                        )}
                       </article>
                     );
                   })}
@@ -447,9 +572,8 @@ export default async function WorkshopDetailPage({
 
             {registered ? (
               <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-                Registration submitted successfully. Please complete payment
-                using your selected payment method. We will confirm your seat
-                after payment review.
+                Registration submitted successfully. Check your message box for
+                the next payment step.
               </div>
             ) : null}
 
@@ -459,116 +583,119 @@ export default async function WorkshopDetailPage({
               </div>
             ) : null}
 
-            <div className="mt-5 rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm font-bold uppercase tracking-[0.15em] text-slate-400">
-                Registration fee
-              </p>
-              <p className="mt-2 text-2xl font-black text-slate-950">
-                {formatPrice(workshop)}
-              </p>
-            </div>
+            {!user ? (
+              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                <p className="font-semibold text-amber-800">
+                  Please register as a website member first.
+                </p>
 
-            {price > 0 ? (
-              <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-slate-700">
-                <p className="font-black text-slate-950">Payment options</p>
+                <p className="mt-2 text-sm leading-6 text-amber-700">
+                  Guest users cannot see workshop cost or register directly.
+                  After you create an account and login, you can submit your
+                  workshop registration. Cost and payment details are shown only
+                  after registration.
+                </p>
 
-                <div className="mt-3 space-y-3">
-                  <div>
-                    <p className="font-bold">Alipay</p>
-                    <p>Scan our Alipay QR code or contact LexData for payment details.</p>
-                  </div>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href={`/signup?redirect=/workshops/${slug}`}
+                    className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                  >
+                    Create account
+                  </Link>
 
-                  <div>
-                    <p className="font-bold">WeChat Pay</p>
-                    <p>Scan our WeChat Pay QR code or contact LexData for payment details.</p>
-                  </div>
-
-                  <div>
-                    <p className="font-bold">Bank transfer</p>
-                    <p>Use the bank account information provided by LexData.</p>
-                  </div>
-
-                  <div>
-                    <p className="font-bold">PayPal</p>
-                    <p>Use the PayPal account or PayPal payment link provided by LexData.</p>
-                  </div>
+                  <Link
+                    href={`/login?redirect=/workshops/${slug}`}
+                    className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
+                  >
+                    Login
+                  </Link>
                 </div>
               </div>
-            ) : null}
+            ) : registration ? (
+              <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+                <p className="font-semibold text-blue-800">
+                  You have already registered for this workshop.
+                </p>
 
-            <form action={registerForWorkshop} className="mt-6 space-y-4">
-              <input type="hidden" name="workshop_id" value={workshop.id} />
-              <input type="hidden" name="workshop_slug" value={slug} />
+                <p className="mt-2 text-sm text-blue-700">
+                  Registration status: {registration.status || "registered"}
+                </p>
 
-              <input
-                name="full_name"
-                required
-                placeholder="Full name"
-                className="w-full rounded-xl border px-4 py-3"
-              />
+                <p className="mt-1 text-sm text-blue-700">
+                  Payment status: {registration.payment_status || "pending"}
+                </p>
 
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="Email address"
-                className="w-full rounded-xl border px-4 py-3"
-              />
+                <p className="mt-1 text-sm font-semibold text-blue-800">
+                  Workshop cost: {formatPrice(workshop)}
+                </p>
 
-              <input
-                name="phone"
-                placeholder="Phone / WhatsApp / WeChat"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-
-              <input
-                name="organization"
-                placeholder="University / company"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-
-              {price > 0 ? (
-                <>
-                  <select
-                    name="payment_method"
-                    required
-                    className="w-full rounded-xl border px-4 py-3"
+                {registration.payment_link ? (
+                  <a
+                    href={registration.payment_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
                   >
-                    <option value="">Choose payment method</option>
-                    <option value="alipay">Alipay</option>
-                    <option value="wechat">WeChat Pay</option>
-                    <option value="bank">Bank transfer</option>
-                    <option value="paypal">PayPal</option>
-                  </select>
+                    Open payment link
+                  </a>
+                ) : (
+                  <Link
+                    href="/dashboard/messages"
+                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
+                  >
+                    Check message box
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <form action={registerForWorkshop} className="mt-6 space-y-4">
+                <input type="hidden" name="workshop_id" value={workshop.id} />
+                <input type="hidden" name="workshop_slug" value={slug} />
 
-                  <input
-                    name="payment_reference"
-                    placeholder="Payment reference / transaction ID if already paid"
-                    className="w-full rounded-xl border px-4 py-3"
-                  />
+                <input
+                  name="full_name"
+                  required
+                  placeholder="Full name"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-                  <input
-                    name="payment_proof_url"
-                    placeholder="Payment proof link, e.g. uploaded screenshot URL"
-                    className="w-full rounded-xl border px-4 py-3"
-                  />
-                </>
-              ) : null}
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  defaultValue={user.email ?? ""}
+                  placeholder="Email address"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-              <textarea
-                name="message"
-                rows={4}
-                placeholder="Message or questions"
-                className="w-full rounded-xl border px-4 py-3"
-              />
+                <input
+                  name="phone"
+                  placeholder="Phone / WhatsApp / WeChat"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-              <button
-                type="submit"
-                className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-              >
-                {price > 0 ? "Submit Registration for Payment Review" : "Submit Registration"}
-              </button>
-            </form>
+                <input
+                  name="organization"
+                  placeholder="University / company"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
+
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="Message or questions"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
+
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
+                >
+                  Submit Registration
+                </button>
+              </form>
+            )}
 
             <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
               {workshop.instructor || workshop.speaker ? (
@@ -584,7 +711,7 @@ export default async function WorkshopDetailPage({
                 </p>
               ) : null}
 
-              {materialUrl ? (
+              {paidAccess && materialUrl ? (
                 <a
                   href={materialUrl}
                   target="_blank"

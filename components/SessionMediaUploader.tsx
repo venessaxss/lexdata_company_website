@@ -66,9 +66,7 @@ export default function SessionMediaUploader() {
       <input type="hidden" name="session_media_url" value={mediaUrl} />
       <input type="hidden" name="session_media_type" value={mediaType} />
 
-      {status ? (
-        <p className="mt-2 text-sm text-slate-600">{status}</p>
-      ) : null}
+      {status ? <p className="mt-2 text-sm text-slate-600">{status}</p> : null}
 
       {mediaUrl && mediaType === "image" ? (
         <img
@@ -87,7 +85,8 @@ export default function SessionMediaUploader() {
       ) : null}
 
       <p className="mt-3 text-xs text-slate-500">
-        For large videos, use the Jianying external video link field below.
+        For large videos, use the YouTube / Jianying external video link field
+        below.
       </p>
     </div>
   );

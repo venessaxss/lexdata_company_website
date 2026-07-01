@@ -13,6 +13,7 @@ type Workshop = {
   title?: string | null;
   slug?: string | null;
   level?: string | null;
+  language?: string | null;
   short_description?: string | null;
   summary?: string | null;
   description?: string | null;
@@ -28,6 +29,8 @@ type Workshop = {
   currency?: string | null;
   capacity?: number | null;
   image_url?: string | null;
+  cover_url?: string | null;
+  thumbnail_url?: string | null;
   material_url?: string | null;
   is_featured?: boolean | null;
   is_published?: boolean | null;
@@ -44,6 +47,7 @@ export default async function AdminWorkshopsPage({
   await requireAdmin();
 
   const { message } = await searchParams;
+
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -56,17 +60,25 @@ export default async function AdminWorkshopsPage({
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+        <Link
+          href="/admin"
+          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+        >
+          ← Back to admin dashboard
+        </Link>
+
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
           Admin Dashboard
         </p>
 
         <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950">
-          Manage Workshops
+          Workshop Management
         </h1>
 
-        <p className="mt-4 max-w-2xl text-slate-600">
-          Create, modify, publish, feature, edit levels, manage materials, add
-          sessions, add YouTube/Jianying video links, or delete workshops.
+        <p className="mt-4 max-w-3xl text-slate-600">
+          Create workshops, edit workshop details, add session arrangements,
+          upload small session media, and add YouTube / Jianying external video
+          links.
         </p>
       </div>
 
@@ -87,31 +99,37 @@ export default async function AdminWorkshopsPage({
           Add New Workshop
         </h2>
 
-        <form action={createWorkshop} className="mt-6 grid gap-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Workshop title
-            </label>
-            <input
-              name="title"
-              required
-              placeholder="e.g. Python for Research Writing"
-              className="w-full rounded-xl border px-4 py-3"
-            />
-          </div>
+        <p className="mt-2 text-sm text-slate-600">
+          Create a new public workshop page. You can edit it later.
+        </p>
 
+        <form action={createWorkshop} className="mt-6 grid gap-5">
           <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Workshop title
+              </label>
+              <input
+                name="title"
+                required
+                placeholder="From Research Idea to Publication"
+                className="w-full rounded-xl border px-4 py-3"
+              />
+            </div>
+
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Slug
               </label>
               <input
                 name="slug"
-                placeholder="auto-generated-if-empty"
+                placeholder="from-research-idea-to-publication"
                 className="w-full rounded-xl border px-4 py-3"
               />
             </div>
+          </div>
 
+          <div className="grid gap-5 md:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
                 Level
@@ -127,40 +145,14 @@ export default async function AdminWorkshopsPage({
                 <option value="All Levels">All Levels</option>
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Short description
-            </label>
-            <textarea
-              name="short_description"
-              rows={3}
-              placeholder="Short summary shown on cards"
-              className="w-full rounded-xl border px-4 py-3"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Full description
-            </label>
-            <textarea
-              name="description"
-              rows={6}
-              placeholder="Full workshop description"
-              className="w-full rounded-xl border px-4 py-3"
-            />
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-700">
-                Instructor / Speaker
+                Language
               </label>
               <input
-                name="instructor"
-                placeholder="Instructor name"
+                name="language"
+                defaultValue="English"
                 className="w-full rounded-xl border px-4 py-3"
               />
             </div>
@@ -179,6 +171,34 @@ export default async function AdminWorkshopsPage({
                 <option value="Hybrid">Hybrid</option>
               </select>
             </div>
+          </div>
+
+          <textarea
+            name="short_description"
+            rows={3}
+            placeholder="Short description shown near the title"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <textarea
+            name="description"
+            rows={8}
+            placeholder="Full workshop introduction"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <input
+              name="instructor"
+              placeholder="Instructor / Speaker"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+
+            <input
+              name="location"
+              placeholder="Location, e.g. Zoom / Shanghai / Online"
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
@@ -210,86 +230,51 @@ export default async function AdminWorkshopsPage({
               </label>
               <input
                 name="duration"
-                placeholder="e.g. 3 weeks / 12 hours"
+                placeholder="3 weeks / 12 hours"
                 className="w-full rounded-xl border px-4 py-3"
               />
             </div>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-4">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Price
-              </label>
-              <input
-                name="price"
-                type="number"
-                step="0.01"
-                defaultValue={0}
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            <input
+              name="price"
+              type="number"
+              step="0.01"
+              defaultValue={0}
+              placeholder="Price"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Currency
-              </label>
-              <input
-                name="currency"
-                defaultValue="USD"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="currency"
+              defaultValue="USD"
+              placeholder="Currency"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Capacity
-              </label>
-              <input
-                name="capacity"
-                type="number"
-                defaultValue={0}
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Location
-              </label>
-              <input
-                name="location"
-                placeholder="Zoom / Shanghai / Online"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="capacity"
+              type="number"
+              defaultValue={0}
+              placeholder="Capacity"
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Cover image URL
-              </label>
-              <input
-                name="image_url"
-                placeholder="Paste image URL"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+          <input
+            name="image_url"
+            placeholder="Cover image URL"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Material URL
-              </label>
-              <input
-                name="material_url"
-                placeholder="Paste uploaded material URL"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
-          </div>
+          <input
+            name="material_url"
+            placeholder="Workshop material URL"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
-          <div className="flex flex-wrap gap-5">
+          <div className="flex flex-wrap gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <label className="flex items-center gap-2">
               <input name="is_featured" type="checkbox" />
               <span>Feature this workshop</span>
@@ -356,32 +341,54 @@ export default async function AdminWorkshopsPage({
               <input
                 name="session_date"
                 type="date"
+                required
                 className="w-full rounded-xl border px-4 py-3"
               />
             </div>
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
-            <input
-              name="start_time"
-              placeholder="Start time, e.g. 19:00"
-              className="w-full rounded-xl border px-4 py-3"
-            />
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Start time
+              </label>
+              <input
+                name="start_time"
+                type="time"
+                required
+                className="w-full rounded-xl border px-4 py-3"
+              />
+            </div>
 
-            <input
-              name="end_time"
-              placeholder="End time, e.g. 21:00"
-              className="w-full rounded-xl border px-4 py-3"
-            />
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                End time
+              </label>
+              <input
+                name="end_time"
+                type="time"
+                className="w-full rounded-xl border px-4 py-3"
+              />
+            </div>
 
-            <input
-              name="display_order"
-              type="number"
-              defaultValue={0}
-              placeholder="Display order"
-              className="w-full rounded-xl border px-4 py-3"
-            />
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">
+                Display order
+              </label>
+              <input
+                name="display_order"
+                type="number"
+                defaultValue={0}
+                className="w-full rounded-xl border px-4 py-3"
+              />
+            </div>
           </div>
+
+          <input
+            name="location"
+            placeholder="Session location, e.g. Zoom / Room 201 / Online"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
           <input
             name="meeting_url"
@@ -415,8 +422,8 @@ export default async function AdminWorkshopsPage({
             />
 
             <p className="mt-2 text-xs text-slate-500">
-              For YouTube links, the homepage will embed and play the video.
-              For Jianying links, the homepage will show an external video
+              For YouTube links, the workshop page can embed and play the
+              video. For Jianying links, the page will show an external video
               button because Jianying share pages usually cannot be embedded.
             </p>
           </div>
@@ -438,89 +445,72 @@ export default async function AdminWorkshopsPage({
         </h2>
 
         {workshops.length === 0 ? (
-          <div className="mt-6 rounded-2xl bg-slate-50 p-8 text-center text-slate-600">
-            No workshops yet.
-          </div>
+          <p className="mt-4 text-slate-600">No workshops yet.</p>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="px-4 py-3">Workshop</th>
-                  <th className="px-4 py-3">Level</th>
-                  <th className="px-4 py-3">Format</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Published</th>
-                  <th className="px-4 py-3">Featured</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
+          <div className="mt-6 grid gap-5">
+            {workshops.map((workshop) => {
+              const publicHref = workshop.slug
+                ? `/workshops/${workshop.slug}`
+                : "/workshops";
 
-              <tbody>
-                {workshops.map((workshop) => {
-                  const published =
-                    workshop.is_published !== false &&
-                    workshop.is_active !== false;
+              return (
+                <article
+                  key={workshop.id}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                >
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+                    <div>
+                      <h3 className="text-xl font-black text-slate-950">
+                        {workshop.title}
+                      </h3>
 
-                  return (
-                    <tr key={workshop.id} className="border-t border-slate-100">
-                      <td className="px-4 py-4">
-                        <div className="font-bold text-slate-950">
-                          {workshop.title}
-                        </div>
+                      <p className="mt-2 text-sm text-slate-600">
+                        {workshop.level || "Beginner"} ·{" "}
+                        {workshop.format || "Online"} ·{" "}
+                        {workshop.start_date || workshop.date || "TBA"}
+                      </p>
 
-                        <div className="mt-1 line-clamp-2 max-w-md text-xs text-slate-500">
-                          {workshop.short_description ||
-                            workshop.summary ||
-                            workshop.description ||
-                            ""}
-                        </div>
-                      </td>
+                      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+                        {workshop.short_description ||
+                          workshop.summary ||
+                          "No short description."}
+                      </p>
 
-                      <td className="px-4 py-4">
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-                          {workshop.level || "Beginner"}
-                        </span>
-                      </td>
+                      <p className="mt-2 text-xs text-slate-500">
+                        Status:{" "}
+                        {workshop.is_published !== false &&
+                        workshop.is_active !== false
+                          ? "Published"
+                          : "Hidden"}
+                      </p>
+                    </div>
 
-                      <td className="px-4 py-4 text-slate-600">
-                        {workshop.format || "Online"}
-                      </td>
+                    <div className="flex flex-wrap gap-3">
+                      <Link
+                        href={publicHref}
+                        className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
+                      >
+                        View
+                      </Link>
 
-                      <td className="px-4 py-4 text-slate-600">
-                        {workshop.start_date || workshop.date || "-"}
-                      </td>
+                      <Link
+                        href={`/admin/workshops/${workshop.id}/edit`}
+                        className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                      >
+                        Edit
+                      </Link>
 
-                      <td className="px-4 py-4">
-                        {published ? "Yes" : "No"}
-                      </td>
-
-                      <td className="px-4 py-4">
-                        {workshop.is_featured ? "Yes" : "No"}
-                      </td>
-
-                      <td className="px-4 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={`/admin/workshops/${workshop.id}/edit`}
-                            className="rounded-lg border border-slate-300 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-100"
-                          >
-                            Edit
-                          </Link>
-
-                          <Link
-                            href={`/admin/workshops/${workshop.id}/delete`}
-                            className="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50"
-                          >
-                            Delete
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      <Link
+                        href={`/admin/workshops/${workshop.id}/delete`}
+                        className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+                      >
+                        Delete
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

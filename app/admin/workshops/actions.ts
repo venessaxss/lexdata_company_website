@@ -200,6 +200,7 @@ export async function deleteWorkshop(formData: FormData) {
   redirect("/admin/workshops?message=Workshop deleted");
 }
 
+
 export async function createWorkshopSession(formData: FormData) {
   await requireAdmin();
 
