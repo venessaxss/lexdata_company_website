@@ -33,6 +33,7 @@ export default async function DashboardPage() {
   const profile = profileData as Profile | null;
 
   const role = profile?.role || "student";
+
   const displayName =
     profile?.full_name || user.user_metadata?.full_name || user.email;
 
