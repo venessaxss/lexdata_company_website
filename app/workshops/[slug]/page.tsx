@@ -84,6 +84,29 @@ async function registerForWorkshop(formData: FormData) {
     redirect(`/workshops/${workshopSlug}?message=Name and email are required`);
   }
 
+  const { data: workshop, error: workshopError } = await supabase
+    .from("workshops")
+    .select("*")
+    .eq("id", workshopId)
+    .single();
+
+  if (workshopError || !workshop) {
+    redirect(`/workshops/${workshopSlug}?message=Workshop not found`);
+  }
+
+  const price = Number(workshop.price ?? 0);
+  const currency = String(workshop.currency || "USD").toUpperCase();
+  const paymentMethod = nullableField(formData, "payment_method");
+
+  const registrationStatus = price > 0 ? "pending_review" : "confirmed";
+  const paymentStatus = price > 0 ? "pending_manual_payment" : "free";
+
+  if (price > 0 && !paymentMethod) {
+    redirect(
+      `/workshops/${workshopSlug}?message=Please choose a payment method`
+    );
+  }
+
   const { error } = await supabase.from("workshop_registrations").insert({
     workshop_id: workshopId,
     workshop_slug: workshopSlug,
@@ -92,8 +115,15 @@ async function registerForWorkshop(formData: FormData) {
     phone: nullableField(formData, "phone"),
     organization: nullableField(formData, "organization"),
     message: nullableField(formData, "message"),
-    status: "pending",
+    status: registrationStatus,
+    payment_status: paymentStatus,
+    payment_amount: price,
+    payment_currency: currency,
+    payment_method: paymentMethod,
+    payment_reference: nullableField(formData, "payment_reference"),
+    payment_proof_url: nullableField(formData, "payment_proof_url"),
     created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   });
 
   if (error) {
@@ -183,7 +213,10 @@ export default async function WorkshopDetailPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ message?: string; registered?: string }>;
+  searchParams: Promise<{
+    message?: string;
+    registered?: string;
+  }>;
 }) {
   noStore();
 
@@ -224,6 +257,7 @@ export default async function WorkshopDetailPage({
   const coverImage = getCoverImage(workshop);
   const materialUrl = getMaterialUrl(workshop);
   const description = getWorkshopDescription(workshop);
+  const price = Number(workshop.price ?? 0);
 
   return (
     <main className="bg-slate-50">
@@ -437,13 +471,52 @@ export default async function WorkshopDetailPage({
 
             {registered ? (
               <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-                Registration submitted successfully. We will contact you soon.
+                Registration submitted successfully. Please complete payment
+                using your selected payment method. We will confirm your seat
+                after payment review.
               </div>
             ) : null}
 
             {message ? (
               <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
                 {message}
+              </div>
+            ) : null}
+
+            <div className="mt-5 rounded-2xl bg-slate-50 p-4">
+              <p className="text-sm font-bold uppercase tracking-[0.15em] text-slate-400">
+                Registration fee
+              </p>
+              <p className="mt-2 text-2xl font-black text-slate-950">
+                {formatPrice(workshop)}
+              </p>
+            </div>
+
+            {price > 0 ? (
+              <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-slate-700">
+                <p className="font-black text-slate-950">Payment options</p>
+
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <p className="font-bold">Alipay</p>
+                    <p>Scan our Alipay QR code or contact LexData for payment details.</p>
+                  </div>
+
+                  <div>
+                    <p className="font-bold">WeChat Pay</p>
+                    <p>Scan our WeChat Pay QR code or contact LexData for payment details.</p>
+                  </div>
+
+                  <div>
+                    <p className="font-bold">Bank transfer</p>
+                    <p>Use the bank account information provided by LexData.</p>
+                  </div>
+
+                  <div>
+                    <p className="font-bold">PayPal</p>
+                    <p>Use the PayPal account or PayPal payment link provided by LexData.</p>
+                  </div>
+                </div>
               </div>
             ) : null}
 
@@ -478,6 +551,34 @@ export default async function WorkshopDetailPage({
                 className="w-full rounded-xl border px-4 py-3"
               />
 
+              {price > 0 ? (
+                <>
+                  <select
+                    name="payment_method"
+                    required
+                    className="w-full rounded-xl border px-4 py-3"
+                  >
+                    <option value="">Choose payment method</option>
+                    <option value="alipay">Alipay</option>
+                    <option value="wechat">WeChat Pay</option>
+                    <option value="bank">Bank transfer</option>
+                    <option value="paypal">PayPal</option>
+                  </select>
+
+                  <input
+                    name="payment_reference"
+                    placeholder="Payment reference / transaction ID if already paid"
+                    className="w-full rounded-xl border px-4 py-3"
+                  />
+
+                  <input
+                    name="payment_proof_url"
+                    placeholder="Payment proof link, e.g. uploaded screenshot URL"
+                    className="w-full rounded-xl border px-4 py-3"
+                  />
+                </>
+              ) : null}
+
               <textarea
                 name="message"
                 rows={4}
@@ -489,7 +590,7 @@ export default async function WorkshopDetailPage({
                 type="submit"
                 className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
               >
-                Submit Registration
+                {price > 0 ? "Submit Registration for Payment Review" : "Submit Registration"}
               </button>
             </form>
 
