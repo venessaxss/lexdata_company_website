@@ -3,6 +3,8 @@ import HomeHero from "@/components/HomeHero";
 import HomeVideoSpotlight from "@/components/HomeVideoSpotlight";
 import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
+import HomeControlPanelButton from "@/components/HomeControlPanelButton";
+import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 
 const featureCards = [
   {
@@ -56,7 +58,8 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
-
+      <HomeControlPanelButton />
+      <HomeMediaShowcase />
       <HomeVideoSpotlight />
 
       <LatestWorkshopVideos />
