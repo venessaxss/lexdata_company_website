@@ -11,77 +11,29 @@ export default function ResetPasswordForm() {
 
   const [isReady, setIsReady] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [message, setMessage] = useState("Checking reset link...");
+  const [message, setMessage] = useState("Checking reset session...");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    async function prepareRecoverySession() {
-      try {
-        const url = new URL(window.location.href);
+    async function checkSession() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-        const code = url.searchParams.get("code");
-
-        if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-          if (error) {
-            setMessage(error.message);
-            setIsReady(false);
-            return;
-          }
-
-          window.history.replaceState({}, document.title, "/reset-password");
-          setMessage("Reset link verified. Please enter your new password.");
-          setIsReady(true);
-          return;
-        }
-
-        const hash = window.location.hash.replace(/^#/, "");
-        const hashParams = new URLSearchParams(hash);
-
-        const accessToken = hashParams.get("access_token");
-        const refreshToken = hashParams.get("refresh_token");
-
-        if (accessToken && refreshToken) {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (error) {
-            setMessage(error.message);
-            setIsReady(false);
-            return;
-          }
-
-          window.history.replaceState({}, document.title, "/reset-password");
-          setMessage("Reset link verified. Please enter your new password.");
-          setIsReady(true);
-          return;
-        }
-
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (session) {
-          setMessage("Please enter your new password.");
-          setIsReady(true);
-          return;
-        }
-
-        setMessage(
-          "Auth session missing. Please request a new password reset link and open it in the same browser."
-        );
-        setIsReady(false);
-      } catch {
-        setMessage("Could not verify the reset link. Please request a new one.");
-        setIsReady(false);
+      if (session) {
+        setIsReady(true);
+        setMessage("Reset session verified. Please enter your new password.");
+        return;
       }
+
+      setIsReady(false);
+      setMessage(
+        "Auth session missing. Please request a new password reset link and open the latest email link in the same browser."
+      );
     }
 
-    prepareRecoverySession();
+    checkSession();
   }, [supabase]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
