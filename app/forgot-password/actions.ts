@@ -29,7 +29,7 @@ export async function sendPasswordResetEmail(formData: FormData) {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
+    redirectTo: `${siteUrl}/reset-password`,
   });
 
   if (error) {
