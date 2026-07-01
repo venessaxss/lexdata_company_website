@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateWorkshop } from "@/app/admin/workshops/actions";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function EditWorkshopPage({
   params,
@@ -11,6 +15,7 @@ export default async function EditWorkshopPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ message?: string }>;
 }) {
+  noStore();
   await requireAdmin();
 
   const { id } = await params;
@@ -18,18 +23,18 @@ export default async function EditWorkshopPage({
 
   const supabase = createAdminClient();
 
-  const { data: workshop } = await supabase
+  const { data: workshop, error } = await supabase
     .from("workshops")
     .select("*")
     .eq("id", id)
     .single();
 
-  if (!workshop) {
+  if (error || !workshop) {
     notFound();
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-4xl px-4 py-10">
       <div className="mb-8">
         <Link
           href="/admin/workshops"
@@ -38,11 +43,11 @@ export default async function EditWorkshopPage({
           ← Back to workshops
         </Link>
 
-        <h1 className="mt-4 text-3xl font-black text-slate-950">
+        <h1 className="mt-4 text-4xl font-black text-slate-950">
           Edit Workshop
         </h1>
 
-        <p className="mt-2 text-slate-600">
+        <p className="mt-3 text-lg text-slate-600">
           Modify workshop details, level, publication status, and material link.
         </p>
       </div>
@@ -53,11 +58,11 @@ export default async function EditWorkshopPage({
         </div>
       ) : null}
 
-      <form action={updateWorkshop} className="space-y-5">
+      <form action={updateWorkshop} className="space-y-6">
         <input type="hidden" name="id" value={workshop.id} />
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Workshop title
           </label>
           <input
@@ -69,7 +74,7 @@ export default async function EditWorkshopPage({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Slug
           </label>
           <input
@@ -81,7 +86,7 @@ export default async function EditWorkshopPage({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Level
           </label>
           <select
@@ -97,33 +102,31 @@ export default async function EditWorkshopPage({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Short description
           </label>
           <textarea
             name="short_description"
-            defaultValue={
-              workshop.short_description ?? workshop.summary ?? ""
-            }
-            rows={3}
+            defaultValue={workshop.short_description ?? workshop.summary ?? ""}
+            rows={4}
             className="w-full rounded-xl border px-4 py-3"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Full description
           </label>
           <textarea
             name="description"
             defaultValue={workshop.description ?? ""}
-            rows={8}
+            rows={12}
             className="w-full rounded-xl border px-4 py-3"
           />
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Instructor / Speaker
           </label>
           <input
@@ -135,7 +138,7 @@ export default async function EditWorkshopPage({
 
         <div className="grid gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Format
             </label>
             <select
@@ -150,20 +153,21 @@ export default async function EditWorkshopPage({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Location
             </label>
             <input
               name="location"
               defaultValue={workshop.location ?? ""}
+              placeholder="Zoom / Shanghai / Online"
               className="w-full rounded-xl border px-4 py-3"
             />
           </div>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-3">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Start date
             </label>
             <input
@@ -175,7 +179,7 @@ export default async function EditWorkshopPage({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               End date
             </label>
             <input
@@ -185,23 +189,23 @@ export default async function EditWorkshopPage({
               className="w-full rounded-xl border px-4 py-3"
             />
           </div>
-        </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Duration
-          </label>
-          <input
-            name="duration"
-            defaultValue={workshop.duration ?? ""}
-            placeholder="e.g. 3 weeks / 12 hours"
-            className="w-full rounded-xl border px-4 py-3"
-          />
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Duration
+            </label>
+            <input
+              name="duration"
+              defaultValue={workshop.duration ?? ""}
+              placeholder="e.g. 3 weeks / 12 hours"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Price
             </label>
             <input
@@ -214,7 +218,7 @@ export default async function EditWorkshopPage({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Currency
             </label>
             <input
@@ -225,7 +229,7 @@ export default async function EditWorkshopPage({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
               Capacity
             </label>
             <input
@@ -238,7 +242,7 @@ export default async function EditWorkshopPage({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Cover image URL
           </label>
           <input
@@ -254,7 +258,7 @@ export default async function EditWorkshopPage({
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
             Material URL
           </label>
           <input
@@ -269,33 +273,31 @@ export default async function EditWorkshopPage({
             placeholder="Paste uploaded material URL here"
             className="w-full rounded-xl border px-4 py-3"
           />
-          <p className="mt-2 text-xs text-slate-500">
-            For large files, upload directly to Supabase Storage and paste the
-            public URL here.
-          </p>
         </div>
 
-        <label className="flex items-center gap-2">
-          <input
-            name="is_featured"
-            type="checkbox"
-            defaultChecked={Boolean(workshop.is_featured)}
-          />
-          <span>Feature this workshop</span>
-        </label>
+        <div className="flex flex-wrap gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <label className="flex items-center gap-2">
+            <input
+              name="is_featured"
+              type="checkbox"
+              defaultChecked={Boolean(workshop.is_featured)}
+            />
+            <span>Feature this workshop</span>
+          </label>
 
-        <label className="flex items-center gap-2">
-          <input
-            name="is_published"
-            type="checkbox"
-            defaultChecked={
-              workshop.is_published !== false && workshop.is_active !== false
-            }
-          />
-          <span>Publish this workshop</span>
-        </label>
+          <label className="flex items-center gap-2">
+            <input
+              name="is_published"
+              type="checkbox"
+              defaultChecked={
+                workshop.is_published !== false && workshop.is_active !== false
+              }
+            />
+            <span>Publish this workshop</span>
+          </label>
+        </div>
 
-        <div className="flex gap-3 pt-4">
+        <div className="flex flex-wrap gap-3 pt-4">
           <button type="submit" className="btn-primary">
             Update Workshop
           </button>
