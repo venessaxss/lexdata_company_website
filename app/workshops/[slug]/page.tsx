@@ -284,6 +284,20 @@ export default async function WorkshopDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
+  let profile: { role?: string | null } | null = null;
+
+  if (user) {
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    profile = profileData;
+  }
+
+  const isAdmin = profile?.role === "admin";
+
   const { data: workshopData, error } = await supabase
     .from("workshops")
     .select("*")
