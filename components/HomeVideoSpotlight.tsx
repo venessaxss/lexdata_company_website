@@ -49,12 +49,12 @@ function getYouTubeVideoId(url?: string | null) {
   }
 }
 
-function getYouTubeAutoplayEmbedUrl(url?: string | null) {
+function getYouTubeEmbedUrl(url?: string | null) {
   const videoId = getYouTubeVideoId(url);
 
   if (!videoId) return null;
 
-  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${videoId}`;
+  return `https://www.youtube.com/embed/${videoId}?controls=1&rel=0&modestbranding=1`;
 }
 
 export default async function HomeVideoSpotlight() {
@@ -83,7 +83,7 @@ export default async function HomeVideoSpotlight() {
     return null;
   }
 
-  const youtubeEmbedUrl = getYouTubeAutoplayEmbedUrl(slide.media_url);
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(slide.media_url);
 
   return (
     <section className="bg-white py-20">
@@ -121,14 +121,11 @@ export default async function HomeVideoSpotlight() {
               />
             ) : (
               <video
-                src={slide.media_url}
-                className="absolute inset-0 h-full w-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-              />
+  src={slide.media_url}
+  className="absolute inset-0 h-full w-full object-cover"
+  playsInline
+  controls
+/>
             )}
           </div>
 
