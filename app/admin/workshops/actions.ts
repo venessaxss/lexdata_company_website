@@ -41,56 +41,72 @@ function getWorkshopPayload(formData: FormData) {
   const title = field(formData, "title");
   const slug = field(formData, "slug") || slugify(title);
 
+  const shortDescription =
+    nullableField(formData, "short_description") ||
+    nullableField(formData, "summary");
+
+  const description = nullableField(formData, "description");
+
+  const instructor =
+    nullableField(formData, "instructor") ||
+    nullableField(formData, "speaker");
+
+  const startDate =
+    nullableField(formData, "start_date") || nullableField(formData, "date");
+
+  const imageUrl =
+    nullableField(formData, "image_url") ||
+    nullableField(formData, "cover_url") ||
+    nullableField(formData, "thumbnail_url");
+
+  const materialUrl =
+    nullableField(formData, "material_url") ||
+    nullableField(formData, "materials_url") ||
+    nullableField(formData, "resource_url") ||
+    nullableField(formData, "file_url");
+
+  const isPublished =
+    checkboxField(formData, "is_published") || checkboxField(formData, "is_active");
+
   return {
     title,
     slug,
 
     level: field(formData, "level") || "Beginner",
+    language: field(formData, "language") || "English",
 
-    short_description:
-      nullableField(formData, "short_description") ||
-      nullableField(formData, "summary"),
+    short_description: shortDescription,
+    summary: shortDescription,
 
-    description: nullableField(formData, "description"),
+    description,
 
-    instructor:
-      nullableField(formData, "instructor") ||
-      nullableField(formData, "speaker"),
+    instructor,
+    speaker: instructor,
 
     location: nullableField(formData, "location"),
-
     format: field(formData, "format") || "Online",
 
-    start_date:
-      nullableField(formData, "start_date") ||
-      nullableField(formData, "date"),
-
+    start_date: startDate,
+    date: startDate,
     end_date: nullableField(formData, "end_date"),
-
     duration: nullableField(formData, "duration"),
 
     price: numberField(formData, "price", 0),
-
     currency: field(formData, "currency") || "USD",
-
     capacity: numberField(formData, "capacity", 0),
 
-    image_url:
-      nullableField(formData, "image_url") ||
-      nullableField(formData, "cover_url") ||
-      nullableField(formData, "thumbnail_url"),
+    image_url: imageUrl,
+    cover_url: imageUrl,
+    thumbnail_url: imageUrl,
 
-    material_url:
-      nullableField(formData, "material_url") ||
-      nullableField(formData, "materials_url") ||
-      nullableField(formData, "resource_url") ||
-      nullableField(formData, "file_url"),
+    material_url: materialUrl,
+    materials_url: materialUrl,
+    resource_url: materialUrl,
+    file_url: materialUrl,
 
     is_featured: checkboxField(formData, "is_featured"),
-
-    is_published:
-      checkboxField(formData, "is_published") ||
-      checkboxField(formData, "is_active"),
+    is_published: isPublished,
+    is_active: isPublished,
 
     updated_at: new Date().toISOString(),
   };
@@ -157,7 +173,7 @@ export async function updateWorkshop(formData: FormData) {
   revalidatePath("/admin/workshops");
   revalidatePath(`/admin/workshops/${id}/edit`);
 
-  redirect("/admin/workshops?message=Workshop updated");
+  redirect(`/admin/workshops/${id}/edit?message=Workshop updated`);
 }
 
 export async function deleteWorkshop(formData: FormData) {
@@ -200,6 +216,24 @@ export async function createWorkshopSession(formData: FormData) {
     redirect("/admin/workshops?message=Missing workshop ID");
   }
 
+  const sessionDate =
+    nullableField(formData, "session_date") || nullableField(formData, "date");
+
+  const startTime = nullableField(formData, "start_time");
+  const endTime = nullableField(formData, "end_time");
+
+  const startsAt =
+    sessionDate && startTime
+      ? new Date(`${sessionDate}T${startTime}:00`).toISOString()
+      : sessionDate
+        ? new Date(`${sessionDate}T09:00:00`).toISOString()
+        : new Date().toISOString();
+
+  const endsAt =
+    sessionDate && endTime
+      ? new Date(`${sessionDate}T${endTime}:00`).toISOString()
+      : null;
+
   const externalVideoUrl = nullableField(formData, "external_video_url");
   const uploadedSessionMediaUrl = nullableField(formData, "session_media_url");
   const uploadedSessionMediaType = field(formData, "session_media_type");
@@ -215,13 +249,12 @@ export async function createWorkshopSession(formData: FormData) {
 
     title,
 
-    session_date:
-      nullableField(formData, "session_date") ||
-      nullableField(formData, "date"),
+    session_date: sessionDate,
+    start_time: startTime,
+    end_time: endTime,
 
-    start_time: nullableField(formData, "start_time"),
-
-    end_time: nullableField(formData, "end_time"),
+    starts_at: startsAt,
+    ends_at: endsAt,
 
     location: nullableField(formData, "location"),
 
@@ -238,7 +271,6 @@ export async function createWorkshopSession(formData: FormData) {
       nullableField(formData, "file_url"),
 
     media_type: finalMediaType,
-
     media_url: finalMediaUrl,
 
     display_order: numberField(formData, "display_order", 0),
@@ -250,7 +282,6 @@ export async function createWorkshopSession(formData: FormData) {
         : true,
 
     created_at: new Date().toISOString(),
-
     updated_at: new Date().toISOString(),
   });
 

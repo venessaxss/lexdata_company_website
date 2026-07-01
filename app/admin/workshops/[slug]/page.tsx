@@ -28,7 +28,12 @@ type Workshop = {
   currency?: string | null;
   capacity?: number | null;
   image_url?: string | null;
+  cover_url?: string | null;
+  thumbnail_url?: string | null;
   material_url?: string | null;
+  materials_url?: string | null;
+  resource_url?: string | null;
+  file_url?: string | null;
   is_published?: boolean | null;
   is_active?: boolean | null;
 };
@@ -40,6 +45,8 @@ type WorkshopSession = {
   session_date?: string | null;
   start_time?: string | null;
   end_time?: string | null;
+  starts_at?: string | null;
+  ends_at?: string | null;
   location?: string | null;
   meeting_url?: string | null;
   recording_url?: string | null;
@@ -143,6 +150,20 @@ function formatPrice(workshop: Workshop) {
   return `${price} ${workshop.currency || "USD"}`;
 }
 
+function getCoverImage(workshop: Workshop) {
+  return workshop.image_url || workshop.cover_url || workshop.thumbnail_url || null;
+}
+
+function getMaterialUrl(workshop: Workshop) {
+  return (
+    workshop.material_url ||
+    workshop.materials_url ||
+    workshop.resource_url ||
+    workshop.file_url ||
+    null
+  );
+}
+
 function getWorkshopDescription(workshop: Workshop) {
   return (
     workshop.description ||
@@ -195,7 +216,8 @@ export default async function WorkshopDetailPage({
 
   const sessions = (sessionsData ?? []) as WorkshopSession[];
 
-  const coverImage = workshop.image_url;
+  const coverImage = getCoverImage(workshop);
+  const materialUrl = getMaterialUrl(workshop);
   const description = getWorkshopDescription(workshop);
 
   return (
@@ -480,9 +502,9 @@ export default async function WorkshopDetailPage({
                 </p>
               ) : null}
 
-              {workshop.material_url ? (
+              {materialUrl ? (
                 <a
-                  href={workshop.material_url}
+                  href={materialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-3 inline-flex font-bold text-blue-700 hover:underline"
