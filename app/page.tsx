@@ -59,6 +59,36 @@ export default function HomePage() {
     <>
       <HomeHero />
       <HomeControlPanelButton />
+       <section className="bg-white py-10">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-7 shadow-sm">
+            <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+                  User Manual
+                </p>
+
+                <h2 className="mt-3 text-2xl font-black text-slate-950">
+                  New to LexData?
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-slate-600">
+                  Read the general member guide to learn how to create an
+                  account, login, use your dashboard, check messages, and access
+                  workshops.
+                </p>
+              </div>
+
+              <Link
+                href="/member-manual"
+                className="w-fit rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+              >
+                View User Manual
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
       <HomeMediaShowcase />
       <HomeVideoSpotlight />
 
