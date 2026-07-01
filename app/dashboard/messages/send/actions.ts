@@ -58,10 +58,7 @@ export async function sendRoleMessage(formData: FormData) {
     redirect("/dashboard/messages/send?message=Title and message are required");
   }
 
-  let query = supabase
-    .from("profiles")
-    .select("id, role")
-    .not("id", "is", null);
+  let query = supabase.from("profiles").select("id, role");
 
   if (targetRole !== "all") {
     query = query.eq("role", targetRole);
