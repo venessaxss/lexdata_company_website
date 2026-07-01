@@ -2,7 +2,13 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createWorkshop, createWorkshopSession } from "./actions";
+import {
+  createWorkshop,
+  createWorkshopSession,
+  createWorkshopSubsession,
+  deleteWorkshopSession,
+  deleteWorkshopSubsession,
+} from "./actions";
 import SessionMediaUploader from "@/components/SessionMediaUploader";
 
 export const dynamic = "force-dynamic";
@@ -16,26 +22,47 @@ type Workshop = {
   language?: string | null;
   short_description?: string | null;
   summary?: string | null;
-  description?: string | null;
-  instructor?: string | null;
-  speaker?: string | null;
   format?: string | null;
-  location?: string | null;
   start_date?: string | null;
-  end_date?: string | null;
   date?: string | null;
   duration?: string | null;
-  price?: number | null;
-  currency?: string | null;
-  capacity?: number | null;
-  image_url?: string | null;
-  cover_url?: string | null;
-  thumbnail_url?: string | null;
-  material_url?: string | null;
-  is_featured?: boolean | null;
   is_published?: boolean | null;
   is_active?: boolean | null;
   created_at?: string | null;
+};
+
+type WorkshopSession = {
+  id: string;
+  workshop_id?: string | null;
+  title?: string | null;
+  session_date?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  starts_at?: string | null;
+  location?: string | null;
+  meeting_url?: string | null;
+  recording_url?: string | null;
+  material_url?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
+};
+
+type WorkshopSubsession = {
+  id: string;
+  session_id?: string | null;
+  title?: string | null;
+  description?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  meeting_url?: string | null;
+  recording_url?: string | null;
+  material_url?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
 };
 
 export default async function AdminWorkshopsPage({
@@ -50,12 +77,40 @@ export default async function AdminWorkshopsPage({
 
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
+  const { data: workshopsData, error: workshopsError } = await supabase
     .from("workshops")
     .select("*")
     .order("created_at", { ascending: false });
 
-  const workshops = (data ?? []) as Workshop[];
+  const { data: sessionsData, error: sessionsError } = await supabase
+    .from("workshop_sessions")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("starts_at", { ascending: true });
+
+  const { data: subsessionsData, error: subsessionsError } = await supabase
+    .from("workshop_subsessions")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  const workshops = (workshopsData ?? []) as Workshop[];
+  const sessions = (sessionsData ?? []) as WorkshopSession[];
+  const subsessions = (subsessionsData ?? []) as WorkshopSubsession[];
+
+  const workshopById = new Map(
+    workshops.map((workshop) => [workshop.id, workshop])
+  );
+
+  const subsessionsBySessionId = new Map<string, WorkshopSubsession[]>();
+
+  for (const subsession of subsessions) {
+    if (!subsession.session_id) continue;
+
+    const existing = subsessionsBySessionId.get(subsession.session_id) ?? [];
+    existing.push(subsession);
+    subsessionsBySessionId.set(subsession.session_id, existing);
+  }
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
@@ -76,9 +131,8 @@ export default async function AdminWorkshopsPage({
         </h1>
 
         <p className="mt-4 max-w-3xl text-slate-600">
-          Create workshops, edit workshop details, add session arrangements,
-          upload small session media, and add YouTube / Jianying external video
-          links.
+          Create workshops, add major sessions, delete sessions, and add
+          subsessions under each major session.
         </p>
       </div>
 
@@ -88,9 +142,11 @@ export default async function AdminWorkshopsPage({
         </div>
       ) : null}
 
-      {error ? (
+      {workshopsError || sessionsError || subsessionsError ? (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error.message}
+          {workshopsError?.message ||
+            sessionsError?.message ||
+            subsessionsError?.message}
         </div>
       ) : null}
 
@@ -99,84 +155,55 @@ export default async function AdminWorkshopsPage({
           Add New Workshop
         </h2>
 
-        <p className="mt-2 text-sm text-slate-600">
-          Create a new public workshop page. You can edit it later.
-        </p>
-
         <form action={createWorkshop} className="mt-6 grid gap-5">
           <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Workshop title
-              </label>
-              <input
-                name="title"
-                required
-                placeholder="From Research Idea to Publication"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="title"
+              required
+              placeholder="Workshop title"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Slug
-              </label>
-              <input
-                name="slug"
-                placeholder="from-research-idea-to-publication"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="slug"
+              placeholder="workshop-slug"
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Level
-              </label>
-              <select
-                name="level"
-                defaultValue="Beginner"
-                className="w-full rounded-xl border px-4 py-3"
-              >
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-                <option value="All Levels">All Levels</option>
-              </select>
-            </div>
+            <select
+              name="level"
+              defaultValue="Beginner"
+              className="w-full rounded-xl border px-4 py-3"
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+              <option value="All Levels">All Levels</option>
+            </select>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Language
-              </label>
-              <input
-                name="language"
-                defaultValue="English"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="language"
+              defaultValue="English"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Format
-              </label>
-              <select
-                name="format"
-                defaultValue="Online"
-                className="w-full rounded-xl border px-4 py-3"
-              >
-                <option value="Online">Online</option>
-                <option value="Offline">Offline</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
-            </div>
+            <select
+              name="format"
+              defaultValue="Online"
+              className="w-full rounded-xl border px-4 py-3"
+            >
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
           </div>
 
           <textarea
             name="short_description"
             rows={3}
-            placeholder="Short description shown near the title"
+            placeholder="Short description"
             className="w-full rounded-xl border px-4 py-3"
           />
 
@@ -196,44 +223,29 @@ export default async function AdminWorkshopsPage({
 
             <input
               name="location"
-              placeholder="Location, e.g. Zoom / Shanghai / Online"
+              placeholder="Location"
               className="w-full rounded-xl border px-4 py-3"
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Start date
-              </label>
-              <input
-                name="start_date"
-                type="date"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="start_date"
+              type="date"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                End date
-              </label>
-              <input
-                name="end_date"
-                type="date"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="end_date"
+              type="date"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Duration
-              </label>
-              <input
-                name="duration"
-                placeholder="3 weeks / 12 hours"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="duration"
+              placeholder="Duration"
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
@@ -294,99 +306,63 @@ export default async function AdminWorkshopsPage({
 
       <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-2xl font-black text-slate-950">
-          Add Workshop Session
+          Add Major Session
         </h2>
 
-        <p className="mt-2 text-sm text-slate-600">
-          Add class dates, Zoom links, recordings, session materials, local
-          pictures, small local videos, YouTube videos, or Jianying / 剪映 links
-          for large workshop videos.
-        </p>
-
         <form action={createWorkshopSession} className="mt-6 grid gap-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Select workshop
-            </label>
-            <select
-              name="workshop_id"
-              required
-              className="w-full rounded-xl border px-4 py-3"
-            >
-              <option value="">Choose workshop</option>
-              {workshops.map((workshop) => (
-                <option key={workshop.id} value={workshop.id}>
-                  {workshop.title}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            name="workshop_id"
+            required
+            className="w-full rounded-xl border px-4 py-3"
+          >
+            <option value="">Choose workshop</option>
+            {workshops.map((workshop) => (
+              <option key={workshop.id} value={workshop.id}>
+                {workshop.title}
+              </option>
+            ))}
+          </select>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Session title
-              </label>
-              <input
-                name="title"
-                placeholder="Session 1: Introduction"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="title"
+              placeholder="Major session title"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Session date
-              </label>
-              <input
-                name="session_date"
-                type="date"
-                required
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="session_date"
+              type="date"
+              required
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Start time
-              </label>
-              <input
-                name="start_time"
-                type="time"
-                required
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="start_time"
+              type="time"
+              required
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                End time
-              </label>
-              <input
-                name="end_time"
-                type="time"
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="end_time"
+              type="time"
+              className="w-full rounded-xl border px-4 py-3"
+            />
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Display order
-              </label>
-              <input
-                name="display_order"
-                type="number"
-                defaultValue={0}
-                className="w-full rounded-xl border px-4 py-3"
-              />
-            </div>
+            <input
+              name="display_order"
+              type="number"
+              defaultValue={0}
+              className="w-full rounded-xl border px-4 py-3"
+            />
           </div>
 
           <input
             name="location"
-            placeholder="Session location, e.g. Zoom / Room 201 / Online"
+            placeholder="Session location"
             className="w-full rounded-xl border px-4 py-3"
           />
 
@@ -410,23 +386,11 @@ export default async function AdminWorkshopsPage({
 
           <SessionMediaUploader />
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              YouTube / Jianying / external video link
-            </label>
-
-            <input
-              name="external_video_url"
-              placeholder="Paste YouTube, Jianying / 剪映, or external video link here"
-              className="w-full rounded-xl border px-4 py-3"
-            />
-
-            <p className="mt-2 text-xs text-slate-500">
-              For YouTube links, the workshop page can embed and play the
-              video. For Jianying links, the page will show an external video
-              button because Jianying share pages usually cannot be embedded.
-            </p>
-          </div>
+          <input
+            name="external_video_url"
+            placeholder="YouTube / Jianying / external video link"
+            className="w-full rounded-xl border px-4 py-3"
+          />
 
           <label className="flex items-center gap-2">
             <input name="is_active" type="checkbox" defaultChecked />
@@ -434,9 +398,201 @@ export default async function AdminWorkshopsPage({
           </label>
 
           <button type="submit" className="btn-primary w-fit">
-            Add Session
+            Add Major Session
           </button>
         </form>
+      </section>
+
+      <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-black text-slate-950">
+          Existing Sessions and Subsessions
+        </h2>
+
+        {sessions.length === 0 ? (
+          <p className="mt-4 text-slate-600">No sessions yet.</p>
+        ) : (
+          <div className="mt-6 grid gap-6">
+            {sessions.map((session) => {
+              const workshop = session.workshop_id
+                ? workshopById.get(session.workshop_id)
+                : null;
+
+              const childSubsessions =
+                subsessionsBySessionId.get(session.id) ?? [];
+
+              return (
+                <article
+                  key={session.id}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+                >
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                        {workshop?.title || "Unknown workshop"}
+                      </p>
+
+                      <h3 className="mt-2 text-xl font-black text-slate-950">
+                        {session.title || "Major Session"}
+                      </h3>
+
+                      <p className="mt-2 text-sm text-slate-600">
+                        {session.session_date || "No date"} ·{" "}
+                        {session.start_time || "No start time"}-
+                        {session.end_time || "No end time"} · Order{" "}
+                        {session.display_order ?? 0}
+                      </p>
+                    </div>
+
+                    <form action={deleteWorkshopSession}>
+                      <input type="hidden" name="id" value={session.id} />
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+                      >
+                        Delete major session
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+                    <h4 className="text-lg font-black text-slate-950">
+                      Add Subsession under this major session
+                    </h4>
+
+                    <form
+                      action={createWorkshopSubsession}
+                      className="mt-4 grid gap-4"
+                    >
+                      <input
+                        type="hidden"
+                        name="session_id"
+                        value={session.id}
+                      />
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <input
+                          name="title"
+                          placeholder="Subsession title"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+
+                        <input
+                          name="display_order"
+                          type="number"
+                          defaultValue={0}
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+                      </div>
+
+                      <textarea
+                        name="description"
+                        rows={3}
+                        placeholder="Subsession description"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <input
+                          name="start_time"
+                          type="time"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+
+                        <input
+                          name="end_time"
+                          type="time"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+                      </div>
+
+                      <input
+                        name="meeting_url"
+                        placeholder="Subsession meeting URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <input
+                        name="recording_url"
+                        placeholder="Subsession recording URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <input
+                        name="material_url"
+                        placeholder="Subsession material URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <SessionMediaUploader />
+
+                      <input
+                        name="external_video_url"
+                        placeholder="Subsession YouTube / Jianying / external video link"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <label className="flex items-center gap-2">
+                        <input name="is_active" type="checkbox" defaultChecked />
+                        <span>Show this subsession</span>
+                      </label>
+
+                      <button type="submit" className="btn-primary w-fit">
+                        Add Subsession
+                      </button>
+                    </form>
+                  </div>
+
+                  {childSubsessions.length > 0 ? (
+                    <div className="mt-6 grid gap-3">
+                      <h4 className="font-black text-slate-950">
+                        Existing Subsessions
+                      </h4>
+
+                      {childSubsessions.map((subsession) => (
+                        <div
+                          key={subsession.id}
+                          className="flex flex-col justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 md:flex-row md:items-center"
+                        >
+                          <div>
+                            <p className="font-bold text-slate-950">
+                              {subsession.title}
+                            </p>
+
+                            <p className="text-sm text-slate-600">
+                              {subsession.start_time || "No start time"}-
+                              {subsession.end_time || "No end time"} · Order{" "}
+                              {subsession.display_order ?? 0}
+                            </p>
+
+                            {subsession.description ? (
+                              <p className="mt-1 text-sm text-slate-500">
+                                {subsession.description}
+                              </p>
+                            ) : null}
+                          </div>
+
+                          <form action={deleteWorkshopSubsession}>
+                            <input
+                              type="hidden"
+                              name="id"
+                              value={subsession.id}
+                            />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+                            >
+                              Delete subsession
+                            </button>
+                          </form>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">

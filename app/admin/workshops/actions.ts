@@ -66,7 +66,8 @@ function getWorkshopPayload(formData: FormData) {
     nullableField(formData, "file_url");
 
   const isPublished =
-    checkboxField(formData, "is_published") || checkboxField(formData, "is_active");
+    checkboxField(formData, "is_published") ||
+    checkboxField(formData, "is_active");
 
   return {
     title,
@@ -200,7 +201,6 @@ export async function deleteWorkshop(formData: FormData) {
   redirect("/admin/workshops?message=Workshop deleted");
 }
 
-
 export async function createWorkshopSession(formData: FormData) {
   await requireAdmin();
 
@@ -295,4 +295,123 @@ export async function createWorkshopSession(formData: FormData) {
   revalidatePath("/admin/workshops");
 
   redirect("/admin/workshops?message=Workshop session created");
+}
+
+export async function deleteWorkshopSession(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/admin/workshops?message=Missing session ID");
+  }
+
+  const { error } = await supabase.from("workshop_sessions").delete().eq("id", id);
+
+  if (error) {
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+
+  redirect("/admin/workshops?message=Session deleted");
+}
+
+export async function createWorkshopSubsession(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const sessionId = field(formData, "session_id");
+
+  if (!sessionId) {
+    redirect("/admin/workshops?message=Missing major session ID");
+  }
+
+  const title = field(formData, "title") || "Subsession";
+
+  const externalVideoUrl = nullableField(formData, "external_video_url");
+  const uploadedSessionMediaUrl = nullableField(formData, "session_media_url");
+  const uploadedSessionMediaType = field(formData, "session_media_type");
+
+  const finalMediaType = externalVideoUrl
+    ? "external_video"
+    : uploadedSessionMediaType || "none";
+
+  const finalMediaUrl = externalVideoUrl || uploadedSessionMediaUrl;
+
+  const { error } = await supabase.from("workshop_subsessions").insert({
+    session_id: sessionId,
+    title,
+    description: nullableField(formData, "description"),
+    start_time: nullableField(formData, "start_time"),
+    end_time: nullableField(formData, "end_time"),
+
+    meeting_url:
+      nullableField(formData, "meeting_url") ||
+      nullableField(formData, "zoom_url"),
+
+    recording_url: nullableField(formData, "recording_url"),
+
+    material_url:
+      nullableField(formData, "material_url") ||
+      nullableField(formData, "materials_url") ||
+      nullableField(formData, "resource_url") ||
+      nullableField(formData, "file_url"),
+
+    media_type: finalMediaType,
+    media_url: finalMediaUrl,
+
+    display_order: numberField(formData, "display_order", 0),
+
+    is_active:
+      formData.has("is_active") || formData.has("is_published")
+        ? checkboxField(formData, "is_active") ||
+          checkboxField(formData, "is_published")
+        : true,
+
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+
+  redirect("/admin/workshops?message=Subsession created");
+}
+
+export async function deleteWorkshopSubsession(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/admin/workshops?message=Missing subsession ID");
+  }
+
+  const { error } = await supabase
+    .from("workshop_subsessions")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+
+  redirect("/admin/workshops?message=Subsession deleted");
 }

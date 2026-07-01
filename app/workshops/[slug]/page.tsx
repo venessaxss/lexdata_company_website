@@ -282,7 +282,13 @@ export default async function WorkshopDetailPage({
     profile = profileData;
   }
 
-  const isAdmin = profile?.role === "admin";
+  const role = profile?.role ?? null;
+
+  const isAdmin = role === "admin";
+  const isManager = role === "manager";
+  const isSpeaker = role === "speaker";
+
+  const canManageCosts = isAdmin || isManager;
 
   const { data: workshopData, error } = await supabase
     .from("workshops")
@@ -326,8 +332,10 @@ export default async function WorkshopDetailPage({
     registration = registrationData as Registration | null;
   }
 
-  const paidAccess = isAdmin || hasPaidAccess(registration);
-  const canSeeWorkshopCost = isAdmin || Boolean(registration);
+  const paidAccess = isAdmin || isManager || isSpeaker || hasPaidAccess(registration);
+
+  const canSeeWorkshopCost =
+  canManageCosts || (Boolean(registration) && !isSpeaker);
 
   const coverImage = getCoverImage(workshop);
   const materialUrl = getMaterialUrl(workshop);
@@ -434,11 +442,16 @@ export default async function WorkshopDetailPage({
                 Session arrangement
               </h2>
 
-              {isAdmin ? (
+              {isAdmin || isManager ? (
                 <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5 text-purple-800">
                   Admin preview mode. All workshop session links, materials,
                   recordings, and videos are unlocked for this account.
                 </div>
+                ) : isSpeaker ? (
+  <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
+    Speaker preview mode. Session arrangements, materials, and links are
+    available for this speaker account. Payment and cost information is hidden.
+  </div>
               ) : !user ? (
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
                   Please register or login as a member first. After registration
@@ -637,10 +650,9 @@ export default async function WorkshopDetailPage({
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-amber-700">
-                  Guest users cannot see workshop cost or register directly.
-                  After you create an account and login, you can submit your
-                  workshop registration. Cost and payment details are shown only
-                  after registration.
+                Guest users cannot register directly for workshops. After you create an
+                account and login, you can submit your workshop registration and receive the
+                next steps from the LexData team.
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-3">
@@ -673,27 +685,31 @@ export default async function WorkshopDetailPage({
                   Payment status: {registration.payment_status || "pending"}
                 </p>
 
+                {canSeeWorkshopCost ? (
                 <p className="mt-1 text-sm font-semibold text-blue-800">
-                  Workshop cost: {formatPrice(workshop)}
+                 Workshop cost: {formatPrice(workshop)}
                 </p>
+                ) : null}
 
-                {registration.payment_link ? (
-                  <a
-                    href={registration.payment_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-                  >
-                    Open payment link
-                  </a>
-                ) : (
-                  <Link
-                    href="/dashboard/messages"
-                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-                  >
-                    Check message box
-                  </Link>
-                )}
+                {!isSpeaker ? (
+  registration.payment_link ? (
+    <a
+      href={registration.payment_link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
+    >
+      Open payment link
+    </a>
+  ) : (
+    <Link
+      href="/dashboard/messages"
+      className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
+    >
+      Check message box
+    </Link>
+  )
+) : null}
               </div>
             ) : (
               <form action={registerForWorkshop} className="mt-6 space-y-4">
