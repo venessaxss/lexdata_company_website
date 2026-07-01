@@ -2,6 +2,9 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function HomeControlPanelButton() {
   noStore();
 
@@ -42,28 +45,28 @@ export default async function HomeControlPanelButton() {
                 </p>
 
                 <h2 className="mt-3 text-2xl font-black text-slate-950">
-                  Login to access your personal dashboard
+                  Access your LexData account
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-slate-600">
-                  Members can view workshop registrations, messages, payment
-                  steps, and unlocked learning materials from their dashboard.
+                  Create an account or login to access your personal dashboard,
+                  workshop registrations, messages, and learning materials.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/login"
+                  href="/signup"
                   className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
                 >
-                  Login
+                  Create account
                 </Link>
 
                 <Link
-                  href="/signup"
+                  href="/login"
                   className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-white"
                 >
-                  Create account
+                  Login
                 </Link>
               </div>
             </div>
