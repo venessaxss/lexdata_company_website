@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateUserRole } from "./actions";
+import { normalizeRole } from "@/lib/roles";
 
 const roles = ["member", "speaker", "manager", "staff", "admin"];
 export default async function AdminUsersPage({
@@ -68,8 +69,7 @@ export default async function AdminUsersPage({
           <tbody>
             {users.map((user) => {
               const profile = profileMap.get(user.id);
-              const currentRole = profile?.role ?? "student";
-
+             const currentRole = normalizeRole(profile?.role);
               return (
                 <tr key={user.id} className="border-t border-slate-100">
                   <td className="px-4 py-4">

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeRole } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -78,15 +79,6 @@ function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
-function normalizeRole(role?: string | null) {
-  if (!role) return "member";
-
-  if (role === "student") {
-    return "member";
-  }
-
-  return role;
-}
 
 function formatDate(value?: string | null) {
   if (!value) return "";

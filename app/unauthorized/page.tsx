@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentProfile } from "@/lib/auth";
 import { ROLE_LABELS } from "@/lib/roles";
+import { normalizeRole } from "@/lib/roles";
 
 export default async function UnauthorizedPage({
   searchParams
@@ -9,7 +10,7 @@ export default async function UnauthorizedPage({
 }) {
   const params = await searchParams;
   const profile = await getCurrentProfile();
-  const role = profile?.role === "student" ? "member" : profile?.role ?? "member";
+  const role = normalizeRole(profile?.role);
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-16">
