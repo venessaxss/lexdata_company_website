@@ -1,11 +1,20 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function getSiteUrl() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (!siteUrl) {
+    return "http://localhost:3000";
+  }
+
+  return siteUrl.replace(/\/$/, "");
 }
 
 export async function sendPasswordResetEmail(formData: FormData) {
@@ -15,17 +24,12 @@ export async function sendPasswordResetEmail(formData: FormData) {
     redirect("/forgot-password?message=Email is required");
   }
 
-  const headerStore = await headers();
-  const origin = headerStore.get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
-
-  if (!origin) {
-    redirect("/forgot-password?message=Missing site URL");
-  }
+  const siteUrl = getSiteUrl();
 
   const supabase = await createClient();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
   });
 
   if (error) {
