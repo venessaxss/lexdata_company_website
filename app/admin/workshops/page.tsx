@@ -443,15 +443,24 @@ export default async function AdminWorkshopsPage({
                       </p>
                     </div>
 
-                    <form action={deleteWorkshopSession}>
-                      <input type="hidden" name="id" value={session.id} />
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
-                      >
-                        Delete major session
-                      </button>
-                    </form>
+                    <div className="flex flex-wrap gap-2">
+  <Link
+    href={`/admin/workshops/subsessions/${subsession.id}/edit`}
+    className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+  >
+    Edit subsession
+  </Link>
+
+  <form action={deleteWorkshopSubsession}>
+    <input type="hidden" name="id" value={subsession.id} />
+    <button
+      type="submit"
+      className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+    >
+      Delete subsession
+    </button>
+  </form>
+</div>
                   </div>
 
                   <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">

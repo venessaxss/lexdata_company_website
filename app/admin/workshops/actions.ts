@@ -415,3 +415,75 @@ export async function deleteWorkshopSubsession(formData: FormData) {
 
   redirect("/admin/workshops?message=Subsession deleted");
 }
+
+export async function updateWorkshopSubsession(formData: FormData) {
+  await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/admin/workshops?message=Missing subsession ID");
+  }
+
+  const externalVideoUrl = nullableField(formData, "external_video_url");
+  const mediaUrl = nullableField(formData, "media_url");
+  const mediaType = field(formData, "media_type") || "none";
+
+  const finalMediaType = externalVideoUrl
+    ? "external_video"
+    : mediaType;
+
+  const finalMediaUrl = externalVideoUrl || mediaUrl;
+
+  const { error } = await supabase
+    .from("workshop_subsessions")
+    .update({
+      title: field(formData, "title") || "Subsession",
+      description: nullableField(formData, "description"),
+      start_time: nullableField(formData, "start_time"),
+      end_time: nullableField(formData, "end_time"),
+
+      meeting_url:
+        nullableField(formData, "meeting_url") ||
+        nullableField(formData, "zoom_url"),
+
+      recording_url: nullableField(formData, "recording_url"),
+
+      material_url:
+        nullableField(formData, "material_url") ||
+        nullableField(formData, "materials_url") ||
+        nullableField(formData, "resource_url") ||
+        nullableField(formData, "file_url"),
+
+      media_type: finalMediaType,
+      media_url: finalMediaUrl,
+
+      display_order: numberField(formData, "display_order", 0),
+
+      is_active:
+        formData.has("is_active") || formData.has("is_published")
+          ? checkboxField(formData, "is_active") ||
+            checkboxField(formData, "is_published")
+          : false,
+
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    redirect(
+      `/admin/workshops/subsessions/${id}/edit?message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+  revalidatePath(`/admin/workshops/subsessions/${id}/edit`);
+
+  redirect(`/admin/workshops/subsessions/${id}/edit?message=Subsession updated`);
+}
