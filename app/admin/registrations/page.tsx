@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -28,33 +27,6 @@ type Registration = {
   } | null;
 };
 
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (
-    profileError ||
-    !profile ||
-    !["admin", "manager"].includes(profile.role)
-  ) {
-    redirect("/dashboard");
-  }
-}
-
 function formatDate(value?: string | null) {
   if (!value) return "-";
 
@@ -65,9 +37,9 @@ function formatDate(value?: string | null) {
   }
 }
 
-export default async function ManagerWorkshopRegistrationsPage() {
+export default async function AdminWorkshopRegistrationsPage() {
   noStore();
-  await requireAdminOrManager();
+  await requireAdmin();
 
   const supabase = createAdminClient();
 
@@ -93,14 +65,14 @@ export default async function ManagerWorkshopRegistrationsPage() {
     <main className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
         <Link
-          href="/manager"
+          href="/admin"
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
         >
-          ← Back to manager dashboard
+          ← Back to admin dashboard
         </Link>
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
-          Manager Dashboard
+          Admin Dashboard
         </p>
 
         <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950">
@@ -108,7 +80,7 @@ export default async function ManagerWorkshopRegistrationsPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-slate-600">
-          View registration submissions from public workshop pages.
+          View all registration submissions from public workshop pages.
         </p>
       </div>
 

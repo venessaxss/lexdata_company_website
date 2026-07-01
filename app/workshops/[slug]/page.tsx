@@ -66,6 +66,7 @@ function nullableField(formData: FormData, key: string) {
   return value.length > 0 ? value : null;
 }
 
+
 async function registerForWorkshop(formData: FormData) {
   "use server";
 
@@ -84,46 +85,17 @@ async function registerForWorkshop(formData: FormData) {
     redirect(`/workshops/${workshopSlug}?message=Name and email are required`);
   }
 
-  const { data: workshop, error: workshopError } = await supabase
-    .from("workshops")
-    .select("*")
-    .eq("id", workshopId)
-    .single();
-
-  if (workshopError || !workshop) {
-    redirect(`/workshops/${workshopSlug}?message=Workshop not found`);
-  }
-
-  const price = Number(workshop.price ?? 0);
-  const currency = String(workshop.currency || "USD").toUpperCase();
-  const paymentMethod = nullableField(formData, "payment_method");
-
-  const registrationStatus = price > 0 ? "pending_review" : "confirmed";
-  const paymentStatus = price > 0 ? "pending_manual_payment" : "free";
-
-  if (price > 0 && !paymentMethod) {
-    redirect(
-      `/workshops/${workshopSlug}?message=Please choose a payment method`
-    );
-  }
-
   const { error } = await supabase.from("workshop_registrations").insert({
     workshop_id: workshopId,
     workshop_slug: workshopSlug,
+    user_id: null,
     full_name: fullName,
     email,
     phone: nullableField(formData, "phone"),
     organization: nullableField(formData, "organization"),
     message: nullableField(formData, "message"),
-    status: registrationStatus,
-    payment_status: paymentStatus,
-    payment_amount: price,
-    payment_currency: currency,
-    payment_method: paymentMethod,
-    payment_reference: nullableField(formData, "payment_reference"),
-    payment_proof_url: nullableField(formData, "payment_proof_url"),
+    status: "pending",
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
   });
 
   if (error) {
@@ -133,6 +105,9 @@ async function registerForWorkshop(formData: FormData) {
   }
 
   revalidatePath(`/workshops/${workshopSlug}`);
+  revalidatePath("/admin/registrations");
+  revalidatePath("/manager/registrations");
+
   redirect(`/workshops/${workshopSlug}?registered=1`);
 }
 

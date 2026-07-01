@@ -8,6 +8,12 @@ const adminCards = [
     href: "/admin/courses",
   },
   {
+  title: "Workshop Registrations",
+  description:
+    "View registration records submitted from public workshop pages.",
+  href: "/admin/registrations",
+},
+  {
     title: "Workshops",
     description:
       "Create, edit, publish, delete, and manage workshops, sessions, levels, materials, YouTube links, and Jianying links.",
