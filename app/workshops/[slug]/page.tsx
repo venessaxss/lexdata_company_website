@@ -86,17 +86,18 @@ async function registerForWorkshop(formData: FormData) {
   }
 
   const { error } = await supabase.from("workshop_registrations").insert({
-    workshop_id: workshopId,
-    workshop_slug: workshopSlug,
-    user_id: null,
-    full_name: fullName,
-    email,
-    phone: nullableField(formData, "phone"),
-    organization: nullableField(formData, "organization"),
-    message: nullableField(formData, "message"),
-    status: "pending",
-    created_at: new Date().toISOString(),
-  });
+  workshop_id: workshopId,
+  workshop_slug: workshopSlug,
+  session_id: null,
+  user_id: null,
+  full_name: fullName,
+  email,
+  phone: nullableField(formData, "phone"),
+  organization: nullableField(formData, "organization"),
+  message: nullableField(formData, "message"),
+  status: "pending",
+  created_at: new Date().toISOString(),
+});
 
   if (error) {
     redirect(
