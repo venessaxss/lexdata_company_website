@@ -8,16 +8,28 @@ const adminCards = [
     href: "/admin/courses",
   },
   {
-  title: "Workshop Registrations",
-  description:
-    "View registration records submitted from public workshop pages.",
-  href: "/admin/registrations",
-},
+    title: "Workshop Registrations",
+    description:
+      "View registration records submitted from public workshop pages.",
+    href: "/admin/registrations",
+  },
   {
     title: "Workshops",
     description:
-      "Create, edit, publish, delete, and manage workshops, sessions, levels, materials, YouTube links, and Jianying links.",
+      "Create, edit, publish, delete, and manage workshops, sessions, subsessions, levels, materials, YouTube links, and Jianying links.",
     href: "/admin/workshops",
+  },
+  {
+    title: "Send Messages",
+    description:
+      "Send messages to all users or selected role groups such as students, speakers, managers, or admins.",
+    href: "/dashboard/messages/send",
+  },
+  {
+    title: "Message Box",
+    description:
+      "Open your message box to view received messages, workshop notices, payment updates, and team messages.",
+    href: "/dashboard/messages",
   },
   {
     title: "Homepage Hero",
@@ -39,7 +51,8 @@ const adminCards = [
   },
   {
     title: "Team Management",
-    description: "Edit team members, profile photos, bios, roles, and visibility.",
+    description:
+      "Edit team members, profile photos, bios, roles, and visibility.",
     href: "/admin/team",
   },
   {
@@ -51,6 +64,12 @@ const adminCards = [
     title: "Media Library",
     description: "Manage uploaded images, banners, and website media.",
     href: "/admin/media",
+  },
+  {
+    title: "My Dashboard",
+    description:
+      "Open your personal dashboard for learning, messages, password settings, and account tools.",
+    href: "/dashboard",
   },
 ];
 
@@ -70,8 +89,8 @@ export default async function AdminPage() {
 
         <p className="mt-4 max-w-2xl text-slate-600">
           Manage LexData courses, workshops, homepage hero slides, homepage
-          video sections, team members, users, roles, and uploaded media from
-          one place.
+          video sections, team members, users, roles, messages, and uploaded
+          media from one place.
         </p>
       </div>
 

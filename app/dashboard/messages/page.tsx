@@ -60,6 +60,9 @@ export default async function DashboardMessagesPage() {
   const canSendMessages =
     role === "admin" || role === "manager" || role === "speaker";
 
+  const backHref =
+    role === "admin" ? "/admin" : role === "manager" ? "/manager" : "/dashboard";
+
   const { data, error } = await supabase
     .from("user_messages")
     .select("*")
@@ -72,7 +75,7 @@ export default async function DashboardMessagesPage() {
     <main className="mx-auto max-w-5xl px-4 py-10">
       <div className="mb-8">
         <Link
-          href="/dashboard"
+          href={backHref}
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
         >
           ← Back to dashboard
