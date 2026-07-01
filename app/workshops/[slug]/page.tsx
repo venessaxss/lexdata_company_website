@@ -85,20 +85,6 @@ async function registerForWorkshop(formData: FormData) {
     data: { user },
   } = await authSupabase.auth.getUser();
 
-  let profile: { role?: string | null } | null = null;
-
-if (user) {
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  profile = profileData;
-}
-
-const isAdmin = profile?.role === "admin";
-
   const workshopId = field(formData, "workshop_id");
   const workshopSlug = field(formData, "workshop_slug");
   const fullName = field(formData, "full_name");
@@ -313,7 +299,7 @@ export default async function WorkshopDetailPage({
   const published =
     workshop.is_published !== false && workshop.is_active !== false;
 
-  if (!published) {
+  if (!published && !isAdmin) {
     notFound();
   }
 
@@ -448,7 +434,12 @@ export default async function WorkshopDetailPage({
                 Session arrangement
               </h2>
 
-              {!user ? (
+              {isAdmin ? (
+                <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5 text-purple-800">
+                  Admin preview mode. All workshop session links, materials,
+                  recordings, and videos are unlocked for this account.
+                </div>
+              ) : !user ? (
                 <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
                   Please register or login as a member first. After registration
                   and payment confirmation, full session links will be unlocked.
@@ -594,189 +585,190 @@ export default async function WorkshopDetailPage({
           </section>
 
           <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-  <h2 className="text-2xl font-black text-slate-950">
-    Register for this workshop
-  </h2>
+            <h2 className="text-2xl font-black text-slate-950">
+              Register for this workshop
+            </h2>
 
-  {registered ? (
-    <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-      Registration submitted successfully. Check your message box for the next
-      payment step.
-    </div>
-  ) : null}
+            {registered ? (
+              <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
+                Registration submitted successfully. Check your message box for
+                the next payment step.
+              </div>
+            ) : null}
 
-  {message ? (
-    <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
-      {message}
-    </div>
-  ) : null}
+            {message ? (
+              <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+                {message}
+              </div>
+            ) : null}
 
-  {isAdmin ? (
-    <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5">
-      <p className="font-semibold text-purple-800">
-        Admin access enabled.
-      </p>
+            {isAdmin ? (
+              <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5">
+                <p className="font-semibold text-purple-800">
+                  Admin access enabled.
+                </p>
 
-      <p className="mt-2 text-sm leading-6 text-purple-700">
-        You are viewing this workshop as an admin. Registration, payment, cost,
-        session links, materials, recordings, and videos are unlocked for this
-        account.
-      </p>
+                <p className="mt-2 text-sm leading-6 text-purple-700">
+                  You are viewing this workshop as an admin. Registration,
+                  payment, cost, session links, materials, recordings, and
+                  videos are unlocked for this account.
+                </p>
 
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Link
-          href="/admin/registrations"
-          className="rounded-xl bg-purple-700 px-4 py-2 text-sm font-bold text-white hover:bg-purple-800"
-        >
-          Manage registrations
-        </Link>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href="/admin/registrations"
+                    className="rounded-xl bg-purple-700 px-4 py-2 text-sm font-bold text-white hover:bg-purple-800"
+                  >
+                    Manage registrations
+                  </Link>
 
-        <Link
-          href="/admin/workshops"
-          className="rounded-xl border border-purple-300 px-4 py-2 text-sm font-bold text-purple-700 hover:bg-purple-100"
-        >
-          Manage workshops
-        </Link>
-      </div>
-    </div>
-  ) : !user ? (
-    <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-      <p className="font-semibold text-amber-800">
-        Please register as a website member first.
-      </p>
+                  <Link
+                    href="/admin/workshops"
+                    className="rounded-xl border border-purple-300 px-4 py-2 text-sm font-bold text-purple-700 hover:bg-purple-100"
+                  >
+                    Manage workshops
+                  </Link>
+                </div>
+              </div>
+            ) : !user ? (
+              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                <p className="font-semibold text-amber-800">
+                  Please register as a website member first.
+                </p>
 
-      <p className="mt-2 text-sm leading-6 text-amber-700">
-        Guest users cannot see workshop cost or register directly. After you
-        create an account and login, you can submit your workshop registration.
-        Cost and payment details are shown only after registration.
-      </p>
+                <p className="mt-2 text-sm leading-6 text-amber-700">
+                  Guest users cannot see workshop cost or register directly.
+                  After you create an account and login, you can submit your
+                  workshop registration. Cost and payment details are shown only
+                  after registration.
+                </p>
 
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Link
-          href={`/signup?redirect=/workshops/${slug}`}
-          className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
-        >
-          Create account
-        </Link>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Link
+                    href={`/signup?redirect=/workshops/${slug}`}
+                    className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                  >
+                    Create account
+                  </Link>
 
-        <Link
-          href={`/login?redirect=/workshops/${slug}`}
-          className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-        >
-          Login
-        </Link>
-      </div>
-    </div>
-  ) : registration ? (
-    <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
-      <p className="font-semibold text-blue-800">
-        You have already registered for this workshop.
-      </p>
+                  <Link
+                    href={`/login?redirect=/workshops/${slug}`}
+                    className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
+                  >
+                    Login
+                  </Link>
+                </div>
+              </div>
+            ) : registration ? (
+              <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+                <p className="font-semibold text-blue-800">
+                  You have already registered for this workshop.
+                </p>
 
-      <p className="mt-2 text-sm text-blue-700">
-        Registration status: {registration.status || "registered"}
-      </p>
+                <p className="mt-2 text-sm text-blue-700">
+                  Registration status: {registration.status || "registered"}
+                </p>
 
-      <p className="mt-1 text-sm text-blue-700">
-        Payment status: {registration.payment_status || "pending"}
-      </p>
+                <p className="mt-1 text-sm text-blue-700">
+                  Payment status: {registration.payment_status || "pending"}
+                </p>
 
-      <p className="mt-1 text-sm font-semibold text-blue-800">
-        Workshop cost: {formatPrice(workshop)}
-      </p>
+                <p className="mt-1 text-sm font-semibold text-blue-800">
+                  Workshop cost: {formatPrice(workshop)}
+                </p>
 
-      {registration.payment_link ? (
-        <a
-          href={registration.payment_link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-        >
-          Open payment link
-        </a>
-      ) : (
-        <Link
-          href="/dashboard/messages"
-          className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-        >
-          Check message box
-        </Link>
-      )}
-    </div>
-  ) : (
-    <form action={registerForWorkshop} className="mt-6 space-y-4">
-      <input type="hidden" name="workshop_id" value={workshop.id} />
-      <input type="hidden" name="workshop_slug" value={slug} />
+                {registration.payment_link ? (
+                  <a
+                    href={registration.payment_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
+                  >
+                    Open payment link
+                  </a>
+                ) : (
+                  <Link
+                    href="/dashboard/messages"
+                    className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
+                  >
+                    Check message box
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <form action={registerForWorkshop} className="mt-6 space-y-4">
+                <input type="hidden" name="workshop_id" value={workshop.id} />
+                <input type="hidden" name="workshop_slug" value={slug} />
 
-      <input
-        name="full_name"
-        required
-        placeholder="Full name"
-        className="w-full rounded-xl border px-4 py-3"
-      />
+                <input
+                  name="full_name"
+                  required
+                  placeholder="Full name"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-      <input
-        name="email"
-        type="email"
-        required
-        defaultValue={user.email ?? ""}
-        placeholder="Email address"
-        className="w-full rounded-xl border px-4 py-3"
-      />
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  defaultValue={user.email ?? ""}
+                  placeholder="Email address"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-      <input
-        name="phone"
-        placeholder="Phone / WhatsApp / WeChat"
-        className="w-full rounded-xl border px-4 py-3"
-      />
+                <input
+                  name="phone"
+                  placeholder="Phone / WhatsApp / WeChat"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-      <input
-        name="organization"
-        placeholder="University / company"
-        className="w-full rounded-xl border px-4 py-3"
-      />
+                <input
+                  name="organization"
+                  placeholder="University / company"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-      <textarea
-        name="message"
-        rows={4}
-        placeholder="Message or questions"
-        className="w-full rounded-xl border px-4 py-3"
-      />
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="Message or questions"
+                  className="w-full rounded-xl border px-4 py-3"
+                />
 
-      <button
-        type="submit"
-        className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-      >
-        Submit Registration
-      </button>
-    </form>
-  )}
+                <button
+                  type="submit"
+                  className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
+                >
+                  Submit Registration
+                </button>
+              </form>
+            )}
 
-  <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-    {workshop.instructor || workshop.speaker ? (
-      <p>
-        <strong>Instructor:</strong>{" "}
-        {workshop.instructor || workshop.speaker}
-      </p>
-    ) : null}
+            <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
+              {workshop.instructor || workshop.speaker ? (
+                <p>
+                  <strong>Instructor:</strong>{" "}
+                  {workshop.instructor || workshop.speaker}
+                </p>
+              ) : null}
 
-    {workshop.location ? (
-      <p className="mt-2">
-        <strong>Location:</strong> {workshop.location}
-      </p>
-    ) : null}
+              {workshop.location ? (
+                <p className="mt-2">
+                  <strong>Location:</strong> {workshop.location}
+                </p>
+              ) : null}
 
-    {paidAccess && materialUrl ? (
-      <a
-        href={materialUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 inline-flex font-bold text-blue-700 hover:underline"
-      >
-        View workshop material
-      </a>
-    ) : null}
-  </div>
+              {paidAccess && materialUrl ? (
+                <a
+                  href={materialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex font-bold text-blue-700 hover:underline"
+                >
+                  View workshop material
+                </a>
+              ) : null}
+            </div>
           </aside>
         </div>
       </section>
