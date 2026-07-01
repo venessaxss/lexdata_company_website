@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const allowedRoles = ["student", "speaker", "manager", "admin"] as const;
+const allowedRoles = ["member", "speaker", "manager", "staff", "admin"] as const;
 type AppRole = (typeof allowedRoles)[number];
 
 function isValidRole(role: string): role is AppRole {

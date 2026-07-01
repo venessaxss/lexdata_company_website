@@ -76,7 +76,8 @@ export default async function ManagerPage() {
 
   const profile = profileData as Profile | null;
 
-  const role = profile?.role || "student";
+  const role =
+  profile?.role === "student" ? "member" : profile?.role || "member";
 
   if (role !== "manager" && role !== "admin") {
     redirect("/dashboard");

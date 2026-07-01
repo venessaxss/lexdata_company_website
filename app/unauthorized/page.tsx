@@ -9,7 +9,7 @@ export default async function UnauthorizedPage({
 }) {
   const params = await searchParams;
   const profile = await getCurrentProfile();
-  const role = profile?.role ?? "student";
+  const role = profile?.role === "student" ? "member" : profile?.role ?? "member";
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-16">

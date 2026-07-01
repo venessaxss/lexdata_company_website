@@ -22,7 +22,7 @@ const adminCards = [
   {
     title: "Send Messages",
     description:
-      "Send messages to all users or selected role groups such as students, speakers, managers, or admins.",
+      "Send messages to all users or selected role groups such as members, speakers, managers, staff, or admins.",
     href: "/dashboard/messages/send",
   },
   {
@@ -57,7 +57,7 @@ const adminCards = [
   },
   {
     title: "Users and Roles",
-    description: "Assign student, speaker, manager, and admin roles.",
+    description: "Assign member, speaker, manager, staff, and admin roles.",
     href: "/admin/users",
   },
   {

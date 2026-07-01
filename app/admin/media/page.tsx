@@ -110,7 +110,7 @@ export default async function AdminMediaPage({
           <textarea
             name="description"
             rows={3}
-            placeholder="Practical workshops for students, teachers, and researchers."
+            placeholder="Practical workshops for members, teachers, and researchers."
             className="w-full rounded-xl border px-4 py-3"
           />
 

@@ -90,10 +90,11 @@ export default async function SendMessagePage({
               className="w-full rounded-xl border px-4 py-3"
             >
               <option value="all">All roles</option>
-              <option value="student">Students</option>
+              <option value="member">Members</option>
               <option value="speaker">Speakers</option>
               <option value="manager">Managers</option>
               <option value="admin">Admins</option>
+              <option value="staff">Staff / Board / Company Members</option>
             </select>
           </div>
 

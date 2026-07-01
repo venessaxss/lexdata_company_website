@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { revalidatePath, unstable_noStore as noStore } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -11,50 +11,50 @@ type Workshop = {
   id: string;
   title?: string | null;
   slug?: string | null;
-  level?: string | null;
-  language?: string | null;
-  short_description?: string | null;
-  summary?: string | null;
   description?: string | null;
-  instructor?: string | null;
-  speaker?: string | null;
-  format?: string | null;
-  location?: string | null;
-  start_date?: string | null;
-  end_date?: string | null;
-  date?: string | null;
-  duration?: string | null;
-  price?: number | null;
+  short_description?: string | null;
+  price?: number | string | null;
   currency?: string | null;
-  capacity?: number | null;
-  image_url?: string | null;
-  cover_url?: string | null;
-  thumbnail_url?: string | null;
-  material_url?: string | null;
-  materials_url?: string | null;
-  resource_url?: string | null;
-  file_url?: string | null;
-  is_published?: boolean | null;
-  is_active?: boolean | null;
+  level?: string | null;
+  starts_at?: string | null;
+  created_at?: string | null;
 };
 
 type WorkshopSession = {
   id: string;
   workshop_id?: string | null;
   title?: string | null;
+  description?: string | null;
   session_date?: string | null;
   start_time?: string | null;
   end_time?: string | null;
-  starts_at?: string | null;
-  ends_at?: string | null;
-  location?: string | null;
   meeting_url?: string | null;
   recording_url?: string | null;
   material_url?: string | null;
   media_type?: string | null;
   media_url?: string | null;
+  speaker_email?: string | null;
   display_order?: number | null;
   is_active?: boolean | null;
+  created_at?: string | null;
+};
+
+type WorkshopSubsession = {
+  id: string;
+  session_id?: string | null;
+  title?: string | null;
+  description?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  meeting_url?: string | null;
+  recording_url?: string | null;
+  material_url?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  speaker_email?: string | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
+  created_at?: string | null;
 };
 
 type Registration = {
@@ -64,136 +64,115 @@ type Registration = {
   status?: string | null;
   payment_status?: string | null;
   payment_link?: string | null;
+  payment_note?: string | null;
   created_at?: string | null;
+};
+
+type Profile = {
+  id?: string | null;
+  full_name?: string | null;
+  role?: string | null;
 };
 
 function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
-function nullableField(formData: FormData, key: string) {
-  const value = field(formData, key);
-  return value.length > 0 ? value : null;
+function normalizeRole(role?: string | null) {
+  if (!role) return "member";
+
+  if (role === "student") {
+    return "member";
+  }
+
+  return role;
 }
 
-async function registerForWorkshop(formData: FormData) {
-  "use server";
+function formatDate(value?: string | null) {
+  if (!value) return "";
 
-  const authSupabase = await createClient();
+  try {
+    return new Date(value).toLocaleDateString();
+  } catch {
+    return value;
+  }
+}
 
-  const {
-    data: { user },
-  } = await authSupabase.auth.getUser();
+function formatDateTime(value?: string | null) {
+  if (!value) return "-";
 
-  const workshopId = field(formData, "workshop_id");
-  const workshopSlug = field(formData, "workshop_slug");
-  const fullName = field(formData, "full_name");
-  const email = field(formData, "email");
+  try {
+    return new Date(value).toLocaleString();
+  } catch {
+    return value;
+  }
+}
 
-  if (!workshopId || !workshopSlug) {
-    redirect("/workshops?message=Missing workshop information");
+function formatWorkshopPrice(workshop: Workshop) {
+  const rawPrice = workshop.price ?? 0;
+  const price = Number(rawPrice);
+  const currency = workshop.currency || "USD";
+
+  if (!Number.isFinite(price) || price <= 0) {
+    return "Free / Not set";
   }
 
-  if (!user) {
-    redirect(
-      `/workshops/${workshopSlug}?message=${encodeURIComponent(
-        "Please register or login as a member first"
-      )}`
-    );
+  return `${currency} ${price}`;
+}
+
+function hasConfirmedWorkshopAccess(registration: Registration | null) {
+  if (!registration) {
+    return false;
   }
 
-  if (!fullName || !email) {
-    redirect(
-      `/workshops/${workshopSlug}?message=${encodeURIComponent(
-        "Name and email are required"
-      )}`
-    );
-  }
+  const paymentStatus = registration.payment_status?.toLowerCase() || "";
+  const registrationStatus = registration.status?.toLowerCase() || "";
 
-  const supabase = createAdminClient();
+  return (
+    paymentStatus === "confirmed" ||
+    paymentStatus === "paid" ||
+    paymentStatus === "waived" ||
+    paymentStatus === "not_required" ||
+    registrationStatus === "confirmed"
+  );
+}
 
-  const { data: existing } = await supabase
-    .from("workshop_registrations")
-    .select("id")
-    .eq("workshop_id", workshopId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+function isExternalVideo(mediaType?: string | null, mediaUrl?: string | null) {
+  if (!mediaUrl) return false;
 
-  if (existing) {
-    redirect(
-      `/workshops/${workshopSlug}?message=${encodeURIComponent(
-        "You have already registered for this workshop"
-      )}`
-    );
-  }
+  const type = mediaType?.toLowerCase() || "";
 
-  const { error } = await supabase.from("workshop_registrations").insert({
-    workshop_id: workshopId,
-    workshop_slug: workshopSlug,
-    session_id: null,
-    user_id: user.id,
-    full_name: fullName,
-    email,
-    phone: nullableField(formData, "phone"),
-    organization: nullableField(formData, "organization"),
-    message: nullableField(formData, "message"),
-    status: "registered",
-    payment_status: "pending",
-    payment_link: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
-
-  if (error) {
-    redirect(
-      `/workshops/${workshopSlug}?message=${encodeURIComponent(error.message)}`
-    );
-  }
-
-  await supabase.from("user_messages").insert({
-    user_id: user.id,
-    title: "Workshop registration received",
-    body:
-      "Your workshop registration has been received. Our team will review it and send you the next payment step here. After payment is confirmed, the full workshop session links will be unlocked.",
-    link_url: `/workshops/${workshopSlug}`,
-    is_read: false,
-    created_at: new Date().toISOString(),
-  });
-
-  revalidatePath(`/workshops/${workshopSlug}`);
-  revalidatePath("/dashboard/messages");
-  revalidatePath("/admin/registrations");
-  revalidatePath("/manager/registrations");
-
-  redirect(`/workshops/${workshopSlug}?registered=1`);
+  return (
+    type === "external_video" ||
+    type === "youtube" ||
+    mediaUrl.includes("youtube.com") ||
+    mediaUrl.includes("youtu.be") ||
+    mediaUrl.includes("jianying") ||
+    mediaUrl.includes("capcut")
+  );
 }
 
 function getYouTubeEmbedUrl(url?: string | null) {
   if (!url) return null;
 
   try {
-    const parsedUrl = new URL(url);
-    const host = parsedUrl.hostname.replace("www.", "");
+    const parsed = new URL(url);
 
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      if (parsedUrl.pathname === "/watch") {
-        const videoId = parsedUrl.searchParams.get("v");
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-      }
-
-      if (parsedUrl.pathname.startsWith("/shorts/")) {
-        const videoId = parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0];
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-      }
-
-      if (parsedUrl.pathname.startsWith("/embed/")) {
-        return url;
-      }
+    if (parsed.hostname.includes("youtu.be")) {
+      const id = parsed.pathname.replace("/", "");
+      return id ? `https://www.youtube.com/embed/${id}` : null;
     }
 
-    if (host === "youtu.be") {
-      const videoId = parsedUrl.pathname.replace("/", "").split("?")[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+
+      if (id) {
+        return `https://www.youtube.com/embed/${id}`;
+      }
+
+      if (parsed.pathname.includes("/embed/")) {
+        return url;
+      }
     }
 
     return null;
@@ -202,67 +181,15 @@ function getYouTubeEmbedUrl(url?: string | null) {
   }
 }
 
-function getCoverImage(workshop: Workshop) {
-  return (
-    workshop.image_url ||
-    workshop.cover_url ||
-    workshop.thumbnail_url ||
-    null
-  );
-}
+async function registerForWorkshop(formData: FormData) {
+  "use server";
 
-function getMaterialUrl(workshop: Workshop) {
-  return (
-    workshop.material_url ||
-    workshop.materials_url ||
-    workshop.resource_url ||
-    workshop.file_url ||
-    null
-  );
-}
+  const workshopId = field(formData, "workshop_id");
+  const slug = field(formData, "slug");
 
-function getWorkshopDescription(workshop: Workshop) {
-  return (
-    workshop.description ||
-    workshop.short_description ||
-    workshop.summary ||
-    "Workshop details will be updated soon."
-  );
-}
-
-function formatPrice(workshop: Workshop) {
-  const price = Number(workshop.price ?? 0);
-
-  if (!price) {
-    return "Contact us";
+  if (!workshopId || !slug) {
+    redirect("/workshops?message=Missing workshop information");
   }
-
-  return `${price} ${workshop.currency || "USD"}`;
-}
-
-function hasPaidAccess(registration: Registration | null) {
-  if (!registration) return false;
-
-  return (
-    registration.payment_status === "confirmed" ||
-    registration.payment_status === "paid" ||
-    registration.status === "approved" ||
-    registration.status === "confirmed" ||
-    registration.status === "paid"
-  );
-}
-
-export default async function WorkshopDetailPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ message?: string; registered?: string }>;
-}) {
-  noStore();
-
-  const { slug } = await params;
-  const { message, registered } = await searchParams;
 
   const supabase = await createClient();
 
@@ -270,54 +197,212 @@ export default async function WorkshopDetailPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  let profile: { role?: string | null } | null = null;
+  if (!user) {
+    redirect(`/login?redirect=/workshops/${slug}`);
+  }
+
+  const admin = createAdminClient();
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name, role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const { data: existingRegistration } = await admin
+    .from("workshop_registrations")
+    .select("id")
+    .eq("workshop_id", workshopId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingRegistration) {
+    redirect(`/workshops/${slug}?message=You have already registered for this workshop`);
+  }
+
+  const { error } = await admin.from("workshop_registrations").insert({
+    workshop_id: workshopId,
+    user_id: user.id,
+    full_name:
+      profile?.full_name ||
+      user.user_metadata?.full_name ||
+      user.email ||
+      "Member",
+    email: user.email,
+    status: "pending",
+    payment_status: "pending",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    redirect(`/workshops/${slug}?message=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect(
+    `/workshops/${slug}?message=Registration submitted. Please check your dashboard and message box for updates.`
+  );
+}
+
+function ResourceButtons({
+  meetingUrl,
+  recordingUrl,
+  materialUrl,
+}: {
+  meetingUrl?: string | null;
+  recordingUrl?: string | null;
+  materialUrl?: string | null;
+}) {
+  if (!meetingUrl && !recordingUrl && !materialUrl) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 flex flex-wrap gap-3">
+      {meetingUrl ? (
+        <a
+          href={meetingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+        >
+          Join session
+        </a>
+      ) : null}
+
+      {recordingUrl ? (
+        <a
+          href={recordingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+        >
+          Recording
+        </a>
+      ) : null}
+
+      {materialUrl ? (
+        <a
+          href={materialUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+        >
+          Materials
+        </a>
+      ) : null}
+    </div>
+  );
+}
+
+function MediaBlock({
+  mediaType,
+  mediaUrl,
+}: {
+  mediaType?: string | null;
+  mediaUrl?: string | null;
+}) {
+  if (!mediaUrl) {
+    return null;
+  }
+
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(mediaUrl);
+
+  if (youtubeEmbedUrl) {
+    return (
+      <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-black">
+        <iframe
+          src={youtubeEmbedUrl}
+          title="Workshop video"
+          className="aspect-video w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+
+  if (mediaType === "video") {
+    return (
+      <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-black">
+        <video src={mediaUrl} controls className="w-full" />
+      </div>
+    );
+  }
+
+  if (isExternalVideo(mediaType, mediaUrl)) {
+    return (
+      <a
+        href={mediaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-5 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+      >
+        Open video link
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={mediaUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-5 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+    >
+      Open media
+    </a>
+  );
+}
+
+export default async function WorkshopSlugPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ message?: string }>;
+}) {
+  noStore();
+
+  const { slug } = await params;
+  const { message } = await searchParams;
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let profile: Profile | null = null;
 
   if (user) {
     const { data: profileData } = await supabase
       .from("profiles")
-      .select("role")
+      .select("id, full_name, role")
       .eq("id", user.id)
       .maybeSingle();
 
-    profile = profileData;
+    profile = profileData as Profile | null;
   }
 
-  const role = profile?.role ?? null;
+  const rawRole = profile?.role ?? null;
+  const role = normalizeRole(rawRole);
 
   const isAdmin = role === "admin";
   const isManager = role === "manager";
   const isSpeaker = role === "speaker";
 
-  const canManageCosts = isAdmin || isManager;
-
-  const { data: workshopData, error } = await supabase
+  const { data: workshopData } = await supabase
     .from("workshops")
     .select("*")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
-  if (error || !workshopData) {
+  if (!workshopData) {
     notFound();
   }
 
   const workshop = workshopData as Workshop;
-
-  const published =
-    workshop.is_published !== false && workshop.is_active !== false;
-
-  if (!published && !isAdmin) {
-    notFound();
-  }
-
-  const { data: sessionsData } = await supabase
-    .from("workshop_sessions")
-    .select("*")
-    .eq("workshop_id", workshop.id)
-    .eq("is_active", true)
-    .order("display_order", { ascending: true })
-    .order("starts_at", { ascending: true });
-
-  const sessions = (sessionsData ?? []) as WorkshopSession[];
 
   let registration: Registration | null = null;
 
@@ -332,18 +417,64 @@ export default async function WorkshopDetailPage({
     registration = registrationData as Registration | null;
   }
 
-  const paidAccess = isAdmin || isManager || isSpeaker || hasPaidAccess(registration);
+  const { data: sessionData } = await supabase
+    .from("workshop_sessions")
+    .select("*")
+    .eq("workshop_id", workshop.id)
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  const sessions = (sessionData ?? []) as WorkshopSession[];
+
+  const sessionIds = sessions.map((session) => session.id);
+
+  let subsessions: WorkshopSubsession[] = [];
+
+  if (sessionIds.length > 0) {
+    const { data: subsessionsData } = await supabase
+      .from("workshop_subsessions")
+      .select("*")
+      .in("session_id", sessionIds)
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    subsessions = (subsessionsData ?? []) as WorkshopSubsession[];
+  }
+
+  const subsessionsBySessionId = new Map<string, WorkshopSubsession[]>();
+
+  for (const subsession of subsessions) {
+    if (!subsession.session_id) continue;
+
+    const existing = subsessionsBySessionId.get(subsession.session_id) ?? [];
+    existing.push(subsession);
+    subsessionsBySessionId.set(subsession.session_id, existing);
+  }
+
+  const userEmail = user?.email?.toLowerCase() ?? "";
+
+  function isAssignedToSpeaker(email?: string | null) {
+    if (!isSpeaker || !userEmail || !email) {
+      return false;
+    }
+
+    return email.toLowerCase().trim() === userEmail;
+  }
+
+  const canSeeAllPrivateAccess =
+    isAdmin || isManager || hasConfirmedWorkshopAccess(registration);
 
   const canSeeWorkshopCost =
-  canManageCosts || (Boolean(registration) && !isSpeaker);
+    isAdmin || isManager || (Boolean(registration) && !isSpeaker);
 
-  const coverImage = getCoverImage(workshop);
-  const materialUrl = getMaterialUrl(workshop);
-  const description = getWorkshopDescription(workshop);
+  const canRegister =
+    Boolean(user) && !registration && !isAdmin && !isManager && !isSpeaker;
 
   return (
-    <main className="bg-slate-50">
-      <section className="mx-auto max-w-7xl px-6 py-12">
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8">
         <Link
           href="/workshops"
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
@@ -351,443 +482,298 @@ export default async function WorkshopDetailPage({
           ← Back to workshops
         </Link>
 
-        <div className="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-          {coverImage ? (
-            <img
-              src={coverImage}
-              alt={workshop.title ?? "Workshop cover"}
-              className="h-[360px] w-full object-cover"
-            />
-          ) : (
-            <div className="h-[360px] w-full bg-gradient-to-br from-slate-200 via-slate-100 to-blue-100" />
-          )}
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+          Workshop
+        </p>
 
-          <div className="p-8 md:p-10">
-            <p className="text-sm font-semibold text-slate-500">
-              {workshop.level || "Beginner"} · {workshop.language || "English"}
-            </p>
+        <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          {workshop.title || "Workshop"}
+        </h1>
 
-            <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-              {workshop.title}
-            </h1>
+        {workshop.short_description ? (
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+            {workshop.short_description}
+          </p>
+        ) : null}
 
-            {workshop.short_description || workshop.summary ? (
-              <p className="mt-6 max-w-4xl text-xl leading-9 text-slate-600">
-                {workshop.short_description || workshop.summary}
-              </p>
-            ) : null}
+        <div className="mt-5 flex flex-wrap gap-3 text-sm font-semibold">
+          {workshop.level ? (
+            <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+              {workshop.level}
+            </span>
+          ) : null}
 
-            <div
-              className={
-                canSeeWorkshopCost
-                  ? "mt-8 grid gap-4 md:grid-cols-4"
-                  : "mt-8 grid gap-4 md:grid-cols-3"
-              }
+          {workshop.starts_at ? (
+            <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+              {formatDate(workshop.starts_at)}
+            </span>
+          ) : null}
+
+          {canSeeWorkshopCost ? (
+            <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+              {formatWorkshopPrice(workshop)}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      {message ? (
+        <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          {message}
+        </div>
+      ) : null}
+
+      {isAdmin || isManager ? (
+        <div className="mb-8 rounded-2xl border border-purple-200 bg-purple-50 p-5 text-purple-800">
+          <p className="font-bold">Management preview mode</p>
+          <p className="mt-1 text-sm leading-6">
+            Workshop session links, materials, recordings, videos, and
+            subsessions are unlocked for this account.
+          </p>
+        </div>
+      ) : null}
+
+      {!user ? (
+        <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
+          <p className="font-bold">Create an account to register</p>
+          <p className="mt-1 text-sm leading-6">
+            Please create an account or login before submitting a workshop
+            registration.
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href={`/signup?redirect=/workshops/${slug}`}
+              className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
             >
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                  Format
-                </p>
-                <p className="mt-2 font-bold text-slate-900">
-                  {workshop.format || "Online"}
-                </p>
-              </div>
+              Create account
+            </Link>
 
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                  Date
-                </p>
-                <p className="mt-2 font-bold text-slate-900">
-                  {workshop.start_date || workshop.date || "TBA"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                  Duration
-                </p>
-                <p className="mt-2 font-bold text-slate-900">
-                  {workshop.duration || "TBA"}
-                </p>
-              </div>
-
-              {canSeeWorkshopCost ? (
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                    Cost
-                  </p>
-                  <p className="mt-2 font-bold text-slate-900">
-                    {formatPrice(workshop)}
-                  </p>
-                </div>
-              ) : null}
-            </div>
+            <Link
+              href={`/login?redirect=/workshops/${slug}`}
+              className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-white"
+            >
+              Login
+            </Link>
           </div>
         </div>
+      ) : canRegister ? (
+        <form action={registerForWorkshop} className="mb-8">
+          <input type="hidden" name="workshop_id" value={workshop.id} />
+          <input type="hidden" name="slug" value={slug} />
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_420px]">
-          <section className="space-y-8">
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="text-3xl font-black text-slate-950">
-                Workshop introduction
-              </h2>
+          <button
+            type="submit"
+            className="rounded-xl bg-slate-950 px-6 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Register for this workshop
+          </button>
+        </form>
+      ) : registration && !canSeeAllPrivateAccess && !isSpeaker ? (
+        <div className="mb-8 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
+          <p className="font-bold">Registration submitted</p>
+          <p className="mt-1 text-sm leading-6">
+            Please check your dashboard and message box for updates from the
+            LexData team.
+          </p>
 
-              <div className="mt-6 whitespace-pre-wrap text-lg leading-9 text-slate-700">
-                {description}
-              </div>
-            </div>
+          <Link
+            href="/dashboard/messages"
+            className="mt-4 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Open message box
+          </Link>
+        </div>
+      ) : null}
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="text-3xl font-black text-slate-950">
-                Session arrangement
-              </h2>
+      {workshop.description ? (
+        <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+          <h2 className="text-2xl font-black text-slate-950">
+            Workshop overview
+          </h2>
 
-              {isAdmin || isManager ? (
-                <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5 text-purple-800">
-                  Admin preview mode. All workshop session links, materials,
-                  recordings, and videos are unlocked for this account.
-                </div>
-                ) : isSpeaker ? (
-  <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
-    Speaker preview mode. Session arrangements, materials, and links are
-    available for this speaker account. Payment and cost information is hidden.
-  </div>
-              ) : !user ? (
-                <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
-                  Please register or login as a member first. After registration
-                  and payment confirmation, full session links will be unlocked.
-                </div>
-              ) : registration && !paidAccess ? (
-                <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-800">
-                  You have registered for this workshop. Please check your
-                  message box for the payment step. Session links will be
-                  unlocked after payment is confirmed.
+          <p className="mt-4 whitespace-pre-wrap leading-8 text-slate-600">
+            {workshop.description}
+          </p>
+        </section>
+      ) : null}
 
-                  <div className="mt-4">
-                    <Link
-                      href="/dashboard/messages"
-                      className="font-bold text-blue-700 hover:underline"
-                    >
-                      Open message box
-                    </Link>
-                  </div>
-                </div>
-              ) : paidAccess ? (
-                <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800">
-                  Payment confirmed. Full session links are unlocked.
-                </div>
-              ) : null}
+      <section className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="mb-6">
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+            Sessions
+          </p>
 
-              {sessions.length === 0 ? (
-                <p className="mt-6 text-lg text-slate-600">
-                  No upcoming sessions yet.
-                </p>
-              ) : (
-                <div className="mt-6 space-y-5">
-                  {sessions.map((session) => {
-                    const youtubeEmbedUrl = getYouTubeEmbedUrl(
-                      session.media_url
-                    );
+          <h2 className="mt-3 text-3xl font-black text-slate-950">
+            Session arrangements
+          </h2>
 
-                    return (
-                      <article
-                        key={session.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-                      >
-                        <h3 className="text-xl font-black text-slate-950">
-                          {session.title || "Workshop Session"}
-                        </h3>
+          <p className="mt-3 max-w-3xl text-slate-600">
+            Registered members with confirmed access can view available session
+            details, materials, links, recordings, and subsessions.
+          </p>
+        </div>
 
-                        <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-600">
-                          {session.session_date ? (
-                            <span>Date: {session.session_date}</span>
-                          ) : null}
+        {sessions.length === 0 ? (
+          <div className="rounded-2xl bg-slate-50 p-6 text-slate-600">
+            No sessions have been published yet.
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {sessions.map((session) => {
+              const childSubsessions =
+                subsessionsBySessionId.get(session.id) ?? [];
 
-                          {session.start_time ? (
-                            <span>Start: {session.start_time}</span>
-                          ) : null}
+              const speakerOwnsSession = isAssignedToSpeaker(
+                session.speaker_email
+              );
 
-                          {session.end_time ? (
-                            <span>End: {session.end_time}</span>
-                          ) : null}
+              const canSeeThisSessionPrivate =
+                canSeeAllPrivateAccess || speakerOwnsSession;
 
-                          {session.location ? (
-                            <span>Location: {session.location}</span>
-                          ) : null}
-                        </div>
+              const visibleSubsessions = canSeeThisSessionPrivate
+                ? childSubsessions
+                : childSubsessions.filter((subsession) =>
+                    isAssignedToSpeaker(subsession.speaker_email)
+                  );
 
-                        {paidAccess && session.media_url ? (
-                          <div className="mt-5 overflow-hidden rounded-2xl bg-slate-950">
-                            {session.media_type === "video" ? (
-                              <video
-                                src={session.media_url}
-                                controls
-                                playsInline
-                                className="aspect-video w-full object-cover"
-                              />
-                            ) : youtubeEmbedUrl ? (
-                              <iframe
-                                src={youtubeEmbedUrl}
-                                title={session.title || "Workshop video"}
-                                className="aspect-video w-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                              />
-                            ) : (
-                              <div className="flex aspect-video items-center justify-center p-6 text-center text-white">
-                                <a
-                                  href={session.media_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="rounded-xl bg-white px-5 py-3 font-bold text-slate-950 hover:bg-slate-100"
-                                >
-                                  Open session video
-                                </a>
-                              </div>
-                            )}
-                          </div>
+              return (
+                <article
+                  key={session.id}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-6"
+                >
+                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+                    <div>
+                      <h3 className="text-xl font-black text-slate-950">
+                        {session.title || "Session"}
+                      </h3>
+
+                      <div className="mt-2 flex flex-wrap gap-2 text-sm font-semibold text-slate-500">
+                        {session.session_date ? (
+                          <span>{session.session_date}</span>
                         ) : null}
 
-                        {paidAccess ? (
-                          <div className="mt-5 flex flex-wrap gap-3">
-                            {session.meeting_url ? (
-                              <a
-                                href={session.meeting_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
-                              >
-                                Join session
-                              </a>
+                        {session.start_time || session.end_time ? (
+                          <span>
+                            {session.start_time || "-"} -{" "}
+                            {session.end_time || "-"}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
+                  {session.description ? (
+                    <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-600">
+                      {session.description}
+                    </p>
+                  ) : null}
+
+                  {canSeeThisSessionPrivate ? (
+                    <>
+                      <ResourceButtons
+                        meetingUrl={session.meeting_url}
+                        recordingUrl={session.recording_url}
+                        materialUrl={session.material_url}
+                      />
+
+                      <MediaBlock
+                        mediaType={session.media_type}
+                        mediaUrl={session.media_url}
+                      />
+                    </>
+                  ) : (
+                    <div className="mt-4 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-600">
+                      Session details are not available for this account.
+                    </div>
+                  )}
+
+                  {visibleSubsessions.length > 0 ? (
+                    <div className="mt-6 space-y-4">
+                      <h4 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">
+                        Subsessions
+                      </h4>
+
+                      {visibleSubsessions.map((subsession) => {
+                        const speakerOwnsSubsession = isAssignedToSpeaker(
+                          subsession.speaker_email
+                        );
+
+                        const canSeeThisSubsessionPrivate =
+                          canSeeAllPrivateAccess ||
+                          speakerOwnsSession ||
+                          speakerOwnsSubsession;
+
+                        return (
+                          <div
+                            key={subsession.id}
+                            className="rounded-2xl border border-slate-200 bg-white p-5"
+                          >
+                            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
+                              <div>
+                                <h5 className="text-lg font-black text-slate-950">
+                                  {subsession.title || "Subsession"}
+                                </h5>
+
+                                <div className="mt-2 flex flex-wrap gap-2 text-sm font-semibold text-slate-500">
+                                  {subsession.start_time ||
+                                  subsession.end_time ? (
+                                    <span>
+                                      {subsession.start_time || "-"} -{" "}
+                                      {subsession.end_time || "-"}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </div>
+
+                            {subsession.description ? (
+                              <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-600">
+                                {subsession.description}
+                              </p>
                             ) : null}
 
-                            {session.recording_url ? (
-                              <a
-                                href={session.recording_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-                              >
-                                Recording
-                              </a>
-                            ) : null}
+                            {canSeeThisSubsessionPrivate ? (
+                              <>
+                                <ResourceButtons
+                                  meetingUrl={subsession.meeting_url}
+                                  recordingUrl={subsession.recording_url}
+                                  materialUrl={subsession.material_url}
+                                />
 
-                            {session.material_url ? (
-                              <a
-                                href={session.material_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-                              >
-                                Materials
-                              </a>
+                                <MediaBlock
+                                  mediaType={subsession.media_type}
+                                  mediaUrl={subsession.media_url}
+                                />
+                              </>
                             ) : null}
                           </div>
-                        ) : (
-                          <div className="mt-5 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-600">
-                            Session links are locked until registration and
-                            payment confirmation.
-                          </div>
-                        )}
-                      </article>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </section>
-
-          <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-2xl font-black text-slate-950">
-              Register for this workshop
-            </h2>
-
-            {registered ? (
-              <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-700">
-                Registration submitted successfully. Check your message box for
-                the next payment step.
-              </div>
-            ) : null}
-
-            {message ? (
-              <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
-                {message}
-              </div>
-            ) : null}
-
-            {isAdmin ? (
-              <div className="mt-6 rounded-2xl border border-purple-200 bg-purple-50 p-5">
-                <p className="font-semibold text-purple-800">
-                  Admin access enabled.
-                </p>
-
-                <p className="mt-2 text-sm leading-6 text-purple-700">
-                  You are viewing this workshop as an admin. Registration,
-                  payment, cost, session links, materials, recordings, and
-                  videos are unlocked for this account.
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    href="/admin/registrations"
-                    className="rounded-xl bg-purple-700 px-4 py-2 text-sm font-bold text-white hover:bg-purple-800"
-                  >
-                    Manage registrations
-                  </Link>
-
-                  <Link
-                    href="/admin/workshops"
-                    className="rounded-xl border border-purple-300 px-4 py-2 text-sm font-bold text-purple-700 hover:bg-purple-100"
-                  >
-                    Manage workshops
-                  </Link>
-                </div>
-              </div>
-            ) : !user ? (
-              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-                <p className="font-semibold text-amber-800">
-                  Please register as a website member first.
-                </p>
-
-                <p className="mt-2 text-sm leading-6 text-amber-700">
-                Guest users cannot register directly for workshops. After you create an
-                account and login, you can submit your workshop registration and receive the
-                next steps from the LexData team.
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    href={`/signup?redirect=/workshops/${slug}`}
-                    className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
-                  >
-                    Create account
-                  </Link>
-
-                  <Link
-                    href={`/login?redirect=/workshops/${slug}`}
-                    className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-white"
-                  >
-                    Login
-                  </Link>
-                </div>
-              </div>
-            ) : registration ? (
-              <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
-                <p className="font-semibold text-blue-800">
-                  You have already registered for this workshop.
-                </p>
-
-                <p className="mt-2 text-sm text-blue-700">
-                  Registration status: {registration.status || "registered"}
-                </p>
-
-                <p className="mt-1 text-sm text-blue-700">
-                  Payment status: {registration.payment_status || "pending"}
-                </p>
-
-                {canSeeWorkshopCost ? (
-                <p className="mt-1 text-sm font-semibold text-blue-800">
-                 Workshop cost: {formatPrice(workshop)}
-                </p>
-                ) : null}
-
-                {!isSpeaker ? (
-  registration.payment_link ? (
-    <a
-      href={registration.payment_link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-    >
-      Open payment link
-    </a>
-  ) : (
-    <Link
-      href="/dashboard/messages"
-      className="mt-4 inline-flex rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white hover:bg-blue-800"
-    >
-      Check message box
-    </Link>
-  )
-) : null}
-              </div>
-            ) : (
-              <form action={registerForWorkshop} className="mt-6 space-y-4">
-                <input type="hidden" name="workshop_id" value={workshop.id} />
-                <input type="hidden" name="workshop_slug" value={slug} />
-
-                <input
-                  name="full_name"
-                  required
-                  placeholder="Full name"
-                  className="w-full rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  defaultValue={user.email ?? ""}
-                  placeholder="Email address"
-                  className="w-full rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="phone"
-                  placeholder="Phone / WhatsApp / WeChat"
-                  className="w-full rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="organization"
-                  placeholder="University / company"
-                  className="w-full rounded-xl border px-4 py-3"
-                />
-
-                <textarea
-                  name="message"
-                  rows={4}
-                  placeholder="Message or questions"
-                  className="w-full rounded-xl border px-4 py-3"
-                />
-
-                <button
-                  type="submit"
-                  className="w-full rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-                >
-                  Submit Registration
-                </button>
-              </form>
-            )}
-
-            <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600">
-              {workshop.instructor || workshop.speaker ? (
-                <p>
-                  <strong>Instructor:</strong>{" "}
-                  {workshop.instructor || workshop.speaker}
-                </p>
-              ) : null}
-
-              {workshop.location ? (
-                <p className="mt-2">
-                  <strong>Location:</strong> {workshop.location}
-                </p>
-              ) : null}
-
-              {paidAccess && materialUrl ? (
-                <a
-                  href={materialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex font-bold text-blue-700 hover:underline"
-                >
-                  View workshop material
-                </a>
-              ) : null}
-            </div>
-          </aside>
-        </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
+
+      <div className="mt-10 flex flex-wrap gap-3">
+        <Link
+          href="/dashboard/my-learning"
+          className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+        >
+          My Learning
+        </Link>
+
+        <Link
+          href="/dashboard/messages"
+          className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+        >
+          Message Box
+        </Link>
+      </div>
     </main>
   );
 }

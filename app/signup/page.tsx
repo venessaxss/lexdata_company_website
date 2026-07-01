@@ -53,7 +53,7 @@ async function signup(formData: FormData) {
       )}`,
       data: {
         full_name: fullName,
-        role: "student",
+        role: "member",
       },
     },
   });
@@ -69,7 +69,7 @@ async function signup(formData: FormData) {
       {
         id: data.user.id,
         full_name: fullName,
-        role: "student",
+        role: "member",
         updated_at: new Date().toISOString(),
       },
       {

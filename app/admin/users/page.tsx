@@ -2,8 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateUserRole } from "./actions";
 
-const roles = ["student", "speaker", "manager", "admin"];
-
+const roles = ["member", "speaker", "manager", "staff", "admin"];
 export default async function AdminUsersPage({
   searchParams,
 }: {
@@ -45,7 +44,7 @@ export default async function AdminUsersPage({
           Users and Roles
         </h1>
         <p className="mt-2 text-slate-600">
-          Assign students, speakers, managers, and admins from this page.
+          Assign members, speakers, managers, staff, and admins from this page.
         </p>
       </div>
 

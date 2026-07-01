@@ -1,60 +1,54 @@
-export const APP_ROLES = ["student", "speaker", "manager", "admin"] as const;
+export const APP_ROLES = [
+  "member",
+  "speaker",
+  "manager",
+  "staff",
+  "admin",
+] as const;
 
-export type AppRole = (typeof APP_ROLES)[number] | "instructor";
+export type AppRole = (typeof APP_ROLES)[number];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  student: "Student",
+  member: "Member",
   speaker: "Speaker",
-  instructor: "Speaker",
   manager: "Manager",
-  admin: "Admin"
+  staff: "Staff",
+  admin: "Admin",
 };
 
 export const ROLE_DESCRIPTIONS: Record<AppRole, string> = {
-  student: "Learns courses, registers for workshops, and manages own payments.",
-  speaker: "Delivers training sessions and checks own attendees.",
-  instructor: "Delivers training sessions and checks own attendees.",
-  manager: "Manages payments, registrations, and finance records.",
-  admin: "Controls courses, workshops, users, roles, and all management pages."
+  member:
+    "Registered website member. Can register for workshops, access approved learning materials, and receive messages.",
+  speaker:
+    "Workshop speaker. Can access assigned sessions and receive speaker-related messages.",
+  manager:
+    "Operations manager. Can manage registrations, manual payments, access confirmation, and messages.",
+  staff:
+    "Internal company, board, or team member. Can receive internal messages and access member tools.",
+  admin:
+    "Full website administrator. Can manage users, roles, workshops, media, registrations, and website content.",
 };
 
 export function normalizeRole(role?: string | null): AppRole {
-  if (role === "admin" || role === "manager" || role === "speaker" || role === "instructor") {
-    return role;
+  if (!role) {
+    return "member";
   }
-  return "student";
+
+  if (role === "student") {
+    return "member";
+  }
+
+  if (APP_ROLES.includes(role as AppRole)) {
+    return role as AppRole;
+  }
+
+  return "member";
 }
 
-export function isSpeakerRole(role?: string | null) {
-  const normalized = normalizeRole(role);
-  return normalized === "speaker" || normalized === "instructor" || normalized === "admin";
+export function getRoleLabel(role?: string | null) {
+  return ROLE_LABELS[normalizeRole(role)];
 }
 
-export function isManagerRole(role?: string | null) {
-  const normalized = normalizeRole(role);
-  return normalized === "manager" || normalized === "admin";
-}
-
-export function isAdminRole(role?: string | null) {
-  return normalizeRole(role) === "admin";
-}
-
-export function hasRoleAccess(role: string | null | undefined, allowedRoles: AppRole[]) {
-  const normalized = normalizeRole(role);
-
-  // Admin can access every internal role area.
-  if (normalized === "admin") return true;
-
-  // Backward compatibility: old "instructor" role behaves like "speaker".
-  if (normalized === "instructor" && allowedRoles.includes("speaker")) return true;
-
-  return allowedRoles.includes(normalized);
-}
-
-export function defaultRoleHome(role?: string | null) {
-  const normalized = normalizeRole(role);
-  if (normalized === "admin") return "/admin/courses";
-  if (normalized === "manager") return "/manager/payments";
-  if (normalized === "speaker" || normalized === "instructor") return "/speaker/sessions";
-  return "/dashboard";
+export function getRoleDescription(role?: string | null) {
+  return ROLE_DESCRIPTIONS[normalizeRole(role)];
 }
