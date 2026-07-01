@@ -1,8 +1,49 @@
 import Link from "next/link";
-import { sendPasswordResetEmail } from "./actions";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+function field(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+function getSiteUrl() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (!siteUrl) {
+    return "http://localhost:3000";
+  }
+
+  return siteUrl.replace(/\/$/, "");
+}
+
+async function sendPasswordResetEmail(formData: FormData) {
+  "use server";
+
+  const email = field(formData, "email");
+
+  if (!email) {
+    redirect("/forgot-password?message=Email is required");
+  }
+
+  const siteUrl = getSiteUrl();
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${siteUrl}/reset-password`,
+  });
+
+  if (error) {
+    redirect(`/forgot-password?message=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect(
+    "/forgot-password?message=Password reset email sent. Please check your inbox."
+  );
+}
 
 export default async function ForgotPasswordPage({
   searchParams,
@@ -57,6 +98,15 @@ export default async function ForgotPasswordPage({
             Send reset link
           </button>
         </form>
+
+        <div className="mt-6">
+          <Link
+            href="/signup"
+            className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+          >
+            Need an account? Create account
+          </Link>
+        </div>
       </div>
     </main>
   );
