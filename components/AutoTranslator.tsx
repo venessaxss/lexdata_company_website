@@ -91,6 +91,8 @@ async function requestTranslations(language: AppLanguage, texts: string[]) {
     return {};
   }
 
+  console.log("[AutoTranslator] requesting", language, uniqueTexts.length);
+
   const response = await fetch("/api/auto-translate", {
     method: "POST",
     headers: {
@@ -103,10 +105,13 @@ async function requestTranslations(language: AppLanguage, texts: string[]) {
   });
 
   if (!response.ok) {
+    console.error("[AutoTranslator] API failed", response.status);
     return {};
   }
 
   const data = await response.json();
+
+  console.log("[AutoTranslator] API response", data);
 
   return (data?.translations ?? {}) as Record<string, string>;
 }
@@ -121,12 +126,15 @@ export default function AutoTranslator({
   useEffect(() => {
     const normalizedLanguage = normalizeLanguage(language);
 
+    console.log("[AutoTranslator] mounted language:", normalizedLanguage);
+
     let cancelled = false;
 
     async function translateRoot(root: ParentNode) {
       const allNodes = collectTextNodes(root);
 
       if (allNodes.length === 0) {
+        console.log("[AutoTranslator] no text nodes found");
         return;
       }
 
@@ -145,6 +153,8 @@ export default function AutoTranslator({
           sourceTexts.push(normalizeText(originalText));
         }
       }
+
+      console.log("[AutoTranslator] collected nodes:", allNodes.length);
 
       if (normalizedLanguage === "en") {
         for (const node of allNodes) {
@@ -167,6 +177,8 @@ export default function AutoTranslator({
         return;
       }
 
+      let appliedCount = 0;
+
       for (const node of allNodes) {
         const originalText = originalTextRef.current.get(node) || "";
         const normalizedOriginal = normalizeText(originalText);
@@ -174,8 +186,11 @@ export default function AutoTranslator({
 
         if (translated && translated !== normalizedOriginal) {
           node.textContent = applyTranslation(originalText, translated);
+          appliedCount += 1;
         }
       }
+
+      console.log("[AutoTranslator] applied translations:", appliedCount);
     }
 
     translateRoot(document.body);

@@ -80,35 +80,52 @@ function getLaraTranslator() {
   }
 
   const credentials = new Credentials(accessKeyId, accessKeySecret);
+
   return new Translator(credentials);
 }
 
-async function translateWithLara(text: string, targetLanguage: string) {
+async function translateWithLara(text: string, language: string) {
   const lara = getLaraTranslator();
 
   if (!lara) {
-    return text;
+    return {
+      translatedText: text,
+      usedProvider: false,
+      error: "Missing LARA_ACCESS_KEY_ID or LARA_ACCESS_KEY_SECRET",
+    };
   }
 
-  const target = LARA_TARGET_LANGUAGE_MAP[targetLanguage] || targetLanguage;
+  const target = LARA_TARGET_LANGUAGE_MAP[language] || language;
 
   try {
-    const result = await lara.translate(text, "en-US", target, {
-      style: "fluid",
-      contentType: "text/plain",
-      noTrace: true,
-    });
+    const result = await lara.translate(text, "en-US", target);
 
     const translated = result?.translation;
 
     if (typeof translated === "string" && translated.trim()) {
-      return translated.trim();
+      return {
+        translatedText: translated.trim(),
+        usedProvider: true,
+        error: null,
+      };
     }
 
-    return text;
+    return {
+      translatedText: text,
+      usedProvider: true,
+      error: "Lara returned empty translation",
+    };
   } catch (error) {
     console.error("Lara translation failed:", error);
-    return text;
+
+    return {
+      translatedText: text,
+      usedProvider: true,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown Lara translation error",
+    };
   }
 }
 
@@ -117,19 +134,32 @@ export async function POST(request: Request) {
     const payload = (await request.json()) as TranslateRequest;
 
     const language = normalizeLanguage(payload.language);
+    const texts = uniqueTexts(payload.texts ?? []);
+
+    const debug = {
+      language,
+      textCount: texts.length,
+      hasLaraAccessKeyId: Boolean(process.env.LARA_ACCESS_KEY_ID),
+      hasLaraAccessKeySecret: Boolean(process.env.LARA_ACCESS_KEY_SECRET),
+      providerCalls: 0,
+      cacheHits: 0,
+      errors: [] as string[],
+    };
 
     if (language === "en") {
       return NextResponse.json({
         ok: true,
+        language,
+        debug,
         translations: {},
       });
     }
 
-    const texts = uniqueTexts(payload.texts ?? []);
-
     if (texts.length === 0) {
       return NextResponse.json({
         ok: true,
+        language,
+        debug,
         translations: {},
       });
     }
@@ -149,7 +179,9 @@ export async function POST(request: Request) {
     const cachedMap = new Map<string, string>();
 
     for (const row of cachedRows) {
-      cachedMap.set(row.source_hash, row.translated_text);
+      if (row.translated_text && row.translated_text !== row.source_text) {
+        cachedMap.set(row.source_hash, row.translated_text);
+      }
     }
 
     const translations: Record<string, string> = {};
@@ -159,38 +191,56 @@ export async function POST(request: Request) {
       const cached = cachedMap.get(hash);
 
       if (cached) {
+        debug.cacheHits += 1;
         translations[text] = cached;
         continue;
       }
 
-      const translatedText = await translateWithLara(text, language);
+      const result = await translateWithLara(text, language);
 
-      translations[text] = translatedText;
+      debug.providerCalls += result.usedProvider ? 1 : 0;
 
-      await supabase.from("auto_translation_cache").upsert(
-        {
-          source_hash: hash,
-          source_text: text,
-          target_language: language,
-          translated_text: translatedText,
-          provider: "lara",
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "source_hash,target_language",
-        }
-      );
+      if (result.error) {
+        debug.errors.push(`${text}: ${result.error}`);
+      }
+
+      translations[text] = result.translatedText;
+
+      if (result.translatedText && result.translatedText !== text) {
+        await supabase.from("auto_translation_cache").upsert(
+          {
+            source_hash: hash,
+            source_text: text,
+            target_language: language,
+            translated_text: result.translatedText,
+            provider: "lara",
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "source_hash,target_language",
+          }
+        );
+      }
     }
 
     return NextResponse.json({
       ok: true,
+      language,
+      debug,
       translations,
     });
   } catch (error) {
     console.error("Auto translation route failed:", error);
 
     return NextResponse.json({
-      ok: true,
+      ok: false,
+      language: null,
+      debug: {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown auto translation error",
+      },
       translations: {},
     });
   }
