@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/lib/site";
 import { normalizeRole } from "@/lib/roles";
-import { normalizeLanguage } from "@/lib/languages";
+import { getServerI18n } from "@/lib/language-server";
+import { translateRole } from "@/lib/languages";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 type Profile = {
@@ -11,27 +12,18 @@ type Profile = {
   full_name?: string | null;
 };
 
-const publicLinks = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Workshops",
-    href: "/workshops",
-  },
-  {
-    label: "Notices",
-    href: "/notices",
-  },
-];
+async function signOutAction() {
+  "use server";
+
+  const supabase = await createClient();
+
+  await supabase.auth.signOut();
+
+  redirect("/");
+}
 
 export default async function Navbar() {
-  const cookieStore = await cookies();
-
-  const currentLanguage = normalizeLanguage(
-    cookieStore.get("lexdata_language")?.value
-  );
+  const { language, t } = await getServerI18n();
 
   const supabase = await createClient();
 
@@ -60,48 +52,61 @@ export default async function Navbar() {
     profile?.full_name || user?.user_metadata?.full_name || user?.email;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-black text-white">
-              LD
-            </div>
+            <img
+              src="/logo2.png"
+              alt={site.name}
+              className="h-11 w-auto object-contain"
+            />
 
-            <div>
+            <div className="hidden sm:block">
               <p className="text-lg font-black tracking-tight text-slate-950">
                 {site.name}
               </p>
-              <p className="hidden text-xs font-semibold text-slate-500 sm:block">
-                Research Training Platform
+              <p className="text-xs font-semibold text-slate-500">
+                {site.tagline}
               </p>
             </div>
           </Link>
 
           <div className="hidden items-center gap-2 lg:flex">
-            {publicLinks.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-              >
-                {item.label}
-              </Link>
-            ))}
+            <Link
+              href="/"
+              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+            >
+              {t("nav.home")}
+            </Link>
+
+            <Link
+              href="/workshops"
+              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+            >
+              {t("nav.workshops")}
+            </Link>
+
+            <Link
+              href="/notices"
+              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+            >
+              {t("nav.notices")}
+            </Link>
 
             {user ? (
               <Link
                 href="/dashboard/my-learning"
                 className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
               >
-                My Learning
+                {t("nav.myLearning")}
               </Link>
             ) : null}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher currentLanguage={currentLanguage} compact />
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher currentLanguage={language} compact />
 
           {user ? (
             <>
@@ -109,8 +114,8 @@ export default async function Navbar() {
                 <p className="max-w-[180px] truncate text-sm font-bold text-slate-950">
                   {displayName}
                 </p>
-                <p className="text-xs font-semibold capitalize text-slate-500">
-                  {role}
+                <p className="text-xs font-semibold text-slate-500">
+                  {translateRole(language, role)}
                 </p>
               </div>
 
@@ -119,7 +124,7 @@ export default async function Navbar() {
                   href="/admin"
                   className="hidden rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 md:inline-flex"
                 >
-                  Admin
+                  {t("nav.admin")}
                 </Link>
               ) : null}
 
@@ -128,7 +133,7 @@ export default async function Navbar() {
                   href="/manager"
                   className="hidden rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 md:inline-flex"
                 >
-                  Manager
+                  {t("nav.manager")}
                 </Link>
               ) : null}
 
@@ -136,8 +141,17 @@ export default async function Navbar() {
                 href="/dashboard"
                 className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
               >
-                Dashboard
+                {t("nav.dashboard")}
               </Link>
+
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-50"
+                >
+                  Log out
+                </button>
+              </form>
             </>
           ) : (
             <>
@@ -145,14 +159,14 @@ export default async function Navbar() {
                 href="/login"
                 className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
               >
-                Login
+                {t("nav.login")}
               </Link>
 
               <Link
                 href="/signup"
                 className="hidden rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700 sm:inline-flex"
               >
-                Sign up
+                {t("nav.signup")}
               </Link>
             </>
           )}
