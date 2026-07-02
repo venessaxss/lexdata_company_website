@@ -65,7 +65,12 @@ const managerCards = [
       "Open your personal dashboard for messages, learning, account settings, and member tools.",
     href: "/dashboard",
   },
-  
+  {
+  title: "Overall Monitoring Board",
+  description:
+    "View registration statistics, payment statistics, website visits, workshop status, course status, and user activity.",
+  href: "/manager/monitor",
+},
 ];
 
 export default async function ManagerPage() {

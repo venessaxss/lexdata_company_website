@@ -77,6 +77,12 @@ const adminCards = [
       "Open your personal dashboard for learning, messages, password settings, and account tools.",
     href: "/dashboard",
   },
+  {
+  title: "Overall Monitoring Board",
+  description:
+    "View registration statistics, payment statistics, website visit records, workshop status, course status, and user activity.",
+  href: "/manager/monitor",
+},
 ];
 
 export default async function AdminPage() {
