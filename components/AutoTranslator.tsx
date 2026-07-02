@@ -1,32 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import type { AppLanguage } from "@/lib/languages";
+import { useEffect, useRef } from "react";
 import { normalizeLanguage } from "@/lib/languages";
-import { AUTO_TRANSLATIONS } from "@/lib/auto-translations";
+import type { AppLanguage } from "@/lib/languages";
 
 function normalizeText(value: string) {
   return value.replace(/\s+/g, " ").trim();
-}
-
-function translateText(value: string, language: AppLanguage) {
-  if (language === "en") {
-    return value;
-  }
-
-  const normalized = normalizeText(value);
-
-  if (!normalized) {
-    return value;
-  }
-
-  const direct = AUTO_TRANSLATIONS[normalized]?.[language];
-
-  if (direct) {
-    return value.replace(normalized, direct);
-  }
-
-  return value;
 }
 
 function shouldSkipElement(element: Element | null) {
@@ -40,7 +19,10 @@ function shouldSkipElement(element: Element | null) {
     tagName === "textarea" ||
     tagName === "input" ||
     tagName === "select" ||
-    tagName === "option"
+    tagName === "option" ||
+    tagName === "code" ||
+    tagName === "pre" ||
+    tagName === "svg"
   ) {
     return true;
   }
@@ -52,37 +34,81 @@ function shouldSkipElement(element: Element | null) {
   return false;
 }
 
-function translateNode(node: Node, language: AppLanguage) {
-  if (language === "en") return;
+function shouldTranslateText(value: string) {
+  const text = normalizeText(value);
 
-  if (node.nodeType === Node.TEXT_NODE) {
-    const parent = node.parentElement;
+  if (!text) return false;
+  if (text.length < 2) return false;
+  if (text.length > 2000) return false;
 
-    if (shouldSkipElement(parent)) {
-      return;
-    }
+  if (/^https?:\/\//i.test(text)) return false;
+  if (/^[\d\s.,:/\-–—()%+]+$/.test(text)) return false;
+  if (/^[^\p{L}\p{N}]+$/u.test(text)) return false;
+  if (/^[\w.-]+@[\w.-]+\.\w+$/.test(text)) return false;
 
-    const original = node.textContent || "";
-    const translated = translateText(original, language);
+  return true;
+}
 
-    if (translated !== original) {
-      node.textContent = translated;
-    }
+function collectTextNodes(root: ParentNode) {
+  const nodes: Text[] = [];
 
-    return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const parent = node.parentElement;
+
+      if (shouldSkipElement(parent)) {
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      if (!shouldTranslateText(node.textContent || "")) {
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+
+  while (walker.nextNode()) {
+    nodes.push(walker.currentNode as Text);
   }
 
-  if (node.nodeType === Node.ELEMENT_NODE) {
-    const element = node as Element;
+  return nodes;
+}
 
-    if (shouldSkipElement(element)) {
-      return;
-    }
+function applyTranslation(original: string, translated: string) {
+  const leading = original.match(/^\s*/)?.[0] ?? "";
+  const trailing = original.match(/\s*$/)?.[0] ?? "";
 
-    for (const child of Array.from(element.childNodes)) {
-      translateNode(child, language);
-    }
+  return `${leading}${translated}${trailing}`;
+}
+
+async function requestTranslations(language: AppLanguage, texts: string[]) {
+  const uniqueTexts = Array.from(new Set(texts.map(normalizeText))).filter(
+    Boolean
+  );
+
+  if (uniqueTexts.length === 0) {
+    return {};
   }
+
+  const response = await fetch("/api/auto-translate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      language,
+      texts: uniqueTexts,
+    }),
+  });
+
+  if (!response.ok) {
+    return {};
+  }
+
+  const data = await response.json();
+
+  return (data?.translations ?? {}) as Record<string, string>;
 }
 
 export default function AutoTranslator({
@@ -90,6 +116,8 @@ export default function AutoTranslator({
 }: {
   language?: string | null;
 }) {
+  const translatedNodesRef = useRef<WeakSet<Node>>(new WeakSet());
+
   useEffect(() => {
     const normalizedLanguage = normalizeLanguage(language);
 
@@ -97,13 +125,57 @@ export default function AutoTranslator({
       return;
     }
 
-    translateNode(document.body, normalizedLanguage);
+    let cancelled = false;
+
+    async function translateRoot(root: ParentNode) {
+      const allNodes = collectTextNodes(root).filter(
+        (node) => !translatedNodesRef.current.has(node)
+      );
+
+      if (allNodes.length === 0) {
+        return;
+      }
+
+      const texts = allNodes.map((node) => normalizeText(node.textContent || ""));
+
+      const translations = await requestTranslations(normalizedLanguage, texts);
+
+      if (cancelled) {
+        return;
+      }
+
+      for (const node of allNodes) {
+        const original = node.textContent || "";
+        const normalized = normalizeText(original);
+        const translated = translations[normalized];
+
+        if (translated && translated !== normalized) {
+          node.textContent = applyTranslation(original, translated);
+        }
+
+        translatedNodesRef.current.add(node);
+      }
+    }
+
+    translateRoot(document.body);
 
     const observer = new MutationObserver((mutations) => {
+      const roots: ParentNode[] = [];
+
       for (const mutation of mutations) {
         for (const node of Array.from(mutation.addedNodes)) {
-          translateNode(node, normalizedLanguage);
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            roots.push(node as ParentNode);
+          }
+
+          if (node.nodeType === Node.TEXT_NODE && node.parentElement) {
+            roots.push(node.parentElement);
+          }
         }
+      }
+
+      for (const root of roots) {
+        translateRoot(root);
       }
     });
 
@@ -112,7 +184,10 @@ export default function AutoTranslator({
       subtree: true,
     });
 
-    return () => observer.disconnect();
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
   }, [language]);
 
   return null;
