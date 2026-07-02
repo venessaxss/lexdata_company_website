@@ -487,3 +487,44 @@ export async function updateWorkshopSubsession(formData: FormData) {
 
   redirect(`/admin/workshops/subsessions/${id}/edit?message=Subsession updated`);
 }
+
+export async function updateWorkshopStatus(formData: FormData) {
+  const actor = await requireAdmin();
+
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/admin/workshops?message=Missing workshop ID");
+  }
+
+  const recruitmentStatus = field(formData, "recruitment_status") || "open";
+  const processStatus = field(formData, "process_status") || "not_started";
+  const statusNote = nullableField(formData, "status_note");
+  const internalStatusNote = nullableField(formData, "internal_status_note");
+
+  const { error } = await supabase
+    .from("workshops")
+    .update({
+      recruitment_status: recruitmentStatus,
+      process_status: processStatus,
+      status_note: statusNote,
+      internal_status_note: internalStatusNote,
+      status_updated_at: new Date().toISOString(),
+      status_updated_by: actor.id,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/admin/workshops?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/workshops");
+  revalidatePath("/admin/workshops");
+  revalidatePath("/manager/workshops");
+
+  redirect("/admin/workshops?message=Workshop status updated");
+}

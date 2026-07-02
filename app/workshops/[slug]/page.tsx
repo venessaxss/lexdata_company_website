@@ -19,6 +19,10 @@ type Workshop = {
   level?: string | null;
   starts_at?: string | null;
   created_at?: string | null;
+
+  recruitment_status?: string | null;
+  process_status?: string | null;
+  status_note?: string | null;
 };
 
 type WorkshopSession = {
@@ -79,22 +83,11 @@ function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
-
 function formatDate(value?: string | null) {
   if (!value) return "";
 
   try {
     return new Date(value).toLocaleDateString();
-  } catch {
-    return value;
-  }
-}
-
-function formatDateTime(value?: string | null) {
-  if (!value) return "-";
-
-  try {
-    return new Date(value).toLocaleString();
   } catch {
     return value;
   }
@@ -110,6 +103,28 @@ function formatWorkshopPrice(workshop: Workshop) {
   }
 
   return `${currency} ${price}`;
+}
+
+function statusLabel(value?: string | null) {
+  if (!value) return "";
+
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function isRecruitmentOpen(workshop: Workshop) {
+  const status = workshop.recruitment_status || "open";
+
+  return status === "open";
+}
+
+function isWorkshopTerminated(workshop: Workshop) {
+  return (
+    workshop.recruitment_status === "terminated" ||
+    workshop.process_status === "terminated"
+  );
 }
 
 function hasConfirmedWorkshopAccess(registration: Registration | null) {
@@ -195,6 +210,29 @@ async function registerForWorkshop(formData: FormData) {
 
   const admin = createAdminClient();
 
+  const { data: workshop } = await admin
+    .from("workshops")
+    .select("id, recruitment_status, process_status")
+    .eq("id", workshopId)
+    .maybeSingle();
+
+  if (!workshop) {
+    redirect("/workshops?message=Workshop not found");
+  }
+
+  const recruitmentStatus = workshop.recruitment_status || "open";
+  const processStatus = workshop.process_status || "not_started";
+
+  if (
+    recruitmentStatus !== "open" ||
+    recruitmentStatus === "terminated" ||
+    processStatus === "terminated"
+  ) {
+    redirect(
+      `/workshops/${slug}?message=Registration is not currently available for this workshop`
+    );
+  }
+
   const { data: profile } = await admin
     .from("profiles")
     .select("full_name, role")
@@ -209,7 +247,9 @@ async function registerForWorkshop(formData: FormData) {
     .maybeSingle();
 
   if (existingRegistration) {
-    redirect(`/workshops/${slug}?message=You have already registered for this workshop`);
+    redirect(
+      `/workshops/${slug}?message=You have already registered for this workshop`
+    );
   }
 
   const { error } = await admin.from("workshop_registrations").insert({
@@ -377,8 +417,7 @@ export default async function WorkshopSlugPage({
     profile = profileData as Profile | null;
   }
 
-  const rawRole = profile?.role ?? null;
-  const role = normalizeRole(rawRole);
+  const role = normalizeRole(profile?.role);
 
   const isAdmin = role === "admin";
   const isManager = role === "manager";
@@ -455,6 +494,9 @@ export default async function WorkshopSlugPage({
     return email.toLowerCase().trim() === userEmail;
   }
 
+  const recruitmentOpen = isRecruitmentOpen(workshop);
+  const workshopTerminated = isWorkshopTerminated(workshop);
+
   const canSeeAllPrivateAccess =
     isAdmin || isManager || hasConfirmedWorkshopAccess(registration);
 
@@ -462,7 +504,13 @@ export default async function WorkshopSlugPage({
     isAdmin || isManager || (Boolean(registration) && !isSpeaker);
 
   const canRegister =
-    Boolean(user) && !registration && !isAdmin && !isManager && !isSpeaker;
+    Boolean(user) &&
+    !registration &&
+    !isAdmin &&
+    !isManager &&
+    !isSpeaker &&
+    recruitmentOpen &&
+    !workshopTerminated;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
@@ -501,12 +549,26 @@ export default async function WorkshopSlugPage({
             </span>
           ) : null}
 
+          <span className="rounded-full bg-blue-50 px-4 py-2 text-blue-700">
+            Recruitment: {statusLabel(workshop.recruitment_status || "open")}
+          </span>
+
+          <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
+            Status: {statusLabel(workshop.process_status || "not_started")}
+          </span>
+
           {canSeeWorkshopCost ? (
             <span className="rounded-full bg-slate-100 px-4 py-2 text-slate-700">
               {formatWorkshopPrice(workshop)}
             </span>
           ) : null}
         </div>
+
+        {workshop.status_note ? (
+          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-700">
+            {workshop.status_note}
+          </div>
+        ) : null}
       </div>
 
       {message ? (
@@ -521,6 +583,23 @@ export default async function WorkshopSlugPage({
           <p className="mt-1 text-sm leading-6">
             Workshop session links, materials, recordings, videos, and
             subsessions are unlocked for this account.
+          </p>
+        </div>
+      ) : null}
+
+      {workshopTerminated ? (
+        <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-800">
+          <p className="font-bold">This workshop has been terminated</p>
+          <p className="mt-1 text-sm leading-6">
+            Registration and recruitment are no longer available for this
+            workshop.
+          </p>
+        </div>
+      ) : !recruitmentOpen ? (
+        <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-800">
+          <p className="font-bold">Recruitment is not currently open</p>
+          <p className="mt-1 text-sm leading-6">
+            Registration is currently closed for this workshop.
           </p>
         </div>
       ) : null}
@@ -601,8 +680,8 @@ export default async function WorkshopSlugPage({
           </h2>
 
           <p className="mt-3 max-w-3xl text-slate-600">
-            Registered members with confirmed access can view available session
-            details, materials, links, recordings, and subsessions.
+            Members with confirmed access can view available session details,
+            materials, links, recordings, and subsessions.
           </p>
         </div>
 

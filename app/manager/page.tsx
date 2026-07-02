@@ -19,9 +19,15 @@ const managerCards = [
     href: "/manager/registrations",
   },
   {
+  title: "Workshop Status Control",
+  description:
+    "Open, close, terminate recruitment, and manage workshop progress status.",
+  href: "/manager/workshops",
+},
+  {
     title: "Send Messages",
     description:
-      "Send messages to all users or selected role groups such as students, speakers, managers, or admins.",
+      "Send messages to all users or selected role groups such as members, speakers, managers, or admins.",
     href: "/dashboard/messages/send",
   },
   {
@@ -53,6 +59,7 @@ const managerCards = [
       "Open your personal dashboard for messages, learning, account settings, and member tools.",
     href: "/dashboard",
   },
+  
 ];
 
 export default async function ManagerPage() {
