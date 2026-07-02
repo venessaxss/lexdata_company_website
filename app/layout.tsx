@@ -8,7 +8,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: `${site.name} | Data-driven Research Training Platform`,
-  description: site.description,
+  description: site.tagline,
 };
 
 export default async function RootLayout({
