@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Navbar from "@/components/Navbar";
 import VisitTracker from "@/components/VisitTracker";
+import AutoTranslator from "@/components/AutoTranslator";
 import { site } from "@/lib/site";
-import { getLanguageDirection, normalizeLanguage } from "@/lib/languages";
+import { getServerI18n } from "@/lib/language-server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,18 +16,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-
-  const currentLanguage = normalizeLanguage(
-    cookieStore.get("lexdata_language")?.value
-  );
-
-  const direction = getLanguageDirection(currentLanguage);
+  const { language, direction } = await getServerI18n();
 
   return (
-    <html lang={currentLanguage} dir={direction}>
+    <html lang={language} dir={direction}>
       <body>
         <VisitTracker />
+        <AutoTranslator language={language} />
         <Navbar />
         {children}
       </body>

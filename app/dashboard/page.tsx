@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeRole } from "@/lib/roles";
+import { getServerI18n } from "@/lib/language-server";
+import { translateRole } from "@/lib/languages";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -12,45 +14,10 @@ type Profile = {
   role?: string | null;
 };
 
-const baseCards = [
-  {
-    title: "My Learning",
-    description:
-      "View your registered workshops, confirmed access, sessions, subsessions, materials, and recordings.",
-    href: "/dashboard/my-learning",
-  },
-  {
-    title: "Message Box",
-    description:
-      "Read payment notices, workshop updates, internal messages, and announcements sent to your account.",
-    href: "/dashboard/messages",
-  },
-  {
-    title: "Language Settings",
-    description:
-      "Choose English, Chinese, Mongolian, Arabic, Urdu, Azerbaijani, Turkish, Japanese, or Korean as your preferred website language.",
-    href: "/dashboard/settings/language",
-  },
-  {
-    title: "Change Password",
-    description: "Update the password for your LexData account.",
-    href: "/dashboard/settings/password",
-  },
-  {
-    title: "Workshops",
-    description: "Browse available workshops and submit new registrations.",
-    href: "/workshops",
-  },
-  {
-    title: "Notice Center",
-    description:
-      "View public notices, announcements, media releases, and platform updates.",
-    href: "/notices",
-  },
-];
-
 export default async function DashboardPage() {
   noStore();
+
+  const { language, t } = await getServerI18n();
 
   const supabase = await createClient();
 
@@ -75,38 +42,65 @@ export default async function DashboardPage() {
   const displayName =
     profile?.full_name || user.user_metadata?.full_name || user.email;
 
-  const cards = [...baseCards];
+  const cards = [
+    {
+      title: t("card.myLearning.title"),
+      description: t("card.myLearning.description"),
+      href: "/dashboard/my-learning",
+    },
+    {
+      title: t("card.messages.title"),
+      description: t("card.messages.description"),
+      href: "/dashboard/messages",
+    },
+    {
+      title: t("card.language.title"),
+      description: t("card.language.description"),
+      href: "/dashboard/settings/language",
+    },
+    {
+      title: t("card.password.title"),
+      description: t("card.password.description"),
+      href: "/dashboard/settings/password",
+    },
+    {
+      title: t("card.workshops.title"),
+      description: t("card.workshops.description"),
+      href: "/workshops",
+    },
+    {
+      title: t("card.notices.title"),
+      description: t("card.notices.description"),
+      href: "/notices",
+    },
+  ];
 
   if (role === "admin") {
     cards.unshift({
-      title: "Admin Dashboard",
-      description:
-        "Manage users, roles, workshops, registrations, payments, notices, media, and website content.",
+      title: t("card.admin.title"),
+      description: t("card.admin.description"),
       href: "/admin",
     });
   }
 
   if (role === "manager" || role === "admin") {
     cards.unshift({
-      title: "Manager Dashboard",
-      description:
-        "Manage registrations, manual payments, payment records, notices, workshop status, and monitoring data.",
+      title: t("card.manager.title"),
+      description: t("card.manager.description"),
       href: "/manager",
     });
 
     cards.unshift({
-      title: "Overall Monitoring Board",
-      description:
-        "View registration statistics, payment statistics, website visits, workshop status, course status, and user activity.",
+      title: t("card.monitor.title"),
+      description: t("card.monitor.description"),
       href: "/manager/monitor",
     });
   }
 
   if (role === "speaker") {
     cards.unshift({
-      title: "Speaker Access",
-      description:
-        "Open assigned workshop sessions and view speaker-related messages.",
+      title: t("card.speaker.title"),
+      description: t("card.speaker.description"),
       href: "/workshops",
     });
   }
@@ -115,21 +109,20 @@ export default async function DashboardPage() {
     <main className="mx-auto max-w-7xl px-4 py-10">
       <section className="mb-10 rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">
-          Dashboard
+          {t("dashboard.title")}
         </p>
 
         <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
-          Welcome, {displayName}
+          {t("dashboard.welcome")}, {displayName}
         </h1>
 
         <p className="mt-4 max-w-3xl text-slate-300">
-          Manage your learning, messages, registrations, language settings, and
-          account tools from one place.
+          {t("dashboard.subtitle")}
         </p>
 
         <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
-          <span className="rounded-full bg-white/10 px-4 py-2 capitalize">
-            Role: {role}
+          <span className="rounded-full bg-white/10 px-4 py-2">
+            {t("dashboard.role")}: {translateRole(language, role)}
           </span>
 
           <span className="rounded-full bg-white/10 px-4 py-2">
@@ -154,7 +147,7 @@ export default async function DashboardPage() {
             </p>
 
             <p className="mt-5 text-sm font-bold text-blue-700">
-              Open →
+              {t("card.open")} →
             </p>
           </Link>
         ))}
