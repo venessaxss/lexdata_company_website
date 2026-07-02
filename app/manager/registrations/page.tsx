@@ -357,12 +357,43 @@ export default async function ManagerRegistrationsPage({
                       className="w-full rounded-xl border bg-white px-4 py-3"
                     />
 
-                    <button
-                      type="submit"
-                      className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
-                    >
-                      Save payment update
-                    </button>
+                    <div className="grid gap-3">
+  <button
+    type="submit"
+    name="action_type"
+    value="send_payment_info"
+    className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-bold text-white hover:bg-blue-600"
+  >
+    Send payment instructions
+  </button>
+
+  <button
+    type="submit"
+    name="action_type"
+    value="record_payment_received"
+    className="rounded-xl bg-amber-600 px-5 py-3 text-sm font-bold text-white hover:bg-amber-500"
+  >
+    Record payment info received
+  </button>
+
+  <button
+    type="submit"
+    name="action_type"
+    value="confirm_payment"
+    className="rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-600"
+  >
+    Confirm payment and unlock access
+  </button>
+
+  <button
+    type="submit"
+    name="action_type"
+    value="save"
+    className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+  >
+    Save without sending message
+  </button>
+</div>
                   </div>
                 </form>
               </div>

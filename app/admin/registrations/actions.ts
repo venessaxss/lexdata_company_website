@@ -54,34 +54,74 @@ function numberField(formData: FormData, key: string, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function buildPaymentInstructionMessage({
+  workshopTitle,
+  paymentMethod,
+  paymentLink,
+  paymentNote,
+  paymentCurrency,
+  amountReceived,
+}: {
+  workshopTitle: string;
+  paymentMethod?: string | null;
+  paymentLink?: string | null;
+  paymentNote?: string | null;
+  paymentCurrency: string;
+  amountReceived: number;
+}) {
+  const parts = [
+    `Your registration for ${workshopTitle} has been reviewed.`,
+    "",
+    "Please follow the payment instructions below.",
+    paymentMethod ? `Payment method: ${paymentMethod}` : null,
+    amountReceived > 0 ? `Amount: ${paymentCurrency} ${amountReceived}` : null,
+    paymentLink ? `Payment instruction/link: ${paymentLink}` : null,
+    paymentNote ? `Note: ${paymentNote}` : null,
+    "",
+    "After completing payment, please send your payment reference or receipt information to the LexData team.",
+  ].filter(Boolean);
+
+  return parts.join("\n");
+}
+
 export async function updateWorkshopRegistration(formData: FormData) {
   const actor = await requirePaymentManager();
 
   const supabase = createAdminClient();
 
   const id = field(formData, "id");
+  const backTo = field(formData, "back_to") || "/admin/registrations";
+  const actionType = field(formData, "action_type") || "save";
 
   if (!id) {
-    redirect("/admin/registrations?message=Missing registration ID");
+    redirect(`${backTo}?message=Missing registration ID`);
   }
 
-  const status = field(formData, "status") || "pending";
-
-  const paymentStatus = field(formData, "payment_status") || "pending";
+  let status = field(formData, "status") || "pending";
+  let paymentStatus = field(formData, "payment_status") || "pending";
 
   const paymentMethod = nullableField(formData, "payment_method");
-
   const paymentReference = nullableField(formData, "payment_reference");
-
   const paymentNote = nullableField(formData, "payment_note");
-
   const paymentLink = nullableField(formData, "payment_link");
-
   const adminNote = nullableField(formData, "admin_note");
-
   const amountReceived = numberField(formData, "amount_received", 0);
-
   const paymentCurrency = field(formData, "payment_currency") || "USD";
+
+  if (actionType === "send_payment_info") {
+    status = status === "pending" ? "approved" : status;
+    paymentStatus = "instructions_sent";
+  }
+
+  if (actionType === "record_payment_received") {
+    status = status === "pending" ? "approved" : status;
+    paymentStatus = "under_review";
+  }
+
+  if (actionType === "confirm_payment") {
+    status = "confirmed";
+    paymentStatus = "confirmed";
+  }
 
   const shouldConfirmPayment =
     paymentStatus === "confirmed" || paymentStatus === "paid";
@@ -120,71 +160,92 @@ export async function updateWorkshopRegistration(formData: FormData) {
     .single();
 
   if (error) {
-    redirect(`/admin/registrations?message=${encodeURIComponent(error.message)}`);
+    redirect(`${backTo}?message=${encodeURIComponent(error.message)}`);
   }
 
   const userId = registration?.user_id as string | null | undefined;
+
   const workshopTitle =
-    registration?.workshops?.title || registration?.workshop_title || "Workshop";
+    registration?.workshops?.title ||
+    registration?.workshop_title ||
+    "Workshop";
+
   const workshopSlug =
     registration?.workshops?.slug || registration?.workshop_slug || "";
 
-  if (userId) {
-    if (
-      paymentStatus === "instructions_sent" ||
-      paymentStatus === "pending" ||
-      paymentStatus === "under_review"
-    ) {
-      const bodyParts = [
-        `Your registration for ${workshopTitle} has been updated.`,
-        paymentMethod ? `Payment method: ${paymentMethod}` : null,
-        paymentLink ? `Payment instruction/link: ${paymentLink}` : null,
-        paymentNote ? `Payment note: ${paymentNote}` : null,
-      ].filter(Boolean);
+  if (userId && actionType === "send_payment_info") {
+    await supabase.from("user_messages").insert({
+      user_id: userId,
+      sender_id: actor.id,
+      sender_role: actor.role,
+      target_role: "member",
+      message_type: "payment_instructions",
+      title: "Payment instructions",
+      body: buildPaymentInstructionMessage({
+        workshopTitle,
+        paymentMethod,
+        paymentLink,
+        paymentNote,
+        paymentCurrency,
+        amountReceived,
+      }),
+      link_url: paymentLink || (workshopSlug ? `/workshops/${workshopSlug}` : null),
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
+  }
 
-      await supabase.from("user_messages").insert({
-        user_id: userId,
-        sender_id: actor.id,
-        sender_role: actor.role,
-        target_role: "member",
-        message_type: "payment_update",
-        title: "Workshop payment instructions",
-        body: bodyParts.join("\n"),
-        link_url: paymentLink || (workshopSlug ? `/workshops/${workshopSlug}` : null),
-        is_read: false,
-        created_at: new Date().toISOString(),
-      });
-    }
+  if (userId && actionType === "record_payment_received") {
+    const bodyParts = [
+      `Your payment information for ${workshopTitle} has been received and is now under review.`,
+      paymentMethod ? `Payment method: ${paymentMethod}` : null,
+      paymentReference ? `Reference: ${paymentReference}` : null,
+      amountReceived > 0 ? `Amount received: ${paymentCurrency} ${amountReceived}` : null,
+      paymentNote ? `Note: ${paymentNote}` : null,
+    ].filter(Boolean);
 
-    if (shouldConfirmPayment) {
-      await supabase.from("user_messages").insert({
-        user_id: userId,
-        sender_id: actor.id,
-        sender_role: actor.role,
-        target_role: "student",
-        message_type: "payment_confirmed",
-        title: "Workshop access confirmed",
-        body: `Your registration for ${workshopTitle} has been confirmed. You can now access the available workshop sessions and materials from your dashboard.`,
-        link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
-        is_read: false,
-        created_at: new Date().toISOString(),
-      });
-    }
+    await supabase.from("user_messages").insert({
+      user_id: userId,
+      sender_id: actor.id,
+      sender_role: actor.role,
+      target_role: "member",
+      message_type: "payment_received",
+      title: "Payment information received",
+      body: bodyParts.join("\n"),
+      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
+  }
 
-    if (paymentStatus === "waived") {
-      await supabase.from("user_messages").insert({
-        user_id: userId,
-        sender_id: actor.id,
-        sender_role: actor.role,
-        target_role: "member",
-        message_type: "access_confirmed",
-        title: "Workshop access confirmed",
-        body: `Your access for ${workshopTitle} has been approved by the LexData team.`,
-        link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
-        is_read: false,
-        created_at: new Date().toISOString(),
-      });
-    }
+  if (userId && actionType === "confirm_payment") {
+    await supabase.from("user_messages").insert({
+      user_id: userId,
+      sender_id: actor.id,
+      sender_role: actor.role,
+      target_role: "member",
+      message_type: "payment_confirmed",
+      title: "Workshop access confirmed",
+      body: `Your registration for ${workshopTitle} has been confirmed. You can now access the available workshop sessions, subsessions, materials, and links from your dashboard.`,
+      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
+  }
+
+  if (userId && paymentStatus === "waived") {
+    await supabase.from("user_messages").insert({
+      user_id: userId,
+      sender_id: actor.id,
+      sender_role: actor.role,
+      target_role: "member",
+      message_type: "access_confirmed",
+      title: "Workshop access confirmed",
+      body: `Your access for ${workshopTitle} has been approved by the LexData team.`,
+      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
   }
 
   revalidatePath("/admin/registrations");
@@ -197,7 +258,17 @@ export async function updateWorkshopRegistration(formData: FormData) {
     revalidatePath(`/workshops/${workshopSlug}`);
   }
 
-  const backTo = field(formData, "back_to") || "/admin/registrations";
+  if (actionType === "send_payment_info") {
+    redirect(`${backTo}?message=Payment instructions sent to member`);
+  }
 
-  redirect(`${backTo}?message=Registration payment updated`);
+  if (actionType === "record_payment_received") {
+    redirect(`${backTo}?message=Payment information recorded and member notified`);
+  }
+
+  if (actionType === "confirm_payment") {
+    redirect(`${backTo}?message=Payment confirmed and access unlocked`);
+  }
+
+  redirect(`${backTo}?message=Registration payment information saved`);
 }
