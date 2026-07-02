@@ -116,44 +116,65 @@ export default function AutoTranslator({
 }: {
   language?: string | null;
 }) {
-  const translatedNodesRef = useRef<WeakSet<Node>>(new WeakSet());
+  const originalTextRef = useRef<WeakMap<Text, string>>(new WeakMap());
 
   useEffect(() => {
     const normalizedLanguage = normalizeLanguage(language);
 
-    if (normalizedLanguage === "en") {
-      return;
-    }
-
     let cancelled = false;
 
     async function translateRoot(root: ParentNode) {
-      const allNodes = collectTextNodes(root).filter(
-        (node) => !translatedNodesRef.current.has(node)
-      );
+      const allNodes = collectTextNodes(root);
 
       if (allNodes.length === 0) {
         return;
       }
 
-      const texts = allNodes.map((node) => normalizeText(node.textContent || ""));
+      const sourceTexts: string[] = [];
 
-      const translations = await requestTranslations(normalizedLanguage, texts);
+      for (const node of allNodes) {
+        const currentText = node.textContent || "";
+
+        if (!originalTextRef.current.has(node)) {
+          originalTextRef.current.set(node, currentText);
+        }
+
+        const originalText = originalTextRef.current.get(node) || currentText;
+
+        if (shouldTranslateText(originalText)) {
+          sourceTexts.push(normalizeText(originalText));
+        }
+      }
+
+      if (normalizedLanguage === "en") {
+        for (const node of allNodes) {
+          const originalText = originalTextRef.current.get(node);
+
+          if (originalText) {
+            node.textContent = originalText;
+          }
+        }
+
+        return;
+      }
+
+      const translations = await requestTranslations(
+        normalizedLanguage,
+        sourceTexts
+      );
 
       if (cancelled) {
         return;
       }
 
       for (const node of allNodes) {
-        const original = node.textContent || "";
-        const normalized = normalizeText(original);
-        const translated = translations[normalized];
+        const originalText = originalTextRef.current.get(node) || "";
+        const normalizedOriginal = normalizeText(originalText);
+        const translated = translations[normalizedOriginal];
 
-        if (translated && translated !== normalized) {
-          node.textContent = applyTranslation(original, translated);
+        if (translated && translated !== normalizedOriginal) {
+          node.textContent = applyTranslation(originalText, translated);
         }
-
-        translatedNodesRef.current.add(node);
       }
     }
 

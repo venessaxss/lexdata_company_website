@@ -11,6 +11,7 @@
   "dependencies": {
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@translated/lara": "^1.12.1",
     "lucide-react": "latest",
     "next": "latest",
     "react": "latest",

@@ -1,5 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { normalizeRole } from "@/lib/roles";
 
 const publicRoutes = [
   "/",
@@ -9,46 +10,80 @@ const publicRoutes = [
   "/forgot-password",
   "/reset-password",
   "/auth/callback",
+  "/member-manual",
   "/workshops",
+  "/notices",
   "/team",
   "/about",
   "/contact",
 ];
 
-function isPublicRoute(pathname: string) {
-  return publicRoutes.some((route) => {
-    if (route === "/") {
-      return pathname === "/";
-    }
+const publicApiPrefixes = [
+  "/api/auto-translate",
+  "/api/language",
+  "/api/visit",
+];
 
-    return pathname === route || pathname.startsWith(`${route}/`);
-  });
+const protectedPrefixes = [
+  "/dashboard",
+  "/admin",
+  "/manager",
+];
+
+function isPublicRoute(pathname: string) {
+  if (publicRoutes.includes(pathname)) {
+    return true;
+  }
+
+  if (pathname.startsWith("/workshops/")) {
+    return true;
+  }
+
+  if (pathname.startsWith("/notices/")) {
+    return true;
+  }
+
+  return false;
 }
 
-function isStaticAsset(pathname: string) {
-  return (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/assets") ||
-    pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg") ||
-    pathname.endsWith(".jpeg") ||
-    pathname.endsWith(".webp") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".ico")
-  );
+function isPublicApiRoute(pathname: string) {
+  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isProtectedRoute(pathname: string) {
+  return protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isAdminRoute(pathname: string) {
+  return pathname.startsWith("/admin");
+}
+
+function isManagerRoute(pathname: string) {
+  return pathname.startsWith("/manager");
 }
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (isStaticAsset(pathname)) {
+  if (isPublicApiRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/manuals") ||
+    pathname.startsWith("/assets") ||
+    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|pdf|txt|xml)$/)
+  ) {
     return NextResponse.next();
   }
 
   let response = NextResponse.next({
-    request,
+    request: {
+      headers: request.headers,
+    },
   });
 
   const supabase = createServerClient(
@@ -65,7 +100,9 @@ export async function middleware(request: NextRequest) {
           });
 
           response = NextResponse.next({
-            request,
+            request: {
+              headers: request.headers,
+            },
           });
 
           cookiesToSet.forEach(({ name, value, options }) => {
@@ -80,16 +117,57 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (isPublicRoute(pathname)) {
-    return response;
+  if (!user && isProtectedRoute(pathname)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/login";
+    redirectUrl.searchParams.set(
+      "redirect",
+      `${request.nextUrl.pathname}${request.nextUrl.search}`
+    );
+
+    return NextResponse.redirect(redirectUrl);
   }
 
-  if (!user) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("redirect", pathname);
+  if (user && (isAdminRoute(pathname) || isManagerRoute(pathname))) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
 
-    return NextResponse.redirect(loginUrl);
+    const role = normalizeRole(profile?.role);
+
+    if (isAdminRoute(pathname) && role !== "admin") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      redirectUrl.search = "";
+
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    if (
+      isManagerRoute(pathname) &&
+      role !== "admin" &&
+      role !== "manager"
+    ) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      redirectUrl.search = "";
+
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  if (user && (pathname === "/login" || pathname === "/signup")) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/dashboard";
+    redirectUrl.search = "";
+
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (!isPublicRoute(pathname) && !isProtectedRoute(pathname)) {
+    return response;
   }
 
   return response;
@@ -97,6 +175,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|pdf|txt|xml)$).*)",
   ],
 };

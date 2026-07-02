@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { NextResponse } from "next/server";
+import { Credentials, Translator } from "@translated/lara";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizeLanguage } from "@/lib/languages";
 
@@ -16,6 +17,18 @@ type CacheRow = {
   source_text: string;
   target_language: string;
   translated_text: string;
+};
+
+const LARA_TARGET_LANGUAGE_MAP: Record<string, string> = {
+  en: "en-US",
+  zh: "zh-CN",
+  mn: "mn-MN",
+  ar: "ar-SA",
+  ur: "ur-PK",
+  az: "az-AZ",
+  tr: "tr-TR",
+  ja: "ja-JP",
+  ko: "ko-KR",
 };
 
 function hashText(value: string) {
@@ -55,42 +68,48 @@ function uniqueTexts(texts: string[]) {
     result.push(cleaned);
   }
 
-  return result.slice(0, 80);
+  return result.slice(0, 60);
 }
 
-async function translateWithLibreTranslate(text: string, targetLanguage: string) {
-  const baseUrl = process.env.TRANSLATE_API_URL;
-  const apiKey = process.env.TRANSLATE_API_KEY;
+function getLaraTranslator() {
+  const accessKeyId = process.env.LARA_ACCESS_KEY_ID;
+  const accessKeySecret = process.env.LARA_ACCESS_KEY_SECRET;
 
-  if (!baseUrl) {
+  if (!accessKeyId || !accessKeySecret) {
+    return null;
+  }
+
+  const credentials = new Credentials(accessKeyId, accessKeySecret);
+  return new Translator(credentials);
+}
+
+async function translateWithLara(text: string, targetLanguage: string) {
+  const lara = getLaraTranslator();
+
+  if (!lara) {
     return text;
   }
 
-  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/translate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      q: text,
-      source: "auto",
-      target: targetLanguage,
-      format: "text",
-      api_key: apiKey || undefined,
-    }),
-  });
+  const target = LARA_TARGET_LANGUAGE_MAP[targetLanguage] || targetLanguage;
 
-  if (!response.ok) {
+  try {
+    const result = await lara.translate(text, "en-US", target, {
+      style: "fluid",
+      contentType: "text/plain",
+      noTrace: true,
+    });
+
+    const translated = result?.translation;
+
+    if (typeof translated === "string" && translated.trim()) {
+      return translated.trim();
+    }
+
+    return text;
+  } catch (error) {
+    console.error("Lara translation failed:", error);
     return text;
   }
-
-  const data = await response.json();
-
-  if (typeof data?.translatedText === "string" && data.translatedText.trim()) {
-    return data.translatedText.trim();
-  }
-
-  return text;
 }
 
 export async function POST(request: Request) {
@@ -144,7 +163,7 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const translatedText = await translateWithLibreTranslate(text, language);
+      const translatedText = await translateWithLara(text, language);
 
       translations[text] = translatedText;
 
@@ -154,7 +173,7 @@ export async function POST(request: Request) {
           source_text: text,
           target_language: language,
           translated_text: translatedText,
-          provider: "libretranslate",
+          provider: "lara",
           updated_at: new Date().toISOString(),
         },
         {
@@ -167,7 +186,9 @@ export async function POST(request: Request) {
       ok: true,
       translations,
     });
-  } catch {
+  } catch (error) {
+    console.error("Auto translation route failed:", error);
+
     return NextResponse.json({
       ok: true,
       translations: {},
