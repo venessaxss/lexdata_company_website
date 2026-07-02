@@ -6,7 +6,7 @@ import TeamShowcase from "@/components/TeamShowcase";
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
-
+import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 const featureCards = [
   {
     title: "Python & Data Skills",
@@ -90,6 +90,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <DynamicHomeShowcase />
       <NoticeSpotlight />
       <HomeMediaShowcase />
       <HomeVideoSpotlight />
