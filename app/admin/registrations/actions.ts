@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeRole } from "@/lib/roles";
 
 type ActionUserProfile = {
   id: string;
@@ -27,11 +28,16 @@ async function requirePaymentManager() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || !["admin", "manager"].includes(profile.role)) {
+  const role = normalizeRole(profile?.role);
+
+  if (!profile || (role !== "admin" && role !== "manager")) {
     redirect("/dashboard");
   }
 
-  return profile as ActionUserProfile;
+  return {
+    id: profile.id,
+    role,
+  } as ActionUserProfile;
 }
 
 function field(formData: FormData, key: string) {
@@ -60,21 +66,21 @@ function buildPaymentInstructionMessage({
   paymentLink,
   paymentNote,
   paymentCurrency,
-  amountReceived,
+  amount,
 }: {
   workshopTitle: string;
   paymentMethod?: string | null;
   paymentLink?: string | null;
   paymentNote?: string | null;
   paymentCurrency: string;
-  amountReceived: number;
+  amount: number;
 }) {
   const parts = [
     `Your registration for ${workshopTitle} has been reviewed.`,
     "",
     "Please follow the payment instructions below.",
     paymentMethod ? `Payment method: ${paymentMethod}` : null,
-    amountReceived > 0 ? `Amount: ${paymentCurrency} ${amountReceived}` : null,
+    amount > 0 ? `Amount: ${paymentCurrency} ${amount}` : null,
     paymentLink ? `Payment instruction/link: ${paymentLink}` : null,
     paymentNote ? `Note: ${paymentNote}` : null,
     "",
@@ -97,15 +103,44 @@ export async function updateWorkshopRegistration(formData: FormData) {
     redirect(`${backTo}?message=Missing registration ID`);
   }
 
-  let status = field(formData, "status") || "pending";
-  let paymentStatus = field(formData, "payment_status") || "pending";
+  const { data: existingRegistration, error: existingError } = await supabase
+    .from("workshop_registrations")
+    .select(
+      `
+      *,
+      workshops:workshop_id (
+        title,
+        slug
+      )
+    `
+    )
+    .eq("id", id)
+    .single();
+
+  if (existingError || !existingRegistration) {
+    redirect(
+      `${backTo}?message=${encodeURIComponent(
+        existingError?.message || "Registration not found"
+      )}`
+    );
+  }
+
+  let status =
+    field(formData, "status") || existingRegistration.status || "pending";
+
+  let paymentStatus =
+    field(formData, "payment_status") ||
+    existingRegistration.payment_status ||
+    "pending";
 
   const paymentMethod = nullableField(formData, "payment_method");
   const paymentReference = nullableField(formData, "payment_reference");
   const paymentNote = nullableField(formData, "payment_note");
   const paymentLink = nullableField(formData, "payment_link");
   const adminNote = nullableField(formData, "admin_note");
-  const amountReceived = numberField(formData, "amount_received", 0);
+  const receiptUrl = nullableField(formData, "receipt_url");
+
+  const amount = numberField(formData, "amount_received", 0);
   const paymentCurrency = field(formData, "payment_currency") || "USD";
 
   if (actionType === "send_payment_info") {
@@ -123,19 +158,62 @@ export async function updateWorkshopRegistration(formData: FormData) {
     paymentStatus = "confirmed";
   }
 
+  if (actionType === "waive_payment") {
+    status = "confirmed";
+    paymentStatus = "waived";
+  }
+
   const shouldConfirmPayment =
-    paymentStatus === "confirmed" || paymentStatus === "paid";
+    paymentStatus === "confirmed" ||
+    paymentStatus === "paid" ||
+    paymentStatus === "waived";
+
+  const { error: paymentRecordError } = await supabase
+    .from("workshop_payment_records")
+    .insert({
+      registration_id: id,
+      workshop_id: existingRegistration.workshop_id,
+      user_id: existingRegistration.user_id,
+
+      action_type: actionType,
+      payment_status: paymentStatus,
+
+      payment_method: paymentMethod,
+      payment_reference: paymentReference,
+      payment_note: paymentNote,
+      admin_note: adminNote,
+      receipt_url: receiptUrl,
+      payment_link: paymentLink,
+
+      amount,
+      currency: paymentCurrency,
+
+      recorded_by: actor.id,
+      recorded_role: actor.role,
+
+      created_at: new Date().toISOString(),
+    });
+
+  if (paymentRecordError) {
+    redirect(
+      `${backTo}?message=${encodeURIComponent(paymentRecordError.message)}`
+    );
+  }
 
   const updatePayload: Record<string, unknown> = {
     status,
     payment_status: paymentStatus,
+
     payment_method: paymentMethod,
     payment_reference: paymentReference,
     payment_note: paymentNote,
     payment_link: paymentLink,
     admin_note: adminNote,
-    amount_received: amountReceived,
+    receipt_url: receiptUrl,
+
+    amount_received: amount,
     payment_currency: paymentCurrency,
+
     updated_at: new Date().toISOString(),
   };
 
@@ -187,9 +265,10 @@ export async function updateWorkshopRegistration(formData: FormData) {
         paymentLink,
         paymentNote,
         paymentCurrency,
-        amountReceived,
+        amount,
       }),
-      link_url: paymentLink || (workshopSlug ? `/workshops/${workshopSlug}` : null),
+      link_url:
+        paymentLink || (workshopSlug ? `/workshops/${workshopSlug}` : null),
       is_read: false,
       created_at: new Date().toISOString(),
     });
@@ -200,7 +279,8 @@ export async function updateWorkshopRegistration(formData: FormData) {
       `Your payment information for ${workshopTitle} has been received and is now under review.`,
       paymentMethod ? `Payment method: ${paymentMethod}` : null,
       paymentReference ? `Reference: ${paymentReference}` : null,
-      amountReceived > 0 ? `Amount received: ${paymentCurrency} ${amountReceived}` : null,
+      amount > 0 ? `Amount received: ${paymentCurrency} ${amount}` : null,
+      receiptUrl ? `Receipt/link: ${receiptUrl}` : null,
       paymentNote ? `Note: ${paymentNote}` : null,
     ].filter(Boolean);
 
@@ -212,7 +292,9 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "payment_received",
       title: "Payment information received",
       body: bodyParts.join("\n"),
-      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      link_url: workshopSlug
+        ? `/workshops/${workshopSlug}`
+        : "/dashboard/my-learning",
       is_read: false,
       created_at: new Date().toISOString(),
     });
@@ -227,13 +309,15 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "payment_confirmed",
       title: "Workshop access confirmed",
       body: `Your registration for ${workshopTitle} has been confirmed. You can now access the available workshop sessions, subsessions, materials, and links from your dashboard.`,
-      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      link_url: workshopSlug
+        ? `/workshops/${workshopSlug}`
+        : "/dashboard/my-learning",
       is_read: false,
       created_at: new Date().toISOString(),
     });
   }
 
-  if (userId && paymentStatus === "waived") {
+  if (userId && actionType === "waive_payment") {
     await supabase.from("user_messages").insert({
       user_id: userId,
       sender_id: actor.id,
@@ -242,7 +326,9 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "access_confirmed",
       title: "Workshop access confirmed",
       body: `Your access for ${workshopTitle} has been approved by the LexData team.`,
-      link_url: workshopSlug ? `/workshops/${workshopSlug}` : "/dashboard/my-learning",
+      link_url: workshopSlug
+        ? `/workshops/${workshopSlug}`
+        : "/dashboard/my-learning",
       is_read: false,
       created_at: new Date().toISOString(),
     });
@@ -259,16 +345,20 @@ export async function updateWorkshopRegistration(formData: FormData) {
   }
 
   if (actionType === "send_payment_info") {
-    redirect(`${backTo}?message=Payment instructions sent to member`);
+    redirect(`${backTo}?message=Payment instructions sent and synced`);
   }
 
   if (actionType === "record_payment_received") {
-    redirect(`${backTo}?message=Payment information recorded and member notified`);
+    redirect(`${backTo}?message=Payment record saved and synced`);
   }
 
   if (actionType === "confirm_payment") {
-    redirect(`${backTo}?message=Payment confirmed and access unlocked`);
+    redirect(`${backTo}?message=Payment confirmed, synced, and access unlocked`);
   }
 
-  redirect(`${backTo}?message=Registration payment information saved`);
+  if (actionType === "waive_payment") {
+    redirect(`${backTo}?message=Payment waived and access unlocked`);
+  }
+
+  redirect(`${backTo}?message=Registration payment information saved and synced`);
 }
