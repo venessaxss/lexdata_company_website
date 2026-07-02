@@ -1,22 +1,35 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import { cookies } from "next/headers";
 import Navbar from "@/components/Navbar";
-import { site } from "@/lib/site";
 import VisitTracker from "@/components/VisitTracker";
+import { site } from "@/lib/site";
+import { getLanguageDirection, normalizeLanguage } from "@/lib/languages";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: `${site.name} | Data-driven Research Training Platform`,
-  description: site.tagline
+  description: site.description,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+
+  const currentLanguage = normalizeLanguage(
+    cookieStore.get("lexdata_language")?.value
+  );
+
+  const direction = getLanguageDirection(currentLanguage);
+
   return (
-    <html lang="en">
+    <html lang={currentLanguage} dir={direction}>
       <body>
         <VisitTracker />
         <Navbar />
-     
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );
