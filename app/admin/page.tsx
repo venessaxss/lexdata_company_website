@@ -44,6 +44,12 @@ const adminCards = [
     href: "/admin/hero",
   },
   {
+  title: "Notice Center",
+  description:
+    "Publish website notices, announcements, media releases, images, audio, videos, and public updates.",
+  href: "/manager/notices",
+},
+  {
     title: "Latest Workshop Videos",
     description:
       "Managed through Workshops. Add session videos or YouTube/Jianying links to show them in the homepage latest video section.",

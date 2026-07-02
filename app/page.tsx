@@ -5,6 +5,7 @@ import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
+import NoticeSpotlight from "@/components/NoticeSpotlight";
 
 const featureCards = [
   {
@@ -89,6 +90,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <NoticeSpotlight />
       <HomeMediaShowcase />
       <HomeVideoSpotlight />
 

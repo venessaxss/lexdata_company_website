@@ -37,6 +37,12 @@ const managerCards = [
     href: "/dashboard/messages",
   },
   {
+  title: "Notice Center",
+  description:
+    "Publish and manage public notices, announcements, media releases, and homepage spotlight updates.",
+  href: "/manager/notices",
+},
+  {
     title: "Workshops",
     description:
       "View public workshop pages and check how workshops appear to users.",
