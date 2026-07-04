@@ -2,12 +2,14 @@ import { uploadPaymentReceiptAction } from "@/app/workshops/[slug]/receipt-actio
 
 type PaymentReceiptUploadFormProps = {
   slug: string;
+  workshopId: string;
   registrationId: string;
   receiptUrl?: string | null;
 };
 
-export default function ReceiptUploadBox({
+export default function PaymentReceiptUploadForm({
   slug,
+  workshopId,
   registrationId,
   receiptUrl,
 }: PaymentReceiptUploadFormProps) {
@@ -39,6 +41,7 @@ export default function ReceiptUploadBox({
 
       <form action={uploadPaymentReceiptAction} className="mt-5 space-y-4">
         <input type="hidden" name="slug" value={slug} />
+        <input type="hidden" name="workshop_id" value={workshopId} />
         <input type="hidden" name="registration_id" value={registrationId} />
 
         <div>

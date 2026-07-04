@@ -22,18 +22,11 @@ function sanitizeFileName(fileName: string) {
 export async function uploadPaymentReceiptAction(formData: FormData) {
   const slug = String(formData.get("slug") || "").trim();
   const registrationId = String(formData.get("registration_id") || "").trim();
+  const workshopIdFromForm = String(formData.get("workshop_id") || "").trim();
   const receipt = formData.get("receipt") as File | null;
 
   if (!slug) {
     redirect("/workshops");
-  }
-
-  if (!registrationId) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Missing registration information"
-      )}`
-    );
   }
 
   if (!receipt || receipt.size === 0) {
@@ -80,34 +73,82 @@ export async function uploadPaymentReceiptAction(formData: FormData) {
 
   const admin = createAdminClient();
 
-  const { data: registration, error: registrationError } = await admin
-    .from("workshop_registrations")
-    .select(
-      `
-      id,
-      user_id,
-      workshop_id,
-      registration_status,
-      payment_status,
-      payment_currency,
-      amount_received
-    `
-    )
-    .eq("id", registrationId)
-    .maybeSingle();
+  let workshopId = workshopIdFromForm;
 
-  if (registrationError || !registration) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Registration was not found"
-      )}`
-    );
+  if (!workshopId) {
+    const { data: workshop, error: workshopError } = await admin
+      .from("workshops")
+      .select("id, slug")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (workshopError || !workshop) {
+      redirect(
+        `/workshops/${slug}?message=${cleanRedirectMessage(
+          "Workshop was not found"
+        )}`
+      );
+    }
+
+    workshopId = workshop.id;
   }
 
-  if (registration.user_id !== user.id) {
+  let registration: {
+    id: string;
+    user_id: string;
+    workshop_id: string;
+    registration_status?: string | null;
+    payment_status?: string | null;
+    payment_currency?: string | null;
+    amount_received?: number | null;
+  } | null = null;
+
+  if (registrationId) {
+    const { data: registrationById } = await admin
+      .from("workshop_registrations")
+      .select(
+        `
+        id,
+        user_id,
+        workshop_id,
+        registration_status,
+        payment_status,
+        payment_currency,
+        amount_received
+      `
+      )
+      .eq("id", registrationId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    registration = registrationById;
+  }
+
+  if (!registration) {
+    const { data: registrationByWorkshop } = await admin
+      .from("workshop_registrations")
+      .select(
+        `
+        id,
+        user_id,
+        workshop_id,
+        registration_status,
+        payment_status,
+        payment_currency,
+        amount_received
+      `
+      )
+      .eq("workshop_id", workshopId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    registration = registrationByWorkshop;
+  }
+
+  if (!registration) {
     redirect(
       `/workshops/${slug}?message=${cleanRedirectMessage(
-        "You cannot upload a receipt for this registration"
+        "Registration was not found. Please refresh the page and try again."
       )}`
     );
   }
@@ -135,8 +176,7 @@ export async function uploadPaymentReceiptAction(formData: FormData) {
   }
 
   const safeFileName = sanitizeFileName(receipt.name || "receipt");
-
-  const storagePath = `${user.id}/${registrationId}/${Date.now()}-${safeFileName}`;
+  const storagePath = `${user.id}/${registration.id}/${Date.now()}-${safeFileName}`;
 
   const arrayBuffer = await receipt.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
@@ -151,7 +191,7 @@ export async function uploadPaymentReceiptAction(formData: FormData) {
   if (uploadError) {
     redirect(
       `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Could not upload receipt"
+        `Could not upload receipt: ${uploadError.message}`
       )}`
     );
   }
@@ -162,7 +202,7 @@ export async function uploadPaymentReceiptAction(formData: FormData) {
 
   const receiptUrl = publicUrlData.publicUrl;
 
-  await admin
+  const { error: updateError } = await admin
     .from("workshop_registrations")
     .update({
       receipt_url: receiptUrl,
@@ -170,7 +210,15 @@ export async function uploadPaymentReceiptAction(formData: FormData) {
       payment_note: "Receipt uploaded by member",
       updated_at: new Date().toISOString(),
     })
-    .eq("id", registrationId);
+    .eq("id", registration.id);
+
+  if (updateError) {
+    redirect(
+      `/workshops/${slug}?message=${cleanRedirectMessage(
+        `Receipt uploaded, but registration update failed: ${updateError.message}`
+      )}`
+    );
+  }
 
   await admin.from("workshop_payment_records").insert({
     registration_id: registration.id,

@@ -919,6 +919,7 @@ export default async function WorkshopDetailPage({
           {canUploadPaymentReceipt && existingRegistration ? (
             <PaymentReceiptUploadForm
               slug={workshop.slug}
+               workshopId={workshop.id}
               registrationId={existingRegistration.id}
               receiptUrl={existingRegistration.receipt_url}
             />
