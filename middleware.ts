@@ -30,6 +30,21 @@ const protectedPrefixes = [
   "/manager",
 ];
 
+function isStaticAsset(pathname: string) {
+  return (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/manuals") ||
+    pathname.startsWith("/assets") ||
+    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|pdf|txt|xml)$/)
+  );
+}
+
+function isPublicApiRoute(pathname: string) {
+  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
 function isPublicRoute(pathname: string) {
   if (publicRoutes.includes(pathname)) {
     return true;
@@ -44,10 +59,6 @@ function isPublicRoute(pathname: string) {
   }
 
   return false;
-}
-
-function isPublicApiRoute(pathname: string) {
-  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
 function isProtectedRoute(pathname: string) {
@@ -65,18 +76,11 @@ function isManagerRoute(pathname: string) {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (isPublicApiRoute(pathname)) {
+  if (isStaticAsset(pathname)) {
     return NextResponse.next();
   }
 
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/manuals") ||
-    pathname.startsWith("/assets") ||
-    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|pdf|txt|xml)$/)
-  ) {
+  if (isPublicApiRoute(pathname)) {
     return NextResponse.next();
   }
 
@@ -116,6 +120,14 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (user && (pathname === "/login" || pathname === "/signup")) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/dashboard";
+    redirectUrl.search = "";
+
+    return NextResponse.redirect(redirectUrl);
+  }
 
   if (!user && isProtectedRoute(pathname)) {
     const redirectUrl = request.nextUrl.clone();
@@ -158,15 +170,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (user && (pathname === "/login" || pathname === "/signup")) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/dashboard";
-    redirectUrl.search = "";
-
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  if (!isPublicRoute(pathname) && !isProtectedRoute(pathname)) {
+  if (isPublicRoute(pathname)) {
     return response;
   }
 
