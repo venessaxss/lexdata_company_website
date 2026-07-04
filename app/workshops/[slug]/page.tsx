@@ -245,34 +245,38 @@ export default async function WorkshopDetailPage({
   const supabase = await createClient();
   const admin = createAdminClient();
 
-  const { data: workshopData } = await admin
-    .from("workshops")
-    .select(
-      `
-      id,
-      slug,
-      title,
-      summary,
-      description,
-      price,
-      currency,
-      start_date,
-      end_date,
-      location,
-      cover_image_url,
-      recruitment_status,
-      process_status,
-      status_note,
-      is_published
+  const { data: workshopData, error: workshopError } = await admin
+  .from("workshops")
+  .select(
     `
-    )
-    .eq("slug", slug)
-    .maybeSingle();
+    id,
+    slug,
+    title,
+    summary,
+    description,
+    price,
+    currency,
+    start_date,
+    end_date,
+    location,
+    cover_image_url,
+    recruitment_status,
+    process_status,
+    status_note,
+    is_published
+  `
+  )
+  .eq("slug", slug)
+  .maybeSingle();
 
-  if (!workshopData) {
-    notFound();
-  }
+if (workshopError) {
+  console.error("Workshop detail query failed:", workshopError);
+  throw new Error(`Workshop detail query failed: ${workshopError.message}`);
+}
 
+if (!workshopData) {
+  notFound();
+}
   const workshop = workshopData as Workshop;
 
   const {
