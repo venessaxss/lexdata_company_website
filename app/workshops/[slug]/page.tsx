@@ -61,6 +61,7 @@ type ExistingRegistration = {
 
 type WorkshopSession = {
   id: string;
+  workshop_id?: string | null;
   title?: string | null;
   description?: string | null;
   session_date?: string | null;
@@ -70,6 +71,24 @@ type WorkshopSession = {
   recording_url?: string | null;
   material_url?: string | null;
   speaker_email?: string | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
+};
+
+type WorkshopSubsession = {
+  id: string;
+  session_id: string;
+  title?: string | null;
+  description?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  meeting_url?: string | null;
+  recording_url?: string | null;
+  material_url?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  display_order?: number | null;
+  is_active?: boolean | null;
 };
 
 function cleanRedirectMessage(message: string) {
@@ -111,7 +130,11 @@ function getStatusClass(value?: string | null) {
     return "bg-emerald-50 text-emerald-700 border-emerald-200";
   }
 
-  if (value === "under_review" || value === "pending" || value === "in_progress") {
+  if (
+    value === "under_review" ||
+    value === "pending" ||
+    value === "in_progress"
+  ) {
     return "bg-amber-50 text-amber-700 border-amber-200";
   }
 
@@ -171,14 +194,22 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const admin = createAdminClient();
 
-  const { data: workshop } = await admin
+  const { data: workshop, error: workshopError } = await admin
     .from("workshops")
     .select("id, slug, recruitment_status, process_status")
     .eq("id", workshopId)
     .maybeSingle();
 
+  if (workshopError) {
+    throw new Error(`Workshop registration query failed: ${workshopError.message}`);
+  }
+
   if (!workshop) {
-    redirect(`/workshops/${slug}?message=${cleanRedirectMessage("Workshop was not found")}`);
+    redirect(
+      `/workshops/${slug}?message=${cleanRedirectMessage(
+        "Workshop was not found"
+      )}`
+    );
   }
 
   const recruitmentStatus = workshop.recruitment_status || "open";
@@ -246,37 +277,38 @@ export default async function WorkshopDetailPage({
   const admin = createAdminClient();
 
   const { data: workshopData, error: workshopError } = await admin
-  .from("workshops")
-  .select(
+    .from("workshops")
+    .select(
+      `
+      id,
+      slug,
+      title,
+      summary,
+      description,
+      price,
+      currency,
+      start_date,
+      end_date,
+      location,
+      cover_image_url,
+      recruitment_status,
+      process_status,
+      status_note,
+      is_published
     `
-    id,
-    slug,
-    title,
-    summary,
-    description,
-    price,
-    currency,
-    start_date,
-    end_date,
-    location,
-    cover_image_url,
-    recruitment_status,
-    process_status,
-    status_note,
-    is_published
-  `
-  )
-  .eq("slug", slug)
-  .maybeSingle();
+    )
+    .eq("slug", slug)
+    .maybeSingle();
 
-if (workshopError) {
-  console.error("Workshop detail query failed:", workshopError);
-  throw new Error(`Workshop detail query failed: ${workshopError.message}`);
-}
+  if (workshopError) {
+    console.error("Workshop detail query failed:", workshopError);
+    throw new Error(`Workshop detail query failed: ${workshopError.message}`);
+  }
 
-if (!workshopData) {
-  notFound();
-}
+  if (!workshopData) {
+    notFound();
+  }
+
   const workshop = workshopData as Workshop;
 
   const {
@@ -287,15 +319,19 @@ if (!workshopData) {
   let existingRegistration: ExistingRegistration | null = null;
 
   if (user) {
-    const { data: profileData } = await admin
+    const { data: profileData, error: profileError } = await admin
       .from("profiles")
       .select("id, role, full_name, email")
       .eq("id", user.id)
       .maybeSingle();
 
+    if (profileError) {
+      console.error("Workshop profile query failed:", profileError);
+    }
+
     profile = profileData as Profile | null;
 
-    const { data: registrationData } = await admin
+    const { data: registrationData, error: registrationError } = await admin
       .from("workshop_registrations")
       .select(
         `
@@ -317,11 +353,14 @@ if (!workshopData) {
       .eq("user_id", user.id)
       .maybeSingle();
 
+    if (registrationError) {
+      console.error("Workshop registration query failed:", registrationError);
+    }
+
     existingRegistration = registrationData as ExistingRegistration | null;
   }
 
   const role = normalizeRole(profile?.role);
-
   const isAdminOrManager = role === "admin" || role === "manager";
 
   if (!workshop.is_published && !isAdminOrManager) {
@@ -349,11 +388,12 @@ if (!workshopData) {
     existingRegistration,
   });
 
-  const { data: sessionsData } = await admin
+  const { data: sessionsData, error: sessionsError } = await admin
     .from("workshop_sessions")
     .select(
       `
       id,
+      workshop_id,
       title,
       description,
       session_date,
@@ -362,20 +402,75 @@ if (!workshopData) {
       meeting_url,
       recording_url,
       material_url,
-      speaker_email
+      speaker_email,
+      display_order,
+      is_active
     `
     )
     .eq("workshop_id", workshop.id)
+    .neq("is_active", false)
+    .order("display_order", { ascending: true })
     .order("session_date", { ascending: true });
+
+  if (sessionsError) {
+    console.error("Workshop sessions query failed:", sessionsError);
+  }
 
   let sessions = (sessionsData ?? []) as WorkshopSession[];
 
   if (role === "speaker" && profile?.email && !privateContentAllowed) {
     sessions = sessions.filter(
       (session) =>
-        session.speaker_email?.toLowerCase() === profile?.email?.toLowerCase()
+        session.speaker_email?.toLowerCase() === profile.email?.toLowerCase()
     );
   }
+
+  const sessionIds = sessions.map((session) => session.id);
+
+  let subsessions: WorkshopSubsession[] = [];
+
+  if (sessionIds.length > 0) {
+    const { data: subsessionsData, error: subsessionsError } = await admin
+      .from("workshop_subsessions")
+      .select(
+        `
+        id,
+        session_id,
+        title,
+        description,
+        start_time,
+        end_time,
+        meeting_url,
+        recording_url,
+        material_url,
+        media_type,
+        media_url,
+        display_order,
+        is_active
+      `
+      )
+      .in("session_id", sessionIds)
+      .neq("is_active", false)
+      .order("display_order", { ascending: true });
+
+    if (subsessionsError) {
+      console.error("Workshop subsessions query failed:", subsessionsError);
+    }
+
+    subsessions = (subsessionsData ?? []) as WorkshopSubsession[];
+  }
+
+  const subsessionsBySessionId = subsessions.reduce<
+    Record<string, WorkshopSubsession[]>
+  >((result, subsession) => {
+    if (!result[subsession.session_id]) {
+      result[subsession.session_id] = [];
+    }
+
+    result[subsession.session_id].push(subsession);
+
+    return result;
+  }, {});
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
@@ -485,75 +580,171 @@ if (!workshopData) {
             </h2>
 
             <div className="mt-4 whitespace-pre-line leading-8 text-slate-600">
-              {workshop.description || workshop.summary || "No description yet."}
+              {workshop.description ||
+                workshop.summary ||
+                "No description yet."}
             </div>
           </div>
 
           {privateContentAllowed || role === "speaker" ? (
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-black text-slate-950">
-                Sessions and materials
+                Sessions, subsessions, and materials
               </h2>
 
               {sessions.length > 0 ? (
                 <div className="mt-6 space-y-4">
-                  {sessions.map((session) => (
-                    <div
-                      key={session.id}
-                      className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-                    >
-                      <h3 className="text-lg font-black text-slate-950">
-                        {session.title || "Untitled session"}
-                      </h3>
+                  {sessions.map((session) => {
+                    const sessionSubsessions =
+                      subsessionsBySessionId[session.id] ?? [];
 
-                      {session.description ? (
-                        <p className="mt-2 text-sm leading-6 text-slate-600">
-                          {session.description}
-                        </p>
-                      ) : null}
+                    return (
+                      <div
+                        key={session.id}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                      >
+                        <h3 className="text-lg font-black text-slate-950">
+                          {session.title || "Untitled session"}
+                        </h3>
 
-                      <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
-                        <span>{formatDate(session.session_date)}</span>
-                        {session.start_time ? <span>{session.start_time}</span> : null}
-                        {session.end_time ? <span>- {session.end_time}</span> : null}
+                        {session.description ? (
+                          <p className="mt-2 text-sm leading-6 text-slate-600">
+                            {session.description}
+                          </p>
+                        ) : null}
+
+                        <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
+                          {session.session_date ? (
+                            <span>{formatDate(session.session_date)}</span>
+                          ) : null}
+                          {session.start_time ? (
+                            <span>{session.start_time}</span>
+                          ) : null}
+                          {session.end_time ? (
+                            <span>- {session.end_time}</span>
+                          ) : null}
+                        </div>
+
+                        <div className="mt-4 flex flex-wrap gap-3">
+                          {session.meeting_url ? (
+                            <a
+                              href={session.meeting_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                            >
+                              Join session
+                            </a>
+                          ) : null}
+
+                          {session.material_url ? (
+                            <a
+                              href={session.material_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                            >
+                              Materials
+                            </a>
+                          ) : null}
+
+                          {session.recording_url ? (
+                            <a
+                              href={session.recording_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                            >
+                              Recording
+                            </a>
+                          ) : null}
+                        </div>
+
+                        {sessionSubsessions.length > 0 ? (
+                          <div className="mt-5 space-y-3 border-t border-slate-200 pt-5">
+                            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                              Subsessions
+                            </p>
+
+                            {sessionSubsessions.map((subsession) => (
+                              <div
+                                key={subsession.id}
+                                className="rounded-2xl border border-slate-200 bg-white p-4"
+                              >
+                                <h4 className="text-base font-black text-slate-950">
+                                  {subsession.title || "Untitled subsession"}
+                                </h4>
+
+                                {subsession.description ? (
+                                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                                    {subsession.description}
+                                  </p>
+                                ) : null}
+
+                                <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
+                                  {subsession.start_time ? (
+                                    <span>{subsession.start_time}</span>
+                                  ) : null}
+                                  {subsession.end_time ? (
+                                    <span>- {subsession.end_time}</span>
+                                  ) : null}
+                                  {subsession.media_type ? (
+                                    <span>{subsession.media_type}</span>
+                                  ) : null}
+                                </div>
+
+                                <div className="mt-4 flex flex-wrap gap-3">
+                                  {subsession.meeting_url ? (
+                                    <a
+                                      href={subsession.meeting_url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                                    >
+                                      Join subsession
+                                    </a>
+                                  ) : null}
+
+                                  {subsession.material_url ? (
+                                    <a
+                                      href={subsession.material_url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                                    >
+                                      Materials
+                                    </a>
+                                  ) : null}
+
+                                  {subsession.recording_url ? (
+                                    <a
+                                      href={subsession.recording_url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                                    >
+                                      Recording
+                                    </a>
+                                  ) : null}
+
+                                  {subsession.media_url ? (
+                                    <a
+                                      href={subsession.media_url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                                    >
+                                      Media
+                                    </a>
+                                  ) : null}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-
-                      <div className="mt-4 flex flex-wrap gap-3">
-                        {session.meeting_url ? (
-                          <a
-                            href={session.meeting_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
-                          >
-                            Join session
-                          </a>
-                        ) : null}
-
-                        {session.material_url ? (
-                          <a
-                            href={session.material_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                          >
-                            Materials
-                          </a>
-                        ) : null}
-
-                        {session.recording_url ? (
-                          <a
-                            href={session.recording_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                          >
-                            Recording
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-slate-500">
@@ -567,8 +758,8 @@ if (!workshopData) {
                 Private course materials
               </h2>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Session links, recordings, and materials are available after
-                your registration/payment is approved.
+                Session links, subsessions, recordings, and materials are
+                available after your registration or payment is approved.
               </p>
             </div>
           )}
@@ -620,6 +811,17 @@ if (!workshopData) {
                     {statusLabel(existingRegistration.payment_status)}
                   </p>
                 </div>
+
+                {privateContentAllowed ? (
+                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
+                    Access unlocked. You can view sessions, subsessions, and
+                    private materials.
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-700">
+                    Access is waiting for registration or payment approval.
+                  </div>
+                )}
 
                 {existingRegistration.payment_link ? (
                   <a
