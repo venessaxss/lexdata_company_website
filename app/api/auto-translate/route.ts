@@ -31,6 +31,18 @@ const LARA_TARGET_LANGUAGE_MAP: Record<string, string> = {
   ko: "ko-KR",
 };
 
+const LIBRE_TARGET_LANGUAGE_MAP: Record<string, string | null> = {
+  en: "en",
+  zh: "zh",
+  mn: null,
+  ar: "ar",
+  ur: "ur",
+  az: "az",
+  tr: "tr",
+  ja: "ja",
+  ko: "ko",
+};
+
 function hashText(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -71,6 +83,85 @@ function uniqueTexts(texts: string[]) {
   return result.slice(0, 60);
 }
 
+async function translateWithLibreTranslate(text: string, language: string) {
+  const baseUrl = process.env.TRANSLATE_API_URL;
+  const apiKey = process.env.TRANSLATE_API_KEY;
+  const target = LIBRE_TARGET_LANGUAGE_MAP[language];
+
+  if (!baseUrl) {
+    return {
+      translatedText: text,
+      usedProvider: false,
+      provider: "libretranslate",
+      error: "Missing TRANSLATE_API_URL",
+    };
+  }
+
+  if (!target) {
+    return {
+      translatedText: text,
+      usedProvider: false,
+      provider: "libretranslate",
+      error: `LibreTranslate does not support target language: ${language}`,
+    };
+  }
+
+  try {
+    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/translate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        q: text,
+        source: "en",
+        target,
+        format: "text",
+        api_key: apiKey || undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      return {
+        translatedText: text,
+        usedProvider: true,
+        provider: "libretranslate",
+        error: errorText || `LibreTranslate HTTP ${response.status}`,
+      };
+    }
+
+    const data = await response.json();
+
+    if (typeof data?.translatedText === "string" && data.translatedText.trim()) {
+      return {
+        translatedText: data.translatedText.trim(),
+        usedProvider: true,
+        provider: "libretranslate",
+        error: null,
+      };
+    }
+
+    return {
+      translatedText: text,
+      usedProvider: true,
+      provider: "libretranslate",
+      error: "LibreTranslate returned empty translation",
+    };
+  } catch (error) {
+    return {
+      translatedText: text,
+      usedProvider: true,
+      provider: "libretranslate",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown LibreTranslate error",
+    };
+  }
+}
+
 function getLaraTranslator() {
   const accessKeyId = process.env.LARA_ACCESS_KEY_ID;
   const accessKeySecret = process.env.LARA_ACCESS_KEY_SECRET;
@@ -80,7 +171,6 @@ function getLaraTranslator() {
   }
 
   const credentials = new Credentials(accessKeyId, accessKeySecret);
-
   return new Translator(credentials);
 }
 
@@ -91,6 +181,7 @@ async function translateWithLara(text: string, language: string) {
     return {
       translatedText: text,
       usedProvider: false,
+      provider: "lara",
       error: "Missing LARA_ACCESS_KEY_ID or LARA_ACCESS_KEY_SECRET",
     };
   }
@@ -106,6 +197,7 @@ async function translateWithLara(text: string, language: string) {
       return {
         translatedText: translated.trim(),
         usedProvider: true,
+        provider: "lara",
         error: null,
       };
     }
@@ -113,20 +205,50 @@ async function translateWithLara(text: string, language: string) {
     return {
       translatedText: text,
       usedProvider: true,
+      provider: "lara",
       error: "Lara returned empty translation",
     };
   } catch (error) {
-    console.error("Lara translation failed:", error);
-
     return {
       translatedText: text,
       usedProvider: true,
+      provider: "lara",
       error:
         error instanceof Error
           ? error.message
           : "Unknown Lara translation error",
     };
   }
+}
+
+async function translateText(text: string, language: string) {
+  const provider = process.env.TRANSLATE_PROVIDER || "libretranslate";
+
+  if (provider === "lara") {
+    return translateWithLara(text, language);
+  }
+
+  const libreResult = await translateWithLibreTranslate(text, language);
+
+  if (
+    libreResult.translatedText &&
+    libreResult.translatedText !== text &&
+    !libreResult.error
+  ) {
+    return libreResult;
+  }
+
+  const laraResult = await translateWithLara(text, language);
+
+  if (
+    laraResult.translatedText &&
+    laraResult.translatedText !== text &&
+    !laraResult.error
+  ) {
+    return laraResult;
+  }
+
+  return libreResult;
 }
 
 export async function POST(request: Request) {
@@ -138,7 +260,9 @@ export async function POST(request: Request) {
 
     const debug = {
       language,
+      provider: process.env.TRANSLATE_PROVIDER || "libretranslate",
       textCount: texts.length,
+      hasTranslateApiUrl: Boolean(process.env.TRANSLATE_API_URL),
       hasLaraAccessKeyId: Boolean(process.env.LARA_ACCESS_KEY_ID),
       hasLaraAccessKeySecret: Boolean(process.env.LARA_ACCESS_KEY_SECRET),
       providerCalls: 0,
@@ -196,12 +320,12 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const result = await translateWithLara(text, language);
+      const result = await translateText(text, language);
 
       debug.providerCalls += result.usedProvider ? 1 : 0;
 
       if (result.error) {
-        debug.errors.push(`${text}: ${result.error}`);
+        debug.errors.push(`${text}: ${result.provider}: ${result.error}`);
       }
 
       translations[text] = result.translatedText;
@@ -213,7 +337,7 @@ export async function POST(request: Request) {
             source_text: text,
             target_language: language,
             translated_text: result.translatedText,
-            provider: "lara",
+            provider: result.provider,
             updated_at: new Date().toISOString(),
           },
           {
