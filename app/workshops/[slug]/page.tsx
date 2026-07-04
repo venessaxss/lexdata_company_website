@@ -138,7 +138,12 @@ function getStatusClass(value?: string | null) {
     return "bg-amber-50 text-amber-700 border-amber-200";
   }
 
-  if (value === "closed" || value === "terminated" || value === "rejected") {
+  if (
+    value === "closed" ||
+    value === "terminated" ||
+    value === "rejected" ||
+    value === "cancelled"
+  ) {
     return "bg-red-50 text-red-700 border-red-200";
   }
 
@@ -147,6 +152,16 @@ function getStatusClass(value?: string | null) {
   }
 
   return "bg-slate-50 text-slate-700 border-slate-200";
+}
+
+function paymentUnlocksAccess(paymentStatus?: string | null) {
+  return paymentStatus === "confirmed" || paymentStatus === "waived";
+}
+
+function registrationUnlocksAccess(registrationStatus?: string | null) {
+  return (
+    registrationStatus === "confirmed" || registrationStatus === "approved"
+  );
 }
 
 function canAccessPrivateContent({
@@ -165,11 +180,94 @@ function canAccessPrivateContent({
   }
 
   return (
-    existingRegistration.registration_status === "confirmed" ||
-    existingRegistration.registration_status === "approved" ||
-    existingRegistration.payment_status === "confirmed" ||
-    existingRegistration.payment_status === "waived"
+    registrationUnlocksAccess(existingRegistration.registration_status) ||
+    paymentUnlocksAccess(existingRegistration.payment_status)
   );
+}
+
+function getEffectiveRegistrationStatus(
+  registration: ExistingRegistration | null
+) {
+  if (!registration) return null;
+
+  if (
+    paymentUnlocksAccess(registration.payment_status) &&
+    !registrationUnlocksAccess(registration.registration_status)
+  ) {
+    return "confirmed";
+  }
+
+  return registration.registration_status || "pending";
+}
+
+function sortSessions(a: WorkshopSession, b: WorkshopSession) {
+  const orderA = a.display_order ?? 9999;
+  const orderB = b.display_order ?? 9999;
+
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+
+  const dateA = a.session_date ? new Date(a.session_date).getTime() : 0;
+  const dateB = b.session_date ? new Date(b.session_date).getTime() : 0;
+
+  if (dateA !== dateB) {
+    return dateA - dateB;
+  }
+
+  return (a.title || "").localeCompare(b.title || "");
+}
+
+function sortSubsessions(a: WorkshopSubsession, b: WorkshopSubsession) {
+  const orderA = a.display_order ?? 9999;
+  const orderB = b.display_order ?? 9999;
+
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+
+  return (a.title || "").localeCompare(b.title || "");
+}
+
+async function syncRegistrationWithPayment(
+  registration: ExistingRegistration | null
+): Promise<ExistingRegistration | null> {
+  if (!registration) {
+    return null;
+  }
+
+  const paymentConfirmed = paymentUnlocksAccess(registration.payment_status);
+  const registrationConfirmed = registrationUnlocksAccess(
+    registration.registration_status
+  );
+
+  if (!paymentConfirmed || registrationConfirmed) {
+    return registration;
+  }
+
+  const admin = createAdminClient();
+
+  const { data: updatedRegistration, error } = await admin
+    .from("workshop_registrations")
+    .update({
+      registration_status: "confirmed",
+    })
+    .eq("id", registration.id)
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    console.error("Could not sync registration with payment:", error);
+    return {
+      ...registration,
+      registration_status: "confirmed",
+    };
+  }
+
+  return (updatedRegistration as ExistingRegistration | null) ?? {
+    ...registration,
+    registration_status: "confirmed",
+  };
 }
 
 async function registerForWorkshopAction(formData: FormData) {
@@ -196,12 +294,14 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const { data: workshop, error: workshopError } = await admin
     .from("workshops")
-    .select("id, slug, recruitment_status, process_status")
+    .select("*")
     .eq("id", workshopId)
     .maybeSingle();
 
   if (workshopError) {
-    throw new Error(`Workshop registration query failed: ${workshopError.message}`);
+    throw new Error(
+      `Workshop registration query failed: ${workshopError.message}`
+    );
   }
 
   if (!workshop) {
@@ -242,14 +342,18 @@ async function registerForWorkshopAction(formData: FormData) {
     );
   }
 
-  await admin.from("workshop_registrations").insert({
-    workshop_id: workshopId,
-    user_id: user.id,
-    registration_status: "pending",
-    payment_status: "pending",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  const { error: insertError } = await admin
+    .from("workshop_registrations")
+    .insert({
+      workshop_id: workshopId,
+      user_id: user.id,
+      registration_status: "pending",
+      payment_status: "pending",
+    });
+
+  if (insertError) {
+    throw new Error(`Could not register: ${insertError.message}`);
+  }
 
   revalidatePath(`/workshops/${slug}`);
   revalidatePath("/dashboard/my-learning");
@@ -278,25 +382,7 @@ export default async function WorkshopDetailPage({
 
   const { data: workshopData, error: workshopError } = await admin
     .from("workshops")
-    .select(
-      `
-      id,
-      slug,
-      title,
-      summary,
-      description,
-      price,
-      currency,
-      start_date,
-      end_date,
-      location,
-      cover_image_url,
-      recruitment_status,
-      process_status,
-      status_note,
-      is_published
-    `
-    )
+    .select("*")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -321,7 +407,7 @@ export default async function WorkshopDetailPage({
   if (user) {
     const { data: profileData, error: profileError } = await admin
       .from("profiles")
-      .select("id, role, full_name, email")
+      .select("*")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -333,22 +419,7 @@ export default async function WorkshopDetailPage({
 
     const { data: registrationData, error: registrationError } = await admin
       .from("workshop_registrations")
-      .select(
-        `
-        id,
-        user_id,
-        workshop_id,
-        registration_status,
-        payment_status,
-        receipt_url,
-        payment_note,
-        payment_link,
-        payment_method,
-        payment_reference,
-        amount_received,
-        payment_currency
-      `
-      )
+      .select("*")
       .eq("workshop_id", workshop.id)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -357,13 +428,15 @@ export default async function WorkshopDetailPage({
       console.error("Workshop registration query failed:", registrationError);
     }
 
-    existingRegistration = registrationData as ExistingRegistration | null;
+    existingRegistration = await syncRegistrationWithPayment(
+      registrationData as ExistingRegistration | null
+    );
   }
 
   const role = normalizeRole(profile?.role);
   const isAdminOrManager = role === "admin" || role === "manager";
 
-  if (!workshop.is_published && !isAdminOrManager) {
+  if (workshop.is_published === false && !isAdminOrManager) {
     notFound();
   }
 
@@ -388,40 +461,28 @@ export default async function WorkshopDetailPage({
     existingRegistration,
   });
 
+  const effectiveRegistrationStatus =
+    getEffectiveRegistrationStatus(existingRegistration);
+
   const { data: sessionsData, error: sessionsError } = await admin
     .from("workshop_sessions")
-    .select(
-      `
-      id,
-      workshop_id,
-      title,
-      description,
-      session_date,
-      start_time,
-      end_time,
-      meeting_url,
-      recording_url,
-      material_url,
-      speaker_email,
-      display_order,
-      is_active
-    `
-    )
-    .eq("workshop_id", workshop.id)
-    .neq("is_active", false)
-    .order("display_order", { ascending: true })
-    .order("session_date", { ascending: true });
+    .select("*")
+    .eq("workshop_id", workshop.id);
 
   if (sessionsError) {
     console.error("Workshop sessions query failed:", sessionsError);
   }
 
-  let sessions = (sessionsData ?? []) as WorkshopSession[];
+  let sessions = ((sessionsData ?? []) as WorkshopSession[])
+    .filter((session) => session.is_active !== false)
+    .sort(sortSessions);
 
-  if (role === "speaker" && profile?.email && !privateContentAllowed) {
+  const profileEmail = profile?.email || user?.email || "";
+
+  if (role === "speaker" && profileEmail && !privateContentAllowed) {
     sessions = sessions.filter(
       (session) =>
-        session.speaker_email?.toLowerCase() === profile.email?.toLowerCase()
+        session.speaker_email?.toLowerCase() === profileEmail.toLowerCase()
     );
   }
 
@@ -432,32 +493,16 @@ export default async function WorkshopDetailPage({
   if (sessionIds.length > 0) {
     const { data: subsessionsData, error: subsessionsError } = await admin
       .from("workshop_subsessions")
-      .select(
-        `
-        id,
-        session_id,
-        title,
-        description,
-        start_time,
-        end_time,
-        meeting_url,
-        recording_url,
-        material_url,
-        media_type,
-        media_url,
-        display_order,
-        is_active
-      `
-      )
-      .in("session_id", sessionIds)
-      .neq("is_active", false)
-      .order("display_order", { ascending: true });
+      .select("*")
+      .in("session_id", sessionIds);
 
     if (subsessionsError) {
       console.error("Workshop subsessions query failed:", subsessionsError);
     }
 
-    subsessions = (subsessionsData ?? []) as WorkshopSubsession[];
+    subsessions = ((subsessionsData ?? []) as WorkshopSubsession[])
+      .filter((subsession) => subsession.is_active !== false)
+      .sort(sortSubsessions);
   }
 
   const subsessionsBySessionId = subsessions.reduce<
@@ -617,9 +662,11 @@ export default async function WorkshopDetailPage({
                           {session.session_date ? (
                             <span>{formatDate(session.session_date)}</span>
                           ) : null}
+
                           {session.start_time ? (
                             <span>{session.start_time}</span>
                           ) : null}
+
                           {session.end_time ? (
                             <span>- {session.end_time}</span>
                           ) : null}
@@ -685,9 +732,11 @@ export default async function WorkshopDetailPage({
                                   {subsession.start_time ? (
                                     <span>{subsession.start_time}</span>
                                   ) : null}
+
                                   {subsession.end_time ? (
                                     <span>- {subsession.end_time}</span>
                                   ) : null}
+
                                   {subsession.media_type ? (
                                     <span>{subsession.media_type}</span>
                                   ) : null}
@@ -757,6 +806,7 @@ export default async function WorkshopDetailPage({
               <h2 className="text-2xl font-black text-slate-950">
                 Private course materials
               </h2>
+
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 Session links, subsessions, recordings, and materials are
                 available after your registration or payment is approved.
@@ -788,14 +838,15 @@ export default async function WorkshopDetailPage({
               <div className="mt-4 space-y-4">
                 <div
                   className={`rounded-2xl border p-4 ${getStatusClass(
-                    existingRegistration.registration_status || "pending"
+                    effectiveRegistrationStatus || "pending"
                   )}`}
                 >
                   <p className="text-xs font-black uppercase tracking-[0.2em]">
                     Registration status
                   </p>
+
                   <p className="mt-1 text-lg font-black">
-                    {statusLabel(existingRegistration.registration_status)}
+                    {statusLabel(effectiveRegistrationStatus)}
                   </p>
                 </div>
 
@@ -807,6 +858,7 @@ export default async function WorkshopDetailPage({
                   <p className="text-xs font-black uppercase tracking-[0.2em]">
                     Payment status
                   </p>
+
                   <p className="mt-1 text-lg font-black">
                     {statusLabel(existingRegistration.payment_status)}
                   </p>
@@ -845,7 +897,7 @@ export default async function WorkshopDetailPage({
                   </a>
                 ) : null}
               </div>
-            ) : registrationIsOpen ? (
+            ) : canSubmitNewRegistration ? (
               <form action={registerForWorkshopAction} className="mt-5">
                 <input type="hidden" name="workshop_id" value={workshop.id} />
                 <input type="hidden" name="slug" value={workshop.slug} />
