@@ -1,78 +1,50 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { unstable_noStore as noStore } from "next/cache";
-import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { revalidatePath, unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { normalizeRole } from "@/lib/roles";
 import PaymentReceiptUploadForm from "@/components/PaymentReceiptUploadForm";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type PageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
-  searchParams?: Promise<{
-    message?: string;
-  }>;
-};
-
 type Workshop = {
   id: string;
-  slug: string;
   title: string;
+  slug: string;
   summary?: string | null;
   description?: string | null;
+  long_description?: string | null;
+  audience?: string | null;
   price?: number | null;
   currency?: string | null;
-  start_date?: string | null;
-  end_date?: string | null;
-  location?: string | null;
-  cover_image_url?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
+  is_published?: boolean | null;
   recruitment_status?: string | null;
   process_status?: string | null;
-  status_note?: string | null;
-  is_published?: boolean | null;
-};
-
-type Profile = {
-  id: string;
-  role?: string | null;
-  full_name?: string | null;
-  email?: string | null;
-};
-
-type ExistingRegistration = {
-  id: string;
-  user_id: string;
-  workshop_id: string;
-  registration_status?: string | null;
-  payment_status?: string | null;
-  receipt_url?: string | null;
-  payment_note?: string | null;
-  payment_link?: string | null;
-  payment_method?: string | null;
-  payment_reference?: string | null;
-  amount_received?: number | null;
-  payment_currency?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 };
 
 type WorkshopSession = {
   id: string;
-  workshop_id?: string | null;
+  workshop_id: string;
   title?: string | null;
   description?: string | null;
-  session_date?: string | null;
   start_time?: string | null;
   end_time?: string | null;
   meeting_url?: string | null;
   recording_url?: string | null;
   material_url?: string | null;
-  speaker_email?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
   display_order?: number | null;
   is_active?: boolean | null;
+  created_at?: string | null;
 };
 
 type WorkshopSubsession = {
@@ -89,194 +61,49 @@ type WorkshopSubsession = {
   media_url?: string | null;
   display_order?: number | null;
   is_active?: boolean | null;
+  created_at?: string | null;
+};
+
+type Registration = {
+  id: string;
+  workshop_id: string;
+  user_id: string;
+  registration_status?: string | null;
+  payment_status?: string | null;
+  payment_link?: string | null;
+  payment_note?: string | null;
+  receipt_url?: string | null;
+  payment_currency?: string | null;
+  amount_received?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+type Profile = {
+  role?: string | null;
+  full_name?: string | null;
+};
+
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+  searchParams?: Promise<{
+    message?: string | string[];
+  }>;
 };
 
 function cleanRedirectMessage(message: string) {
   return encodeURIComponent(message);
 }
 
-function formatDate(value?: string | null) {
-  if (!value) return "-";
-
-  try {
-    return new Intl.DateTimeFormat("en", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(value));
-  } catch {
-    return value;
-  }
-}
-
-function formatMoney(amount?: number | null, currency?: string | null) {
-  if (!amount || amount <= 0) {
-    return "Free / To be confirmed";
-  }
-
-  return `${currency || "USD"} ${amount}`;
-}
-
-function statusLabel(value?: string | null) {
-  if (!value) return "Pending";
-
-  return value
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function getStatusClass(value?: string | null) {
-  if (value === "confirmed" || value === "approved" || value === "open") {
-    return "bg-emerald-50 text-emerald-700 border-emerald-200";
-  }
-
-  if (
-    value === "under_review" ||
-    value === "pending" ||
-    value === "in_progress"
-  ) {
-    return "bg-amber-50 text-amber-700 border-amber-200";
-  }
-
-  if (
-    value === "closed" ||
-    value === "terminated" ||
-    value === "rejected" ||
-    value === "cancelled"
-  ) {
-    return "bg-red-50 text-red-700 border-red-200";
-  }
-
-  if (value === "completed" || value === "waived") {
-    return "bg-blue-50 text-blue-700 border-blue-200";
-  }
-
-  return "bg-slate-50 text-slate-700 border-slate-200";
-}
-
-function paymentUnlocksAccess(paymentStatus?: string | null) {
-  return paymentStatus === "confirmed" || paymentStatus === "waived";
-}
-
-function registrationUnlocksAccess(registrationStatus?: string | null) {
-  return (
-    registrationStatus === "confirmed" || registrationStatus === "approved"
-  );
-}
-
-function canAccessPrivateContent({
-  role,
-  existingRegistration,
-}: {
-  role: string;
-  existingRegistration: ExistingRegistration | null;
-}) {
-  if (role === "admin" || role === "manager") {
-    return true;
-  }
-
-  if (!existingRegistration) {
-    return false;
-  }
-
-  return (
-    registrationUnlocksAccess(existingRegistration.registration_status) ||
-    paymentUnlocksAccess(existingRegistration.payment_status)
-  );
-}
-
-function getEffectiveRegistrationStatus(
-  registration: ExistingRegistration | null
-) {
-  if (!registration) return null;
-
-  if (
-    paymentUnlocksAccess(registration.payment_status) &&
-    !registrationUnlocksAccess(registration.registration_status)
-  ) {
-    return "confirmed";
-  }
-
-  return registration.registration_status || "pending";
-}
-
-function sortSessions(a: WorkshopSession, b: WorkshopSession) {
-  const orderA = a.display_order ?? 9999;
-  const orderB = b.display_order ?? 9999;
-
-  if (orderA !== orderB) {
-    return orderA - orderB;
-  }
-
-  const dateA = a.session_date ? new Date(a.session_date).getTime() : 0;
-  const dateB = b.session_date ? new Date(b.session_date).getTime() : 0;
-
-  if (dateA !== dateB) {
-    return dateA - dateB;
-  }
-
-  return (a.title || "").localeCompare(b.title || "");
-}
-
-function sortSubsessions(a: WorkshopSubsession, b: WorkshopSubsession) {
-  const orderA = a.display_order ?? 9999;
-  const orderB = b.display_order ?? 9999;
-
-  if (orderA !== orderB) {
-    return orderA - orderB;
-  }
-
-  return (a.title || "").localeCompare(b.title || "");
-}
-
-async function syncRegistrationWithPayment(
-  registration: ExistingRegistration | null
-): Promise<ExistingRegistration | null> {
-  if (!registration) {
-    return null;
-  }
-
-  const paymentConfirmed = paymentUnlocksAccess(registration.payment_status);
-  const registrationConfirmed = registrationUnlocksAccess(
-    registration.registration_status
-  );
-
-  if (!paymentConfirmed || registrationConfirmed) {
-    return registration;
-  }
-
-  const admin = createAdminClient();
-
-  const { data: updatedRegistration, error } = await admin
-    .from("workshop_registrations")
-    .update({
-      registration_status: "confirmed",
-    })
-    .eq("id", registration.id)
-    .select("*")
-    .maybeSingle();
-
-  if (error) {
-    console.error("Could not sync registration with payment:", error);
-    return {
-      ...registration,
-      registration_status: "confirmed",
-    };
-  }
-
-  return (updatedRegistration as ExistingRegistration | null) ?? {
-    ...registration,
-    registration_status: "confirmed",
-  };
-}
-
 async function registerForWorkshopAction(formData: FormData) {
   "use server";
 
-  const workshopId = String(formData.get("workshop_id") || "").trim();
   const slug = String(formData.get("slug") || "").trim();
+  const workshopId = String(formData.get("workshop_id") || "").trim();
 
-  if (!workshopId || !slug) {
+  if (!slug || !workshopId) {
     redirect("/workshops");
   }
 
@@ -292,41 +119,6 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const admin = createAdminClient();
 
-  const { data: workshop, error: workshopError } = await admin
-    .from("workshops")
-    .select("*")
-    .eq("id", workshopId)
-    .maybeSingle();
-
-  if (workshopError) {
-    throw new Error(
-      `Workshop registration query failed: ${workshopError.message}`
-    );
-  }
-
-  if (!workshop) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Workshop was not found"
-      )}`
-    );
-  }
-
-  const recruitmentStatus = workshop.recruitment_status || "open";
-  const processStatus = workshop.process_status || "not_started";
-
-  if (
-    recruitmentStatus !== "open" ||
-    recruitmentStatus === "terminated" ||
-    processStatus === "terminated"
-  ) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Registration is not currently available for this workshop"
-      )}`
-    );
-  }
-
   const { data: existingRegistration } = await admin
     .from("workshop_registrations")
     .select("id")
@@ -337,33 +129,205 @@ async function registerForWorkshopAction(formData: FormData) {
   if (existingRegistration) {
     redirect(
       `/workshops/${slug}?message=${cleanRedirectMessage(
-        "You have already registered for this workshop"
+        "You are already registered for this workshop."
       )}`
     );
   }
 
-  const { error: insertError } = await admin
-    .from("workshop_registrations")
-    .insert({
-      workshop_id: workshopId,
-      user_id: user.id,
-      registration_status: "pending",
-      payment_status: "pending",
-    });
+  const { error } = await admin.from("workshop_registrations").insert({
+    workshop_id: workshopId,
+    user_id: user.id,
+    registration_status: "pending",
+    payment_status: "pending",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
 
-  if (insertError) {
-    throw new Error(`Could not register: ${insertError.message}`);
+  if (error) {
+    redirect(
+      `/workshops/${slug}?message=${cleanRedirectMessage(
+        `Registration failed: ${error.message}`
+      )}`
+    );
   }
 
   revalidatePath(`/workshops/${slug}`);
   revalidatePath("/dashboard/my-learning");
-  revalidatePath("/admin/registrations");
   revalidatePath("/manager/registrations");
+  revalidatePath("/admin/registrations");
 
   redirect(
     `/workshops/${slug}?message=${cleanRedirectMessage(
-      "Registration submitted successfully"
+      "Registration submitted successfully. Please wait for payment instructions."
     )}`
+  );
+}
+
+function formatDateTime(value?: string | null) {
+  if (!value) return "To be announced";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function formatDate(value?: string | null) {
+  if (!value) return "To be announced";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+}
+
+function formatPrice(workshop: Workshop) {
+  if (workshop.price === null || workshop.price === undefined) {
+    return "Contact us";
+  }
+
+  if (workshop.price === 0) {
+    return "Free";
+  }
+
+  return `${workshop.currency || "USD"} ${workshop.price}`;
+}
+
+function statusLabel(status?: string | null) {
+  if (!status) return "Pending";
+
+  return status
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function statusClass(status?: string | null) {
+  if (status === "confirmed" || status === "waived" || status === "open") {
+    return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  }
+
+  if (status === "under_review" || status === "instructions_sent") {
+    return "bg-blue-50 text-blue-700 ring-blue-200";
+  }
+
+  if (status === "cancelled" || status === "rejected" || status === "closed") {
+    return "bg-red-50 text-red-700 ring-red-200";
+  }
+
+  return "bg-amber-50 text-amber-700 ring-amber-200";
+}
+
+function isRegistrationOpen(workshop: Workshop) {
+  const status = workshop.recruitment_status || "open";
+
+  return (
+    status === "open" ||
+    status === "recruiting" ||
+    status === "active" ||
+    status === "published"
+  );
+}
+
+function paymentUnlocksAccess(paymentStatus?: string | null) {
+  return paymentStatus === "confirmed" || paymentStatus === "waived";
+}
+
+function registrationUnlocksAccess(registrationStatus?: string | null) {
+  return registrationStatus === "confirmed";
+}
+
+function sortSessions(a: WorkshopSession, b: WorkshopSession) {
+  const orderA = a.display_order ?? 0;
+  const orderB = b.display_order ?? 0;
+
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+
+  const timeA = a.start_time ? new Date(a.start_time).getTime() : 0;
+  const timeB = b.start_time ? new Date(b.start_time).getTime() : 0;
+
+  return timeA - timeB;
+}
+
+function sortSubsessions(a: WorkshopSubsession, b: WorkshopSubsession) {
+  const orderA = a.display_order ?? 0;
+  const orderB = b.display_order ?? 0;
+
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+
+  const timeA = a.start_time ? new Date(a.start_time).getTime() : 0;
+  const timeB = b.start_time ? new Date(b.start_time).getTime() : 0;
+
+  return timeA - timeB;
+}
+
+function renderWorkshopMedia(workshop: Workshop) {
+  if (!workshop.media_url) {
+    return (
+      <div className="flex h-80 items-center justify-center rounded-[2rem] border border-slate-200 bg-slate-100 text-sm font-black text-slate-500">
+        No media
+      </div>
+    );
+  }
+
+  if (workshop.media_type === "image") {
+    return (
+      <img
+        src={workshop.media_url}
+        alt={workshop.title}
+        className="h-80 w-full rounded-[2rem] object-cover shadow-sm"
+      />
+    );
+  }
+
+  if (workshop.media_type === "video") {
+    return (
+      <video
+        src={workshop.media_url}
+        controls
+        className="h-80 w-full rounded-[2rem] bg-slate-950 object-cover shadow-sm"
+      />
+    );
+  }
+
+  if (workshop.media_type === "audio") {
+    return (
+      <div className="flex h-80 items-center justify-center rounded-[2rem] border border-slate-200 bg-slate-100 p-8">
+        <audio src={workshop.media_url} controls className="w-full" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-80 items-center justify-center rounded-[2rem] border border-slate-200 bg-slate-100">
+      <a
+        href={workshop.media_url}
+        target="_blank"
+        rel="noreferrer"
+        className="rounded-2xl bg-slate-950 px-6 py-3 text-sm font-black text-white hover:bg-slate-700"
+      >
+        Open media
+      </a>
+    </div>
   );
 }
 
@@ -375,10 +339,30 @@ export default async function WorkshopDetailPage({
 
   const { slug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const message = resolvedSearchParams?.message;
+  const rawMessage = resolvedSearchParams.message;
+  const message = Array.isArray(rawMessage) ? rawMessage[0] : rawMessage;
 
   const supabase = await createClient();
   const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let profile: Profile | null = null;
+
+  if (user) {
+    const { data: profileData } = await admin
+      .from("profiles")
+      .select("role, full_name")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    profile = profileData as Profile | null;
+  }
+
+  const role = normalizeRole(profile?.role);
+  const canManage = role === "admin" || role === "manager";
 
   const { data: workshopData, error: workshopError } = await admin
     .from("workshops")
@@ -387,8 +371,7 @@ export default async function WorkshopDetailPage({
     .maybeSingle();
 
   if (workshopError) {
-    console.error("Workshop detail query failed:", workshopError);
-    throw new Error(`Workshop detail query failed: ${workshopError.message}`);
+    console.error("Workshop query failed:", workshopError);
   }
 
   if (!workshopData) {
@@ -397,26 +380,13 @@ export default async function WorkshopDetailPage({
 
   const workshop = workshopData as Workshop;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (workshop.is_published === false && !canManage) {
+    notFound();
+  }
 
-  let profile: Profile | null = null;
-  let existingRegistration: ExistingRegistration | null = null;
+  let existingRegistration: Registration | null = null;
 
   if (user) {
-    const { data: profileData, error: profileError } = await admin
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (profileError) {
-      console.error("Workshop profile query failed:", profileError);
-    }
-
-    profile = profileData as Profile | null;
-
     const { data: registrationData, error: registrationError } = await admin
       .from("workshop_registrations")
       .select("*")
@@ -425,61 +395,30 @@ export default async function WorkshopDetailPage({
       .maybeSingle();
 
     if (registrationError) {
-      console.error("Workshop registration query failed:", registrationError);
+      console.error("Registration query failed:", registrationError);
     }
 
-    existingRegistration = await syncRegistrationWithPayment(
-      registrationData as ExistingRegistration | null
-    );
+    existingRegistration = registrationData as Registration | null;
   }
 
-  const role = normalizeRole(profile?.role);
-  const isAdminOrManager = role === "admin" || role === "manager";
+  if (
+    existingRegistration &&
+    paymentUnlocksAccess(existingRegistration.payment_status) &&
+    existingRegistration.registration_status !== "confirmed"
+  ) {
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: "confirmed",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", existingRegistration.id);
 
-  if (workshop.is_published === false && !isAdminOrManager) {
-    notFound();
+    existingRegistration = {
+      ...existingRegistration,
+      registration_status: "confirmed",
+    };
   }
-
-  const recruitmentStatus = workshop.recruitment_status || "open";
-  const processStatus = workshop.process_status || "not_started";
-
-  const registrationIsOpen =
-    recruitmentStatus === "open" && processStatus !== "terminated";
-
-  const canSubmitNewRegistration =
-    Boolean(user) && registrationIsOpen && !existingRegistration;
-
-  const paymentStatus = existingRegistration?.payment_status || "pending";
-
-const managerHasSentPaymentInstructions =
-  paymentStatus === "instructions_sent" ||
-  paymentStatus === "under_review" ||
-  Boolean(existingRegistration?.payment_link) ||
-  Boolean(existingRegistration?.payment_note);
-
-const canUploadPaymentReceipt =
-  Boolean(existingRegistration) &&
-  existingRegistration?.registration_status !== "cancelled" &&
-  existingRegistration?.registration_status !== "rejected" &&
-  paymentStatus !== "confirmed" &&
-  paymentStatus !== "waived" &&
-  managerHasSentPaymentInstructions;
-
-const isWaitingForPaymentInstructions =
-  Boolean(existingRegistration) &&
-  existingRegistration?.registration_status !== "cancelled" &&
-  existingRegistration?.registration_status !== "rejected" &&
-  paymentStatus !== "confirmed" &&
-  paymentStatus !== "waived" &&
-  !managerHasSentPaymentInstructions;
-
-  const privateContentAllowed = canAccessPrivateContent({
-    role,
-    existingRegistration,
-  });
-
-  const effectiveRegistrationStatus =
-    getEffectiveRegistrationStatus(existingRegistration);
 
   const { data: sessionsData, error: sessionsError } = await admin
     .from("workshop_sessions")
@@ -490,18 +429,9 @@ const isWaitingForPaymentInstructions =
     console.error("Workshop sessions query failed:", sessionsError);
   }
 
-  let sessions = ((sessionsData ?? []) as WorkshopSession[])
+  const sessions = ((sessionsData ?? []) as WorkshopSession[])
     .filter((session) => session.is_active !== false)
     .sort(sortSessions);
-
-  const profileEmail = profile?.email || user?.email || "";
-
-  if (role === "speaker" && profileEmail && !privateContentAllowed) {
-    sessions = sessions.filter(
-      (session) =>
-        session.speaker_email?.toLowerCase() === profileEmail.toLowerCase()
-    );
-  }
 
   const sessionIds = sessions.map((session) => session.id);
 
@@ -522,193 +452,213 @@ const isWaitingForPaymentInstructions =
       .sort(sortSubsessions);
   }
 
-  const subsessionsBySessionId = subsessions.reduce<
-    Record<string, WorkshopSubsession[]>
-  >((result, subsession) => {
-    if (!result[subsession.session_id]) {
-      result[subsession.session_id] = [];
-    }
+  const subsessionsBySessionId = new Map<string, WorkshopSubsession[]>();
 
-    result[subsession.session_id].push(subsession);
+  for (const subsession of subsessions) {
+    const current = subsessionsBySessionId.get(subsession.session_id) ?? [];
+    current.push(subsession);
+    subsessionsBySessionId.set(subsession.session_id, current);
+  }
 
-    return result;
-  }, {});
+  const registrationStatus =
+    existingRegistration?.registration_status || "pending";
+
+  const paymentStatus = existingRegistration?.payment_status || "pending";
+
+  const managerHasSentPaymentInstructions =
+    paymentStatus === "instructions_sent" ||
+    paymentStatus === "under_review" ||
+    Boolean(existingRegistration?.payment_link) ||
+    Boolean(existingRegistration?.payment_note);
+
+  const canUploadPaymentReceipt =
+    Boolean(existingRegistration) &&
+    registrationStatus !== "cancelled" &&
+    registrationStatus !== "rejected" &&
+    paymentStatus !== "confirmed" &&
+    paymentStatus !== "waived" &&
+    managerHasSentPaymentInstructions;
+
+  const isWaitingForPaymentInstructions =
+    Boolean(existingRegistration) &&
+    registrationStatus !== "cancelled" &&
+    registrationStatus !== "rejected" &&
+    paymentStatus !== "confirmed" &&
+    paymentStatus !== "waived" &&
+    !managerHasSentPaymentInstructions;
+
+  const canAccessPrivateContent =
+    Boolean(existingRegistration) &&
+    (paymentUnlocksAccess(paymentStatus) ||
+      registrationUnlocksAccess(registrationStatus));
+
+  const canSubmitNewRegistration =
+    Boolean(user) && !existingRegistration && isRegistrationOpen(workshop);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10">
-      {message ? (
-        <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm font-bold text-blue-800">
-          {message}
-        </div>
-      ) : null}
-
-      <div className="mb-8">
-        <Link
-          href="/workshops"
-          className="text-sm font-bold text-slate-600 hover:text-slate-950"
-        >
-          ← Back to workshops
-        </Link>
-      </div>
-
-      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-        {workshop.cover_image_url ? (
-          <img
-            src={workshop.cover_image_url}
-            alt={workshop.title}
-            className="h-72 w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-72 w-full items-center justify-center bg-slate-950 text-5xl font-black text-white">
-            LexData
+    <main className="bg-slate-50">
+      <section className="mx-auto max-w-7xl px-4 py-10">
+        {message ? (
+          <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm font-bold text-blue-800">
+            {message}
           </div>
-        )}
+        ) : null}
 
-        <div className="p-8">
-          <div className="flex flex-wrap gap-3">
-            <span
-              className={`rounded-full border px-4 py-2 text-xs font-black ${getStatusClass(
-                recruitmentStatus
-              )}`}
-            >
-              Recruitment: {statusLabel(recruitmentStatus)}
-            </span>
+        <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+          <div className="space-y-8">
+            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusClass(
+                    workshop.recruitment_status || "open"
+                  )}`}
+                >
+                  Recruitment: {statusLabel(workshop.recruitment_status || "open")}
+                </span>
 
-            <span
-              className={`rounded-full border px-4 py-2 text-xs font-black ${getStatusClass(
-                processStatus
-              )}`}
-            >
-              Course: {statusLabel(processStatus)}
-            </span>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-black ring-1 ${statusClass(
+                    workshop.process_status || "not_started"
+                  )}`}
+                >
+                  Course: {statusLabel(workshop.process_status || "not_started")}
+                </span>
+              </div>
 
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-black text-slate-700">
-              {formatMoney(workshop.price, workshop.currency)}
-            </span>
-          </div>
+              <h1 className="mt-5 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+                {workshop.title}
+              </h1>
 
-          <h1 className="mt-6 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
-            {workshop.title}
-          </h1>
+              {workshop.summary ? (
+                <p className="mt-5 text-lg leading-8 text-slate-600">
+                  {workshop.summary}
+                </p>
+              ) : null}
 
-          {workshop.summary ? (
-            <p className="mt-4 max-w-4xl text-lg leading-8 text-slate-600">
-              {workshop.summary}
-            </p>
-          ) : null}
+              <div className="mt-8">{renderWorkshopMedia(workshop)}</div>
+            </section>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                Start
-              </p>
-              <p className="mt-2 font-bold text-slate-950">
-                {formatDate(workshop.start_date)}
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                End
-              </p>
-              <p className="mt-2 font-bold text-slate-950">
-                {formatDate(workshop.end_date)}
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-slate-50 p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                Location
-              </p>
-              <p className="mt-2 font-bold text-slate-950">
-                {workshop.location || "Online / To be confirmed"}
-              </p>
-            </div>
-          </div>
-
-          {workshop.status_note ? (
-            <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-800">
-              {workshop.status_note}
-            </div>
-          ) : null}
-        </div>
-      </section>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
-        <section className="space-y-8">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-2xl font-black text-slate-950">
-              About this workshop
-            </h2>
-
-            <div className="mt-4 whitespace-pre-line leading-8 text-slate-600">
-              {workshop.description ||
-                workshop.summary ||
-                "No description yet."}
-            </div>
-          </div>
-
-          {privateContentAllowed || role === "speaker" ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
               <h2 className="text-2xl font-black text-slate-950">
-                Sessions, subsessions, and materials
+                About this workshop
               </h2>
 
-              {sessions.length > 0 ? (
-                <div className="mt-6 space-y-4">
-                  {sessions.map((session) => {
-                    const sessionSubsessions =
-                      subsessionsBySessionId[session.id] ?? [];
+              <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+                {workshop.description ? <p>{workshop.description}</p> : null}
 
-                    return (
-                      <div
-                        key={session.id}
-                        className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-                      >
-                        <h3 className="text-lg font-black text-slate-950">
-                          {session.title || "Untitled session"}
-                        </h3>
+                {workshop.long_description ? (
+                  <p>{workshop.long_description}</p>
+                ) : null}
 
-                        {session.description ? (
-                          <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {session.description}
+                {!workshop.description && !workshop.long_description ? (
+                  <p>Detailed workshop information will be updated soon.</p>
+                ) : null}
+              </div>
+            </section>
+
+            {isWaitingForPaymentInstructions ? (
+              <section className="rounded-[2rem] border border-amber-200 bg-amber-50 p-8">
+                <h2 className="text-2xl font-black text-slate-950">
+                  Waiting for payment instructions
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-amber-800">
+                  Your registration has been received. The manager will send
+                  payment instructions or a payment note soon. After that, you
+                  will be able to upload your payment receipt here.
+                </p>
+              </section>
+            ) : null}
+
+            {canUploadPaymentReceipt && existingRegistration ? (
+              <PaymentReceiptUploadForm
+                slug={workshop.slug}
+                workshopId={workshop.id}
+                registrationId={existingRegistration.id}
+                receiptUrl={existingRegistration.receipt_url}
+              />
+            ) : null}
+
+            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
+              <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-950">
+                    Sessions and learning materials
+                  </h2>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Confirmed participants can access meeting links, recordings,
+                    and materials here.
+                  </p>
+                </div>
+
+                {canAccessPrivateContent ? (
+                  <span className="rounded-full bg-emerald-50 px-4 py-2 text-xs font-black text-emerald-700 ring-1 ring-emerald-200">
+                    Access unlocked
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600 ring-1 ring-slate-200">
+                    Locked until confirmation
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-6 space-y-5">
+                {sessions.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-slate-300 p-6 text-sm font-bold text-slate-500">
+                    No sessions have been published yet.
+                  </div>
+                ) : null}
+
+                {sessions.map((session, index) => {
+                  const childSubsessions =
+                    subsessionsBySessionId.get(session.id) ?? [];
+
+                  return (
+                    <article
+                      key={session.id}
+                      className="rounded-3xl border border-slate-200 p-6"
+                    >
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">
+                        Session {index + 1}
+                      </p>
+
+                      <h3 className="mt-2 text-xl font-black text-slate-950">
+                        {session.title || "Untitled session"}
+                      </h3>
+
+                      {session.description ? (
+                        <p className="mt-3 text-sm leading-6 text-slate-600">
+                          {session.description}
+                        </p>
+                      ) : null}
+
+                      <div className="mt-4 grid gap-3 text-sm md:grid-cols-2">
+                        <div className="rounded-2xl bg-slate-50 p-4">
+                          <p className="font-black text-slate-500">Start</p>
+                          <p className="mt-1 font-bold text-slate-900">
+                            {formatDateTime(session.start_time)}
                           </p>
-                        ) : null}
-
-                        <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
-                          {session.session_date ? (
-                            <span>{formatDate(session.session_date)}</span>
-                          ) : null}
-
-                          {session.start_time ? (
-                            <span>{session.start_time}</span>
-                          ) : null}
-
-                          {session.end_time ? (
-                            <span>- {session.end_time}</span>
-                          ) : null}
                         </div>
 
-                        <div className="mt-4 flex flex-wrap gap-3">
+                        <div className="rounded-2xl bg-slate-50 p-4">
+                          <p className="font-black text-slate-500">End</p>
+                          <p className="mt-1 font-bold text-slate-900">
+                            {formatDateTime(session.end_time)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {canAccessPrivateContent ? (
+                        <div className="mt-5 flex flex-wrap gap-3">
                           {session.meeting_url ? (
                             <a
                               href={session.meeting_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                              className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white hover:bg-slate-700"
                             >
-                              Join session
-                            </a>
-                          ) : null}
-
-                          {session.material_url ? (
-                            <a
-                              href={session.material_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                            >
-                              Materials
+                              Join meeting
                             </a>
                           ) : null}
 
@@ -717,68 +667,66 @@ const isWaitingForPaymentInstructions =
                               href={session.recording_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                              className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
                             >
                               Recording
                             </a>
                           ) : null}
+
+                          {session.material_url ? (
+                            <a
+                              href={session.material_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
+                            >
+                              Materials
+                            </a>
+                          ) : null}
                         </div>
+                      ) : (
+                        <p className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-500">
+                          Private session links and materials will unlock after
+                          your registration/payment is confirmed.
+                        </p>
+                      )}
 
-                        {sessionSubsessions.length > 0 ? (
-                          <div className="mt-5 space-y-3 border-t border-slate-200 pt-5">
-                            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-                              Subsessions
-                            </p>
+                      {childSubsessions.length > 0 ? (
+                        <div className="mt-6 space-y-3">
+                          <h4 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">
+                            Subsessions
+                          </h4>
 
-                            {sessionSubsessions.map((subsession) => (
-                              <div
-                                key={subsession.id}
-                                className="rounded-2xl border border-slate-200 bg-white p-4"
-                              >
-                                <h4 className="text-base font-black text-slate-950">
-                                  {subsession.title || "Untitled subsession"}
-                                </h4>
+                          {childSubsessions.map((subsession) => (
+                            <div
+                              key={subsession.id}
+                              className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                            >
+                              <h5 className="font-black text-slate-950">
+                                {subsession.title || "Untitled subsession"}
+                              </h5>
 
-                                {subsession.description ? (
-                                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                                    {subsession.description}
-                                  </p>
-                                ) : null}
+                              {subsession.description ? (
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                  {subsession.description}
+                                </p>
+                              ) : null}
 
-                                <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-slate-500">
-                                  {subsession.start_time ? (
-                                    <span>{subsession.start_time}</span>
-                                  ) : null}
+                              <p className="mt-2 text-xs font-bold text-slate-500">
+                                {formatDateTime(subsession.start_time)} —{" "}
+                                {formatDateTime(subsession.end_time)}
+                              </p>
 
-                                  {subsession.end_time ? (
-                                    <span>- {subsession.end_time}</span>
-                                  ) : null}
-
-                                  {subsession.media_type ? (
-                                    <span>{subsession.media_type}</span>
-                                  ) : null}
-                                </div>
-
-                                <div className="mt-4 flex flex-wrap gap-3">
+                              {canAccessPrivateContent ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
                                   {subsession.meeting_url ? (
                                     <a
                                       href={subsession.meeting_url}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                                      className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white hover:bg-slate-700"
                                     >
-                                      Join subsession
-                                    </a>
-                                  ) : null}
-
-                                  {subsession.material_url ? (
-                                    <a
-                                      href={subsession.material_url}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                                    >
-                                      Materials
+                                      Join
                                     </a>
                                   ) : null}
 
@@ -787,200 +735,204 @@ const isWaitingForPaymentInstructions =
                                       href={subsession.recording_url}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                                      className="rounded-xl border border-slate-300 px-3 py-2 text-xs font-black text-slate-700 hover:bg-white"
                                     >
                                       Recording
                                     </a>
                                   ) : null}
 
-                                  {subsession.media_url ? (
+                                  {subsession.material_url ? (
                                     <a
-                                      href={subsession.media_url}
+                                      href={subsession.material_url}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                                      className="rounded-xl border border-slate-300 px-3 py-2 text-xs font-black text-slate-700 hover:bg-white"
                                     >
-                                      Media
+                                      Material
                                     </a>
                                   ) : null}
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="mt-4 text-sm text-slate-500">
-                  No sessions have been added yet.
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8">
-              <h2 className="text-2xl font-black text-slate-950">
-                Private course materials
-              </h2>
-
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Session links, subsessions, recordings, and materials are
-                available after your registration or payment is approved.
-              </p>
-            </div>
-          )}
-        </section>
-
-        <aside className="space-y-6">
-          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-black text-slate-950">
-              Registration
-            </h2>
-
-            {!user ? (
-              <div className="mt-4">
-                <p className="text-sm leading-6 text-slate-600">
-                  Please log in to register for this workshop.
-                </p>
-
-                <Link
-                  href={`/login?redirect=/workshops/${workshop.slug}`}
-                  className="mt-5 inline-flex w-full justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
-                >
-                  Log in to register
-                </Link>
-              </div>
-            ) : existingRegistration ? (
-              <div className="mt-4 space-y-4">
-                <div
-                  className={`rounded-2xl border p-4 ${getStatusClass(
-                    effectiveRegistrationStatus || "pending"
-                  )}`}
-                >
-                  <p className="text-xs font-black uppercase tracking-[0.2em]">
-                    Registration status
-                  </p>
-
-                  <p className="mt-1 text-lg font-black">
-                    {statusLabel(effectiveRegistrationStatus)}
-                  </p>
-                </div>
-
-                <div
-                  className={`rounded-2xl border p-4 ${getStatusClass(
-                    existingRegistration.payment_status || "pending"
-                  )}`}
-                >
-                  <p className="text-xs font-black uppercase tracking-[0.2em]">
-                    Payment status
-                  </p>
-
-                  <p className="mt-1 text-lg font-black">
-                    {statusLabel(existingRegistration.payment_status)}
-                  </p>
-                </div>
-
-                {privateContentAllowed ? (
-                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
-                    Access unlocked. You can view sessions, subsessions, and
-                    private materials.
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-700">
-                    Access is waiting for registration or payment approval.
-                  </div>
-                )}
-
-                {existingRegistration.payment_link ? (
-                  <a
-                    href={existingRegistration.payment_link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex w-full justify-center rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800"
-                  >
-                    Open payment link
-                  </a>
-                ) : null}
-
-                {existingRegistration.receipt_url ? (
-                  <a
-                    href={existingRegistration.receipt_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex w-full justify-center rounded-2xl border border-slate-300 px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
-                  >
-                    View uploaded receipt
-                  </a>
-                ) : null}
-              </div>
-            ) : canSubmitNewRegistration ? (
-              <form action={registerForWorkshopAction} className="mt-5">
-                <input type="hidden" name="workshop_id" value={workshop.id} />
-                <input type="hidden" name="slug" value={workshop.slug} />
-
-                <button
-                  type="submit"
-                  className="w-full rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
-                >
-                  Register now
-                </button>
-              </form>
-            ) : (
-              <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
-                New registration is currently closed.
-              </div>
-            )}
-          </section>
-
-          {isWaitingForPaymentInstructions ? (
-  <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6">
-    <h2 className="text-xl font-black text-slate-950">
-      Waiting for payment instructions
-    </h2>
-
-    <p className="mt-2 text-sm leading-6 text-amber-800">
-      Your registration has been received. The manager will send payment
-      instructions or a payment note soon. After that, you will be able to
-      upload your payment receipt here.
-    </p>
-  </section>
-) : null}
-
-{canUploadPaymentReceipt && existingRegistration ? (
-  <PaymentReceiptUploadForm
-    slug={workshop.slug}
-    workshopId={workshop.id}
-    registrationId={existingRegistration.id}
-    receiptUrl={existingRegistration.receipt_url}
-  />
-) : null}
-
-          {isAdminOrManager ? (
-            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-black text-slate-950">
-                Management
-              </h2>
-
-              <div className="mt-4 space-y-3">
-                <Link
-                  href="/manager/registrations"
-                  className="block rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                >
-                  Manage registrations
-                </Link>
-
-                <Link
-                  href="/manager/workshops"
-                  className="block rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                >
-                  Manage workshop status
-                </Link>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </article>
+                  );
+                })}
               </div>
             </section>
-          ) : null}
-        </aside>
-      </div>
+          </div>
+
+          <aside className="space-y-6">
+            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
+              <h2 className="text-2xl font-black text-slate-950">
+                Workshop details
+              </h2>
+
+              <div className="mt-5 space-y-4 text-sm">
+                <div>
+                  <p className="font-black text-slate-500">Start date</p>
+                  <p className="mt-1 font-bold text-slate-950">
+                    {formatDate(workshop.start_date)}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-black text-slate-500">End date</p>
+                  <p className="mt-1 font-bold text-slate-950">
+                    {formatDate(workshop.end_date)}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-black text-slate-500">Price</p>
+                  <p className="mt-1 font-bold text-slate-950">
+                    {formatPrice(workshop)}
+                  </p>
+                </div>
+
+                {workshop.audience ? (
+                  <div>
+                    <p className="font-black text-slate-500">Audience</p>
+                    <p className="mt-1 font-bold text-slate-950">
+                      {workshop.audience}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+            </section>
+
+            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
+              <h2 className="text-2xl font-black text-slate-950">
+                Registration
+              </h2>
+
+              <div className="mt-6">
+                {!user ? (
+                  <Link
+                    href={`/login?redirect=/workshops/${workshop.slug}`}
+                    className="flex w-full items-center justify-center rounded-3xl bg-slate-950 px-6 py-5 text-lg font-black text-white hover:bg-slate-700"
+                  >
+                    Log in to register
+                  </Link>
+                ) : null}
+
+                {canSubmitNewRegistration ? (
+                  <form action={registerForWorkshopAction}>
+                    <input type="hidden" name="slug" value={workshop.slug} />
+                    <input
+                      type="hidden"
+                      name="workshop_id"
+                      value={workshop.id}
+                    />
+
+                    <button
+                      type="submit"
+                      className="w-full rounded-3xl bg-slate-950 px-6 py-5 text-lg font-black text-white hover:bg-slate-700"
+                    >
+                      Register now
+                    </button>
+                  </form>
+                ) : null}
+
+                {user && !existingRegistration && !isRegistrationOpen(workshop) ? (
+                  <div className="rounded-3xl bg-slate-100 p-5 text-sm font-bold text-slate-600">
+                    Registration is currently closed.
+                  </div>
+                ) : null}
+
+                {existingRegistration ? (
+                  <div className="space-y-4">
+                    <div className="rounded-3xl bg-slate-50 p-5">
+                      <p className="text-sm font-black text-slate-500">
+                        Registration status
+                      </p>
+                      <span
+                        className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${statusClass(
+                          registrationStatus
+                        )}`}
+                      >
+                        {statusLabel(registrationStatus)}
+                      </span>
+                    </div>
+
+                    <div className="rounded-3xl bg-slate-50 p-5">
+                      <p className="text-sm font-black text-slate-500">
+                        Payment status
+                      </p>
+                      <span
+                        className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${statusClass(
+                          paymentStatus
+                        )}`}
+                      >
+                        {statusLabel(paymentStatus)}
+                      </span>
+                    </div>
+
+                    {existingRegistration.payment_note ? (
+                      <div className="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+                        <p className="text-sm font-black text-blue-700">
+                          Payment note
+                        </p>
+                        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-blue-900">
+                          {existingRegistration.payment_note}
+                        </p>
+                      </div>
+                    ) : null}
+
+                    {existingRegistration.payment_link ? (
+                      <a
+                        href={existingRegistration.payment_link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex w-full items-center justify-center rounded-3xl bg-blue-700 px-5 py-4 text-sm font-black text-white hover:bg-blue-800"
+                      >
+                        Open payment link
+                      </a>
+                    ) : null}
+
+                    {existingRegistration.receipt_url ? (
+                      <a
+                        href={existingRegistration.receipt_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex w-full items-center justify-center rounded-3xl border border-slate-300 px-5 py-4 text-sm font-black text-slate-700 hover:bg-slate-50"
+                      >
+                        View uploaded receipt
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </section>
+
+            {canManage ? (
+              <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-slate-200">
+                <h2 className="text-2xl font-black text-slate-950">
+                  Management
+                </h2>
+
+                <div className="mt-6 space-y-3">
+                  <Link
+                    href={`/manager/registrations?workshop=${workshop.id}`}
+                    className="flex w-full items-center justify-center rounded-3xl border border-slate-300 px-5 py-4 text-sm font-black text-slate-700 hover:bg-slate-50"
+                  >
+                    Manage registrations
+                  </Link>
+
+                  <Link
+                    href={`/manager/workshops`}
+                    className="flex w-full items-center justify-center rounded-3xl border border-slate-300 px-5 py-4 text-sm font-black text-slate-700 hover:bg-slate-50"
+                  >
+                    Manage workshop status
+                  </Link>
+                </div>
+              </section>
+            ) : null}
+          </aside>
+        </div>
+      </section>
     </main>
   );
 }
