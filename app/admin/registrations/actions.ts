@@ -5,6 +5,12 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { normalizeRole } from "@/lib/roles";
+import {
+  sendPaymentConfirmedEmail,
+  sendPaymentInstructionsEmail,
+  sendPaymentReceivedReviewEmail,
+  sendPaymentWaivedEmail,
+} from "@/lib/registration-email";
 
 type ActionUserProfile = {
   id: string;
@@ -84,10 +90,135 @@ function buildPaymentInstructionMessage({
     paymentLink ? `Payment instruction/link: ${paymentLink}` : null,
     paymentNote ? `Note: ${paymentNote}` : null,
     "",
-    "After completing payment, please send your payment reference or receipt information to the LexData team.",
+    "After completing payment, please upload your payment receipt on the workshop page.",
   ].filter(Boolean);
 
   return parts.join("\n");
+}
+
+async function safeSendPaymentInstructionsEmail({
+  userId,
+  registrationId,
+  workshopId,
+  workshopTitle,
+  paymentMethod,
+  paymentLink,
+  paymentNote,
+  paymentCurrency,
+  amount,
+}: {
+  userId: string;
+  registrationId: string;
+  workshopId: string;
+  workshopTitle: string;
+  paymentMethod?: string | null;
+  paymentLink?: string | null;
+  paymentNote?: string | null;
+  paymentCurrency: string;
+  amount: number;
+}) {
+  try {
+    await sendPaymentInstructionsEmail({
+      userId,
+      registrationId,
+      workshopId,
+      workshopTitle,
+      paymentMethod,
+      paymentLink,
+      paymentNote,
+      paymentCurrency,
+      amount,
+    });
+  } catch (error) {
+    console.error("Payment instruction email failed:", error);
+  }
+}
+
+async function safeSendPaymentReceivedReviewEmail({
+  userId,
+  registrationId,
+  workshopId,
+  workshopTitle,
+  paymentMethod,
+  paymentReference,
+  paymentNote,
+  receiptUrl,
+  paymentCurrency,
+  amount,
+}: {
+  userId: string;
+  registrationId: string;
+  workshopId: string;
+  workshopTitle: string;
+  paymentMethod?: string | null;
+  paymentReference?: string | null;
+  paymentNote?: string | null;
+  receiptUrl?: string | null;
+  paymentCurrency: string;
+  amount: number;
+}) {
+  try {
+    await sendPaymentReceivedReviewEmail({
+      userId,
+      registrationId,
+      workshopId,
+      workshopTitle,
+      paymentMethod,
+      paymentReference,
+      paymentNote,
+      receiptUrl,
+      paymentCurrency,
+      amount,
+    });
+  } catch (error) {
+    console.error("Payment received review email failed:", error);
+  }
+}
+
+async function safeSendPaymentConfirmedEmail({
+  userId,
+  registrationId,
+  workshopId,
+  workshopTitle,
+}: {
+  userId: string;
+  registrationId: string;
+  workshopId: string;
+  workshopTitle: string;
+}) {
+  try {
+    await sendPaymentConfirmedEmail({
+      userId,
+      registrationId,
+      workshopId,
+      workshopTitle,
+    });
+  } catch (error) {
+    console.error("Payment confirmed email failed:", error);
+  }
+}
+
+async function safeSendPaymentWaivedEmail({
+  userId,
+  registrationId,
+  workshopId,
+  workshopTitle,
+}: {
+  userId: string;
+  registrationId: string;
+  workshopId: string;
+  workshopTitle: string;
+}) {
+  try {
+    await sendPaymentWaivedEmail({
+      userId,
+      registrationId,
+      workshopId,
+      workshopTitle,
+    });
+  } catch (error) {
+    console.error("Payment waived email failed:", error);
+  }
 }
 
 export async function updateWorkshopRegistration(formData: FormData) {
@@ -243,6 +374,8 @@ export async function updateWorkshopRegistration(formData: FormData) {
 
   const userId = registration?.user_id as string | null | undefined;
 
+  const workshopId = registration?.workshop_id as string | null | undefined;
+
   const workshopTitle =
     registration?.workshops?.title ||
     registration?.workshop_title ||
@@ -251,7 +384,20 @@ export async function updateWorkshopRegistration(formData: FormData) {
   const workshopSlug =
     registration?.workshops?.slug || registration?.workshop_slug || "";
 
+  const workshopLink = workshopSlug
+    ? `/workshops/${workshopSlug}`
+    : "/dashboard/my-learning";
+
   if (userId && actionType === "send_payment_info") {
+    const websiteMessageBody = buildPaymentInstructionMessage({
+      workshopTitle,
+      paymentMethod,
+      paymentLink,
+      paymentNote,
+      paymentCurrency,
+      amount,
+    });
+
     await supabase.from("user_messages").insert({
       user_id: userId,
       sender_id: actor.id,
@@ -259,19 +405,25 @@ export async function updateWorkshopRegistration(formData: FormData) {
       target_role: "member",
       message_type: "payment_instructions",
       title: "Payment instructions",
-      body: buildPaymentInstructionMessage({
+      body: websiteMessageBody,
+      link_url: paymentLink || workshopLink,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
+
+    if (workshopId) {
+      await safeSendPaymentInstructionsEmail({
+        userId,
+        registrationId: registration.id,
+        workshopId,
         workshopTitle,
         paymentMethod,
         paymentLink,
         paymentNote,
         paymentCurrency,
         amount,
-      }),
-      link_url:
-        paymentLink || (workshopSlug ? `/workshops/${workshopSlug}` : null),
-      is_read: false,
-      created_at: new Date().toISOString(),
-    });
+      });
+    }
   }
 
   if (userId && actionType === "record_payment_received") {
@@ -292,12 +444,25 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "payment_received",
       title: "Payment information received",
       body: bodyParts.join("\n"),
-      link_url: workshopSlug
-        ? `/workshops/${workshopSlug}`
-        : "/dashboard/my-learning",
+      link_url: workshopLink,
       is_read: false,
       created_at: new Date().toISOString(),
     });
+
+    if (workshopId) {
+      await safeSendPaymentReceivedReviewEmail({
+        userId,
+        registrationId: registration.id,
+        workshopId,
+        workshopTitle,
+        paymentMethod,
+        paymentReference,
+        paymentNote,
+        receiptUrl,
+        paymentCurrency,
+        amount,
+      });
+    }
   }
 
   if (userId && actionType === "confirm_payment") {
@@ -309,12 +474,19 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "payment_confirmed",
       title: "Workshop access confirmed",
       body: `Your registration for ${workshopTitle} has been confirmed. You can now access the available workshop sessions, subsessions, materials, and links from your dashboard.`,
-      link_url: workshopSlug
-        ? `/workshops/${workshopSlug}`
-        : "/dashboard/my-learning",
+      link_url: workshopLink,
       is_read: false,
       created_at: new Date().toISOString(),
     });
+
+    if (workshopId) {
+      await safeSendPaymentConfirmedEmail({
+        userId,
+        registrationId: registration.id,
+        workshopId,
+        workshopTitle,
+      });
+    }
   }
 
   if (userId && actionType === "waive_payment") {
@@ -326,12 +498,19 @@ export async function updateWorkshopRegistration(formData: FormData) {
       message_type: "access_confirmed",
       title: "Workshop access confirmed",
       body: `Your access for ${workshopTitle} has been approved by the LexData team.`,
-      link_url: workshopSlug
-        ? `/workshops/${workshopSlug}`
-        : "/dashboard/my-learning",
+      link_url: workshopLink,
       is_read: false,
       created_at: new Date().toISOString(),
     });
+
+    if (workshopId) {
+      await safeSendPaymentWaivedEmail({
+        userId,
+        registrationId: registration.id,
+        workshopId,
+        workshopTitle,
+      });
+    }
   }
 
   revalidatePath("/admin/registrations");
@@ -345,19 +524,19 @@ export async function updateWorkshopRegistration(formData: FormData) {
   }
 
   if (actionType === "send_payment_info") {
-    redirect(`${backTo}?message=Payment instructions sent and synced`);
+    redirect(`${backTo}?message=Payment instructions sent and emailed`);
   }
 
   if (actionType === "record_payment_received") {
-    redirect(`${backTo}?message=Payment record saved and synced`);
+    redirect(`${backTo}?message=Payment record saved and emailed`);
   }
 
   if (actionType === "confirm_payment") {
-    redirect(`${backTo}?message=Payment confirmed, synced, and access unlocked`);
+    redirect(`${backTo}?message=Payment confirmed, emailed, and access unlocked`);
   }
 
   if (actionType === "waive_payment") {
-    redirect(`${backTo}?message=Payment waived and access unlocked`);
+    redirect(`${backTo}?message=Payment waived, emailed, and access unlocked`);
   }
 
   redirect(`${backTo}?message=Registration payment information saved and synced`);

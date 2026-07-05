@@ -32,7 +32,10 @@ function messageToHtml(subject: string, body: string) {
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
       <h2 style="margin: 0 0 16px; font-size: 22px;">${safeSubject}</h2>
-      <div style="font-size: 15px;">${safeBody}</div>
+
+      <div style="font-size: 15px;">
+        ${safeBody}
+      </div>
 
       <p style="margin-top: 28px; font-size: 13px; color: #64748b;">
         This message was sent from LexData. Please log in to your LexData account to view full details.
@@ -76,7 +79,17 @@ export async function syncMessageToParticipantEmails({
   let failed = 0;
 
   for (const profile of profiles) {
-    if (!profile.email) {
+    let recipientEmail = profile.email;
+
+    if (!recipientEmail) {
+      const { data: authUserData } = await admin.auth.admin.getUserById(
+        profile.id
+      );
+
+      recipientEmail = authUserData?.user?.email || null;
+    }
+
+    if (!recipientEmail) {
       failed += 1;
 
       await admin.from("email_delivery_logs").insert({
@@ -88,21 +101,22 @@ export async function syncMessageToParticipantEmails({
         workshop_id: workshopId,
         status: "failed",
         provider: "resend",
-        error_message: "Recipient profile has no email",
+        error_message:
+          "Recipient profile has no email and Auth user email was not found",
       });
 
       continue;
     }
 
     const result = await sendEmail({
-      to: profile.email,
+      to: recipientEmail,
       subject,
       html: messageToHtml(subject, body),
       text: `${subject}\n\n${body}`,
     });
 
     await admin.from("email_delivery_logs").insert({
-      recipient_email: profile.email,
+      recipient_email: recipientEmail,
       recipient_user_id: profile.id,
       subject,
       source_type: sourceType,
