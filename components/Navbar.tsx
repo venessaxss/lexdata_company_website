@@ -16,7 +16,6 @@ async function signOutAction() {
   "use server";
 
   const supabase = await createClient();
-
   await supabase.auth.signOut();
 
   redirect("/");
@@ -24,7 +23,6 @@ async function signOutAction() {
 
 export default async function Navbar() {
   const { language, t } = await getServerI18n();
-
   const supabase = await createClient();
 
   const {
@@ -44,9 +42,9 @@ export default async function Navbar() {
   }
 
   const role = normalizeRole(profile?.role);
-
   const isAdmin = role === "admin";
   const isManager = role === "manager";
+  const canManage = isAdmin || isManager;
 
   const displayName =
     profile?.full_name || user?.user_metadata?.full_name || user?.email;
@@ -54,32 +52,25 @@ export default async function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-6">
+          <Link href="/" className="flex shrink-0 items-center gap-3">
             <img
-              src="/logo2.png"
+              src="/logo.png"
               alt={site.name}
-              className="h-11 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
 
             <div className="hidden sm:block">
-              <p className="text-lg font-black tracking-tight text-slate-950">
+              <p className="text-base font-black tracking-tight text-slate-950">
                 {site.name}
               </p>
-              <p className="text-xs font-semibold text-slate-500">
+              <p className="max-w-[190px] truncate text-xs font-semibold text-slate-500">
                 {site.tagline}
               </p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-2 lg:flex">
-            <Link
-              href="/"
-              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-            >
-              {t("nav.home")}
-            </Link>
-
+          <div className="hidden items-center gap-1 lg:flex">
             <Link
               href="/workshops"
               className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
@@ -94,64 +85,151 @@ export default async function Navbar() {
               {t("nav.notices")}
             </Link>
 
-            {user ? (
-              <Link
-                href="/dashboard/my-learning"
-                className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-              >
-                {t("nav.myLearning")}
-              </Link>
-            ) : null}
+            <details className="relative">
+              <summary className="cursor-pointer list-none rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950">
+                More
+              </summary>
+
+              <div className="absolute left-0 mt-2 w-52 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                <Link
+                  href="/team"
+                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Team
+                </Link>
+
+                <Link
+                  href="/about"
+                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  About
+                </Link>
+
+                <Link
+                  href="/contact"
+                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Contact
+                </Link>
+              </div>
+            </details>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher currentLanguage={language} compact />
 
           {user ? (
             <>
-              <div className="hidden text-right md:block">
-                <p className="max-w-[180px] truncate text-sm font-bold text-slate-950">
-                  {displayName}
-                </p>
-                <p className="text-xs font-semibold text-slate-500">
-                  {translateRole(language, role)}
-                </p>
-              </div>
-
-              {isAdmin ? (
-                <Link
-                  href="/admin"
-                  className="hidden rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 md:inline-flex"
-                >
-                  {t("nav.admin")}
-                </Link>
-              ) : null}
-
-              {isManager || isAdmin ? (
-                <Link
-                  href="/manager"
-                  className="hidden rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50 md:inline-flex"
-                >
-                  {t("nav.manager")}
-                </Link>
-              ) : null}
+              <Link
+                href="/dashboard/messages"
+                className="hidden rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100 md:inline-flex"
+              >
+                Messages
+              </Link>
 
               <Link
                 href="/dashboard"
-                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
               >
                 {t("nav.dashboard")}
               </Link>
 
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-50"
-                >
-                  Log out
-                </button>
-              </form>
+              <details className="relative">
+                <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">
+                  <span className="hidden max-w-[130px] truncate md:inline">
+                    {displayName}
+                  </span>
+                  <span className="md:hidden">Menu</span>
+                  <span>▾</span>
+                </summary>
+
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                  <div className="border-b border-slate-100 px-3 py-3">
+                    <p className="truncate text-sm font-black text-slate-950">
+                      {displayName}
+                    </p>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {translateRole(language, role)}
+                    </p>
+                  </div>
+
+                  <Link
+                    href="/dashboard/messages"
+                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 md:hidden"
+                  >
+                    Messages
+                  </Link>
+
+                  <Link
+                    href="/dashboard/my-learning"
+                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                  >
+                    My Learning
+                  </Link>
+
+                  <Link
+                    href="/dashboard/settings/language"
+                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                  >
+                    Language
+                  </Link>
+
+                  {canManage ? (
+                    <>
+                      <div className="my-2 border-t border-slate-100" />
+
+                      <Link
+                        href="/manager"
+                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Manager Panel
+                      </Link>
+
+                      <Link
+                        href="/manager/registrations"
+                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Registrations
+                      </Link>
+
+                      <Link
+                        href="/manager/notices"
+                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Notices
+                      </Link>
+
+                      <Link
+                        href="/manager/team"
+                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Team
+                      </Link>
+                    </>
+                  ) : null}
+
+                  {isAdmin ? (
+                    <Link
+                      href="/admin"
+                      className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      Admin Panel
+                    </Link>
+                  ) : null}
+
+                  <div className="my-2 border-t border-slate-100" />
+
+                  <form action={signOutAction}>
+                    <button
+                      type="submit"
+                      className="w-full rounded-xl px-3 py-2 text-left text-sm font-black text-red-700 hover:bg-red-50"
+                    >
+                      Log out
+                    </button>
+                  </form>
+                </div>
+              </details>
             </>
           ) : (
             <>
