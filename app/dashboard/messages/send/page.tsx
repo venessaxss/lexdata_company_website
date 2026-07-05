@@ -134,6 +134,16 @@ export default async function SendMessagePage({
             />
           </div>
 
+         <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700">
+  <input
+    name="send_email"
+    type="checkbox"
+    defaultChecked
+    className="h-4 w-4"
+  />
+  Also send this message to recipients by email
+</label>
+
           <button type="submit" className="btn-primary w-fit">
             Send Message
           </button>

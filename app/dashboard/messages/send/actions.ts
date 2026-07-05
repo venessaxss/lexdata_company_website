@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { syncMessageToParticipantEmails } from "@/lib/message-email-sync";
 
 type SenderProfile = {
   id: string;
@@ -93,13 +94,45 @@ export async function sendRoleMessage(formData: FormData) {
   }
 
   const { error } = await supabase.from("user_messages").insert(rows);
-
   if (error) {
-    redirect(
-      `/dashboard/messages/send?message=${encodeURIComponent(error.message)}`
-    );
-  }
+  redirect(
+    `/dashboard/messages/send?message=${encodeURIComponent(error.message)}`
+  );
+}
 
+const sendEmailToo = String(formData.get("send_email") || "") === "on";
+
+if (sendEmailToo) {
+  const recipientUserIds = Array.from(
+    new Set(
+      rows
+        .map((row: any) => row.recipient_id || row.user_id || row.to_user_id)
+        .filter(Boolean)
+    )
+  );
+
+  const emailSubject =
+    String(formData.get("subject") || formData.get("title") || "").trim() ||
+    "LexData message";
+
+  const emailBody =
+    String(
+      formData.get("body") ||
+        formData.get("message") ||
+        formData.get("content") ||
+        ""
+    ).trim() || emailSubject;
+
+  await syncMessageToParticipantEmails({
+    recipientUserIds,
+    subject: emailSubject,
+    body: emailBody,
+    sourceType: "user_message",
+    sourceId: null,
+    workshopId: null,
+  });
+}
+  
   revalidatePath("/dashboard/messages");
   revalidatePath("/dashboard/messages/send");
 
