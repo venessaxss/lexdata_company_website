@@ -449,12 +449,29 @@ export default async function WorkshopDetailPage({
   const canSubmitNewRegistration =
     Boolean(user) && registrationIsOpen && !existingRegistration;
 
-  const canUploadPaymentReceipt =
-    Boolean(existingRegistration) &&
-    existingRegistration?.registration_status !== "cancelled" &&
-    existingRegistration?.registration_status !== "rejected" &&
-    existingRegistration?.payment_status !== "confirmed" &&
-    existingRegistration?.payment_status !== "waived";
+  const paymentStatus = existingRegistration?.payment_status || "pending";
+
+const managerHasSentPaymentInstructions =
+  paymentStatus === "instructions_sent" ||
+  paymentStatus === "under_review" ||
+  Boolean(existingRegistration?.payment_link) ||
+  Boolean(existingRegistration?.payment_note);
+
+const canUploadPaymentReceipt =
+  Boolean(existingRegistration) &&
+  existingRegistration?.registration_status !== "cancelled" &&
+  existingRegistration?.registration_status !== "rejected" &&
+  paymentStatus !== "confirmed" &&
+  paymentStatus !== "waived" &&
+  managerHasSentPaymentInstructions;
+
+const isWaitingForPaymentInstructions =
+  Boolean(existingRegistration) &&
+  existingRegistration?.registration_status !== "cancelled" &&
+  existingRegistration?.registration_status !== "rejected" &&
+  paymentStatus !== "confirmed" &&
+  paymentStatus !== "waived" &&
+  !managerHasSentPaymentInstructions;
 
   const privateContentAllowed = canAccessPrivateContent({
     role,
@@ -916,14 +933,28 @@ export default async function WorkshopDetailPage({
             )}
           </section>
 
-          {canUploadPaymentReceipt && existingRegistration ? (
-            <PaymentReceiptUploadForm
-              slug={workshop.slug}
-               workshopId={workshop.id}
-              registrationId={existingRegistration.id}
-              receiptUrl={existingRegistration.receipt_url}
-            />
-          ) : null}
+          {isWaitingForPaymentInstructions ? (
+  <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6">
+    <h2 className="text-xl font-black text-slate-950">
+      Waiting for payment instructions
+    </h2>
+
+    <p className="mt-2 text-sm leading-6 text-amber-800">
+      Your registration has been received. The manager will send payment
+      instructions or a payment note soon. After that, you will be able to
+      upload your payment receipt here.
+    </p>
+  </section>
+) : null}
+
+{canUploadPaymentReceipt && existingRegistration ? (
+  <PaymentReceiptUploadForm
+    slug={workshop.slug}
+    workshopId={workshop.id}
+    registrationId={existingRegistration.id}
+    receiptUrl={existingRegistration.receipt_url}
+  />
+) : null}
 
           {isAdminOrManager ? (
             <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
