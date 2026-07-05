@@ -97,6 +97,7 @@ function cleanRedirectMessage(message: string) {
   return encodeURIComponent(message);
 }
 
+
 async function registerForWorkshopAction(formData: FormData) {
   "use server";
 
@@ -119,6 +120,25 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const admin = createAdminClient();
 
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const userEmail =
+    profile?.email ||
+    user.email ||
+    user.user_metadata?.email ||
+    "";
+
+  const fullName =
+    profile?.full_name ||
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    userEmail.split("@")[0] ||
+    "Registered participant";
+
   const { data: existingRegistration } = await admin
     .from("workshop_registrations")
     .select("id")
@@ -137,8 +157,13 @@ async function registerForWorkshopAction(formData: FormData) {
   const { error } = await admin.from("workshop_registrations").insert({
     workshop_id: workshopId,
     user_id: user.id,
+
+    full_name: fullName,
+    email: userEmail,
+
     registration_status: "pending",
     payment_status: "pending",
+
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   });
@@ -162,6 +187,7 @@ async function registerForWorkshopAction(formData: FormData) {
     )}`
   );
 }
+
 
 function formatDateTime(value?: string | null) {
   if (!value) return "To be announced";
