@@ -19,25 +19,23 @@ type Notice = {
   created_at?: string | null;
 };
 
-function isNoticeVisible(notice: Notice) {
-  if (!notice.is_published) {
-    return false;
-  }
+function isVisibleNotice(notice: Notice) {
+  if (!notice.is_published) return false;
 
   const now = Date.now();
 
   if (notice.publish_at) {
-    const publishTime = new Date(notice.publish_at).getTime();
+    const publishAt = new Date(notice.publish_at).getTime();
 
-    if (!Number.isNaN(publishTime) && publishTime > now) {
+    if (!Number.isNaN(publishAt) && publishAt > now) {
       return false;
     }
   }
 
   if (notice.expire_at) {
-    const expireTime = new Date(notice.expire_at).getTime();
+    const expireAt = new Date(notice.expire_at).getTime();
 
-    if (!Number.isNaN(expireTime) && expireTime < now) {
+    if (!Number.isNaN(expireAt) && expireAt < now) {
       return false;
     }
   }
@@ -71,37 +69,17 @@ export default async function NoticeSpotlight() {
 
   const { data, error } = await admin
     .from("notices")
-    .select(
-      `
-      id,
-      title,
-      summary,
-      body,
-      notice_type,
-      media_type,
-      media_url,
-      button_text,
-      button_href,
-      priority,
-      is_featured,
-      is_published,
-      publish_at,
-      expire_at,
-      created_at
-    `
-    )
-    .eq("is_published", true)
-    .order("priority", { ascending: false })
+    .select("*")
     .order("created_at", { ascending: false })
-    .limit(12);
+    .limit(20);
 
   if (error) {
-    console.error("Homepage notices failed:", error);
+    console.error("NoticeSpotlight failed:", error);
     return null;
   }
 
   const notices = ((data ?? []) as Notice[])
-    .filter(isNoticeVisible)
+    .filter(isVisibleNotice)
     .sort(sortNotices)
     .slice(0, 3);
 
@@ -116,9 +94,11 @@ export default async function NoticeSpotlight() {
           <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-700">
             Notice Center
           </p>
+
           <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
             Latest announcements
           </h2>
+
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             Important updates, workshop notices, media releases, and platform
             announcements.
