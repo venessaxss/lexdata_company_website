@@ -97,7 +97,6 @@ function cleanRedirectMessage(message: string) {
   return encodeURIComponent(message);
 }
 
-
 async function registerForWorkshopAction(formData: FormData) {
   "use server";
 
@@ -120,6 +119,20 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const admin = createAdminClient();
 
+  const { data: workshop, error: workshopError } = await admin
+    .from("workshops")
+    .select("id, title, price, currency")
+    .eq("id", workshopId)
+    .maybeSingle();
+
+  if (workshopError || !workshop) {
+    redirect(
+      `/workshops/${slug}?message=${cleanRedirectMessage(
+        "Workshop was not found."
+      )}`
+    );
+  }
+
   const { data: profile } = await admin
     .from("profiles")
     .select("full_name, email")
@@ -127,10 +140,7 @@ async function registerForWorkshopAction(formData: FormData) {
     .maybeSingle();
 
   const userEmail =
-    profile?.email ||
-    user.email ||
-    user.user_metadata?.email ||
-    "";
+    profile?.email || user.email || user.user_metadata?.email || "";
 
   const fullName =
     profile?.full_name ||
@@ -154,6 +164,14 @@ async function registerForWorkshopAction(formData: FormData) {
     );
   }
 
+  const isFreeWorkshop =
+    workshop.price === null ||
+    workshop.price === undefined ||
+    Number(workshop.price) === 0;
+
+  const registrationStatus = isFreeWorkshop ? "confirmed" : "pending";
+  const paymentStatus = isFreeWorkshop ? "waived" : "pending";
+
   const { error } = await admin.from("workshop_registrations").insert({
     workshop_id: workshopId,
     user_id: user.id,
@@ -161,8 +179,11 @@ async function registerForWorkshopAction(formData: FormData) {
     full_name: fullName,
     email: userEmail,
 
-    registration_status: "pending",
-    payment_status: "pending",
+    registration_status: registrationStatus,
+    payment_status: paymentStatus,
+
+    payment_currency: workshop.currency || "USD",
+    amount_received: 0,
 
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -183,10 +204,13 @@ async function registerForWorkshopAction(formData: FormData) {
 
   redirect(
     `/workshops/${slug}?message=${cleanRedirectMessage(
-      "Registration submitted successfully. Please wait for payment instructions."
+      isFreeWorkshop
+        ? "Registration confirmed. Your course access is now unlocked."
+        : "Registration submitted successfully. Please wait for payment instructions."
     )}`
   );
 }
+
 
 
 function formatDateTime(value?: string | null) {
