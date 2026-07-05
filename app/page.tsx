@@ -5,8 +5,11 @@ import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
-import NoticeSpotlight from "@/components/NoticeSpotlight";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
+import NoticeSpotlight from "@/components/NoticeSpotlight";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const featureCards = [
   {
     title: "Python & Data Skills",
@@ -52,8 +55,6 @@ const programCards = [
   },
 ];
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export default function HomePage() {
   return (
