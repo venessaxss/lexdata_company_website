@@ -30,6 +30,18 @@ export default async function Navbar() {
   } = await supabase.auth.getUser();
 
   let profile: Profile | null = null;
+  let unreadMessageCount = 0;
+  
+  if (user) {
+  const { count } = await supabase
+    .from("messages")
+    .select("id", { count: "exact", head: true })
+    .eq("recipient_id", user.id)
+    .is("read_at", null);
+
+  unreadMessageCount = count || 0;
+}
+
 
   if (user) {
     const { data: profileData } = await supabase
@@ -55,7 +67,7 @@ export default async function Navbar() {
         <div className="flex min-w-0 items-center gap-6">
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <img
-              src="/logo.png"
+              src="/logo2.png"
               alt={site.name}
               className="h-10 w-auto object-contain"
             />
@@ -122,11 +134,17 @@ export default async function Navbar() {
           {user ? (
             <>
               <Link
-                href="/dashboard/messages"
-                className="hidden rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100 md:inline-flex"
-              >
-                Messages
-              </Link>
+  href="/dashboard/messages"
+  className="relative hidden rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100 md:inline-flex"
+>
+  Messages
+
+  {unreadMessageCount > 0 ? (
+    <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-black text-white">
+      {unreadMessageCount > 99 ? "99+" : unreadMessageCount}
+    </span>
+  ) : null}
+</Link>
 
               <Link
                 href="/dashboard"
@@ -155,12 +173,17 @@ export default async function Navbar() {
                   </div>
 
                   <Link
-                    href="/dashboard/messages"
-                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 md:hidden"
-                  >
-                    Messages
-                  </Link>
+  href="/dashboard/messages"
+  className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 md:hidden"
+>
+  <span>Messages</span>
 
+  {unreadMessageCount > 0 ? (
+    <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-black text-white">
+      {unreadMessageCount > 99 ? "99+" : unreadMessageCount}
+    </span>
+  ) : null}
+</Link>
                   <Link
                     href="/dashboard/my-learning"
                     className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
