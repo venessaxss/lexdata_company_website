@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function updateWorkshopRegistrationPaymentAction(formData: FormData) {
+export async function updateWorkshopRegistrationPaymentAction(
+  formData: FormData
+) {
   const admin = createAdminClient();
 
   const registrationId = String(formData.get("registration_id") || "");
@@ -16,7 +18,7 @@ export async function updateWorkshopRegistrationPaymentAction(formData: FormData
 
   const { data: registration } = await admin
     .from("workshop_registrations")
-    .select("id, workshop_id, user_id, workshops(slug)")
+    .select("*")
     .eq("id", registrationId)
     .maybeSingle();
 
@@ -39,18 +41,20 @@ export async function updateWorkshopRegistrationPaymentAction(formData: FormData
     })
     .eq("id", registrationId);
 
-  const workshop = registration.workshops as any;
-  const slug = Array.isArray(workshop) ? workshop[0]?.slug : workshop?.slug;
+  const { data: workshop } = await admin
+    .from("workshops")
+    .select("slug")
+    .eq("id", registration.workshop_id)
+    .maybeSingle();
 
-  if (slug) {
-    revalidatePath(`/workshops/${slug}`);
+  if (workshop?.slug) {
+    revalidatePath(`/workshops/${workshop.slug}`);
   }
 
   revalidatePath("/manager/registrations");
-  revalidatePath("/dashboard/my-learning");
   revalidatePath("/admin/registrations");
+  revalidatePath("/dashboard/my-learning");
 }
 
-// Keep old imports working if your files already use these names.
 export const updatePaymentAction = updateWorkshopRegistrationPaymentAction;
 export const updateWorkshopRegistration = updateWorkshopRegistrationPaymentAction;
