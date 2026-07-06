@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic";
 export default async function ManagerMonitorPage() {
   const admin = createAdminClient();
 
-  const { data: confirmedRegistrations } = await admin
+  // ✅ SOURCE OF TRUTH: confirmed registrations only
+  const { data: confirmedRegistrations, error } = await admin
     .from("workshop_registrations")
     .select(`
       id,
@@ -23,6 +24,10 @@ export default async function ManagerMonitorPage() {
     .eq("registration_status", "confirmed")
     .eq("payment_status", "confirmed");
 
+  if (error) {
+    console.error("monitor error:", error);
+  }
+
   const workshopStats = new Map();
 
   for (const row of confirmedRegistrations ?? []) {
@@ -33,7 +38,8 @@ export default async function ManagerMonitorPage() {
     if (!workshopStats.has(id)) {
       workshopStats.set(id, {
         workshopId: id,
-        title: row.workshops?.title || "Untitled",
+        title: row.workshops?.[0]?.title || "Untitled",
+        slug: row.workshops?.[0]?.slug || "",
         currency,
         confirmedCount: 0,
         confirmedAmount: 0,
@@ -53,26 +59,29 @@ export default async function ManagerMonitorPage() {
     0
   );
 
+  const totalConfirmedCount = confirmedRegistrations?.length ?? 0;
+
   return (
     <main className="p-6 space-y-6">
+      {/* HEADER */}
       <div className="rounded-2xl bg-white p-6 shadow">
         <h1 className="text-xl font-black">Manager Monitor</h1>
 
         <p className="text-sm text-slate-500 mt-2">
-          Based on manually confirmed registration records
+          Based on confirmed workshop registrations
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <div className="rounded-xl bg-slate-50 p-4">
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="p-4 bg-slate-50 rounded-xl">
             <p className="text-sm font-bold text-slate-500">
-              Confirmed Registrations
+              Confirmed Users
             </p>
             <p className="text-xl font-black">
-              {confirmedRegistrations?.length ?? 0}
+              {totalConfirmedCount}
             </p>
           </div>
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="p-4 bg-slate-50 rounded-xl">
             <p className="text-sm font-bold text-slate-500">
               Confirmed Revenue
             </p>
@@ -83,9 +92,10 @@ export default async function ManagerMonitorPage() {
         </div>
       </div>
 
+      {/* WORKSHOP TABLE */}
       <div className="rounded-2xl bg-white p-6 shadow">
         <h2 className="text-lg font-black mb-4">
-          Workshop-wise Summary
+          Workshop Breakdown
         </h2>
 
         <table className="w-full text-sm">
@@ -109,6 +119,12 @@ export default async function ManagerMonitorPage() {
             ))}
           </tbody>
         </table>
+
+        {workshopList.length === 0 && (
+          <p className="text-sm text-slate-500 mt-4">
+            No confirmed registrations yet
+          </p>
+        )}
       </div>
     </main>
   );

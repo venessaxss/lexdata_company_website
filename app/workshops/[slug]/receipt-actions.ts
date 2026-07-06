@@ -3,16 +3,12 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
-export async function uploadReceiptAction({
-  registrationId,
-  receiptUrl,
-  slug,
-}: {
-  registrationId: string;
-  receiptUrl: string;
-  slug: string;
-}) {
+export async function uploadReceiptAction(formData: FormData) {
   const admin = createAdminClient();
+
+  const registrationId = String(formData.get("registrationId"));
+  const receiptUrl = String(formData.get("receiptUrl"));
+  const slug = String(formData.get("slug"));
 
   await admin
     .from("workshop_registrations")
@@ -24,6 +20,6 @@ export async function uploadReceiptAction({
     .eq("id", registrationId);
 
   revalidatePath(`/workshops/${slug}`);
-  revalidatePath("/manager/monitor");
   revalidatePath("/admin/registrations");
+  revalidatePath("/manager/monitor");
 }

@@ -16,5 +16,6 @@ export async function confirmRegistration(id: string) {
     .eq("id", id);
 
   revalidatePath("/admin/registrations");
+  revalidatePath("/manager/registrations");
   revalidatePath("/manager/monitor");
 }
