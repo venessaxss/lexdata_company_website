@@ -1,62 +1,56 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function updatePaymentAction(formData: FormData) {
+export async function updateWorkshopRegistrationPaymentAction(formData: FormData) {
   const admin = createAdminClient();
 
-  const id = String(formData.get("id"));
-  const payment_status = String(formData.get("payment_status"));
+  const registrationId = String(formData.get("registration_id") || "");
+  const paymentStatus = String(formData.get("payment_status") || "pending");
+  const amountReceived = Number(formData.get("amount_received") || 0);
+  const paymentCurrency = String(formData.get("payment_currency") || "USD");
+  const paymentNote = String(formData.get("payment_note") || "");
 
-  const registration_status = String(formData.get("registration_status"));
-  const amount_received = Number(formData.get("amount_received"));
-  const currency = String(formData.get("currency"));
-  const reference = String(formData.get("reference"));
-  const receipt_url = String(formData.get("receipt_url"));
-  const payment_note = String(formData.get("payment_note"));
+  if (!registrationId) return;
 
-  // update registration
+  const { data: registration } = await admin
+    .from("workshop_registrations")
+    .select("id, workshop_id, user_id, workshops(slug)")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (!registration) return;
+
+  const registrationStatus =
+    paymentStatus === "confirmed" || paymentStatus === "waived"
+      ? "confirmed"
+      : "pending";
+
   await admin
     .from("workshop_registrations")
     .update({
-      registration_status,
-      payment_status,
-      amount_received,
-      payment_currency: currency,
-      transaction_reference: reference,
-      receipt_url,
-      payment_note,
+      registration_status: registrationStatus,
+      payment_status: paymentStatus,
+      amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
+      payment_currency: paymentCurrency,
+      payment_note: paymentNote,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", id);
+    .eq("id", registrationId);
 
-  // 🔥 AUTO UNLOCK ALL SESSIONS
-  if (payment_status === "confirmed") {
-    const { data: reg } = await admin
-      .from("workshop_registrations")
-      .select("user_id, workshop_id")
-      .eq("id", id)
-      .single();
+  const workshop = registration.workshops as any;
+  const slug = Array.isArray(workshop) ? workshop[0]?.slug : workshop?.slug;
 
-    const { data: sessions } = await admin
-      .from("workshop_sessions")
-      .select("id")
-      .eq("workshop_id", reg.workshop_id);
-
-    if (sessions) {
-      await admin.from("session_access_logs").insert(
-        sessions.map((s: any) => ({
-          user_id: reg.user_id,
-          session_id: s.id,
-          unlocked: true,
-          unlocked_at: new Date().toISOString(),
-        }))
-      );
-    }
+  if (slug) {
+    revalidatePath(`/workshops/${slug}`);
   }
 
   revalidatePath("/manager/registrations");
-  revalidatePath("/manager/monitor");
-  revalidatePath("/workshops");
+  revalidatePath("/dashboard/my-learning");
+  revalidatePath("/admin/registrations");
 }
+
+// Keep old imports working if your files already use these names.
+export const updatePaymentAction = updateWorkshopRegistrationPaymentAction;
+export const updateWorkshopRegistration = updateWorkshopRegistrationPaymentAction;
