@@ -8,18 +8,19 @@ export async function uploadReceiptAction(formData: FormData) {
 
   const registrationId = String(formData.get("registrationId"));
   const receiptUrl = String(formData.get("receiptUrl"));
-  const slug = String(formData.get("slug"));
+  const userNote = String(formData.get("userNote") || "");
 
   await admin
     .from("workshop_registrations")
     .update({
       receipt_url: receiptUrl,
       payment_status: "under_review",
+      user_note: userNote,
       updated_at: new Date().toISOString(),
     })
     .eq("id", registrationId);
 
-  revalidatePath(`/workshops/${slug}`);
+  revalidatePath("/workshops");
   revalidatePath("/admin/registrations");
   revalidatePath("/manager/monitor");
 }
