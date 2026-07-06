@@ -3,10 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
-/**
- * CONFIRM PAYMENT + ACCESS
- */
-export async function confirmRegistration(id: string, note?: string) {
+export async function confirmRegistration(id: string) {
   const admin = createAdminClient();
 
   await admin
@@ -14,20 +11,16 @@ export async function confirmRegistration(id: string, note?: string) {
     .update({
       registration_status: "confirmed",
       payment_status: "confirmed",
-      manager_note: note || "Approved",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
 
-  revalidatePath("/admin/registrations");
   revalidatePath("/manager/registrations");
+  revalidatePath("/admin/registrations");
   revalidatePath("/manager/monitor");
 }
 
-/**
- * REJECT PAYMENT
- */
-export async function rejectRegistration(id: string, note?: string) {
+export async function rejectRegistration(id: string) {
   const admin = createAdminClient();
 
   await admin
@@ -35,17 +28,13 @@ export async function rejectRegistration(id: string, note?: string) {
     .update({
       registration_status: "rejected",
       payment_status: "rejected",
-      manager_note: note || "Rejected",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
 
-  revalidatePath("/admin/registrations");
+  revalidatePath("/manager/registrations");
 }
 
-/**
- * ADD MANAGER NOTE
- */
 export async function addManagerNote(id: string, note: string) {
   const admin = createAdminClient();
 
@@ -57,5 +46,5 @@ export async function addManagerNote(id: string, note: string) {
     })
     .eq("id", id);
 
-  revalidatePath("/admin/registrations");
+  revalidatePath("/manager/registrations");
 }

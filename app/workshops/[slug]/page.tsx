@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath, unstable_noStore as noStore } from "next/cache";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeRole } from "@/lib/roles";
@@ -9,6 +10,10 @@ import PaymentReceiptUploadForm from "@/components/PaymentReceiptUploadForm";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+/* =========================
+   TYPES
+========================= */
+
 type Workshop = {
   id: string;
   title: string;
@@ -16,14 +21,13 @@ type Workshop = {
   summary?: string | null;
   description?: string | null;
   long_description?: string | null;
-  audience?: string | null;
   price?: number | null;
   currency?: string | null;
-  media_type?: string | null;
-  media_url?: string | null;
   is_published?: boolean | null;
   recruitment_status?: string | null;
   process_status?: string | null;
+  media_type?: string | null;
+  media_url?: string | null;
   start_date?: string | null;
   end_date?: string | null;
 };
@@ -34,39 +38,39 @@ type Registration = {
   user_id: string;
   registration_status?: string | null;
   payment_status?: string | null;
-  payment_link?: string | null;
-  payment_note?: string | null;
   receipt_url?: string | null;
-  payment_currency?: string | null;
+  payment_note?: string | null;
+  payment_link?: string | null;
   amount_received?: number | null;
+  payment_currency?: string | null;
 };
 
-type Profile = {
-  role?: string | null;
-  full_name?: string | null;
-};
+/* =========================
+   PAGE PROPS
+========================= */
 
 type PageProps = {
   params: Promise<{ slug: string }>;
   searchParams?: Promise<{ message?: string | string[] }>;
 };
 
-function cleanRedirectMessage(message: string) {
-  return encodeURIComponent(message);
+/* =========================
+   HELPERS
+========================= */
+
+function cleanMessage(msg: string) {
+  return encodeURIComponent(msg);
 }
 
 /* =========================
-   REGISTRATION ACTION
+   REGISTER ACTION
 ========================= */
+
 async function registerForWorkshopAction(formData: FormData) {
   "use server";
 
-  const slug = String(formData.get("slug") || "").trim();
-  const workshopId = String(formData.get("workshop_id") || "").trim();
-
-  if (!slug || !workshopId) {
-    redirect("/workshops");
-  }
+  const slug = String(formData.get("slug"));
+  const workshopId = String(formData.get("workshop_id"));
 
   const supabase = await createClient();
 
@@ -82,69 +86,42 @@ async function registerForWorkshopAction(formData: FormData) {
 
   const { data: workshop } = await admin
     .from("workshops")
-    .select("id, title, price, currency")
+    .select("*")
     .eq("id", workshopId)
     .maybeSingle();
 
   if (!workshop) {
-    redirect(`/workshops/${slug}?message=Workshop not found`);
+    redirect(`/workshops/${slug}?message=${cleanMessage("Workshop not found")}`);
   }
 
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("full_name, email")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const userEmail =
-    profile?.email || user.email || user.user_metadata?.email || "";
-
-  const fullName =
-    profile?.full_name ||
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    userEmail.split("@")[0] ||
-    "Participant";
-
-  const { data: existingRegistration } = await admin
+  const { data: existing } = await admin
     .from("workshop_registrations")
     .select("id")
     .eq("workshop_id", workshopId)
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (existingRegistration) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        "Already registered."
-      )}`
-    );
+  if (existing) {
+    redirect(`/workshops/${slug}?message=${cleanMessage("Already registered")}`);
   }
 
   const isFree = Number(workshop.price || 0) === 0;
 
-  const registrationStatus = isFree ? "confirmed" : "pending";
-  const paymentStatus = isFree ? "waived" : "pending";
-
   const { error } = await admin.from("workshop_registrations").insert({
     workshop_id: workshopId,
     user_id: user.id,
-    full_name: fullName,
-    email: userEmail,
-    registration_status: registrationStatus,
-    payment_status: paymentStatus,
-    payment_currency: workshop.currency || "USD",
+    full_name: user.email?.split("@")[0] ?? "User",
+    email: user.email,
+    registration_status: isFree ? "confirmed" : "pending",
+    payment_status: isFree ? "waived" : "pending",
     amount_received: 0,
+    payment_currency: workshop.currency || "USD",
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   });
 
   if (error) {
-    redirect(
-      `/workshops/${slug}?message=${cleanRedirectMessage(
-        error.message
-      )}`
-    );
+    redirect(`/workshops/${slug}?message=${cleanMessage(error.message)}`);
   }
 
   revalidatePath(`/workshops/${slug}`);
@@ -152,10 +129,8 @@ async function registerForWorkshopAction(formData: FormData) {
   revalidatePath("/admin/registrations");
 
   redirect(
-    `/workshops/${slug}?message=${cleanRedirectMessage(
-      isFree
-        ? "Registered successfully."
-        : "Registration submitted. Wait for payment instructions."
+    `/workshops/${slug}?message=${cleanMessage(
+      isFree ? "Registered successfully" : "Waiting for payment instructions"
     )}`
   );
 }
@@ -163,6 +138,7 @@ async function registerForWorkshopAction(formData: FormData) {
 /* =========================
    MAIN PAGE
 ========================= */
+
 export default async function WorkshopDetailPage({
   params,
   searchParams,
@@ -170,10 +146,8 @@ export default async function WorkshopDetailPage({
   noStore();
 
   const { slug } = await params;
-  const sp = searchParams ? await searchParams : {};
-  const message = Array.isArray(sp.message)
-    ? sp.message[0]
-    : sp.message;
+  const sp = (await searchParams) ?? {};
+  const message = Array.isArray(sp.message) ? sp.message[0] : sp.message;
 
   const supabase = await createClient();
   const admin = createAdminClient();
@@ -181,6 +155,10 @@ export default async function WorkshopDetailPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  /* =========================
+     WORKSHOP FETCH
+  ========================= */
 
   const { data: workshop } = await admin
     .from("workshops")
@@ -190,7 +168,11 @@ export default async function WorkshopDetailPage({
 
   if (!workshop) notFound();
 
-  let existingRegistration: Registration | null = null;
+  /* =========================
+     REGISTRATION FETCH
+  ========================= */
+
+  let registration: Registration | null = null;
 
   if (user) {
     const { data } = await admin
@@ -200,24 +182,26 @@ export default async function WorkshopDetailPage({
       .eq("user_id", user.id)
       .maybeSingle();
 
-    existingRegistration = data;
+    registration = data;
   }
 
-  const registrationStatus =
-    existingRegistration?.registration_status || "pending";
-
-  const paymentStatus =
-    existingRegistration?.payment_status || "pending";
-
-  const canUploadReceipt =
-    !!existingRegistration &&
-    paymentStatus !== "confirmed" &&
-    paymentStatus !== "waived";
+  /* =========================
+     ACCESS LOGIC (FIXED)
+  ========================= */
 
   const canAccess =
-    registrationStatus === "confirmed" ||
-    paymentStatus === "confirmed" ||
-    paymentStatus === "waived";
+    registration?.registration_status === "confirmed" ||
+    registration?.payment_status === "confirmed" ||
+    registration?.payment_status === "waived";
+
+  const canUploadReceipt =
+    !!registration &&
+    registration.payment_status !== "confirmed" &&
+    registration.payment_status !== "waived";
+
+  /* =========================
+     UI
+  ========================= */
 
   return (
     <main className="p-6">
@@ -229,8 +213,8 @@ export default async function WorkshopDetailPage({
 
       <h1 className="text-2xl font-bold">{workshop.title}</h1>
 
-      {/* Registration */}
-      {!existingRegistration && (
+      {/* REGISTER */}
+      {!registration && (
         <form action={registerForWorkshopAction}>
           <input type="hidden" name="slug" value={workshop.slug} />
           <input type="hidden" name="workshop_id" value={workshop.id} />
@@ -241,17 +225,17 @@ export default async function WorkshopDetailPage({
         </form>
       )}
 
-      {/* Receipt Upload */}
+      {/* RECEIPT UPLOAD */}
       {canUploadReceipt && (
         <PaymentReceiptUploadForm
           slug={workshop.slug}
           workshopId={workshop.id}
-          registrationId={existingRegistration!.id}
-          receiptUrl={existingRegistration?.receipt_url}
+          registrationId={registration!.id}
+          receiptUrl={registration?.receipt_url}
         />
       )}
 
-      {/* Access */}
+      {/* ACCESS */}
       <div className="mt-6">
         {canAccess ? (
           <p className="text-green-600 font-bold">
@@ -263,6 +247,13 @@ export default async function WorkshopDetailPage({
           </p>
         )}
       </div>
+
+      {/* PAYMENT INFO */}
+      {registration?.payment_note && (
+        <div className="mt-4 bg-yellow-50 p-3 rounded">
+          {registration.payment_note}
+        </div>
+      )}
     </main>
   );
 }

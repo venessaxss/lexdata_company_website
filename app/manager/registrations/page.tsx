@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function ManagerRegistrationsPage() {
   const admin = createAdminClient();
 
-  const { data: registrations } = await admin
+  const { data } = await admin
     .from("workshop_registrations")
     .select(`
       id,
@@ -20,6 +20,8 @@ export default async function ManagerRegistrationsPage() {
       payment_status,
       receipt_url,
       manager_note,
+      amount_received,
+      payment_currency,
       workshops (
         title,
         slug
@@ -27,80 +29,45 @@ export default async function ManagerRegistrationsPage() {
     `)
     .order("created_at", { ascending: false });
 
-  const list = registrations ?? [];
+  const list = data ?? [];
 
   return (
     <main className="p-6">
-      <h1 className="text-xl font-black mb-6">Manager Control Panel</h1>
+      <h1>Manager Panel</h1>
 
-      <div className="space-y-4">
-        {list.map((r: any) => (
-          <div key={r.id} className="bg-white p-4 rounded-xl shadow">
+      {list.map((r: any) => (
+        <div key={r.id}>
+          <p>{r.full_name}</p>
+          <p>{r.email}</p>
 
-            {/* INFO */}
-            <div className="mb-3">
-              <p className="font-black">{r.full_name}</p>
-              <p className="text-sm text-slate-500">{r.email}</p>
+          <p>{r.workshops?.title}</p>
 
-              <p className="text-sm font-bold mt-2">
-                {r.workshops?.title ?? "Unknown Workshop"}
-              </p>
+          <p>{r.registration_status} / {r.payment_status}</p>
 
-              <p className="text-xs mt-1">
-                {r.registration_status} / {r.payment_status}
-              </p>
+          {r.receipt_url && (
+            <a href={r.receipt_url}>Receipt</a>
+          )}
 
-              {r.manager_note && (
-                <p className="text-xs mt-2 text-blue-600">
-                  Note: {r.manager_note}
-                </p>
-              )}
+          <form action={confirmRegistration.bind(null, r.id)}>
+            <button>Confirm</button>
+          </form>
 
-              {r.receipt_url && (
-                <a
-                  href={r.receipt_url}
-                  target="_blank"
-                  className="text-xs text-blue-600 underline"
-                >
-                  View Receipt
-                </a>
-              )}
-            </div>
+          <form action={rejectRegistration.bind(null, r.id)}>
+            <button>Reject</button>
+          </form>
 
-            {/* ACTIONS */}
-            <div className="flex gap-2">
-              <form action={confirmRegistration.bind(null, r.id)}>
-                <button className="bg-green-600 text-white px-3 py-1 rounded">
-                  Confirm
-                </button>
-              </form>
-
-              <form action={rejectRegistration.bind(null, r.id)}>
-                <button className="bg-red-600 text-white px-3 py-1 rounded">
-                  Reject
-                </button>
-              </form>
-
-              <form
-                action={async (formData: FormData) => {
-                  "use server";
-                  const note = String(formData.get("note"));
-                  await addManagerNote(r.id, note);
-                }}
-              >
-                <input
-                  name="note"
-                  placeholder="Add note..."
-                  className="border px-2 py-1 text-sm rounded"
-                />
-                <button className="ml-2 bg-black text-white px-2 py-1 rounded text-sm">
-                  Save
-                </button>
-              </form>
-            </div>
-          </div>
-        ))}
-      </div>
+          <form
+            action={async (formData: FormData) => {
+              "use server";
+              const note = String(formData.get("note"));
+              await addManagerNote(r.id, note);
+            }}
+          >
+            <input name="note" placeholder="note" />
+            <button>Save</button>
+          </form>
+        </div>
+      ))}
     </main>
   );
 }
