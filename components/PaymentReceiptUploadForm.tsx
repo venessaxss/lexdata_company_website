@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { uploadReceiptAction } from "@/app/workshops/[slug]/receipt-actions";
 
-type PaymentReceiptUploadFormProps = {
+type Props = {
   slug: string;
   workshopId: string;
   registrationId: string;
@@ -12,55 +12,54 @@ type PaymentReceiptUploadFormProps = {
 
 export default function PaymentReceiptUploadForm({
   slug,
-  workshopId,
   registrationId,
   receiptUrl,
-}: PaymentReceiptUploadFormProps) {
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleUpload() {
-    if (!file) return;
-
-    setLoading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("registrationId", registrationId);
-      formData.append("slug", slug);
-
-      await uploadReceiptAction(formData);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setLoading(false);
-  }
+}: Props) {
+  const [fileName, setFileName] = useState("");
 
   return (
-    <div className="rounded-2xl bg-white p-6 shadow">
-      <h2 className="text-lg font-black">Upload Payment Receipt</h2>
+    <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+      <h2 className="text-2xl font-black text-slate-950">
+        Upload payment receipt
+      </h2>
+
+      <form action={uploadReceiptAction} className="mt-5 space-y-4">
+        <input type="hidden" name="slug" value={slug} />
+        <input type="hidden" name="registrationId" value={registrationId} />
+
+        <input
+          type="file"
+          name="receipt"
+          accept="image/*,.pdf"
+          required
+          onChange={(event) =>
+            setFileName(event.target.files?.[0]?.name || "")
+          }
+          className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700"
+        />
+
+        {fileName ? (
+          <p className="text-sm font-bold text-slate-500">{fileName}</p>
+        ) : null}
+
+        <button
+          type="submit"
+          className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
+        >
+          Upload receipt
+        </button>
+      </form>
 
       {receiptUrl ? (
-        <p className="mt-2 text-sm text-green-600">
-          Receipt already uploaded
-        </p>
+        <a
+          href={receiptUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-5 inline-flex rounded-2xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700"
+        >
+          View current receipt
+        </a>
       ) : null}
-
-      <input
-        type="file"
-        className="mt-4 block w-full text-sm"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
-
-      <button
-        onClick={handleUpload}
-        disabled={!file || loading}
-        className="mt-4 rounded-xl bg-black px-4 py-2 text-white"
-      >
-        {loading ? "Uploading..." : "Upload Receipt"}
-      </button>
-    </div>
+    </section>
   );
 }
