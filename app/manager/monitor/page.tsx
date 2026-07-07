@@ -4,223 +4,137 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type Workshop = {
-  id: string;
-  title?: string | null;
-  currency?: string | null;
-};
-
-type Registration = {
-  id: string;
-  workshop_id: string;
-  registration_status?: string | null;
-  payment_status?: string | null;
-  amount_received?: number | null;
-  payment_currency?: string | null;
-  receipt_url?: string | null;
-};
+function pct(value: number, total: number) {
+  if (!total) return 0;
+  return Math.round((value / total) * 100);
+}
 
 export default async function ManagerMonitorPage() {
   noStore();
 
   const admin = createAdminClient();
 
-  const [{ data: workshopsData }, { data: registrationsData }] =
-    await Promise.all([
-      admin.from("workshops").select("id, title, currency"),
-      admin
-        .from("workshop_registrations")
-        .select(
-          "id, workshop_id, registration_status, payment_status, amount_received, payment_currency, receipt_url"
-        ),
-    ]);
+  const [
+    workshopsResult,
+    registrationsResult,
+    usersResult,
+    messagesResult,
+    visitsResult,
+  ] = await Promise.all([
+    admin.from("workshops").select("id, title, currency"),
+    admin.from("workshop_registrations").select("id, workshop_id, registration_status, payment_status, amount_received, payment_currency, receipt_url"),
+    admin.from("profiles").select("id, role, created_at"),
+    admin.from("internal_messages").select("id"),
+    admin.from("website_visits").select("id, path, created_at"),
+  ]);
 
-  const workshops = (workshopsData ?? []) as Workshop[];
-  const registrations = (registrationsData ?? []) as Registration[];
-
-  const workshopById = new Map<string, Workshop>();
-  for (const workshop of workshops) {
-    workshopById.set(workshop.id, workshop);
-  }
+  const workshops = workshopsResult.data ?? [];
+  const registrations = registrationsResult.data ?? [];
+  const users = usersResult.data ?? [];
+  const messages = messagesResult.data ?? [];
+  const visits = visitsResult.data ?? [];
 
   const confirmedPaid = registrations.filter(
-    (item) =>
-      item.registration_status === "confirmed" &&
-      item.payment_status === "confirmed"
+    (r: any) => r.registration_status === "confirmed" && r.payment_status === "confirmed"
   );
+  const pending = registrations.filter((r: any) => !r.payment_status || r.payment_status === "pending");
+  const instructions = registrations.filter((r: any) => r.payment_status === "instructions_sent");
+  const review = registrations.filter((r: any) => r.payment_status === "under_review");
+  const waived = registrations.filter((r: any) => r.payment_status === "waived");
 
-  const underReview = registrations.filter(
-    (item) => item.payment_status === "under_review"
-  );
-
-  const instructionsSent = registrations.filter(
-    (item) => item.payment_status === "instructions_sent"
-  );
-
-  const totalConfirmedAmount = confirmedPaid.reduce(
-    (sum, item) => sum + Number(item.amount_received || 0),
+  const paidAmount = confirmedPaid.reduce(
+    (sum: number, r: any) => sum + Number(r.amount_received || 0),
     0
   );
 
-  const workshopStats = new Map<
-    string,
-    {
-      title: string;
-      currency: string;
-      confirmedCount: number;
-      confirmedAmount: number;
-      totalRegistrations: number;
-      receiptsUploaded: number;
-    }
-  >();
+  const total = registrations.length;
 
-  for (const registration of registrations) {
-    const workshop = workshopById.get(registration.workshop_id);
-    const workshopId = registration.workshop_id;
-
-    if (!workshopStats.has(workshopId)) {
-      workshopStats.set(workshopId, {
-        title: workshop?.title || "Unknown workshop",
-        currency:
-          registration.payment_currency || workshop?.currency || "USD",
-        confirmedCount: 0,
-        confirmedAmount: 0,
-        totalRegistrations: 0,
-        receiptsUploaded: 0,
-      });
-    }
-
-    const item = workshopStats.get(workshopId);
-    if (!item) continue;
-
-    item.totalRegistrations += 1;
-
-    if (registration.receipt_url) {
-      item.receiptsUploaded += 1;
-    }
-
-    if (
-      registration.registration_status === "confirmed" &&
-      registration.payment_status === "confirmed"
-    ) {
-      item.confirmedCount += 1;
-      item.confirmedAmount += Number(registration.amount_received || 0);
-    }
-  }
+  const bars = [
+    { label: "Unpaid / Pending", value: pending.length, color: "bg-amber-500" },
+    { label: "Instructions Sent", value: instructions.length, color: "bg-blue-600" },
+    { label: "Under Review", value: review.length, color: "bg-orange-500" },
+    { label: "Confirmed Paid", value: confirmedPaid.length, color: "bg-emerald-600" },
+    { label: "Waived", value: waived.length, color: "bg-slate-600" },
+  ];
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8">
       <section className="mx-auto max-w-7xl space-y-8">
         <div>
           <h1 className="text-3xl font-black text-slate-950">
-            Overall Dashboard
+            Overall Monitoring Dashboard
           </h1>
-          <p className="mt-2 text-sm font-medium text-slate-600">
-            Payment totals are calculated only from manager/admin manually
-            confirmed registration records.
+          <p className="mt-2 text-sm text-slate-600">
+            Paid money is calculated only from manually confirmed registration payments.
           </p>
         </div>
 
         <div className="grid gap-5 md:grid-cols-4">
-          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-              Confirmed Paid Amount
-            </p>
-            <p className="mt-4 text-4xl font-black text-slate-950">
-              USD {totalConfirmedAmount.toFixed(2)}
-            </p>
-            <p className="mt-3 text-sm font-medium text-slate-500">
-              From confirmed registrations only
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-              Confirmed Paid Records
-            </p>
-            <p className="mt-4 text-4xl font-black text-slate-950">
-              {confirmedPaid.length}
-            </p>
-            <p className="mt-3 text-sm font-medium text-slate-500">
-              Manual confirmations
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-              Under Review
-            </p>
-            <p className="mt-4 text-4xl font-black text-slate-950">
-              {underReview.length}
-            </p>
-            <p className="mt-3 text-sm font-medium text-slate-500">
-              Receipts waiting for review
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
-              Instructions Sent
-            </p>
-            <p className="mt-4 text-4xl font-black text-slate-950">
-              {instructionsSent.length}
-            </p>
-            <p className="mt-3 text-sm font-medium text-slate-500">
-              Waiting for user payment
-            </p>
-          </div>
+          {[
+            ["Confirmed Paid Amount", `USD ${paidAmount.toFixed(2)}`],
+            ["Total Registrations", total],
+            ["Confirmed Paid", confirmedPaid.length],
+            ["Pending / Unpaid", pending.length],
+            ["Receipts Under Review", review.length],
+            ["Instructions Sent", instructions.length],
+            ["Users", users.length],
+            ["Website Visits", visits.length],
+            ["Workshops", workshops.length],
+            ["Internal Messages", messages.length],
+          ].map(([label, value]) => (
+            <div key={String(label)} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                {label}
+              </p>
+              <p className="mt-4 text-3xl font-black text-slate-950">
+                {value}
+              </p>
+            </div>
+          ))}
         </div>
 
         <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
           <h2 className="text-xl font-black text-slate-950">
-            Workshop-wise payment summary
+            Payment Status Graphic
           </h2>
 
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 text-xs uppercase tracking-[0.18em] text-slate-400">
-                  <th className="py-3">Workshop</th>
-                  <th className="py-3">Total Registrations</th>
-                  <th className="py-3">Receipts Uploaded</th>
-                  <th className="py-3">Confirmed Paid</th>
-                  <th className="py-3">Confirmed Amount</th>
-                </tr>
-              </thead>
+          <div className="mt-6 space-y-5">
+            {bars.map((bar) => (
+              <div key={bar.label}>
+                <div className="flex justify-between text-sm font-black text-slate-700">
+                  <span>{bar.label}</span>
+                  <span>{bar.value} records</span>
+                </div>
+                <div className="mt-2 h-5 rounded-full bg-slate-100">
+                  <div
+                    className={`h-5 rounded-full ${bar.color}`}
+                    style={{ width: `${pct(bar.value, total)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-              <tbody>
-                {Array.from(workshopStats.entries()).map(([id, item]) => (
-                  <tr key={id} className="border-b border-slate-100">
-                    <td className="py-4 font-bold text-slate-900">
-                      {item.title}
-                    </td>
-                    <td className="py-4 font-bold text-slate-700">
-                      {item.totalRegistrations}
-                    </td>
-                    <td className="py-4 font-bold text-slate-700">
-                      {item.receiptsUploaded}
-                    </td>
-                    <td className="py-4 font-bold text-slate-700">
-                      {item.confirmedCount}
-                    </td>
-                    <td className="py-4 font-black text-slate-950">
-                      {item.currency} {item.confirmedAmount.toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
+        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h2 className="text-xl font-black text-slate-950">
+            Registration Funnel
+          </h2>
 
-                {workshopStats.size === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={5}
-                      className="py-6 text-center font-bold text-slate-400"
-                    >
-                      No registration records yet.
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
+          <div className="mt-6 grid gap-4 md:grid-cols-5">
+            {bars.map((bar) => (
+              <div key={bar.label} className="rounded-2xl bg-slate-50 p-4 text-center">
+                <div className={`mx-auto h-20 w-20 rounded-full ${bar.color} flex items-center justify-center text-xl font-black text-white`}>
+                  {pct(bar.value, total)}%
+                </div>
+                <p className="mt-3 text-sm font-black text-slate-900">
+                  {bar.label}
+                </p>
+                <p className="text-xs font-bold text-slate-500">
+                  {bar.value} / {total}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
       </section>
