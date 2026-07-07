@@ -67,6 +67,8 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
   const intent = String(formData.get("intent") || "");
   const registrationId = String(formData.get("registration_id") || "").trim();
+  
+
 
   const registrationStatus = String(
     formData.get("registration_status") || "pending"
@@ -87,7 +89,25 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     .maybeSingle();
 
   if (!registration) return;
-
+   if (intent === "save_statuses") {
+  await admin
+    .from("workshop_registrations")
+    .update({
+      registration_status: registrationStatus,
+      payment_status: paymentStatus,
+      amount_received:
+        paymentStatus === "waived"
+          ? 0
+          : Number.isFinite(amountReceived)
+            ? amountReceived
+            : 0,
+      payment_currency: paymentCurrency || "USD",
+      payment_link: paymentLink || null,
+      payment_note: paymentNote || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", registrationId);
+}
   if (intent === "send_payment_message") {
     const messageBody =
       paymentNote ||

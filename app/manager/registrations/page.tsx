@@ -429,6 +429,37 @@ export default async function ManagerRegistrationsPage({
     Registration and payment control
   </h3>
 
+
+  <label className="mt-4 block text-sm font-black text-slate-600">
+  Registration status
+</label>
+<select
+  name="registration_status"
+  defaultValue={registration.registration_status || "pending"}
+  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+>
+  <option value="pending">Pending</option>
+  <option value="confirmed">Confirmed</option>
+  <option value="rejected">Rejected</option>
+  <option value="cancelled">Cancelled</option>
+</select>
+
+<label className="mt-4 block text-sm font-black text-slate-600">
+  Payment status
+</label>
+<select
+  name="payment_status"
+  defaultValue={registration.payment_status || "pending"}
+  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+>
+  <option value="pending">Unpaid / Pending</option>
+  <option value="instructions_sent">Instructions Sent</option>
+  <option value="under_review">Under Review</option>
+  <option value="confirmed">Confirmed Paid</option>
+  <option value="waived">Waived</option>
+  <option value="rejected">Rejected</option>
+</select>
+
   <label className="mt-4 block text-sm font-black text-slate-600">
     Registration status
   </label>
@@ -500,6 +531,14 @@ export default async function ManagerRegistrationsPage({
   />
 
   <div className="mt-5 space-y-3">
+    <button
+  type="submit"
+  name="intent"
+  value="save_statuses"
+  className="w-full rounded-3xl bg-slate-800 px-6 py-5 text-lg font-black text-white"
+>
+  Save registration and payment status
+</button>
     <button
       type="submit"
       name="intent"
