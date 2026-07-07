@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-async function notify(input: {
+async function notifyUser(input: {
   userId?: string | null;
   email?: string | null;
   title: string;
@@ -22,9 +22,7 @@ async function notify(input: {
     source_id: input.sourceId,
   });
 
-  if (!input.email || !process.env.RESEND_API_KEY) {
-    return;
-  }
+  if (!input.email || !process.env.RESEND_API_KEY) return;
 
   await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -41,7 +39,7 @@ async function notify(input: {
   });
 }
 
-async function revalidateAll(workshopId?: string | null) {
+async function revalidateRegistration(workshopId?: string | null) {
   const admin = createAdminClient();
 
   if (workshopId) {
@@ -59,10 +57,8 @@ async function revalidateAll(workshopId?: string | null) {
   revalidatePath("/manager/registrations");
   revalidatePath("/admin/registrations");
   revalidatePath("/manager/monitor");
-  revalidatePath("/admin");
-  revalidatePath("/manager");
-  revalidatePath("/dashboard/my-learning");
   revalidatePath("/dashboard/messages");
+  revalidatePath("/dashboard/my-learning");
   revalidatePath("/my/workshops");
 }
 
@@ -71,14 +67,18 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
   const intent = String(formData.get("intent") || "");
   const registrationId = String(formData.get("registration_id") || "").trim();
+
+  const registrationStatus = String(
+    formData.get("registration_status") || "pending"
+  );
+
+  const paymentStatus = String(formData.get("payment_status") || "pending");
   const paymentLink = String(formData.get("payment_link") || "").trim();
   const paymentNote = String(formData.get("payment_note") || "").trim();
   const paymentCurrency = String(formData.get("payment_currency") || "USD");
   const amountReceived = Number(formData.get("amount_received") || 0);
 
-  if (!registrationId) {
-    return;
-  }
+  if (!registrationId) return;
 
   const { data: registration } = await admin
     .from("workshop_registrations")
@@ -86,11 +86,15 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     .eq("id", registrationId)
     .maybeSingle();
 
-  if (!registration) {
-    return;
-  }
+  if (!registration) return;
 
-  if (intent === "send_instructions") {
+  if (intent === "send_payment_message") {
+    const messageBody =
+      paymentNote ||
+      (paymentLink
+        ? `Payment instructions have been sent. Please complete payment using this link: ${paymentLink}`
+        : "Payment instructions have been sent. Please complete payment and upload your receipt.");
+
     await admin
       .from("workshop_registrations")
       .update({
@@ -102,24 +106,53 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       })
       .eq("id", registrationId);
 
-    await notify({
+    await notifyUser({
       userId: registration.user_id,
       email: registration.email,
       title: "Payment instructions sent",
-      body:
-        paymentNote ||
-        "Payment instructions have been sent. Please complete payment and upload your receipt.",
+      body: messageBody,
       sourceType: "payment_instructions",
       sourceId: registrationId,
     });
   }
 
-  if (intent === "record_received") {
+  if (intent === "save_statuses") {
     await admin
       .from("workshop_registrations")
       .update({
-        payment_status: "under_review",
+        registration_status: registrationStatus,
+        payment_status: paymentStatus,
+        amount_received:
+          paymentStatus === "waived"
+            ? 0
+            : Number.isFinite(amountReceived)
+              ? amountReceived
+              : 0,
+        payment_currency: paymentCurrency || "USD",
+        payment_link: paymentLink || null,
+        payment_note: paymentNote || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await notifyUser({
+      userId: registration.user_id,
+      email: registration.email,
+      title: "Registration status updated",
+      body:
+        paymentNote ||
+        `Your registration status is ${registrationStatus}. Your payment status is ${paymentStatus}.`,
+      sourceType: "registration_status_updated",
+      sourceId: registrationId,
+    });
+  }
+
+  if (intent === "record_payment_received") {
+    await admin
+      .from("workshop_registrations")
+      .update({
         registration_status: "pending",
+        payment_status: "under_review",
         amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
         payment_currency: paymentCurrency || "USD",
         payment_note: paymentNote || null,
@@ -127,12 +160,12 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       })
       .eq("id", registrationId);
 
-    await notify({
+    await notifyUser({
       userId: registration.user_id,
       email: registration.email,
       title: "Payment information received",
       body: "Your payment information has been recorded and is now under review.",
-      sourceType: "payment_info_received",
+      sourceType: "payment_received",
       sourceId: registrationId,
     });
   }
@@ -150,7 +183,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       })
       .eq("id", registrationId);
 
-    await notify({
+    await notifyUser({
       userId: registration.user_id,
       email: registration.email,
       title: "Payment confirmed",
@@ -160,18 +193,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     });
   }
 
-  if (intent === "mark_pending") {
-    await admin
-      .from("workshop_registrations")
-      .update({
-        registration_status: "pending",
-        payment_status: "pending",
-        amount_received: 0,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
-  }
-
   if (intent === "waive_payment") {
     await admin
       .from("workshop_registrations")
@@ -179,29 +200,26 @@ export async function handleRegistrationManagementAction(formData: FormData) {
         registration_status: "confirmed",
         payment_status: "waived",
         amount_received: 0,
+        payment_note: paymentNote || null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", registrationId);
 
-    await notify({
+    await notifyUser({
       userId: registration.user_id,
       email: registration.email,
       title: "Workshop access unlocked",
-      body: "Your workshop payment has been waived. Your access is now unlocked.",
+      body: "Your payment has been waived. Your workshop access is now unlocked.",
       sourceType: "payment_waived",
       sourceId: registrationId,
     });
   }
 
-  await revalidateAll(registration.workshop_id);
+  await revalidateRegistration(registration.workshop_id);
 }
 
-export const sendPaymentInstructionsAction =
-  handleRegistrationManagementAction;
-
+export const sendPaymentInstructionsAction = handleRegistrationManagementAction;
 export const updateWorkshopRegistrationPaymentAction =
   handleRegistrationManagementAction;
-
 export const updatePaymentAction = handleRegistrationManagementAction;
-
 export const updateWorkshopRegistration = handleRegistrationManagementAction;

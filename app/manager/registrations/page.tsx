@@ -419,107 +419,133 @@ export default async function ManagerRegistrationsPage({
                     </div>
                   </div>
 
-                  <form
-                   action={paymentActions.handleRegistrationManagementAction}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
-                  >
-                    <input
-                      type="hidden"
-                      name="registration_id"
-                      value={registration.id}
-                    />
+                 <form
+  action={paymentActions.handleRegistrationManagementAction}
+  className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
+>
+  <input type="hidden" name="registration_id" value={registration.id} />
 
-                    <h3 className="text-lg font-black text-slate-950">
-                      Payment actions
-                    </h3>
+  <h3 className="text-lg font-black text-slate-950">
+    Registration and payment control
+  </h3>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Payment link
-                    </label>
-                    <input
-                      name="payment_link"
-                      defaultValue={registration.payment_link || ""}
-                      placeholder="https://..."
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Registration status
+  </label>
+  <select
+    name="registration_status"
+    defaultValue={registration.registration_status || "pending"}
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  >
+    <option value="pending">Pending</option>
+    <option value="confirmed">Confirmed</option>
+    <option value="rejected">Rejected</option>
+    <option value="cancelled">Cancelled</option>
+  </select>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Amount received
-                    </label>
-                    <input
-                      name="amount_received"
-                      type="number"
-                      step="0.01"
-                      defaultValue={registration.amount_received || 0}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Payment status
+  </label>
+  <select
+    name="payment_status"
+    defaultValue={registration.payment_status || "pending"}
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  >
+    <option value="pending">Unpaid / Pending</option>
+    <option value="instructions_sent">Instructions Sent</option>
+    <option value="under_review">Under Review</option>
+    <option value="confirmed">Confirmed Paid</option>
+    <option value="waived">Waived</option>
+    <option value="rejected">Rejected</option>
+  </select>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Currency
-                    </label>
-                    <input
-                      name="payment_currency"
-                      defaultValue={registration.payment_currency || "USD"}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Payment link, optional
+  </label>
+  <input
+    name="payment_link"
+    defaultValue={registration.payment_link || ""}
+    placeholder="https://... or leave empty for non-link payment"
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  />
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Message / internal note
-                    </label>
-                    <textarea
-                      name="payment_note"
-                      defaultValue={registration.payment_note || ""}
-                      rows={4}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Amount received
+  </label>
+  <input
+    name="amount_received"
+    type="number"
+    step="0.01"
+    defaultValue={registration.amount_received || 0}
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  />
 
-                    <div className="mt-5 space-y-3">
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="send_instructions"
-                        className="w-full rounded-3xl bg-blue-700 px-6 py-5 text-lg font-black text-white hover:bg-blue-800"
-                      >
-                        Send payment instruction
-                      </button>
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Currency
+  </label>
+  <input
+    name="payment_currency"
+    defaultValue={registration.payment_currency || "USD"}
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  />
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="record_received"
-                        className="w-full rounded-3xl bg-orange-600 px-6 py-5 text-lg font-black text-white hover:bg-orange-700"
-                      >
-                        Record payment info received
-                      </button>
+  <label className="mt-4 block text-sm font-black text-slate-600">
+    Message / payment instruction / internal note
+  </label>
+  <textarea
+    name="payment_note"
+    defaultValue={registration.payment_note || ""}
+    rows={4}
+    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+  />
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="confirm_payment"
-                        className="w-full rounded-3xl bg-emerald-700 px-6 py-5 text-lg font-black text-white hover:bg-emerald-800"
-                      >
-                        Confirm payment and unlock access
-                      </button>
+  <div className="mt-5 space-y-3">
+    <button
+      type="submit"
+      name="intent"
+      value="send_payment_message"
+      className="w-full rounded-3xl bg-blue-700 px-6 py-5 text-lg font-black text-white"
+    >
+      Send payment message to email and inbox
+    </button>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="waive_payment"
-                        className="w-full rounded-3xl bg-slate-700 px-6 py-4 text-sm font-black text-white hover:bg-slate-800"
-                      >
-                        Waive payment and unlock
-                      </button>
+    <button
+      type="submit"
+      name="intent"
+      value="save_statuses"
+      className="w-full rounded-3xl bg-slate-700 px-6 py-5 text-lg font-black text-white"
+    >
+      Save registration/payment status
+    </button>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="mark_pending"
-                        className="w-full rounded-3xl border border-slate-300 bg-white px-6 py-4 text-sm font-black text-slate-700 hover:bg-slate-50"
-                      >
-                        Reset to unpaid / pending
-                      </button>
-                    </div>
-                  </form>
+    <button
+      type="submit"
+      name="intent"
+      value="record_payment_received"
+      className="w-full rounded-3xl bg-orange-600 px-6 py-5 text-lg font-black text-white"
+    >
+      Record payment info received
+    </button>
+
+    <button
+      type="submit"
+      name="intent"
+      value="confirm_payment"
+      className="w-full rounded-3xl bg-emerald-700 px-6 py-5 text-lg font-black text-white"
+    >
+      Confirm payment and unlock access
+    </button>
+
+    <button
+      type="submit"
+      name="intent"
+      value="waive_payment"
+      className="w-full rounded-3xl border border-slate-300 bg-white px-6 py-4 text-sm font-black text-slate-700"
+    >
+      Waive payment and unlock
+    </button>
+  </div>
+</form>
                 </div>
               </article>
             );
