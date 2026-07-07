@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
 import HomeHero from "@/components/HomeHero";
-import HomeVideoSpotlight from "@/components/HomeVideoSpotlight";
 import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import TeamShowcase from "@/components/TeamShowcase";
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
@@ -9,9 +11,9 @@ import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
 
 const featureCards = [
   {
@@ -58,13 +60,43 @@ const programCards = [
   },
 ];
 
+export default async function HomePage() {
+  const supabase = await createClient();
+  const admin = createAdminClient();
 
-export default function HomePage() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let canManageHomepage = false;
+
+  if (user) {
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    canManageHomepage =
+      profile?.role === "admin" || profile?.role === "manager";
+  }
+
+  const homepageVideosQuery = admin
+    .from("homepage_videos")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  const { data: homepageVideos } = canManageHomepage
+    ? await homepageVideosQuery
+    : await homepageVideosQuery.eq("is_active", true);
+
   return (
     <>
       <HomeHero />
       <HomeControlPanelButton />
-       <section className="bg-white py-10">
+
+      <section className="bg-white py-10">
         <div className="mx-auto max-w-7xl px-6">
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-7 shadow-sm">
             <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
@@ -94,10 +126,14 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
       <DynamicHomeShowcase />
       <NoticeSpotlight />
-      <HomeMediaShowcase />
-      <HomeVideoSpotlight />
+
+      <HomeMediaShowcase
+        videos={homepageVideos ?? []}
+        canManage={canManageHomepage}
+      />
 
       <LatestWorkshopVideos />
       <NlpAttractionSection />
