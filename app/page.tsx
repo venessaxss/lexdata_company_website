@@ -7,6 +7,7 @@ import HomeControlPanelButton from "@/components/HomeControlPanelButton";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
+import MouCollaborationSection from "@/components/MouCollaborationSection";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -97,6 +98,8 @@ export default function HomePage() {
       <HomeVideoSpotlight />
 
       <LatestWorkshopVideos />
+
+      <MouCollaborationSection />
 
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-6">
