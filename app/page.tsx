@@ -8,8 +8,10 @@ import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
+import NlpAttractionSection from "@/components/NlpAttractionSection";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
 
 const featureCards = [
   {
@@ -98,7 +100,7 @@ export default function HomePage() {
       <HomeVideoSpotlight />
 
       <LatestWorkshopVideos />
-
+      <NlpAttractionSection />
       <MouCollaborationSection />
 
       <section className="bg-white py-20">
