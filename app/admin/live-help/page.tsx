@@ -1,5 +1,6 @@
-export {
-  default,
-  dynamic,
-  revalidate,
-} from "@/app/manager/live-help/page";
+import ManagerLiveHelpPage from "@/app/manager/live-help/page";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default ManagerLiveHelpPage;
