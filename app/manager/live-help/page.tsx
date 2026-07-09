@@ -18,7 +18,7 @@ function badge(status?: string | null) {
 export default async function ManagerLiveHelpPage() {
   const admin = createAdminClient();
 
-  const { data: requests } = await admin
+  const { data: requests, error } = await admin
     .from("live_qa_requests")
     .select("*")
     .order("created_at", { ascending: false });
@@ -34,6 +34,12 @@ export default async function ManagerLiveHelpPage() {
             Review participant help requests and reply from here.
           </p>
         </div>
+
+        {error ? (
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
+            Failed to load Q&A requests: {error.message}
+          </div>
+        ) : null}
 
         {(requests ?? []).length === 0 ? (
           <div className="rounded-3xl bg-white p-8 text-center font-bold text-slate-400 shadow-sm ring-1 ring-slate-200">
@@ -60,6 +66,12 @@ export default async function ManagerLiveHelpPage() {
                   <p className="mt-1 text-sm font-medium text-slate-500">
                     {item.email || "No email provided"}
                   </p>
+
+                  {item.page_path ? (
+                    <p className="mt-1 text-xs font-bold text-slate-400">
+                      From page: {item.page_path}
+                    </p>
+                  ) : null}
                 </div>
 
                 <span
