@@ -23,6 +23,7 @@ export default async function Navbar() {
 
   let role: UserRole = null;
   let displayName = "";
+  let unreadMessageCount = 0;
 
   if (user) {
     const { data: profile } = await admin
@@ -38,7 +39,19 @@ export default async function Navbar() {
       user.email?.split("@")[0] ||
       "Member";
   }
+    const messageFilters = [`user_id.eq.${user.id}`];
 
+if (user.email) {
+  messageFilters.push(`recipient_email.eq.${user.email}`);
+}
+
+const { count } = await admin
+  .from("internal_messages")
+  .select("id", { count: "exact", head: true })
+  .or(messageFilters.join(","))
+  .is("read_at", null);
+
+unreadMessageCount = count ?? 0;
   const isAdmin = role === "admin";
   const isManager = role === "manager";
   const isSpeaker = role === "speaker";
@@ -246,6 +259,20 @@ export default async function Navbar() {
                         {roleLabel(role)}
                       </p>
                     </div>
+                     
+                     <Link
+  href="/dashboard/messages"
+  className="relative rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-blue-800"
+>
+  Messages
+
+  {unreadMessageCount > 0 ? (
+    <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-2 text-xs font-black text-white ring-2 ring-white">
+      {unreadMessageCount}
+    </span>
+  ) : null}
+</Link>
+
 
                     <Link
                       href="/dashboard"
@@ -262,12 +289,17 @@ export default async function Navbar() {
                     </Link>
 
                     <Link
-                      href="/dashboard/messages"
-                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                    >
-                      Messages
-                    </Link>
+  href="/dashboard/messages"
+  className="relative rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white"
+>
+  Messages
 
+  {unreadMessageCount > 0 ? (
+    <span className="ml-2 rounded-full bg-red-600 px-2 py-1 text-xs font-black text-white">
+      {unreadMessageCount}
+    </span>
+  ) : null}
+</Link>
                     <Link
                       href="/my/workshops"
                       className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"

@@ -8,7 +8,6 @@ import TeamShowcase from "@/components/TeamShowcase";
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
-import NoticeSpotlight from "@/components/NoticeSpotlight";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
 
@@ -129,7 +128,7 @@ export default async function HomePage() {
       </section>
 
       <DynamicHomeShowcase />
-      <NoticeSpotlight />
+  
 
       <HomeMediaShowcase
         videos={homepageVideos ?? []}
