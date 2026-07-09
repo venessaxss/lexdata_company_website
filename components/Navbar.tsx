@@ -49,7 +49,7 @@ export default async function Navbar() {
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3">
             <img
-  src="/logo.2png"
+  src="/logo2.png"
   alt="LexData Logo"
   className="h-11 w-11 rounded-2xl object-cover"
 />
