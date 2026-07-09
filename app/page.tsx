@@ -11,7 +11,7 @@ import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
-import LiveQaHelpSection from "@/components/LiveQaHelpSection";
+
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -140,7 +140,7 @@ export default async function HomePage() {
       <LatestWorkshopVideos />
       <NlpAttractionSection />
       <MouCollaborationSection />
-      <LiveQaHelpSection />
+  
 
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-6">
