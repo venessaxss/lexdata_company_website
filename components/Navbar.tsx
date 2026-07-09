@@ -13,45 +13,69 @@ function roleLabel(role: UserRole) {
   return "Member";
 }
 
+function MessageBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+
+  return (
+    <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-2 text-xs font-black text-white ring-2 ring-white">
+      {count}
+    </span>
+  );
+}
+
 export default async function Navbar() {
   const supabase = await createClient();
   const admin = createAdminClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  let user: any = null;
   let role: UserRole = null;
   let displayName = "";
   let unreadMessageCount = 0;
 
-  if (user) {
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("role, full_name, name")
-      .eq("id", user.id)
-      .maybeSingle();
+  try {
+    const userResult = await supabase.auth.getUser();
+    user = userResult.data.user ?? null;
 
-    role = (profile?.role || "user") as UserRole;
-    displayName =
-      profile?.full_name ||
-      profile?.name ||
-      user.email?.split("@")[0] ||
-      "Member";
+    if (user) {
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("role, full_name, name")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      role = (profile?.role || "user") as UserRole;
+      displayName =
+        profile?.full_name ||
+        profile?.name ||
+        user.email?.split("@")[0] ||
+        "Member";
+
+      const messageFilters = [`user_id.eq.${user.id}`];
+
+      if (user.email) {
+        messageFilters.push(`recipient_email.eq.${user.email}`);
+      }
+
+      const { count, error } = await admin
+        .from("internal_messages")
+        .select("id", { count: "exact", head: true })
+        .or(messageFilters.join(","))
+        .is("read_at", null);
+
+      if (!error) {
+        unreadMessageCount = count ?? 0;
+      } else {
+        unreadMessageCount = 0;
+      }
+    }
+  } catch (error) {
+    console.error("Navbar render error:", error);
+    user = null;
+    role = null;
+    displayName = "";
+    unreadMessageCount = 0;
   }
-    const messageFilters = [`user_id.eq.${user.id}`];
 
-if (user.email) {
-  messageFilters.push(`recipient_email.eq.${user.email}`);
-}
-
-const { count } = await admin
-  .from("internal_messages")
-  .select("id", { count: "exact", head: true })
-  .or(messageFilters.join(","))
-  .is("read_at", null);
-
-unreadMessageCount = count ?? 0;
   const isAdmin = role === "admin";
   const isManager = role === "manager";
   const isSpeaker = role === "speaker";
@@ -62,23 +86,24 @@ unreadMessageCount = count ?? 0;
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3">
-  <div className="flex h-14 w-14 items-center justify-center overflow-visible rounded-2xl bg-white p-1">
-    <img
-      src="/logo2.png"
-      alt="LexData Logo"
-      className="h-full w-full object-contain"
-    />
-  </div>
+            <div className="flex h-14 w-14 items-center justify-center overflow-visible rounded-2xl bg-white p-1">
+              <img
+                src="/logo2.png"
+                alt="LexData Logo"
+                className="h-full w-full object-contain"
+              />
+            </div>
 
-  <div>
-    <p className="text-lg font-black leading-none text-slate-950">
-      LexData
-    </p>
-    <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
-      AI · NLP · RESEARCH
-    </p>
-  </div>
-</Link>
+            <div>
+              <p className="text-lg font-black leading-none text-slate-950">
+                LexData
+              </p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+                AI · NLP · RESEARCH
+              </p>
+            </div>
+          </Link>
+
           <div className="hidden items-center gap-1 lg:flex">
             <Link
               href="/courses"
@@ -124,6 +149,8 @@ unreadMessageCount = count ?? 0;
           </div>
 
           <div className="hidden items-center gap-3 lg:flex">
+            <LiveQaHelpWidget variant="nav" />
+
             {user ? (
               <>
                 <div className="rounded-2xl bg-slate-50 px-4 py-2 ring-1 ring-slate-200">
@@ -136,20 +163,19 @@ unreadMessageCount = count ?? 0;
                 </div>
 
                 <Link
+                  href="/dashboard/messages"
+                  className="relative rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-blue-800"
+                >
+                  Messages
+                  <MessageBadge count={unreadMessageCount} />
+                </Link>
+
+                <Link
                   href="/dashboard"
                   className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-black text-slate-800 hover:bg-slate-50"
                 >
                   Dashboard
                 </Link>
-
-                <form action={logoutAction}>
-  <button
-    type="submit"
-    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-red-700"
-  >
-    Logout
-  </button>
-</form>
 
                 {isSpeaker ? (
                   <Link
@@ -167,7 +193,6 @@ unreadMessageCount = count ?? 0;
                   >
                     Manager
                   </Link>
-
                 ) : null}
 
                 {isAdmin ? (
@@ -178,6 +203,15 @@ unreadMessageCount = count ?? 0;
                     Admin
                   </Link>
                 ) : null}
+
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
+                </form>
               </>
             ) : (
               <>
@@ -247,6 +281,10 @@ unreadMessageCount = count ?? 0;
                   Contact
                 </Link>
 
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-3">
+                  <LiveQaHelpWidget variant="nav" />
+                </div>
+
                 <div className="my-2 h-px bg-slate-200" />
 
                 {user ? (
@@ -259,20 +297,18 @@ unreadMessageCount = count ?? 0;
                         {roleLabel(role)}
                       </p>
                     </div>
-                     
-                     <Link
-  href="/dashboard/messages"
-  className="relative rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-blue-800"
->
-  Messages
 
-  {unreadMessageCount > 0 ? (
-    <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-2 text-xs font-black text-white ring-2 ring-white">
-      {unreadMessageCount}
-    </span>
-  ) : null}
-</Link>
-
+                    <Link
+                      href="/dashboard/messages"
+                      className="relative rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white"
+                    >
+                      Messages
+                      {unreadMessageCount > 0 ? (
+                        <span className="ml-2 rounded-full bg-red-600 px-2 py-1 text-xs font-black text-white">
+                          {unreadMessageCount}
+                        </span>
+                      ) : null}
+                    </Link>
 
                     <Link
                       href="/dashboard"
@@ -288,18 +324,6 @@ unreadMessageCount = count ?? 0;
                       My Learning
                     </Link>
 
-                    <Link
-  href="/dashboard/messages"
-  className="relative rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white"
->
-  Messages
-
-  {unreadMessageCount > 0 ? (
-    <span className="ml-2 rounded-full bg-red-600 px-2 py-1 text-xs font-black text-white">
-      {unreadMessageCount}
-    </span>
-  ) : null}
-</Link>
                     <Link
                       href="/my/workshops"
                       className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
@@ -331,21 +355,20 @@ unreadMessageCount = count ?? 0;
                         >
                           Manage Registrations
                         </Link>
-        
+
                         <Link
                           href="/manager/live-help"
                           className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                         >
                           Live Help Desk
                         </Link>
-                        <form action={logoutAction}>
-  <button
-    type="submit"
-    className="w-full rounded-2xl bg-red-600 px-4 py-3 text-left text-sm font-black text-white hover:bg-red-700"
-  >
-    Logout
-  </button>
-</form>
+
+                        <Link
+                          href="/manager/member-messages"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Member Messages
+                        </Link>
                       </>
                     ) : null}
 
@@ -371,17 +394,35 @@ unreadMessageCount = count ?? 0;
                         >
                           Admin Live Help
                         </Link>
+
+                        <Link
+                          href="/admin/member-messages"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Member Messages
+                        </Link>
                       </>
                     ) : null}
 
                     {isAdminOrManager ? (
                       <Link
-                        href={isAdmin ? "/admin/live-help" : "/manager/live-help"}
+                        href={
+                          isAdmin ? "/admin/live-help" : "/manager/live-help"
+                        }
                         className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700"
                       >
                         Q&A Requests
                       </Link>
                     ) : null}
+
+                    <form action={logoutAction}>
+                      <button
+                        type="submit"
+                        className="w-full rounded-2xl bg-red-600 px-4 py-3 text-left text-sm font-black text-white hover:bg-red-700"
+                      >
+                        Logout
+                      </button>
+                    </form>
                   </>
                 ) : (
                   <>
@@ -405,8 +446,6 @@ unreadMessageCount = count ?? 0;
           </details>
         </nav>
       </header>
-
-      <LiveQaHelpWidget />
     </>
   );
 }

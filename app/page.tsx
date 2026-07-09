@@ -61,35 +61,54 @@ const programCards = [
 ];
 
 export default async function HomePage() {
-  const supabase = await createClient();
   const admin = createAdminClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   let canManageHomepage = false;
+  let homepageVideos: any[] = [];
 
-  if (user) {
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+  try {
+    const supabase = await createClient();
 
-    canManageHomepage =
-      profile?.role === "admin" || profile?.role === "manager";
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (!userError && user) {
+      const { data: profile, error: profileError } = await admin
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!profileError) {
+        canManageHomepage =
+          profile?.role === "admin" || profile?.role === "manager";
+      }
+    }
+
+    let homepageVideosQuery = admin
+      .from("homepage_videos")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if (!canManageHomepage) {
+      homepageVideosQuery = homepageVideosQuery.eq("is_active", true);
+    }
+
+    const { data, error } = await homepageVideosQuery;
+
+    if (!error) {
+      homepageVideos = data ?? [];
+    } else {
+      console.error("homepage_videos loading error:", error.message);
+    }
+  } catch (error) {
+    console.error("Homepage render error:", error);
+    canManageHomepage = false;
+    homepageVideos = [];
   }
-
-  const homepageVideosQuery = admin
-    .from("homepage_videos")
-    .select("*")
-    .order("display_order", { ascending: true })
-    .order("created_at", { ascending: false });
-
-  const { data: homepageVideos } = canManageHomepage
-    ? await homepageVideosQuery
-    : await homepageVideosQuery.eq("is_active", true);
 
   return (
     <>
@@ -128,18 +147,15 @@ export default async function HomePage() {
       </section>
 
       <DynamicHomeShowcase />
-  
 
       <HomeMediaShowcase
-        videos={homepageVideos ?? []}
+        videos={homepageVideos}
         canManage={canManageHomepage}
       />
 
-      
       <LatestWorkshopVideos />
       <NlpAttractionSection />
       <MouCollaborationSection />
-  
 
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-6">

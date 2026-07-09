@@ -4,9 +4,20 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { submitLiveQaRequestAction } from "@/app/live-qa/actions";
 
-export default function LiveQaHelpWidget() {
+type LiveQaHelpWidgetProps = {
+  variant?: "nav" | "floating";
+};
+
+export default function LiveQaHelpWidget({
+  variant = "nav",
+}: LiveQaHelpWidgetProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  const buttonClass =
+    variant === "floating"
+      ? "fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-700 text-2xl font-black text-white shadow-2xl ring-4 ring-blue-100 transition hover:scale-105 hover:bg-blue-800"
+      : "flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-xl font-black text-white shadow-sm transition hover:bg-blue-800";
 
   return (
     <>
@@ -14,13 +25,14 @@ export default function LiveQaHelpWidget() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open Q&A help"
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-700 text-2xl font-black text-white shadow-2xl ring-4 ring-blue-100 transition hover:scale-105 hover:bg-blue-800"
+        title="Q&A Help"
+        className={buttonClass}
       >
         ?
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 px-4 py-6 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[999] bg-slate-950/60 px-4 py-6 backdrop-blur-sm">
           <div className="ml-auto flex min-h-full max-w-xl items-center">
             <div className="w-full rounded-[2rem] bg-white p-6 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
@@ -48,10 +60,7 @@ export default function LiveQaHelpWidget() {
                 </button>
               </div>
 
-              <form
-                action={submitLiveQaRequestAction}
-                className="mt-6 space-y-4"
-              >
+              <form action={submitLiveQaRequestAction} className="mt-6 space-y-4">
                 <input type="hidden" name="page_path" value={pathname} />
 
                 <div className="grid gap-4 md:grid-cols-2">
