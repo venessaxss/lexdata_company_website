@@ -48,9 +48,11 @@ export default async function Navbar() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-lg font-black text-white">
-              L
-            </div>
+            <img
+  src="/logo.2png"
+  alt="LexData Logo"
+  className="h-11 w-11 rounded-2xl object-cover"
+/>
 
             <div>
               <p className="text-lg font-black leading-none text-slate-950">
