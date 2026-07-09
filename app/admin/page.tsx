@@ -14,6 +14,13 @@ const adminCards = [
     href: "/admin/registrations",
   },
   {
+  title: "Q&A Help Desk",
+  description:
+    "View all participant Q&A requests, answer them, close resolved issues, and manage support communication.",
+  href: "/admin/live-help",
+  },
+
+  {
     title: "Workshops",
     description:
       "Create, edit, publish, delete, and manage workshops, sessions, subsessions, levels, materials, YouTube links, and Jianying links.",
