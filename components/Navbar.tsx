@@ -24,19 +24,23 @@ function MessageBadge({ count }: { count: number }) {
 }
 
 export default async function Navbar() {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-
   let user: any = null;
   let role: UserRole = null;
   let displayName = "";
   let unreadMessageCount = 0;
 
   try {
-    const userResult = await supabase.auth.getUser();
-    user = userResult.data.user ?? null;
+    const supabase = await createClient();
+
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+
+    user = currentUser ?? null;
 
     if (user) {
+      const admin = createAdminClient();
+
       const { data: profile } = await admin
         .from("profiles")
         .select("role, full_name, name")
@@ -44,6 +48,7 @@ export default async function Navbar() {
         .maybeSingle();
 
       role = (profile?.role || "user") as UserRole;
+
       displayName =
         profile?.full_name ||
         profile?.name ||
@@ -64,8 +69,6 @@ export default async function Navbar() {
 
       if (!error) {
         unreadMessageCount = count ?? 0;
-      } else {
-        unreadMessageCount = 0;
       }
     }
   } catch (error) {
