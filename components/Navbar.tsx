@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import LiveQaHelpWidget from "@/components/LiveQaHelpWidget";
+import { logoutAction } from "@/app/logout/actions";
 
 type UserRole = "admin" | "manager" | "speaker" | "user" | null;
 
@@ -128,6 +129,15 @@ export default async function Navbar() {
                   Dashboard
                 </Link>
 
+                <form action={logoutAction}>
+  <button
+    type="submit"
+    className="rounded-xl bg-red-600 px-5 py-3 text-sm font-black text-white shadow-sm hover:bg-red-700"
+  >
+    Logout
+  </button>
+</form>
+
                 {isSpeaker ? (
                   <Link
                     href="/speaker"
@@ -144,6 +154,7 @@ export default async function Navbar() {
                   >
                     Manager
                   </Link>
+
                 ) : null}
 
                 {isAdmin ? (
@@ -288,13 +299,21 @@ export default async function Navbar() {
                         >
                           Manage Registrations
                         </Link>
-
+        
                         <Link
                           href="/manager/live-help"
                           className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                         >
                           Live Help Desk
                         </Link>
+                        <form action={logoutAction}>
+  <button
+    type="submit"
+    className="w-full rounded-2xl bg-red-600 px-4 py-3 text-left text-sm font-black text-white hover:bg-red-700"
+  >
+    Logout
+  </button>
+</form>
                       </>
                     ) : null}
 
