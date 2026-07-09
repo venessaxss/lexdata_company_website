@@ -1,278 +1,358 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { site } from "@/lib/site";
-import { normalizeRole } from "@/lib/roles";
-import { getServerI18n } from "@/lib/language-server";
-import { translateRole } from "@/lib/languages";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LiveQaHelpWidget from "@/components/LiveQaHelpWidget";
 
-type Profile = {
-  role?: string | null;
-  full_name?: string | null;
-};
+type UserRole = "admin" | "manager" | "speaker" | "user" | null;
 
-async function signOutAction() {
-  "use server";
-
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-
-  redirect("/");
+function roleLabel(role: UserRole) {
+  if (role === "admin") return "Admin";
+  if (role === "manager") return "Manager";
+  if (role === "speaker") return "Speaker";
+  return "Member";
 }
 
 export default async function Navbar() {
-  const { language, t } = await getServerI18n();
   const supabase = await createClient();
+  const admin = createAdminClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let profile: Profile | null = null;
-  let unreadMessageCount = 0;
-  
-  if (user) {
-  const { count } = await supabase
-    .from("messages")
-    .select("id", { count: "exact", head: true })
-    .eq("recipient_id", user.id)
-    .is("read_at", null);
-
-  unreadMessageCount = count || 0;
-}
-
+  let role: UserRole = null;
+  let displayName = "";
 
   if (user) {
-    const { data: profileData } = await supabase
+    const { data: profile } = await admin
       .from("profiles")
-      .select("role, full_name")
+      .select("role, full_name, name")
       .eq("id", user.id)
       .maybeSingle();
 
-    profile = profileData as Profile | null;
+    role = (profile?.role || "user") as UserRole;
+    displayName =
+      profile?.full_name ||
+      profile?.name ||
+      user.email?.split("@")[0] ||
+      "Member";
   }
 
-  const role = normalizeRole(profile?.role);
   const isAdmin = role === "admin";
   const isManager = role === "manager";
-  const canManage = isAdmin || isManager;
-
-  const displayName =
-    profile?.full_name || user?.user_metadata?.full_name || user?.email;
+  const isSpeaker = role === "speaker";
+  const isAdminOrManager = isAdmin || isManager;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-6">
-          <Link href="/" className="flex shrink-0 items-center gap-3">
-            <img
-              src="/logo2.png"
-              alt={site.name}
-              className="h-10 w-auto object-contain"
-            />
+    <>
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-lg font-black text-white">
+              L
+            </div>
 
-            <div className="hidden sm:block">
-              <p className="text-base font-black tracking-tight text-slate-950">
-                {site.name}
+            <div>
+              <p className="text-lg font-black leading-none text-slate-950">
+                LexData
               </p>
-              <p className="max-w-[190px] truncate text-xs font-semibold text-slate-500">
-                {site.tagline}
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+                AI · NLP · Research
               </p>
             </div>
           </Link>
 
           <div className="hidden items-center gap-1 lg:flex">
             <Link
-              href="/workshops"
-              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+              href="/courses"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
             >
-              {t("nav.workshops")}
+              Courses
             </Link>
 
             <Link
-              href="/notices"
-              className="rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+              href="/workshops"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
             >
-              {t("nav.notices")}
+              Workshops
             </Link>
 
-            <details className="relative">
-              <summary className="cursor-pointer list-none rounded-xl px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-950">
-                More
-              </summary>
+            <Link
+              href="/services"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+            >
+              Services
+            </Link>
 
-              <div className="absolute left-0 mt-2 w-52 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+            <Link
+              href="/team"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+            >
+              Team
+            </Link>
+
+            <Link
+              href="/member-manual"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+            >
+              Manual
+            </Link>
+
+            <Link
+              href="/contact"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-950"
+            >
+              Contact
+            </Link>
+          </div>
+
+          <div className="hidden items-center gap-3 lg:flex">
+            {user ? (
+              <>
+                <div className="rounded-2xl bg-slate-50 px-4 py-2 ring-1 ring-slate-200">
+                  <p className="max-w-40 truncate text-sm font-black text-slate-950">
+                    {displayName}
+                  </p>
+                  <p className="text-xs font-bold text-blue-700">
+                    {roleLabel(role)}
+                  </p>
+                </div>
+
+                <Link
+                  href="/dashboard"
+                  className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-black text-slate-800 hover:bg-slate-50"
+                >
+                  Dashboard
+                </Link>
+
+                {isSpeaker ? (
+                  <Link
+                    href="/speaker"
+                    className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-black text-slate-800 hover:bg-slate-50"
+                  >
+                    Speaker
+                  </Link>
+                ) : null}
+
+                {isManager ? (
+                  <Link
+                    href="/manager"
+                    className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white hover:bg-blue-800"
+                  >
+                    Manager
+                  </Link>
+                ) : null}
+
+                {isAdmin ? (
+                  <Link
+                    href="/admin"
+                    className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
+                  >
+                    Admin
+                  </Link>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-xl px-4 py-2 text-sm font-black text-slate-700 hover:bg-slate-100"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/register"
+                  className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+
+          <details className="relative lg:hidden">
+            <summary className="list-none rounded-xl border border-slate-300 px-4 py-2 text-sm font-black text-slate-800">
+              Menu
+            </summary>
+
+            <div className="absolute right-0 mt-3 w-80 rounded-3xl border border-slate-200 bg-white p-4 shadow-2xl">
+              <div className="grid gap-2">
+                <Link
+                  href="/courses"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Courses
+                </Link>
+
+                <Link
+                  href="/workshops"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Workshops
+                </Link>
+
+                <Link
+                  href="/services"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Services
+                </Link>
+
                 <Link
                   href="/team"
-                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                 >
                   Team
                 </Link>
 
                 <Link
-                  href="/about"
-                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                  href="/member-manual"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                 >
-                  About
+                  User Manual
                 </Link>
 
                 <Link
                   href="/contact"
-                  className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                  className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                 >
                   Contact
                 </Link>
-              </div>
-            </details>
-          </div>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <LanguageSwitcher currentLanguage={language} compact />
+                <div className="my-2 h-px bg-slate-200" />
 
-          {user ? (
-            <>
-              <Link
-  href="/dashboard/messages"
-  className="relative hidden rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-700 hover:bg-blue-100 md:inline-flex"
->
-  Messages
+                {user ? (
+                  <>
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <p className="truncate text-sm font-black text-slate-950">
+                        {displayName}
+                      </p>
+                      <p className="mt-1 text-xs font-bold text-blue-700">
+                        {roleLabel(role)}
+                      </p>
+                    </div>
 
-  {unreadMessageCount > 0 ? (
-    <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-black text-white">
-      {unreadMessageCount > 99 ? "99+" : unreadMessageCount}
-    </span>
-  ) : null}
-</Link>
-
-              <Link
-                href="/dashboard"
-                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
-              >
-                {t("nav.dashboard")}
-              </Link>
-
-              <details className="relative">
-                <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">
-                  <span className="hidden max-w-[130px] truncate md:inline">
-                    {displayName}
-                  </span>
-                  <span className="md:hidden">Menu</span>
-                  <span>▾</span>
-                </summary>
-
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-                  <div className="border-b border-slate-100 px-3 py-3">
-                    <p className="truncate text-sm font-black text-slate-950">
-                      {displayName}
-                    </p>
-                    <p className="text-xs font-semibold text-slate-500">
-                      {translateRole(language, role)}
-                    </p>
-                  </div>
-
-                  <Link
-  href="/dashboard/messages"
-  className="flex items-center justify-between rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100 md:hidden"
->
-  <span>Messages</span>
-
-  {unreadMessageCount > 0 ? (
-    <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-black text-white">
-      {unreadMessageCount > 99 ? "99+" : unreadMessageCount}
-    </span>
-  ) : null}
-</Link>
-                  <Link
-                    href="/dashboard/my-learning"
-                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                  >
-                    My Learning
-                  </Link>
-
-                  <Link
-                    href="/dashboard/settings/language"
-                    className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                  >
-                    Language
-                  </Link>
-
-                  {canManage ? (
-                    <>
-                      <div className="my-2 border-t border-slate-100" />
-
-                      <Link
-                        href="/manager"
-                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                      >
-                        Manager Panel
-                      </Link>
-
-                      <Link
-                        href="/manager/registrations"
-                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                      >
-                        Registrations
-                      </Link>
-
-                      <Link
-                        href="/manager/notices"
-                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                      >
-                        Notices
-                      </Link>
-
-                      <Link
-                        href="/manager/team"
-                        className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
-                      >
-                        Team
-                      </Link>
-                    </>
-                  ) : null}
-
-                  {isAdmin ? (
                     <Link
-                      href="/admin"
-                      className="block rounded-xl px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      href="/dashboard"
+                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
                     >
-                      Admin Panel
+                      Dashboard
                     </Link>
-                  ) : null}
 
-                  <div className="my-2 border-t border-slate-100" />
-
-                  <form action={signOutAction}>
-                    <button
-                      type="submit"
-                      className="w-full rounded-xl px-3 py-2 text-left text-sm font-black text-red-700 hover:bg-red-50"
+                    <Link
+                      href="/dashboard/my-learning"
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
                     >
-                      Log out
-                    </button>
-                  </form>
-                </div>
-              </details>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
-              >
-                {t("nav.login")}
-              </Link>
+                      My Learning
+                    </Link>
 
-              <Link
-                href="/signup"
-                className="hidden rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700 sm:inline-flex"
-              >
-                {t("nav.signup")}
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
+                    <Link
+                      href="/dashboard/messages"
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      Messages
+                    </Link>
+
+                    <Link
+                      href="/my/workshops"
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      My Workshops
+                    </Link>
+
+                    {isSpeaker ? (
+                      <Link
+                        href="/speaker"
+                        className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      >
+                        Speaker Dashboard
+                      </Link>
+                    ) : null}
+
+                    {isManager ? (
+                      <>
+                        <Link
+                          href="/manager"
+                          className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white"
+                        >
+                          Manager Dashboard
+                        </Link>
+
+                        <Link
+                          href="/manager/registrations"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Manage Registrations
+                        </Link>
+
+                        <Link
+                          href="/manager/live-help"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Live Help Desk
+                        </Link>
+                      </>
+                    ) : null}
+
+                    {isAdmin ? (
+                      <>
+                        <Link
+                          href="/admin"
+                          className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
+                        >
+                          Admin Dashboard
+                        </Link>
+
+                        <Link
+                          href="/admin/registrations"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Admin Registrations
+                        </Link>
+
+                        <Link
+                          href="/admin/live-help"
+                          className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                        >
+                          Admin Live Help
+                        </Link>
+                      </>
+                    ) : null}
+
+                    {isAdminOrManager ? (
+                      <Link
+                        href={isAdmin ? "/admin/live-help" : "/manager/live-help"}
+                        className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-black text-blue-700"
+                      >
+                        Q&A Requests
+                      </Link>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="rounded-2xl px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+                    >
+                      Login
+                    </Link>
+
+                    <Link
+                      href="/register"
+                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </details>
+        </nav>
+      </header>
+
+      <LiveQaHelpWidget />
+    </>
   );
 }
