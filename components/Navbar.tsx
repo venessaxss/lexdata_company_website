@@ -48,22 +48,23 @@ export default async function Navbar() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3">
-            <img
-  src="/logo2.png"
-  alt="LexData Logo"
-  className="h-11 w-11 rounded-2xl object-cover"
-/>
+  <div className="flex h-14 w-14 items-center justify-center overflow-visible rounded-2xl bg-white p-1">
+    <img
+      src="/logo2.png"
+      alt="LexData Logo"
+      className="h-full w-full object-contain"
+    />
+  </div>
 
-            <div>
-              <p className="text-lg font-black leading-none text-slate-950">
-                LexData
-              </p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
-                AI · NLP · Research
-              </p>
-            </div>
-          </Link>
-
+  <div>
+    <p className="text-lg font-black leading-none text-slate-950">
+      LexData
+    </p>
+    <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+      AI · NLP · RESEARCH
+    </p>
+  </div>
+</Link>
           <div className="hidden items-center gap-1 lg:flex">
             <Link
               href="/courses"
