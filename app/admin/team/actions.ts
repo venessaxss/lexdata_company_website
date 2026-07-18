@@ -273,3 +273,42 @@ export async function deleteTeamMember(formData: FormData) {
 
   redirect(`${returnTo}?message=Team member deleted`);
 }
+
+export async function reorderTeamMembers(formData: FormData) {
+  await requireAdminOrManager();
+
+  const supabase = createAdminClient();
+  const returnTo = field(formData, "return_to") || "/manager/team";
+
+  let order: { id: string; sort_order: number }[] = [];
+
+  try {
+    order = JSON.parse(field(formData, "order") || "[]");
+  } catch {
+    redirect(`${returnTo}?message=Invalid team order data`);
+  }
+
+  if (!Array.isArray(order) || order.length === 0) {
+    redirect(`${returnTo}?message=No team order changes submitted`);
+  }
+
+  for (const item of order) {
+    if (!item.id) continue;
+
+    await supabase
+      .from("team_members")
+      .update({
+        sort_order: item.sort_order,
+        display_order: item.sort_order,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", item.id);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/team");
+  revalidatePath("/admin/team");
+  revalidatePath("/manager/team");
+
+  redirect(`${returnTo}?message=Team order updated`);
+}

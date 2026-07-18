@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import TeamMedia from "@/components/TeamMedia";
 
 type TeamMember = {
@@ -34,21 +35,50 @@ function getName(member: TeamMember) {
 }
 
 function getRole(member: TeamMember) {
-  return member.position_title || member.role_title || member.role || "Team Member";
+  return (
+    member.position_title || member.role_title || member.role || "Team Member"
+  );
 }
 
 function getMediaUrl(member: TeamMember) {
   return member.media_url || member.photo_url || member.profile_image_url || null;
 }
 
-export default async function TeamShowcase() {
-  const supabase = await createClient();
+async function canManageTeam() {
+  try {
+    const supabase = await createClient();
 
-  const { data, error } = await supabase
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return false;
+
+    const admin = createAdminClient();
+
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    return profile?.role === "admin" || profile?.role === "manager";
+  } catch {
+    return false;
+  }
+}
+
+export default async function TeamShowcase() {
+  const admin = createAdminClient();
+  const canManage = await canManageTeam();
+
+  const { data, error } = await admin
     .from("team_members")
     .select("*")
     .eq("is_active", true)
+    .or("is_featured.eq.true,is_featured.is.null")
     .order("sort_order", { ascending: true })
+    .order("display_order", { ascending: true })
     .limit(6);
 
   if (error) {
@@ -77,12 +107,23 @@ export default async function TeamShowcase() {
             </p>
           </div>
 
-          <Link
-            href="/team"
-            className="inline-flex rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700"
-          >
-            View full team
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            {canManage ? (
+              <Link
+                href="/manager/team"
+                className="inline-flex rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800"
+              >
+                Manage homepage team
+              </Link>
+            ) : null}
+
+            <Link
+              href="/team"
+              className="inline-flex rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700"
+            >
+              View full team
+            </Link>
+          </div>
         </div>
 
         {members.length === 0 ? (
@@ -104,9 +145,10 @@ export default async function TeamShowcase() {
                 : `/team/${member.id}`;
 
               return (
-                <article
+                <Link
+                  href={profileUrl}
                   key={member.id}
-                  className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="block overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                 >
                   <TeamMedia
                     name={name}
@@ -142,14 +184,11 @@ export default async function TeamShowcase() {
                       </p>
                     ) : null}
 
-                    <Link
-                      href={profileUrl}
-                      className="mt-5 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-                    >
+                    <span className="mt-5 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">
                       {member.profile_cta || "View Profile"}
-                    </Link>
+                    </span>
                   </div>
-                </article>
+                </Link>
               );
             })}
           </div>

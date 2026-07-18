@@ -89,14 +89,13 @@ export default async function Navbar() {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4 md:px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center overflow-visible rounded-2xl bg-white p-1">
-              <img
-                src="/logo2.png"
-                alt="LexData Logo"
-                className="h-full w-full object-contain"
-              />
-            </div>
-
+           <div className="flex h-20 w-20 items-center justify-center overflow-visible rounded-2xl bg-white p-1">
+  <img
+    src="/logo2.png"
+    alt="LexData Logo"
+    className="h-full w-full object-contain"
+  />
+</div>
             <div>
               <p className="text-lg font-black leading-none text-slate-950">
                 LexData

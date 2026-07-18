@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deleteTeamMember } from "@/app/admin/team/actions";
+import TeamOrderManager from "@/components/TeamOrderManager";
 
 async function requireAdminOrManager() {
   const supabase = await createClient();
@@ -26,6 +27,24 @@ async function requireAdminOrManager() {
   }
 }
 
+function getName(member: any) {
+  return member.full_name || member.name || "Unnamed member";
+}
+
+function getRole(member: any) {
+  return (
+    member.position_title ||
+    member.role_title ||
+    member.role ||
+    member.title ||
+    "Team Member"
+  );
+}
+
+function getPhoto(member: any) {
+  return member.media_url || member.photo_url || member.profile_image_url || "";
+}
+
 export default async function ManagerTeamPage({
   searchParams,
 }: {
@@ -39,24 +58,49 @@ export default async function ManagerTeamPage({
   const { data: members } = await supabase
     .from("team_members")
     .select("*")
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  const orderMembers = (members ?? []).map((member: any) => ({
+    id: member.id,
+    name: getName(member),
+    role: getRole(member),
+    section: member.section,
+    photo: getPhoto(member),
+    is_active: member.is_active,
+    is_featured: member.is_featured,
+    sort_order: member.sort_order ?? member.display_order ?? 0,
+  }));
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <p className="text-sm font-semibold text-slate-500">Manager</p>
+
           <h1 className="mt-2 text-3xl font-bold text-slate-900">
             Team Members
           </h1>
+
           <p className="mt-2 text-slate-600">
-            Modify team photos, bios, titles, sections, and visibility.
+            Modify homepage team photos, bios, titles, sections, visibility, and
+            display order.
           </p>
         </div>
 
-        <Link href="/manager/team/new" className="btn-primary">
-          Add member
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/"
+            className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
+          >
+            View Homepage
+          </Link>
+
+          <Link href="/manager/team/new" className="btn-primary">
+            Add member
+          </Link>
+        </div>
       </div>
 
       {message ? (
@@ -65,7 +109,9 @@ export default async function ManagerTeamPage({
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <TeamOrderManager members={orderMembers} returnTo="/manager/team" />
+
+      <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-slate-600">
             <tr>
@@ -74,18 +120,17 @@ export default async function ManagerTeamPage({
               <th className="px-4 py-3">Role</th>
               <th className="px-4 py-3">Section</th>
               <th className="px-4 py-3">Active</th>
+              <th className="px-4 py-3">Homepage</th>
               <th className="px-4 py-3">Order</th>
               <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {(members ?? []).map((member) => {
-              const photo =
-                member.media_url || member.photo_url || member.profile_image_url;
-              const name = member.full_name || member.name;
-              const role =
-                member.position_title || member.role_title || member.role;
+            {(members ?? []).map((member: any) => {
+              const photo = getPhoto(member);
+              const name = getName(member);
+              const role = getRole(member);
 
               return (
                 <tr key={member.id} className="border-t border-slate-100">
@@ -105,9 +150,7 @@ export default async function ManagerTeamPage({
                     {name}
                   </td>
 
-                  <td className="px-4 py-4 text-slate-600">
-                    {role || "-"}
-                  </td>
+                  <td className="px-4 py-4 text-slate-600">{role || "-"}</td>
 
                   <td className="px-4 py-4 text-slate-600">
                     {member.section || "-"}
@@ -118,11 +161,22 @@ export default async function ManagerTeamPage({
                   </td>
 
                   <td className="px-4 py-4">
+                    {member.is_featured ? "Yes" : "No"}
+                  </td>
+
+                  <td className="px-4 py-4">
                     {member.sort_order ?? member.display_order ?? 0}
                   </td>
 
                   <td className="px-4 py-4">
                     <div className="flex gap-2">
+                      <Link
+                        href={`/team/${member.profile_slug || member.id}`}
+                        className="rounded-lg border border-blue-200 px-3 py-2 text-blue-700 hover:bg-blue-50"
+                      >
+                        View
+                      </Link>
+
                       <Link
                         href={`/manager/team/${member.id}/edit`}
                         className="rounded-lg border border-slate-300 px-3 py-2 hover:bg-slate-100"
