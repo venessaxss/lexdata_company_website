@@ -33,6 +33,12 @@ const adminCards = [
     href: "/admin/workshops",
   },
   {
+  title: "Member Profiles",
+  description:
+    "View member profile information including institution, profession, country, degree, and research interests.",
+  href: "/admin/member-profiles",
+},
+  {
     title: "Send Messages",
     description:
       "Send messages to all users or selected role groups such as members, speakers, managers, staff, or admins.",

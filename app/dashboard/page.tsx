@@ -44,6 +44,12 @@ export default async function DashboardPage() {
 
   const cards = [
     {
+  title: "My Profile",
+  description:
+    "Add your institution, profession, country, academic status, and research interests.",
+  href: "/dashboard/profile",
+},
+    {
       title: t("card.myLearning.title"),
       description: t("card.myLearning.description"),
       href: "/dashboard/my-learning",

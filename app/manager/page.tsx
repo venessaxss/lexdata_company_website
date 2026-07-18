@@ -19,7 +19,6 @@ export default async function ManagerDashboardPage() {
 
   const supabase = await createClient();
   const admin = createAdminClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -87,11 +86,23 @@ export default async function ManagerDashboardPage() {
       href: "/team",
     },
     {
+  title: "Member Profiles",
+  description:
+    "View members’ institutions, professions, countries, academic status, and research interests.",
+  href: "/manager/member-profiles",
+},
+    {
       title: "Workshops",
       description:
         "Open the public workshop list and check workshop visibility, registration status, and member-facing content.",
       href: "/workshops",
     },
+    {
+  title: "Course Enrollments",
+  description:
+    "Review course enrollment requests, check payment status, approve course access, reject requests, and manage member course participation.",
+  href: "/manager/course-enrollments",
+},
   ];
 
   return (
