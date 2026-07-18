@@ -8,6 +8,12 @@ const adminCards = [
     href: "/admin/courses",
   },
   {
+  title: "Course Enrollments",
+  description:
+    "View course enrollment requests, approve course access, check payment status, and manage student participation.",
+  href: "/admin/course-enrollments",
+},
+  {
     title: "Workshop Registrations",
     description:
       "View registration records submitted from public workshop pages.",
