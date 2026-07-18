@@ -770,6 +770,7 @@ export default async function ManagerRegistrationsPage({
                                   >
                                     <option value="USD">USD</option>
                                     <option value="MNT">MNT</option>
+                                    <option value="PKR">PKR</option>
                                     <option value="CNY">CNY</option>
                                     <option value="EUR">EUR</option>
                                     <option value="GBP">GBP</option>

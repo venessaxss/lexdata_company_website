@@ -58,9 +58,13 @@ export default async function CourseDetailPage({
     .eq("is_published", true)
     .order("position");
 
+  const isApproved =
+    existingEnrollment?.enrollment_status === "approved" ||
+    existingEnrollment?.enrollment_status === "confirmed";
+
   return (
     <section className="mx-auto max-w-5xl px-4 py-12">
-      <div className="card overflow-hidden">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <div className="h-64 bg-slate-200">
           {course.cover_url ? (
             <img
@@ -68,29 +72,42 @@ export default async function CourseDetailPage({
               alt={course.title}
               className="h-full w-full object-cover"
             />
-          ) : null}
+          ) : (
+            <div className="flex h-full items-center justify-center bg-slate-950 text-4xl font-black text-white">
+              LexData
+            </div>
+          )}
         </div>
 
         <div className="p-8">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm font-bold text-slate-500">
             {course.level ?? "All levels"} · {course.language ?? "English"}
           </p>
 
-          <h1 className="mt-2 text-4xl font-bold">{course.title}</h1>
+          <h1 className="mt-2 text-4xl font-black text-slate-950">
+            {course.title}
+          </h1>
 
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg leading-8 text-slate-600">
             {course.short_description}
           </p>
 
-          <div className="mt-5 flex flex-wrap items-center gap-4">
-            <p className="text-2xl font-bold">
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <p className="text-2xl font-black text-slate-950">
               {money(course.price_cents, course.currency)}
             </p>
 
-            {existingEnrollment ? (
+            {!user ? (
+              <Link
+                href={`/login?message=Please login before enrolling in this course.`}
+                className="inline-flex cursor-pointer rounded-2xl bg-blue-700 px-7 py-4 text-base font-black text-white shadow-sm hover:bg-blue-800"
+              >
+                Login to Enroll
+              </Link>
+            ) : existingEnrollment ? (
               <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4">
                 <p className="text-sm font-black text-blue-800">
-                  You are enrolled / requested access
+                  You have already requested access
                 </p>
 
                 <p className="mt-1 text-xs font-bold text-blue-700">
@@ -103,13 +120,18 @@ export default async function CourseDetailPage({
                 <input type="hidden" name="course_id" value={course.id} />
                 <input type="hidden" name="slug" value={course.slug} />
 
-                <button className="btn-primary">Enroll Course</button>
+                <button
+                  type="submit"
+                  className="inline-flex cursor-pointer rounded-2xl bg-blue-700 px-7 py-4 text-base font-black text-white shadow-sm hover:bg-blue-800"
+                >
+                  Enroll Course
+                </button>
               </form>
             )}
           </div>
 
           {sp.message ? (
-            <p className="mt-4 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700">
+            <p className="mt-5 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700">
               {sp.message}
             </p>
           ) : null}
@@ -117,23 +139,26 @@ export default async function CourseDetailPage({
       </div>
 
       <div className="mt-10 grid gap-8 md:grid-cols-[0.7fr_0.3fr]">
-        <div className="card p-6">
-          <h2 className="text-2xl font-semibold">Course introduction</h2>
-          <p className="mt-4 whitespace-pre-line text-slate-700">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-2xl font-black text-slate-950">
+            Course introduction
+          </h2>
+
+          <p className="mt-4 whitespace-pre-line leading-8 text-slate-700">
             {course.intro}
           </p>
         </div>
 
-        <aside className="card p-6">
-          <h2 className="font-semibold">Lessons</h2>
+        <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-black text-slate-950">Lessons</h2>
 
-          {existingEnrollment?.enrollment_status === "approved" ? (
+          {isApproved ? (
             <ol className="mt-4 space-y-3 text-sm text-slate-700">
               {(lessons ?? []).map((lesson: any) => (
                 <li key={lesson.id}>
                   <Link
                     href={`/courses/${course.slug}/lessons/${lesson.id}`}
-                    className="hover:underline"
+                    className="font-bold text-blue-700 hover:underline"
                   >
                     {lesson.position}. {lesson.title}
                   </Link>
@@ -142,7 +167,8 @@ export default async function CourseDetailPage({
             </ol>
           ) : (
             <p className="mt-4 text-sm leading-6 text-slate-600">
-              Lessons will be available after your enrollment is approved.
+              Lessons will be available after your enrollment is approved by the
+              LexData team.
             </p>
           )}
         </aside>
