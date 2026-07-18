@@ -636,12 +636,12 @@ export default async function ManagerRegistrationsPage({
                       </td>
 
                       <td className="px-4 py-4">
-                        <details className="group">
+                        <details className="group relative">
                           <summary className="cursor-pointer rounded-xl bg-slate-950 px-4 py-2 text-center text-xs font-black text-white hover:bg-slate-700">
                             Manage
                           </summary>
 
-                          <div className="absolute right-4 z-20 mt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+                           <div className="mt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
                             <form
                               action={
                                 paymentActions.handleRegistrationManagementAction
