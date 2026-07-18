@@ -10,7 +10,7 @@ import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
-
+import HomeHighlightedCourses from "@/components/HomeHighlightedCourses";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -147,7 +147,7 @@ export default async function HomePage() {
       </section>
 
       <DynamicHomeShowcase />
-
+     <HomeHighlightedCourses />
       <HomeMediaShowcase
         videos={homepageVideos}
         canManage={canManageHomepage}

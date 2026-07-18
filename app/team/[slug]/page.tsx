@@ -24,6 +24,12 @@ function getMediaUrl(member: any) {
   return member.media_url || member.photo_url || member.profile_image_url || null;
 }
 
+function isVisible(member: any) {
+  if (member.is_active === false) return false;
+  if (member.is_published === false) return false;
+  return true;
+}
+
 export default async function TeamProfilePage({
   params,
 }: {
@@ -38,7 +44,7 @@ export default async function TeamProfilePage({
     .or(`profile_slug.eq.${slug},id.eq.${slug}`)
     .maybeSingle();
 
-  if (error || !member || member.is_active === false) {
+  if (error || !member || !isVisible(member)) {
     notFound();
   }
 
