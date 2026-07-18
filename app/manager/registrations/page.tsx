@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import * as paymentActions from "@/app/manager/actions/payment-actions";
@@ -5,8 +6,17 @@ import * as paymentActions from "@/app/manager/actions/payment-actions";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+type SearchParams = {
+  workshop?: string;
+  q?: string;
+  registration?: string;
+  payment?: string;
+  page?: string;
+  pageSize?: string;
+};
+
 type PageProps = {
-  searchParams?: Promise<{ workshop?: string }> | { workshop?: string };
+  searchParams?: Promise<SearchParams> | SearchParams;
 };
 
 type Workshop = {
@@ -57,7 +67,94 @@ function badgeClass(status?: string | null) {
 }
 
 function money(amount?: number | null, currency?: string | null) {
-  return `${currency || "USD"} ${Number(amount || 0).toFixed(2)}`;
+  const code = (currency || "USD").toUpperCase();
+  const value = Number(amount || 0);
+
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+    }).format(value);
+  } catch {
+    return `${code} ${value.toFixed(2)}`;
+  }
+}
+
+function normalizeCurrency(currency?: string | null) {
+  return (currency || "USD").trim().toUpperCase();
+}
+
+function safePositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number(value || "");
+  if (!Number.isFinite(parsed) || parsed < 1) return fallback;
+  return Math.floor(parsed);
+}
+
+function cleanSearch(value?: string) {
+  return String(value || "")
+    .replace(/[%_,]/g, " ")
+    .trim();
+}
+
+function buildHref(input: {
+  workshop: string;
+  q: string;
+  registration: string;
+  payment: string;
+  page: number;
+  pageSize: number;
+}) {
+  const params = new URLSearchParams();
+
+  if (input.workshop && input.workshop !== "all") {
+    params.set("workshop", input.workshop);
+  }
+
+  if (input.q) {
+    params.set("q", input.q);
+  }
+
+  if (input.registration && input.registration !== "all") {
+    params.set("registration", input.registration);
+  }
+
+  if (input.payment && input.payment !== "all") {
+    params.set("payment", input.payment);
+  }
+
+  params.set("page", String(input.page));
+  params.set("pageSize", String(input.pageSize));
+
+  return `/manager/registrations?${params.toString()}`;
+}
+
+function applyRegistrationFilters(query: any, input: {
+  selectedWorkshopId: string;
+  searchText: string;
+  registrationFilter: string;
+  paymentFilter: string;
+}) {
+  let next = query;
+
+  if (input.selectedWorkshopId !== "all") {
+    next = next.eq("workshop_id", input.selectedWorkshopId);
+  }
+
+  if (input.registrationFilter !== "all") {
+    next = next.eq("registration_status", input.registrationFilter);
+  }
+
+  if (input.paymentFilter !== "all") {
+    next = next.eq("payment_status", input.paymentFilter);
+  }
+
+  if (input.searchText) {
+    next = next.or(
+      `full_name.ilike.%${input.searchText}%,email.ilike.%${input.searchText}%`
+    );
+  }
+
+  return next;
 }
 
 export default async function ManagerRegistrationsPage({
@@ -66,7 +163,16 @@ export default async function ManagerRegistrationsPage({
   noStore();
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
+
   const selectedWorkshopId = resolvedSearchParams.workshop || "all";
+  const searchText = cleanSearch(resolvedSearchParams.q);
+  const registrationFilter = resolvedSearchParams.registration || "all";
+  const paymentFilter = resolvedSearchParams.payment || "all";
+  const page = safePositiveInt(resolvedSearchParams.page, 1);
+  const pageSize = safePositiveInt(resolvedSearchParams.pageSize, 25);
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize - 1;
 
   const admin = createAdminClient();
 
@@ -92,22 +198,49 @@ export default async function ManagerRegistrationsPage({
       payment_link,
       receipt_url,
       created_at
-    `
+    `,
+      { count: "exact" }
     )
     .order("created_at", { ascending: false });
 
-  if (selectedWorkshopId !== "all") {
-    registrationsQuery = registrationsQuery.eq(
-      "workshop_id",
-      selectedWorkshopId
-    );
-  }
+  registrationsQuery = applyRegistrationFilters(registrationsQuery, {
+    selectedWorkshopId,
+    searchText,
+    registrationFilter,
+    paymentFilter,
+  });
 
-  const { data: registrationsData, error: registrationsError } =
-    await registrationsQuery;
+  const {
+    data: registrationsData,
+    error: registrationsError,
+    count: totalCount,
+  } = await registrationsQuery.range(start, end);
+
+  let summaryQuery = admin
+    .from("workshop_registrations")
+    .select(
+      `
+      id,
+      workshop_id,
+      registration_status,
+      payment_status,
+      amount_received,
+      payment_currency
+    `
+    );
+
+  summaryQuery = applyRegistrationFilters(summaryQuery, {
+    selectedWorkshopId,
+    searchText,
+    registrationFilter,
+    paymentFilter,
+  });
+
+  const { data: summaryData, error: summaryError } = await summaryQuery;
 
   const workshops = (workshopsData ?? []) as Workshop[];
   const registrations = (registrationsData ?? []) as Registration[];
+  const summaryRegistrations = (summaryData ?? []) as Registration[];
 
   const workshopById = new Map<string, Workshop>();
 
@@ -115,28 +248,51 @@ export default async function ManagerRegistrationsPage({
     workshopById.set(workshop.id, workshop);
   }
 
-  const confirmedPaid = registrations.filter(
+  const confirmedPaid = summaryRegistrations.filter(
     (registration) =>
       registration.registration_status === "confirmed" &&
       registration.payment_status === "confirmed"
   );
 
-  const confirmedAmount = confirmedPaid.reduce(
-    (sum, registration) => sum + Number(registration.amount_received || 0),
-    0
+  const currencyTotals = new Map<string, number>();
+
+  for (const registration of confirmedPaid) {
+    const currency = normalizeCurrency(registration.payment_currency);
+    const amount = Number(registration.amount_received || 0);
+
+    currencyTotals.set(currency, (currencyTotals.get(currency) || 0) + amount);
+  }
+
+  const currencySummary = Array.from(currencyTotals.entries()).sort((a, b) =>
+    a[0].localeCompare(b[0])
   );
+
+  const totalRecords = totalCount ?? registrations.length;
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+  const showingFrom = totalRecords === 0 ? 0 : start + 1;
+  const showingTo = Math.min(start + registrations.length, totalRecords);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8">
-      <section className="mx-auto max-w-7xl space-y-8">
-        <div>
-          <h1 className="text-3xl font-black text-slate-950">
-            Registration & Payment Management
-          </h1>
-          <p className="mt-2 text-sm font-medium text-slate-600">
-            Send payment messages, edit statuses, check receipts, and confirm
-            access.
-          </p>
+      <section className="mx-auto max-w-7xl space-y-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <h1 className="text-3xl font-black text-slate-950">
+              Registration & Payment Management
+            </h1>
+
+            <p className="mt-2 text-sm font-medium text-slate-600">
+              Manage workshop registrations, payment status, receipts, and
+              access approval.
+            </p>
+          </div>
+
+          <Link
+            href="/manager"
+            className="w-fit rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+          >
+            Back to manager dashboard
+          </Link>
         </div>
 
         {workshopsError ? (
@@ -151,42 +307,138 @@ export default async function ManagerRegistrationsPage({
           </div>
         ) : null}
 
+        {summaryError ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
+            Failed to load payment summary: {summaryError.message}
+          </div>
+        ) : null}
+
         <form className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-          <label className="block text-sm font-black text-slate-600">
-            Filter by workshop
-          </label>
+          <div className="grid gap-4 md:grid-cols-5">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-black text-slate-600">
+                Search name or email
+              </label>
 
-          <select
-            name="workshop"
-            defaultValue={selectedWorkshopId}
-            className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
-          >
-            <option value="all">All workshops</option>
-            {workshops.map((workshop) => (
-              <option key={workshop.id} value={workshop.id}>
-                {workshop.title || "Untitled workshop"}
-              </option>
-            ))}
-          </select>
+              <input
+                name="q"
+                defaultValue={searchText}
+                placeholder="Search participant..."
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="mt-4 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
-          >
-            Apply filter
-          </button>
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Workshop
+              </label>
+
+              <select
+                name="workshop"
+                defaultValue={selectedWorkshopId}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All workshops</option>
+                {workshops.map((workshop) => (
+                  <option key={workshop.id} value={workshop.id}>
+                    {workshop.title || "Untitled workshop"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Registration
+              </label>
+
+              <select
+                name="registration"
+                defaultValue={registrationFilter}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="rejected">Rejected</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Payment
+              </label>
+
+              <select
+                name="payment"
+                defaultValue={paymentFilter}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="instructions_sent">Instructions Sent</option>
+                <option value="under_review">Under Review</option>
+                <option value="confirmed">Confirmed Paid</option>
+                <option value="waived">Waived</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <select
+              name="pageSize"
+              defaultValue={String(pageSize)}
+              className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+            >
+              <option value="10">10 per page</option>
+              <option value="25">25 per page</option>
+              <option value="50">50 per page</option>
+              <option value="100">100 per page</option>
+            </select>
+
+            <input type="hidden" name="page" value="1" />
+
+            <button
+              type="submit"
+              className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
+            >
+              Apply filters
+            </button>
+
+            <Link
+              href="/manager/registrations"
+              className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+            >
+              Reset
+            </Link>
+          </div>
         </form>
 
         <div className="grid gap-5 md:grid-cols-3">
           <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
             <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
-              Confirmed Amount
+              Confirmed Amount by Currency
             </p>
-            <p className="mt-4 text-4xl font-black text-slate-950">
-              USD {confirmedAmount.toFixed(2)}
-            </p>
+
+            <div className="mt-4 space-y-2">
+              {currencySummary.length === 0 ? (
+                <p className="text-3xl font-black text-slate-950">0.00</p>
+              ) : (
+                currencySummary.map(([currency, amount]) => (
+                  <p
+                    key={currency}
+                    className="text-3xl font-black text-slate-950"
+                  >
+                    {money(amount, currency)}
+                  </p>
+                ))
+              )}
+            </div>
+
             <p className="mt-3 text-sm font-medium text-slate-500">
-              Only manually confirmed paid registrations
+              Only confirmed paid registrations. Currencies are not mixed.
             </p>
           </div>
 
@@ -194,9 +446,11 @@ export default async function ManagerRegistrationsPage({
             <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
               Confirmed Paid Records
             </p>
+
             <p className="mt-4 text-4xl font-black text-slate-950">
               {confirmedPaid.length}
             </p>
+
             <p className="mt-3 text-sm font-medium text-slate-500">
               Excludes waived/free registrations
             </p>
@@ -204,267 +458,397 @@ export default async function ManagerRegistrationsPage({
 
           <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
             <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
-              Total Records
+              Filtered Records
             </p>
+
             <p className="mt-4 text-4xl font-black text-slate-950">
-              {registrations.length}
+              {totalRecords}
             </p>
+
             <p className="mt-3 text-sm font-medium text-slate-500">
-              Current filtered registrations
+              Showing {showingFrom}–{showingTo} of {totalRecords}
             </p>
           </div>
         </div>
 
-        <section className="space-y-5">
-          {registrations.map((registration) => {
-            const workshop = workshopById.get(registration.workshop_id);
+        <section className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+              <div>
+                <h2 className="text-lg font-black text-slate-950">
+                  Registrations
+                </h2>
 
-            return (
-              <article
-                key={registration.id}
-                className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-              >
-                <div className="grid gap-6 lg:grid-cols-[1fr_430px]">
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">
-                      {workshop?.title || "Unknown workshop"}
-                    </p>
+                <p className="text-sm font-medium text-slate-500">
+                  Compact list. Open “Manage” only when you need to edit one
+                  registration.
+                </p>
+              </div>
 
-                    <h2 className="mt-2 text-xl font-black text-slate-950">
-                      {registration.full_name || "Unnamed participant"}
-                    </h2>
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <Link
+                  href={buildHref({
+                    workshop: selectedWorkshopId,
+                    q: searchText,
+                    registration: registrationFilter,
+                    payment: paymentFilter,
+                    page: Math.max(1, page - 1),
+                    pageSize,
+                  })}
+                  className={`rounded-xl border px-4 py-2 ${
+                    page <= 1
+                      ? "pointer-events-none border-slate-200 text-slate-300"
+                      : "border-slate-300 text-slate-700 hover:bg-white"
+                  }`}
+                >
+                  Previous
+                </Link>
 
-                    <p className="mt-1 text-sm font-medium text-slate-500">
-                      {registration.email || "No email"}
-                    </p>
+                <span className="px-2 text-slate-500">
+                  Page {page} / {totalPages}
+                </span>
 
-                    <div className="mt-5 grid gap-3 md:grid-cols-3">
-                      <div className="rounded-2xl bg-slate-50 p-4">
-                        <p className="text-xs font-black text-slate-400">
-                          Registration
+                <Link
+                  href={buildHref({
+                    workshop: selectedWorkshopId,
+                    q: searchText,
+                    registration: registrationFilter,
+                    payment: paymentFilter,
+                    page: Math.min(totalPages, page + 1),
+                    pageSize,
+                  })}
+                  className={`rounded-xl border px-4 py-2 ${
+                    page >= totalPages
+                      ? "pointer-events-none border-slate-200 text-slate-300"
+                      : "border-slate-300 text-slate-700 hover:bg-white"
+                  }`}
+                >
+                  Next
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-h-[75vh] overflow-auto">
+            <table className="w-full min-w-[1100px] text-left text-sm">
+              <thead className="sticky top-0 z-10 bg-slate-100 text-xs uppercase tracking-[0.16em] text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Participant</th>
+                  <th className="px-4 py-3">Workshop</th>
+                  <th className="px-4 py-3">Registration</th>
+                  <th className="px-4 py-3">Payment</th>
+                  <th className="px-4 py-3">Amount</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Files</th>
+                  <th className="px-4 py-3">Manage</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {registrations.map((registration) => {
+                  const workshop = workshopById.get(registration.workshop_id);
+
+                  return (
+                    <tr
+                      key={registration.id}
+                      className="border-t border-slate-100 align-top"
+                    >
+                      <td className="px-4 py-4">
+                        <p className="font-black text-slate-950">
+                          {registration.full_name || "Unnamed participant"}
                         </p>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          {registration.email || "No email"}
+                        </p>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <p className="max-w-[260px] font-bold text-slate-700">
+                          {workshop?.title || "Unknown workshop"}
+                        </p>
+                      </td>
+
+                      <td className="px-4 py-4">
                         <span
-                          className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
                             registration.registration_status
                           )}`}
                         >
                           {label(registration.registration_status)}
                         </span>
-                      </div>
+                      </td>
 
-                      <div className="rounded-2xl bg-slate-50 p-4">
-                        <p className="text-xs font-black text-slate-400">
-                          Payment
-                        </p>
+                      <td className="px-4 py-4">
                         <span
-                          className={`mt-2 inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
                             registration.payment_status
                           )}`}
                         >
                           {label(registration.payment_status)}
                         </span>
-                      </div>
+                      </td>
 
-                      <div className="rounded-2xl bg-slate-50 p-4">
-                        <p className="text-xs font-black text-slate-400">
-                          Amount
-                        </p>
-                        <p className="mt-2 font-black text-slate-900">
-                          {money(
-                            registration.amount_received,
-                            registration.payment_currency
-                          )}
-                        </p>
-                      </div>
-                    </div>
+                      <td className="px-4 py-4 font-black text-slate-950">
+                        {money(
+                          registration.amount_received,
+                          registration.payment_currency
+                        )}
+                      </td>
 
-                    {registration.payment_note ? (
-                      <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 p-4">
-                        <p className="text-xs font-black text-blue-700">
-                          Payment message / note
-                        </p>
-                        <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-blue-900">
-                          {registration.payment_note}
-                        </p>
-                      </div>
-                    ) : null}
+                      <td className="px-4 py-4 text-xs font-semibold text-slate-500">
+                        {registration.created_at
+                          ? new Date(registration.created_at).toLocaleString()
+                          : "-"}
+                      </td>
 
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      {registration.payment_link ? (
-                        <a
-                          href={registration.payment_link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white hover:bg-blue-800"
-                        >
-                          Open payment link
-                        </a>
-                      ) : null}
+                      <td className="px-4 py-4">
+                        <div className="flex flex-col gap-2">
+                          {registration.payment_link ? (
+                            <a
+                              href={registration.payment_link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-black text-blue-700 hover:underline"
+                            >
+                              Payment link
+                            </a>
+                          ) : null}
 
-                      {registration.receipt_url ? (
-                        <a
-                          href={registration.receipt_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex rounded-2xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
-                        >
-                          View uploaded receipt
-                        </a>
-                      ) : null}
-                    </div>
-                  </div>
+                          {registration.receipt_url ? (
+                            <a
+                              href={registration.receipt_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-black text-emerald-700 hover:underline"
+                            >
+                              Receipt
+                            </a>
+                          ) : null}
 
-                  <form
-                    action={paymentActions.handleRegistrationManagementAction}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
-                  >
-                    <input
-                      type="hidden"
-                      name="registration_id"
-                      value={registration.id}
-                    />
+                          {!registration.payment_link &&
+                          !registration.receipt_url ? (
+                            <span className="text-xs font-semibold text-slate-400">
+                              No file/link
+                            </span>
+                          ) : null}
+                        </div>
+                      </td>
 
-                    <h3 className="text-lg font-black text-slate-950">
-                      Payment actions
-                    </h3>
+                      <td className="px-4 py-4">
+                        <details className="group">
+                          <summary className="cursor-pointer rounded-xl bg-slate-950 px-4 py-2 text-center text-xs font-black text-white hover:bg-slate-700">
+                            Manage
+                          </summary>
 
-                    <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                      <p className="text-sm font-black text-slate-700">
-                        Edit status
-                      </p>
+                          <div className="absolute right-4 z-20 mt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+                            <form
+                              action={
+                                paymentActions.handleRegistrationManagementAction
+                              }
+                              className="space-y-4"
+                            >
+                              <input
+                                type="hidden"
+                                name="registration_id"
+                                value={registration.id}
+                              />
 
-                      <label className="mt-3 block text-xs font-black text-slate-500">
-                        Registration status
-                      </label>
-                      <select
-                        name="registration_status"
-                        defaultValue={
-                          registration.registration_status || "pending"
-                        }
-                        className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
+                              <div>
+                                <h3 className="text-lg font-black text-slate-950">
+                                  Payment actions
+                                </h3>
 
-                      <label className="mt-3 block text-xs font-black text-slate-500">
-                        Payment status
-                      </label>
-                      <select
-                        name="payment_status"
-                        defaultValue={registration.payment_status || "pending"}
-                        className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
-                      >
-                        <option value="pending">Unpaid / Pending</option>
-                        <option value="instructions_sent">
-                          Instructions Sent
-                        </option>
-                        <option value="under_review">Under Review</option>
-                        <option value="confirmed">Confirmed Paid</option>
-                        <option value="waived">Waived</option>
-                        <option value="rejected">Rejected</option>
-                      </select>
+                                <p className="mt-1 text-xs font-semibold text-slate-500">
+                                  {registration.full_name || "Participant"}
+                                </p>
+                              </div>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="save_statuses"
-                        className="mt-4 w-full rounded-2xl bg-slate-800 px-4 py-3 text-sm font-black text-white hover:bg-slate-700"
-                      >
-                        Save status changes
-                      </button>
-                    </div>
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Registration status
+                                  </label>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Payment link
-                    </label>
-                    <input
-                      name="payment_link"
-                      defaultValue={registration.payment_link || ""}
-                      placeholder="https://... or leave empty for non-link payment"
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+                                  <select
+                                    name="registration_status"
+                                    defaultValue={
+                                      registration.registration_status ||
+                                      "pending"
+                                    }
+                                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                  >
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="cancelled">Cancelled</option>
+                                  </select>
+                                </div>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Amount received
-                    </label>
-                    <input
-                      name="amount_received"
-                      type="number"
-                      step="0.01"
-                      defaultValue={registration.amount_received || 0}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Payment status
+                                  </label>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Currency
-                    </label>
-                    <input
-                      name="payment_currency"
-                      defaultValue={registration.payment_currency || "USD"}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+                                  <select
+                                    name="payment_status"
+                                    defaultValue={
+                                      registration.payment_status || "pending"
+                                    }
+                                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                  >
+                                    <option value="pending">
+                                      Unpaid / Pending
+                                    </option>
+                                    <option value="instructions_sent">
+                                      Instructions Sent
+                                    </option>
+                                    <option value="under_review">
+                                      Under Review
+                                    </option>
+                                    <option value="confirmed">
+                                      Confirmed Paid
+                                    </option>
+                                    <option value="waived">Waived</option>
+                                    <option value="rejected">Rejected</option>
+                                  </select>
+                                </div>
+                              </div>
 
-                    <label className="mt-4 block text-sm font-black text-slate-600">
-                      Message / internal note
-                    </label>
-                    <textarea
-                      name="payment_note"
-                      defaultValue={registration.payment_note || ""}
-                      rows={4}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
-                    />
+                              <button
+                                type="submit"
+                                name="intent"
+                                value="save_statuses"
+                                className="w-full rounded-2xl bg-slate-800 px-4 py-3 text-sm font-black text-white hover:bg-slate-700"
+                              >
+                                Save status changes
+                              </button>
 
-                    <div className="mt-5 space-y-3">
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="send_payment_message"
-                        className="w-full rounded-3xl bg-blue-700 px-6 py-5 text-lg font-black text-white"
-                      >
-                        Send payment instruction
-                      </button>
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Payment link
+                                </label>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="record_payment_received"
-                        className="w-full rounded-3xl bg-orange-600 px-6 py-5 text-lg font-black text-white"
-                      >
-                        Record payment info received
-                      </button>
+                                <input
+                                  name="payment_link"
+                                  defaultValue={
+                                    registration.payment_link || ""
+                                  }
+                                  placeholder="https://... or leave empty"
+                                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                />
+                              </div>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="confirm_payment"
-                        className="w-full rounded-3xl bg-emerald-700 px-6 py-5 text-lg font-black text-white"
-                      >
-                        Confirm payment and unlock access
-                      </button>
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Amount received
+                                  </label>
 
-                      <button
-                        type="submit"
-                        name="intent"
-                        value="waive_payment"
-                        className="w-full rounded-3xl border border-slate-300 bg-white px-6 py-4 text-sm font-black text-slate-700"
-                      >
-                        Waive payment and unlock
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </article>
-            );
-          })}
+                                  <input
+                                    name="amount_received"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={
+                                      registration.amount_received || 0
+                                    }
+                                    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                  />
+                                </div>
 
-          {registrations.length === 0 ? (
-            <div className="rounded-3xl bg-white p-8 text-center font-bold text-slate-400 shadow-sm ring-1 ring-slate-200">
-              No registrations found.
-            </div>
-          ) : null}
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Currency
+                                  </label>
+
+                                  <select
+                                    name="payment_currency"
+                                    defaultValue={normalizeCurrency(
+                                      registration.payment_currency
+                                    )}
+                                    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                  >
+                                    <option value="USD">USD</option>
+                                    <option value="MNT">MNT</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="KRW">KRW</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Message / internal note
+                                </label>
+
+                                <textarea
+                                  name="payment_note"
+                                  defaultValue={
+                                    registration.payment_note || ""
+                                  }
+                                  rows={4}
+                                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                />
+                              </div>
+
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="send_payment_message"
+                                  className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white hover:bg-blue-800"
+                                >
+                                  Send instruction
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="record_payment_received"
+                                  className="rounded-2xl bg-orange-600 px-4 py-3 text-sm font-black text-white hover:bg-orange-700"
+                                >
+                                  Record received
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="confirm_payment"
+                                  className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-black text-white hover:bg-emerald-800"
+                                >
+                                  Confirm & unlock
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="waive_payment"
+                                  className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
+                                >
+                                  Waive & unlock
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </details>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {registrations.length === 0 ? (
+              <div className="p-8 text-center font-bold text-slate-400">
+                No registrations found.
+              </div>
+            ) : null}
+          </div>
         </section>
       </section>
     </main>
