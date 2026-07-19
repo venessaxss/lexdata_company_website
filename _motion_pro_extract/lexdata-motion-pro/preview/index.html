@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LexData — Motion Layer PRO demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+<style>
+/* ================= original-flavor design tokens ================= */
+* { box-sizing: border-box; }
+:root {
+  --bg: #f4f6f2; --fg: #14192b; --dim: #59607a;
+  --blue: #2b44e7; --mark: #ddff4f;
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: "IBM Plex Sans", system-ui, sans-serif; transition: background 1s var(--ease), color 1s var(--ease); overflow-x: hidden; }
+body.dark { --bg: #14192b; --fg: #f4f6f2; --dim: #9aa2c0; background: var(--bg); color: var(--fg); }
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: "IBM Plex Mono", monospace; }
+.serif { font-family: "Instrument Serif", serif; font-weight: 400; }
+
+/* ================= preloader ================= */
+#loader {
+  position: fixed; inset: 0; z-index: 200;
+  background: #14192b; color: #f4f6f2;
+  display: grid; place-items: center;
+  transition: transform .9s cubic-bezier(.77,0,.18,1);
+}
+#loader.done { transform: translateY(-101%); }
+#loader .word { font-family: "Instrument Serif", serif; font-size: clamp(40px, 8vw, 100px); }
+#loader .bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--mark); width: 0%; }
+
+/* ================= custom cursor ================= */
+@media (pointer: fine) {
+  body { cursor: none; } a, button { cursor: none; }
+  #cursor-dot, #cursor-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 190; border-radius: 50%; }
+  #cursor-dot { width: 8px; height: 8px; background: var(--blue); transform: translate(-50%,-50%); }
+  #cursor-ring {
+    width: 38px; height: 38px; border: 1.5px solid var(--blue);
+    transform: translate(-50%,-50%); transition: width .25s, height .25s, background .25s, opacity .25s;
+    mix-blend-mode: difference; border-color: #fff;
+  }
+  #cursor-ring.hovering { width: 64px; height: 64px; background: rgba(255,255,255,.15); }
+}
+
+/* ================= smooth scroll wrapper ================= */
+#smooth { position: fixed; top: 0; left: 0; width: 100%; will-change: transform; }
+
+/* ================= progress bar ================= */
+#progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; background: linear-gradient(90deg, var(--blue), var(--mark)); transform-origin: left; transform: scaleX(0); z-index: 180; }
+
+/* ================= nav ================= */
+header.site { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: padding .35s var(--ease), backdrop-filter .35s; }
+header.site.condensed { padding: 10px 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(20,25,43,.1); }
+header.site .wrap { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: "Instrument Serif", serif; font-size: 26px; text-decoration: none; }
+.logo b { color: var(--blue); font-weight: 400; }
+nav.main { display: flex; gap: 24px; font-size: 14.5px; }
+nav.main a { text-decoration: none; }
+@media (max-width: 720px) { nav.main { display: none; } }
+
+/* ================= hero ================= */
+.hero { min-height: 100svh; display: flex; align-items: center; position: relative; padding: 120px 0 80px; }
+#constellation { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero .wrap { position: relative; z-index: 2; }
+.hero h1 { font-family: "Instrument Serif", serif; font-size: clamp(46px, 8vw, 110px); line-height: 1; letter-spacing: -.015em; max-width: 13ch; }
+.hero h1 .kw { color: var(--blue); }
+.hero .sub { margin-top: 26px; color: var(--dim); max-width: 52ch; font-size: clamp(15px,1.6vw,19px); line-height: 1.65; }
+.ctas { margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; background: var(--blue); color: #fff; padding: 14px 28px; border-radius: 999px; text-decoration: none; font-size: 15px; font-weight: 500; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--fg); }
+.scrollcue { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .2em; color: var(--dim); z-index: 2; }
+
+/* split text */
+.split-line { display: block; overflow: hidden; }
+.split-word { display: inline-block; transform: translateY(110%); }
+.on .split-word { transition: transform .9s var(--ease); transition-delay: calc(var(--w) * 60ms); transform: none; }
+[data-split-view] .split-word { transform: translateY(110%); }
+[data-split-view].in-view .split-word { transition: transform .9s var(--ease); transition-delay: calc(var(--w) * 50ms); transform: none; }
+
+/* ================= velocity marquee ================= */
+.vmarquee { border-top: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); padding: 20px 0; overflow: hidden; }
+.vmarquee .track { display: flex; gap: 46px; width: max-content; will-change: transform; font-family: "Instrument Serif", serif; font-size: 24px; white-space: nowrap; }
+.vmarquee .track i { font-style: normal; color: var(--blue); font-family: "IBM Plex Mono", monospace; font-size: 12px; align-self: center; }
+
+/* ================= giant scrub text ================= */
+.giant { padding: 140px 0; overflow: hidden; }
+.giant .line { font-family: "Instrument Serif", serif; font-size: clamp(70px, 13vw, 190px); line-height: .95; white-space: nowrap; will-change: transform; }
+.giant .line.outline { color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
+
+/* ================= pinned horizontal section ================= */
+.pin-sect { position: relative; }
+.pin-stage { height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+.pin-head { margin-bottom: 44px; }
+.pin-head .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--mark); }
+.pin-head h2 { font-family: "Instrument Serif", serif; font-size: clamp(34px,4.6vw,60px); margin-top: 12px; }
+.hrow { display: flex; gap: 26px; will-change: transform; padding: 0 24px; }
+.hcard {
+  flex: 0 0 min(460px, 78vw); background: rgba(244,246,242,.06);
+  border: 1px solid rgba(244,246,242,.16); border-radius: 22px; padding: 40px 34px; min-height: 320px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.hcard .num { font-family: "IBM Plex Mono", monospace; color: var(--mark); font-size: 13px; letter-spacing: .14em; }
+.hcard h3 { font-family: "Instrument Serif", serif; font-size: 34px; margin: 16px 0 10px; }
+.hcard p { color: var(--dim); line-height: 1.6; font-size: 15.5px; }
+.hprogress { height: 2px; background: rgba(244,246,242,.15); margin: 44px 24px 0; }
+.hprogress b { display: block; height: 100%; background: var(--mark); transform-origin: left; transform: scaleX(0); }
+
+/* ================= cards with clip reveal + tilt ================= */
+.block { padding: 130px 0; }
+.block h2.title { font-family: "Instrument Serif", serif; font-size: clamp(34px,4.6vw,60px); margin-bottom: 46px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; perspective: 1100px; }
+.card {
+  background: #fff; border: 1px solid rgba(20,25,43,.12); border-radius: 20px; padding: 30px 26px;
+  clip-path: inset(12% 6% 12% 6% round 20px); opacity: 0;
+  transition: clip-path 1s var(--ease), opacity .7s var(--ease), border-color .3s;
+  transition-delay: calc(var(--i) * .1s); will-change: transform, clip-path;
+}
+.card.in-view { clip-path: inset(0 0 0 0 round 20px); opacity: 1; }
+.card:hover { border-color: var(--blue); }
+.card .tag { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .16em; color: var(--blue); }
+.card h3 { font-family: "Instrument Serif", serif; font-size: 25px; margin: 40px 0 10px; }
+.card p { color: var(--dim); font-size: 14.5px; line-height: 1.6; }
+
+/* ================= closing ================= */
+.closing { text-align: center; padding: 160px 24px 180px; position: relative; overflow: hidden; }
+.closing h2 { font-family: "Instrument Serif", serif; font-size: clamp(40px,6vw,86px); max-width: 16ch; margin: 0 auto; line-height: 1.02; }
+.closing h2 mark { background: var(--mark); color: #14192b; padding: 0 .1em; border-radius: 6px; }
+.closing p { color: var(--dim); margin: 24px auto 40px; max-width: 46ch; line-height: 1.6; }
+.closing .bigglyph { position: absolute; font-family: "Instrument Serif", serif; font-size: 30vw; opacity: .05; inset: 0; display: grid; place-items: center; pointer-events: none; will-change: transform; }
+
+footer.site { padding: 50px 0; border-top: 1px solid color-mix(in srgb, var(--fg) 12%, transparent); font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
+footer.site .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  #loader { display: none; }
+  body, a, button { cursor: auto !important; }
+  #cursor-dot, #cursor-ring { display: none; }
+  .split-word, .card { transform: none !important; clip-path: none !important; opacity: 1 !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="word" id="loader-word">Language</div><div class="bar" id="loader-bar"></div></div>
+<div id="progress"></div>
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+
+<header class="site" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#">Lex<b>Data</b></a>
+    <nav class="main">
+      <a href="#" data-cursor>About</a><a href="#" data-cursor>Services</a>
+      <a href="#" data-cursor>Courses</a><a href="#" data-cursor>Workshops</a>
+      <a href="#" data-cursor>Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- everything below scrolls through the inertia scroller -->
+<div id="smooth">
+
+  <section class="hero" data-theme="light">
+    <canvas id="constellation"></canvas>
+    <div class="wrap">
+      <h1 id="hero-h1" data-scrub-y="-60">
+        <span data-split>Where</span> <span class="kw serif" id="kw">language</span><br />
+        <span data-split>meets data science.</span>
+      </h1>
+      <p class="sub" data-scrub-y="-30">LexData bridges the humanities and data science for real-world impact — intelligent data solutions for language, translation, education &amp; society.</p>
+      <div class="ctas" data-scrub-y="-15">
+        <a class="btn" href="#method" data-cursor>Explore courses →</a>
+        <a class="btn ghost" href="#method" data-cursor>Our services</a>
+      </div>
+    </div>
+    <div class="scrollcue">SCROLL</div>
+  </section>
+
+  <div class="vmarquee" data-theme="light">
+    <div class="track" id="vtrack"></div>
+  </div>
+
+  <section class="giant" data-theme="light">
+    <div class="line" data-scrub-x="-14">Corpus → Annotation → Model → Insight →&nbsp;</div>
+    <div class="line outline" data-scrub-x="10">Humanities × Data Science × Humanities ×&nbsp;</div>
+  </section>
+
+  <!-- pinned horizontal-scroll method section (dark theme morph) -->
+  <div class="pin-sect" id="method" data-pin="300" data-theme="dark">
+    <div class="pin-stage">
+      <div class="wrap pin-head">
+        <span class="eyebrow">Our method — keep scrolling</span>
+        <h2 data-split-view>One arc, every project.</h2>
+      </div>
+      <div class="hrow" id="hrow">
+        <div class="hcard"><div><span class="num">STEP 01</span><h3>Corpus</h3><p>We gather and structure the raw language — documents, transcripts, translations — into research-grade datasets.</p></div><span class="num">语料库</span></div>
+        <div class="hcard"><div><span class="num">STEP 02</span><h3>Annotation</h3><p>Linguists and domain experts label what matters, with pipelines that keep every judgment traceable.</p></div><span class="num">标注</span></div>
+        <div class="hcard"><div><span class="num">STEP 03</span><h3>Model</h3><p>We train and evaluate models on your annotated data — honestly benchmarked, never oversold.</p></div><span class="num">模型</span></div>
+        <div class="hcard"><div><span class="num">STEP 04</span><h3>Insight</h3><p>Findings land as decisions: better translations, better teaching, better evidence.</p></div><span class="num">洞察</span></div>
+      </div>
+      <div class="hprogress"><b id="hfill"></b></div>
+    </div>
+  </div>
+
+  <section class="block" data-theme="light">
+    <div class="wrap">
+      <h2 class="title" data-split-view>Three ways in.</h2>
+      <div class="cards">
+        <div class="card" style="--i:0" data-tilt data-view><span class="tag">SERVICE</span><h3>Language data engineering</h3><p>Multilingual corpora, terminology systems, and annotation workflows built to academic standards.</p></div>
+        <div class="card" style="--i:1" data-tilt data-view><span class="tag">COURSE</span><h3>Data science for the humanities</h3><p>From spreadsheets to working NLP pipelines — designed for humanists, not engineers.</p></div>
+        <div class="card" style="--i:2" data-tilt data-view><span class="tag">WORKSHOP</span><h3>Hands-on intensives</h3><p>Short, practical workshops: MT evaluation, text mining, corpus methods.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing" data-theme="light">
+    <div class="bigglyph" data-scrub-rotate="12">言</div>
+    <h2 data-split-view>Bridging humanities and data science for <mark>real-world impact</mark>.</h2>
+    <p>Join a workshop, enroll in a course, or bring us a problem where language and data meet.</p>
+    <div class="ctas" style="justify-content:center">
+      <a class="btn" href="#" data-cursor>Upcoming workshops →</a>
+      <a class="btn ghost" href="#" data-cursor>Contact us</a>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="wrap"><span>© 2026 LexData</span><span>corpus → annotation → model → insight</span></div>
+  </footer>
+
+</div>
+
+<script>
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============ 1. PRELOADER ============ */
+const LOADER_WORDS = ["Language","语言","Lengua","اللغة","Langue","언어","भाषा","Data."];
+const loader = document.getElementById('loader');
+(function preload() {
+  if (reduced) { loader.remove(); boot(); return; }
+  const w = document.getElementById('loader-word'), bar = document.getElementById('loader-bar');
+  let i = 0;
+  const id = setInterval(() => {
+    i++;
+    if (i >= LOADER_WORDS.length) {
+      clearInterval(id);
+      loader.classList.add('done');
+      setTimeout(() => loader.remove(), 1000);
+      boot();
+      return;
+    }
+    w.textContent = LOADER_WORDS[i];
+    bar.style.width = (i / (LOADER_WORDS.length - 1) * 100) + '%';
+  }, 220);
+})();
+
+/* ============ 2. SMOOTH INERTIA SCROLL ============ */
+const smooth = document.getElementById('smooth');
+let current = 0, target = 0;
+function setBodyHeight() { document.body.style.height = smooth.scrollHeight + 'px'; }
+new ResizeObserver(setBodyHeight).observe(smooth);
+setBodyHeight();
+
+/* ============ 3. SPLIT TEXT ============ */
+function split(el) {
+  const words = el.textContent.trim().split(/\s+/);
+  el.textContent = '';
+  const line = document.createElement('span');
+  line.className = 'split-line';
+  words.forEach((word, i) => {
+    const s = document.createElement('span');
+    s.className = 'split-word';
+    s.style.setProperty('--w', i);
+    s.innerHTML = word + (i < words.length - 1 ? '&nbsp;' : '');
+    line.appendChild(s);
+  });
+  el.appendChild(line);
+}
+document.querySelectorAll('[data-split],[data-split-view]').forEach(split);
+
+/* hero keyword cycles */
+const KW = ["language","语言","lengua","اللغة","langue","언어","भाषा"];
+let kwi = 0;
+const kwEl = document.getElementById('kw');
+if (!reduced) setInterval(() => {
+  kwEl.style.transition = 'opacity .3s, filter .3s';
+  kwEl.style.opacity = 0; kwEl.style.filter = 'blur(4px)';
+  setTimeout(() => {
+    kwi = (kwi + 1) % KW.length;
+    kwEl.textContent = KW[kwi];
+    kwEl.style.opacity = 1; kwEl.style.filter = 'none';
+  }, 300);
+}, 2800);
+
+/* ============ 4. CUSTOM CURSOR ============ */
+const dot = document.getElementById('cursor-dot'), ring = document.getElementById('cursor-ring');
+let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; });
+document.querySelectorAll('a,button,[data-cursor]').forEach(el => {
+  el.addEventListener('pointerenter', () => ring.classList.add('hovering'));
+  el.addEventListener('pointerleave', () => ring.classList.remove('hovering'));
+});
+
+/* ============ 5. CONSTELLATION CANVAS ============ */
+const canvas = document.getElementById('constellation'), ctx = canvas.getContext('2d');
+const GLYPHS = "言語λΣωةضあ한글मßЖяδφト字义ñçα".split('');
+let pts = [];
+function sizeCanvas() {
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  pts = Array.from({ length: Math.min(70, innerWidth / 16) }, () => ({
+    x: Math.random() * canvas.offsetWidth, y: Math.random() * canvas.offsetHeight,
+    vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+    g: GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
+  }));
+}
+sizeCanvas(); addEventListener('resize', sizeCanvas);
+function drawConstellation() {
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  ctx.clearRect(0, 0, w, h);
+  const fg = document.body.classList.contains('dark') ? '244,246,242' : '20,25,43';
+  const heroRect = canvas.getBoundingClientRect();
+  const lx = mx - heroRect.left, ly = my - heroRect.top;
+  for (const p of pts) {
+    const dx = p.x - lx, dy = p.y - ly, d = Math.hypot(dx, dy);
+    if (d < 140 && d > 0) { p.x += dx / d * .8; p.y += dy / d * .8; }
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > w) p.vx *= -1;
+    if (p.y < 0 || p.y > h) p.vy *= -1;
+    ctx.fillStyle = `rgba(${fg},.28)`;
+    ctx.font = '13px "IBM Plex Mono", monospace';
+    ctx.fillText(p.g, p.x, p.y);
+  }
+  for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+    const a = pts[i], b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (d < 110) {
+      ctx.strokeStyle = `rgba(${fg},${(1 - d / 110) * .16})`;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+  }
+}
+
+/* ============ 6. SCROLL ENGINE (scrubs, pin, theme, marquee, reveals) ============ */
+const scrubs = [...document.querySelectorAll('[data-scrub-y],[data-scrub-x],[data-scrub-rotate]')];
+const pin = document.querySelector('[data-pin]');
+const pinLen = pin ? Number(pin.dataset.pin) / 100 : 0; /* in viewport-heights */
+if (pin) pin.style.height = (100 + Number(pin.dataset.pin)) + 'vh';
+const pinStage = pin?.querySelector('.pin-stage');
+const hrow = document.getElementById('hrow'), hfill = document.getElementById('hfill');
+const themeSections = [...document.querySelectorAll('[data-theme]')];
+const vtrack = document.getElementById('vtrack');
+const VITEMS = "Corpus linguistics|Machine translation|NLP for the humanities|Terminology|Digital pedagogy|Text mining|Open social data".split('|');
+vtrack.innerHTML = [...VITEMS, ...VITEMS].map(t => `<span>${t}</span><i>◆</i>`).join('');
+let vx = 0, lastCurrent = 0;
+
+const viewIO = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in-view'); viewIO.unobserve(e.target); }
+}), { threshold: .2 });
+document.querySelectorAll('[data-view],[data-split-view]').forEach(el => viewIO.observe(el));
+
+/* tilt cards */
+if (!reduced) document.querySelectorAll('[data-tilt]').forEach(el => {
+  el.addEventListener('pointermove', e => {
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    el.style.transform = `rotateY(${(px - .5) * 14}deg) rotateX(${(.5 - py) * 14}deg)`;
+  });
+  el.addEventListener('pointerleave', () => el.style.transform = '');
+});
+
+const progressBar = document.getElementById('progress');
+const navEl = document.getElementById('nav');
+
+function frame() {
+  target = scrollY;
+  current += (target - current) * (reduced ? 1 : 0.085);
+  if (Math.abs(target - current) < .05) current = target;
+  smooth.style.transform = `translate3d(0, ${-current}px, 0)`;
+
+  const velocity = current - lastCurrent; lastCurrent = current;
+
+  /* progress + nav */
+  const max = smooth.scrollHeight - innerHeight;
+  progressBar.style.transform = `scaleX(${max > 0 ? current / max : 0})`;
+  navEl.classList.toggle('condensed', current > 24);
+
+  /* generic scrubs: element progress 0..1 through viewport */
+  for (const el of scrubs) {
+    const r = el.getBoundingClientRect();
+    const p = Math.min(Math.max(1 - (r.top + r.height / 2) / innerHeight * 1.2 + .1, 0), 1);
+    const t = [];
+    if (el.dataset.scrubY) t.push(`translateY(${p * Number(el.dataset.scrubY)}px)`);
+    if (el.dataset.scrubX) t.push(`translateX(${p * Number(el.dataset.scrubX)}vw)`);
+    if (el.dataset.scrubRotate) t.push(`rotate(${p * Number(el.dataset.scrubRotate)}deg)`);
+    el.style.transform = t.join(' ');
+  }
+
+  /* pinned horizontal section */
+  if (pin) {
+    const top = pin.offsetTop, len = pinLen * innerHeight;
+    const p = Math.min(Math.max((current - top) / len, 0), 1);
+    pinStage.style.transform = `translateY(${Math.min(Math.max(current - top, 0), len)}px)`;
+    const maxShift = hrow.scrollWidth - innerWidth + 48;
+    hrow.style.transform = `translateX(${-p * maxShift}px)`;
+    hfill.style.transform = `scaleX(${p})`;
+  }
+
+  /* velocity marquee: base drift + scroll velocity + skew */
+  vx -= .6 + Math.abs(velocity) * .6;
+  const half = vtrack.scrollWidth / 2;
+  if (-vx > half) vx += half;
+  vtrack.style.transform = `translateX(${vx}px) skewX(${Math.max(Math.min(-velocity * .4, 12), -12)}deg)`;
+
+  /* theme morph: section under mid-viewport decides body theme */
+  let theme = 'light';
+  for (const s of themeSections) {
+    const r = s.getBoundingClientRect();
+    if (r.top <= innerHeight * .5 && r.bottom >= innerHeight * .5) theme = s.dataset.theme;
+  }
+  document.body.classList.toggle('dark', theme === 'dark');
+
+  /* cursor lerp */
+  rx += (mx - rx) * .16; ry += (my - ry) * .16;
+  dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+  ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+
+  drawConstellation();
+  requestAnimationFrame(frame);
+}
+
+function boot() {
+  document.querySelectorAll('[data-split]').forEach(el => el.closest('.hero')?.classList.add('on'));
+  requestAnimationFrame(frame);
+}
+
+</script>
+</body>
+</html>

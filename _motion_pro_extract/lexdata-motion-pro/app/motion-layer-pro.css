@@ -1,0 +1,117 @@
+/* ============================================================
+   LexData Motion Layer PRO — supporting CSS
+   Import from app/globals.css:  @import "./motion-layer-pro.css";
+   All selectors are mlp- prefixed or attribute-scoped; inert
+   until MotionLayerPro mounts (sets data-motion-pro on <html>).
+   ============================================================ */
+
+:root {
+  --mlp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mlp-accent: #2b44e7;   /* override to match your brand */
+  --mlp-accent-2: #ddff4f;
+  --mlp-loader-bg: #14192b;
+  --mlp-loader-fg: #f4f6f2;
+}
+
+/* ---------- preloader ---------- */
+.mlp-loader {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--mlp-loader-bg); color: var(--mlp-loader-fg);
+  display: grid; place-items: center;
+  transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1);
+}
+.mlp-loader.mlp-done { transform: translateY(-101%); }
+.mlp-loader-word { font-size: clamp(40px, 8vw, 100px); font-family: Georgia, serif; }
+.mlp-loader-bar { position: absolute; bottom: 0; left: 0; height: 3px; width: 0%; background: var(--mlp-accent-2); transition: width 0.2s linear; }
+
+/* ---------- progress ---------- */
+html[data-motion-pro="on"] .mlp-progress {
+  position: fixed; top: 0; left: 0; z-index: 180;
+  height: 3px; width: 100%;
+  background: linear-gradient(90deg, var(--mlp-accent), var(--mlp-accent-2));
+  transform-origin: left; transform: scaleX(0);
+}
+
+/* ---------- custom cursor ---------- */
+@media (pointer: fine) {
+  html[data-cursor-pro="on"], html[data-cursor-pro="on"] a, html[data-cursor-pro="on"] button { cursor: none; }
+  .mlp-cursor-dot, .mlp-cursor-ring {
+    position: fixed; top: 0; left: 0; z-index: 190;
+    border-radius: 50%; pointer-events: none;
+  }
+  .mlp-cursor-dot { width: 8px; height: 8px; background: var(--mlp-accent); }
+  .mlp-cursor-ring {
+    width: 38px; height: 38px; border: 1.5px solid #fff;
+    mix-blend-mode: difference;
+    transition: width 0.25s, height 0.25s, background 0.25s;
+  }
+  .mlp-cursor-ring.mlp-hovering { width: 64px; height: 64px; background: rgba(255, 255, 255, 0.15); }
+}
+@media (pointer: coarse) { .mlp-cursor-dot, .mlp-cursor-ring { display: none; } }
+
+/* ---------- smooth scroll wrapper ---------- */
+.mlp-content.mlp-smooth {
+  position: fixed; top: 0; left: 0; width: 100%;
+  will-change: transform;
+}
+
+/* ---------- split text ---------- */
+.mlp-split-line { display: block; overflow: hidden; }
+.mlp-split-word { display: inline-block; transform: translateY(110%); }
+.mlp-split-on .mlp-split-word,
+[data-split].mlp-split-on .mlp-split-word {
+  transition: transform 0.9s var(--mlp-ease);
+  transition-delay: calc(var(--w) * 60ms);
+  transform: none;
+}
+[data-split-view] .mlp-split-word { transform: translateY(110%); }
+[data-split-view].in-view .mlp-split-word {
+  transition: transform 0.9s var(--mlp-ease);
+  transition-delay: calc(var(--w) * 50ms);
+  transform: none;
+}
+
+/* ---------- generic in-view hook (style it to taste) ---------- */
+html[data-motion-pro="on"] [data-view] {
+  clip-path: inset(12% 6% 12% 6% round 20px);
+  opacity: 0;
+  transition: clip-path 1s var(--mlp-ease), opacity 0.7s var(--mlp-ease);
+  transition-delay: calc(var(--i, 0) * 0.1s);
+}
+html[data-motion-pro="on"] [data-view].in-view { clip-path: inset(0 0 0 0 round 20px); opacity: 1; }
+
+/* ---------- scrub / tilt hints ---------- */
+html[data-motion-pro="on"] [data-scrub-y],
+html[data-motion-pro="on"] [data-scrub-x],
+html[data-motion-pro="on"] [data-scrub-rotate],
+html[data-motion-pro="on"] [data-scrub-scale],
+html[data-motion-pro="on"] [data-tilt] { will-change: transform; }
+html[data-motion-pro="on"] [data-tilt] { transform-style: preserve-3d; }
+
+/* ---------- pin ---------- */
+.mlp-pin-stage { height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; will-change: transform; }
+.mlp-pin-stage.mlp-pin-native { position: sticky; top: 0; transform: none !important; }
+[data-pin-track] { display: flex; will-change: transform; }
+[data-pin-fill] { transform-origin: left; transform: scaleX(0); }
+
+/* ---------- velocity marquee ---------- */
+html[data-motion-pro="on"] [data-marquee-velocity] { overflow: hidden; }
+.mlp-vtrack { display: flex; gap: inherit; width: max-content; will-change: transform; white-space: nowrap; }
+
+/* ---------- theme morph ----------
+   The layer toggles .mlp-dark on <html>. Map it to your palette: */
+html { transition: background-color 1s var(--mlp-ease); }
+html.mlp-dark body {
+  background: #14192b; color: #f4f6f2;
+  transition: background-color 1s var(--mlp-ease), color 1s var(--mlp-ease);
+}
+html:not(.mlp-dark) body { transition: background-color 1s var(--mlp-ease), color 1s var(--mlp-ease); }
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .mlp-loader { display: none; }
+  .mlp-cursor-dot, .mlp-cursor-ring { display: none; }
+  html[data-cursor-pro="on"], html[data-cursor-pro="on"] a, html[data-cursor-pro="on"] button { cursor: auto; }
+  .mlp-split-word { transform: none !important; transition: none !important; }
+  html[data-motion-pro="on"] [data-view] { clip-path: none; opacity: 1; transition: none; }
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import VisitTracker from "@/components/VisitTracker";
 import AutoTranslator from "@/components/AutoTranslator";
+import PaperRevealShell from "@/components/PaperRevealShell";
 import { site } from "@/lib/site";
 import { getServerI18n } from "@/lib/language-server";
 import "./globals.css";
@@ -20,11 +21,23 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={direction}>
-      <body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+
+      <body className="lex-paper-site">
         <VisitTracker />
         <AutoTranslator language={language} />
-        <Navbar />
-        {children}
+
+        <PaperRevealShell>
+          <Navbar />
+          {children}
+        </PaperRevealShell>
       </body>
     </html>
   );

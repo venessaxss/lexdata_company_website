@@ -1,0 +1,197 @@
+import type { ReactNode } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+import HomeHero from "@/components/HomeHero";
+import HomeControlPanelButton from "@/components/HomeControlPanelButton";
+import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
+import HomeHighlightedCourses from "@/components/HomeHighlightedCourses";
+import HomeMediaShowcase from "@/components/HomeMediaShowcase";
+import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
+import NlpAttractionSection from "@/components/NlpAttractionSection";
+import MouCollaborationSection from "@/components/MouCollaborationSection";
+import TeamShowcase from "@/components/TeamShowcase";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function V2DynamicSection({
+  label,
+  title,
+  description,
+  children,
+}: {
+  label: string;
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="v2-dynamic-section">
+      <div className="v2-dynamic-container">
+        <div className="v2-dynamic-head">
+          <p className="v2-dynamic-label">{label}</p>
+          <h2>{title}</h2>
+          {description ? <p>{description}</p> : null}
+        </div>
+
+        <div className="v2-dynamic-panel">{children}</div>
+      </div>
+    </section>
+  );
+}
+
+function ArabicLanguageSection() {
+  return (
+    <section className="v2-dynamic-section">
+      <div className="v2-dynamic-container">
+        <div className="v2-arabic-grid">
+          <div className="v2-arabic-card">
+            <p className="v2-dynamic-label">Arabic language support</p>
+
+            <h2>Arabic language, corpus, translation, and AI research.</h2>
+
+            <p>
+              LexData supports multilingual research and training, including
+              Arabic language data, corpus linguistics, translation technology,
+              discourse analysis, and AI-assisted academic workflows.
+            </p>
+          </div>
+
+          <div className="v2-arabic-card">
+            <p className="v2-dynamic-label">Arabic section</p>
+
+            <h3 dir="rtl">
+              &#1583;&#1593;&#1605; &#1575;&#1604;&#1604;&#1594;&#1577; &#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;
+            </h3>
+
+            <p dir="rtl">
+              &#1578;&#1583;&#1593;&#1605; LexData &#1575;&#1604;&#1576;&#1581;&#1579; &#1575;&#1604;&#1604;&#1594;&#1608;&#1610; &#1608;&#1575;&#1604;&#1578;&#1585;&#1580;&#1605;&#1577; &#1608;&#1578;&#1581;&#1604;&#1610;&#1604; &#1575;&#1604;&#1606;&#1589;&#1608;&#1589; &#1608;&#1575;&#1604;&#1578;&#1593;&#1604;&#1605; &#1575;&#1604;&#1605;&#1583;&#1593;&#1608;&#1605; &#1576;&#1575;&#1604;&#1584;&#1603;&#1575;&#1569; &#1575;&#1604;&#1575;&#1589;&#1591;&#1606;&#1575;&#1593;&#1610;.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default async function HomePage() {
+  const admin = createAdminClient();
+
+  let canManageHomepage = false;
+  let homepageVideos: any[] = [];
+
+  try {
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (!userError && user) {
+      const { data: profile, error: profileError } = await admin
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!profileError) {
+        canManageHomepage =
+          profile?.role === "admin" || profile?.role === "manager";
+      }
+    }
+
+    let homepageVideosQuery = admin
+      .from("homepage_videos")
+      .select("*")
+      .order("display_order", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if (!canManageHomepage) {
+      homepageVideosQuery = homepageVideosQuery.eq("is_active", true);
+    }
+
+    const { data, error } = await homepageVideosQuery;
+
+    if (!error) {
+      homepageVideos = data ?? [];
+    } else {
+      console.error("homepage_videos loading error:", error.message);
+    }
+  } catch (error) {
+    console.error("Homepage render error:", error);
+    canManageHomepage = false;
+    homepageVideos = [];
+  }
+
+  return (
+    <>
+      <HomeHero />
+      <HomeControlPanelButton />
+
+      <main className="v2-dynamic-root">
+        <V2DynamicSection
+          label="Homepage showcase"
+          title="Featured LexData announcements and highlights."
+          description="This keeps the original dynamic homepage showcase connected to your admin-managed homepage content."
+        >
+          <DynamicHomeShowcase />
+        </V2DynamicSection>
+
+        <V2DynamicSection
+          label="Highlighted courses"
+          title="Featured courses from your course dashboard."
+          description="This keeps the original dynamic course highlight component instead of static demo course cards."
+        >
+          <HomeHighlightedCourses />
+        </V2DynamicSection>
+
+        <V2DynamicSection
+          label="Video highlights"
+          title="Homepage video showcase."
+          description="This keeps your original dynamic video management section. Videos still come from homepage_videos."
+        >
+          <HomeMediaShowcase
+            videos={homepageVideos}
+            canManage={canManageHomepage}
+          />
+        </V2DynamicSection>
+
+        <V2DynamicSection
+          label="Latest workshop videos"
+          title="Recent workshop previews and learning videos."
+          description="This keeps the original latest workshop video component."
+        >
+          <LatestWorkshopVideos />
+        </V2DynamicSection>
+
+        <ArabicLanguageSection />
+
+        <V2DynamicSection
+          label="NLP attraction"
+          title="Why language data matters."
+          description="This keeps your original animated NLP attraction section."
+        >
+          <NlpAttractionSection />
+        </V2DynamicSection>
+
+        <V2DynamicSection
+          label="Collaboration"
+          title="Partnerships, MoUs, and academic cooperation."
+          description="This keeps your original MoU and collaboration display."
+        >
+          <MouCollaborationSection />
+        </V2DynamicSection>
+
+        <V2DynamicSection
+          label="LexData team"
+          title="Dynamic team presentation."
+          description="This keeps your original team component, including admin-managed team content."
+        >
+          <TeamShowcase />
+        </V2DynamicSection>
+      </main>
+    </>
+  );
+}
