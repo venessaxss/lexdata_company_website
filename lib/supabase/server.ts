@@ -20,7 +20,7 @@ export async function createClient() {
             });
           } catch {
             // Server Components cannot always write cookies.
-            // The proxy refreshes cookies during navigation.
+            // proxy.ts refreshes the session during navigation.
           }
         },
       },
