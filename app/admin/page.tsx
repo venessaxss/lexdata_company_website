@@ -19,7 +19,7 @@ const adminCards = [
     title: "Workshop Registrations",
     description:
       "View registration records submitted from public workshop pages.",
-    href: "/admin/registrations",
+    href: "/manager/registrations",
   },
   {
   title: "Q&A Help Desk",

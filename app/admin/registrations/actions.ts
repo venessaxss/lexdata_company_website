@@ -2,8 +2,11 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/auth";
 
 export async function confirmRegistration(id: string) {
+  await requireRole(["manager"], "/manager/registrations"); // managers + admins only
+
   const admin = createAdminClient();
 
   await admin
@@ -21,6 +24,8 @@ export async function confirmRegistration(id: string) {
 }
 
 export async function rejectRegistration(id: string) {
+  await requireRole(["manager"], "/manager/registrations"); // managers + admins only
+
   const admin = createAdminClient();
 
   await admin
@@ -36,6 +41,8 @@ export async function rejectRegistration(id: string) {
 }
 
 export async function addManagerNote(id: string, note: string) {
+  await requireRole(["manager"], "/manager/registrations"); // managers + admins only
+
   const admin = createAdminClient();
 
   await admin
