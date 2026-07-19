@@ -683,7 +683,7 @@ function PaperFooter() {
         </div>
 
         <div className="paper-footer-bottom">
-          <span>濠?2026 LexData</span>
+          <span>婵?2026 LexData</span>
           <span>made by humans</span>
         </div>
       </div>
@@ -789,9 +789,7 @@ export default async function IntegratedHomePage() {
         <LexDataDarkStorySection />
         <PreviousCasesShowcase />
         <LexDataManifestoSection />
-        <DashboardSection stats={stats} slots={slots} />
-
-        <PaperPanel
+<PaperPanel
           id="showcase"
           kicker="Homepage showcase"
           title="Featured LexData announcements and highlights."
