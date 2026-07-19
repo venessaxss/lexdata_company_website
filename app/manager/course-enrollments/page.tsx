@@ -1,32 +1,10 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdminOrManager } from "@/lib/auth";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateCourseEnrollmentAction } from "@/app/courses/[slug]/enroll-actions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const admin = createAdminClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (!profile || !["admin", "manager"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-}
 
 export default async function ManagerCourseEnrollmentsPage({
   searchParams,

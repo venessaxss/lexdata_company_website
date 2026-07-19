@@ -1,7 +1,8 @@
+import { requireManagerOrAdmin } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import { unstable_noStore as noStore } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateWorkshopStatusByManager } from "./actions";
 
@@ -19,26 +20,6 @@ type Workshop = {
   status_updated_at?: string | null;
   created_at?: string | null;
 };
-
-async function requireManagerOrAdmin() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || !["manager", "admin"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-}
 
 function formatDate(value?: string | null) {
   if (!value) return "-";

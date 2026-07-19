@@ -1,31 +1,11 @@
+import { requireAdminOrManager } from "@/lib/auth";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deleteTeamMember } from "@/app/admin/team/actions";
 import TeamOrderManager from "@/components/TeamOrderManager";
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || !["admin", "manager"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-}
 
 function getName(member: any) {
   return member.full_name || member.name || "Unnamed member";

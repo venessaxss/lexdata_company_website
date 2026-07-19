@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LexPaperNavbar from "@/components/LexPaperNavbar";
+import AuthSync from "@/components/AuthSync";
 import VisitTracker from "@/components/VisitTracker";
 import AutoTranslator from "@/components/AutoTranslator";
 import PaperRevealShell from "@/components/PaperRevealShell";
@@ -31,6 +32,7 @@ export default async function RootLayout({
       </head>
 
       <body className="lex-paper-site">
+        <AuthSync />
         <VisitTracker />
         <AutoTranslator language={language} />
 

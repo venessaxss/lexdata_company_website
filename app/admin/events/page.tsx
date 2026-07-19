@@ -1,6 +1,6 @@
+import { requireAdminOrManager } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getLexDataEvents, formatEventDate } from "@/lib/lexdata-events";
 import {
@@ -10,32 +10,6 @@ import {
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/unauthorized");
-  }
-
-  const admin = createAdminClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const role = String(profile?.role || "").toLowerCase();
-
-  if (role !== "admin" && role !== "manager") {
-    redirect("/unauthorized");
-  }
-}
 
 function EventFields({ event }: { event?: any }) {
   return (
@@ -200,7 +174,7 @@ export default async function AdminEventsPage({
 }: {
   searchParams: Promise<{ message?: string }>;
 }) {
-  await requireAdminOrManager();
+  await requireAdminOrManager("/admin/events");
 
   const params = await searchParams;
   const events = await getLexDataEvents({

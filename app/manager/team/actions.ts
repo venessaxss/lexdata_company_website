@@ -1,10 +1,11 @@
 "use server";
 
+import { requireManagerOrAdmin } from "@/lib/auth";
 import { Buffer } from "buffer";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+
 import { normalizeRole } from "@/lib/roles";
 
 const TEAM_PHOTOS_BUCKET = "team-photos";
@@ -18,36 +19,6 @@ function sanitizeFileName(fileName: string) {
     .replace(/[^a-zA-Z0-9._-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
-}
-
-async function requireManagerOrAdmin() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const admin = createAdminClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const role = normalizeRole(profile?.role);
-
-  if (role !== "admin" && role !== "manager") {
-    redirect("/dashboard");
-  }
-
-  return {
-    user,
-    admin,
-    role,
-  };
 }
 
 async function uploadTeamPhoto(file: File, memberId: string) {

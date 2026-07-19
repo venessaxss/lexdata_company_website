@@ -21,6 +21,7 @@ export type AuthContext = {
 
   user: any;
   profile: any;
+  admin: ReturnType<typeof createAdminClient>;
 };
 
 export function normalizeRole(role?: string | null) {
@@ -44,7 +45,11 @@ function applyAdminOverride(email?: string | null, role?: string | null) {
   return normalized;
 }
 
-function makeContext(user: any, profile: any): AuthContext {
+function makeContext(
+  user: any,
+  profile: any,
+  admin: ReturnType<typeof createAdminClient>
+): AuthContext {
   const role = applyAdminOverride(user?.email, profile?.role);
 
   const context = {
@@ -53,6 +58,7 @@ function makeContext(user: any, profile: any): AuthContext {
     email: user.email,
     role,
     user,
+    admin,
     profile: null,
   } as AuthContext;
 
@@ -96,12 +102,11 @@ export async function getCurrentProfile() {
     .eq("id", user.id)
     .maybeSingle();
 
-  return makeContext(user, profile);
+  return makeContext(user, profile, admin);
 }
 
 export async function requireProfile(next = "/dashboard") {
   const user = await requireUser(next);
-
   const admin = createAdminClient();
 
   const { data: profile } = await admin
@@ -110,7 +115,7 @@ export async function requireProfile(next = "/dashboard") {
     .eq("id", user.id)
     .maybeSingle();
 
-  return makeContext(user, profile);
+  return makeContext(user, profile, admin);
 }
 
 export async function requireRole(allowedRoles: string[], next = "/dashboard") {

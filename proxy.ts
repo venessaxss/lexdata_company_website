@@ -8,6 +8,16 @@ function safeNextPath(value: string | null) {
   return value;
 }
 
+function redirectPreservingCookies(response: NextResponse, url: URL) {
+  const redirectResponse = NextResponse.redirect(url);
+
+  response.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie);
+  });
+
+  return redirectResponse;
+}
+
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
@@ -66,15 +76,18 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", fullPath);
-    return NextResponse.redirect(url);
+    return redirectPreservingCookies(response, url);
   }
 
   if (isAuthPage && user) {
-    const next = safeNextPath(request.nextUrl.searchParams.get("next"));
+    const next =
+      request.nextUrl.searchParams.get("next") ||
+      request.nextUrl.searchParams.get("redirect");
+
     const url = request.nextUrl.clone();
-    url.pathname = next;
+    url.pathname = safeNextPath(next);
     url.search = "";
-    return NextResponse.redirect(url);
+    return redirectPreservingCookies(response, url);
   }
 
   return response;
@@ -82,6 +95,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|pdf|txt|xml)$).*)",
   ],
 };

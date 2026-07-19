@@ -1,32 +1,12 @@
+import { requireAdminOrManager } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import { unstable_noStore as noStore } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (!profile || !["admin", "manager"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-}
 
 export default async function ManagerMemberProfilesPage({
   searchParams,

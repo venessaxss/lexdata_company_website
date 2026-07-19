@@ -1,38 +1,10 @@
 "use server";
 
+import { requireAdminOrManager } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect("/unauthorized");
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (
-    profileError ||
-    !profile ||
-    !["admin", "manager"].includes(profile.role)
-  ) {
-    redirect("/dashboard");
-  }
-
-  return { user, profile };
-}
 
 function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();

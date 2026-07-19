@@ -1,36 +1,15 @@
 "use server";
 
+import { requireManagerOrAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type ManagerProfile = {
   id: string;
   role?: string | null;
 };
-
-async function requireManagerOrAdmin() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || !["manager", "admin"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-
-  return profile as ManagerProfile;
-}
 
 function field(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();

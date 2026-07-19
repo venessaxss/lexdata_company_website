@@ -1,40 +1,13 @@
 "use server";
 
+import { requireAdminOrManager } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+
 import { createAdminClient } from "@/lib/supabase/admin";
 
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/unauthorized");
-  }
-
-  const admin = createAdminClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const role = String(profile?.role || "").toLowerCase();
-
-  if (role !== "admin" && role !== "manager") {
-    throw new Error("You do not have permission to edit homepage content.");
-  }
-
-  return user;
-}
-
 export async function updateHomepageContentAction(formData: FormData) {
-  await requireAdminOrManager();
+  await requireAdminOrManager("/admin/homepage-content");
 
   const admin = createAdminClient();
   const keys = formData.getAll("key").map(String);
