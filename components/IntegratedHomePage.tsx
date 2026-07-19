@@ -192,48 +192,8 @@ function IntroSection() {
   );
 }
 
-function DashboardSection({
-  stats,
-  slots,
-}: {
-  stats: StatCard[];
-  slots: Record<string, Slot>;
-}) {
-  const dashboardSlots = [
-    getSlot(slots, "dashboard_slot_01"),
-    getSlot(slots, "dashboard_slot_02"),
-  ].filter(Boolean);
-
-  return (
-    <section className="paper-block paper-page" id="dashboard">
-      <div className="paper-wrap">
-        <SectionHead
-          kicker="Dashboard"
-          title="Live activity and editable dashboard slots."
-        />
-
-        <div className="paper-dashboard-grid">
-          {stats.map((item) => (
-            <Link key={item.label} href={item.href} className="paper-stat-card paper-rev paper-turn">
-              <span>{item.label}</span>
-              <b>{item.value}</b>
-              <p>Open -&gt;</p>
-            </Link>
-          ))}
-        </div>
-
-        <div className="paper-slot-grid paper-slot-grid-two">
-          {dashboardSlots.map((slot) => (
-            <article key={slot.key} className="paper-slot-card paper-rev paper-turn">
-              <span>{slot.label}</span>
-              <h3>{slot.title}</h3>
-              <p>{slot.body}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+function DashboardSection() {
+  return null;
 }
 
 function PaperPanel({
@@ -683,7 +643,7 @@ function PaperFooter() {
         </div>
 
         <div className="paper-footer-bottom">
-          <span>濠?2026 LexData</span>
+          <span>婵?2026 LexData</span>
           <span>made by humans</span>
         </div>
       </div>
