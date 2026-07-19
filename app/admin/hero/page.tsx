@@ -1,14 +1,13 @@
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
--i-m-p-o-r-t- -H-e-r-o-A-d-m-i-n-P-a-n-e-l- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-H-e-r-o-A-d-m-i-n-P-a-n-e-l-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -A-d-m-i-n-H-e-r-o-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-H-e-r-o-A-d-m-i-n-P-a-n-e-l-
-- - - - - - -t-i-t-l-e-=-"-A-d-m-i-n-:- -H-o-m-e-p-a-g-e- -H-e-r-o- -S-l-i-d-e-s-"-
-- - - - - - -r-e-t-u-r-n-T-o-=-"-/-a-d-m-i-n-/-h-e-r-o-"-
-- - - - -/->-
-- - -)-;-
--}-
--
+export const revalidate = 0;
+import HeroAdminPanel from "@/components/HeroAdminPanel";
+
+export const dynamic = "force-dynamic";
+
+export default function AdminHeroPage() {
+  return (
+    <HeroAdminPanel
+      title="Admin: Homepage Hero Slides"
+      returnTo="/admin/hero"
+    />
+  );
+}

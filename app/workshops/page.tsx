@@ -1,40 +1,39 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -W-o-r-k-s-h-o-p-s-P-a-g-e-(-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -w-o-r-k-s-h-o-p-s- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-s-l-u-g-,-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-,-c-o-v-e-r-_-u-r-l-,-l-e-v-e-l-,-l-a-n-g-u-a-g-e-"-)-
-- - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
-- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-2-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -f-l-e-x---w-r-a-p- -i-t-e-m-s---e-n-d- -j-u-s-t-i-f-y---b-e-t-w-e-e-n- -g-a-p---4-"->-
-- - - - - - - - -<-d-i-v->-
-- - - - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d-"->-L-i-v-e- -w-o-r-k-s-h-o-p-s-<-/-h-1->-
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-l-a-t-e---6-0-0-"->-R-e-g-i-s-t-e-r- -f-o-r- -l-i-v-e- -s-e-s-s-i-o-n-s-,- -b-o-o-t-c-a-m-p-s-,- -a-n-d- -s-p-e-a-k-e-r---l-e-d- -t-r-a-i-n-i-n-g-.-<-/-p->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -g-r-i-d- -g-a-p---5- -m-d-:-g-r-i-d---c-o-l-s---3-"->-
-- - - - - - - - -{-(-w-o-r-k-s-h-o-p-s- -?-?- -[-]-)-.-m-a-p-(-(-w-o-r-k-s-h-o-p-:- -a-n-y-)- -=->- -(-
-- - - - - - - - - - -<-L-i-n-k- -k-e-y-=-{-w-o-r-k-s-h-o-p-.-i-d-}- -h-r-e-f-=-{-`-/-w-o-r-k-s-h-o-p-s-/-$-{-w-o-r-k-s-h-o-p-.-s-l-u-g-}-`-}- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -o-v-e-r-f-l-o-w---h-i-d-d-e-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---m-d-"->-
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-h---4-0- -b-g---s-l-a-t-e---2-0-0-"->-
-- - - - - - - - - - - - - - -{-w-o-r-k-s-h-o-p-.-c-o-v-e-r-_-u-r-l- -?- -<-i-m-g- -s-r-c-=-{-w-o-r-k-s-h-o-p-.-c-o-v-e-r-_-u-r-l-}- -a-l-t-=-"-"- -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"- -/->- -:- -n-u-l-l-}-
-- - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p---5-"->-
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -t-e-x-t---s-l-a-t-e---5-0-0-"->-{-w-o-r-k-s-h-o-p-.-l-e-v-e-l-}- -·- -{-w-o-r-k-s-h-o-p-.-l-a-n-g-u-a-g-e-}-<-/-p->-
-- - - - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---x-l- -f-o-n-t---s-e-m-i-b-o-l-d-"->-{-w-o-r-k-s-h-o-p-.-t-i-t-l-e-}-<-/-h-2->-
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---6-0-0-"->-{-w-o-r-k-s-h-o-p-.-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-}-<-/-p->-
-- - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - -<-/-L-i-n-k->-
-- - - - - - - - -)-)-}-
-- - - - - - - - -{-(-!-w-o-r-k-s-h-o-p-s- -|-|- -w-o-r-k-s-h-o-p-s-.-l-e-n-g-t-h- -=-=-=- -0-)- -?- -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-N-o- -w-o-r-k-s-h-o-p-s- -p-u-b-l-i-s-h-e-d- -y-e-t-.-<-/-d-i-v->- -:- -n-u-l-l-}-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function WorkshopsPage() {
+  const supabase = await createClient();
+
+  const { data: workshops } = await supabase
+    .from("workshops")
+    .select("id,title,slug,short_description,cover_url,level,language")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Live workshops</h1>
+          <p className="mt-2 text-slate-600">Register for live sessions, bootcamps, and speaker-led training.</p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-5 md:grid-cols-3">
+        {(workshops ?? []).map((workshop: any) => (
+          <Link key={workshop.id} href={`/workshops/${workshop.slug}`} className="card overflow-hidden hover:-translate-y-1 hover:shadow-md">
+            <div className="h-40 bg-slate-200">
+              {workshop.cover_url ? <img src={workshop.cover_url} alt="" className="h-full w-full object-cover" /> : null}
+            </div>
+            <div className="p-5">
+              <p className="text-xs text-slate-500">{workshop.level} · {workshop.language}</p>
+              <h2 className="mt-2 text-xl font-semibold">{workshop.title}</h2>
+              <p className="mt-2 text-sm text-slate-600">{workshop.short_description}</p>
+            </div>
+          </Link>
+        ))}
+        {(!workshops || workshops.length === 0) ? <div className="card p-6 text-slate-600">No workshops published yet.</div> : null}
+      </div>
+    </section>
+  );
+}

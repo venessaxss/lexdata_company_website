@@ -1,44 +1,44 @@
--i-m-p-o-r-t- -t-y-p-e- -{- -M-e-t-a-d-a-t-a- -}- -f-r-o-m- -"-n-e-x-t-"-;-
--i-m-p-o-r-t- -L-e-x-P-a-p-e-r-N-a-v-b-a-r- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-N-a-v-b-a-r-"-;-
--i-m-p-o-r-t- -V-i-s-i-t-T-r-a-c-k-e-r- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-V-i-s-i-t-T-r-a-c-k-e-r-"-;-
--i-m-p-o-r-t- -A-u-t-o-T-r-a-n-s-l-a-t-o-r- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-A-u-t-o-T-r-a-n-s-l-a-t-o-r-"-;-
--i-m-p-o-r-t- -P-a-p-e-r-R-e-v-e-a-l-S-h-e-l-l- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-P-a-p-e-r-R-e-v-e-a-l-S-h-e-l-l-"-;-
--i-m-p-o-r-t- -{- -s-i-t-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-i-t-e-"-;-
--i-m-p-o-r-t- -{- -g-e-t-S-e-r-v-e-r-I-1-8-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e---s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -"-.-/-g-l-o-b-a-l-s-.-c-s-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -m-e-t-a-d-a-t-a-:- -M-e-t-a-d-a-t-a- -=- -{-
-- - -t-i-t-l-e-:- -`-$-{-s-i-t-e-.-n-a-m-e-}- -|- -D-a-t-a---d-r-i-v-e-n- -R-e-s-e-a-r-c-h- -T-r-a-i-n-i-n-g- -P-l-a-t-f-o-r-m-`-,-
-- - -d-e-s-c-r-i-p-t-i-o-n-:- -s-i-t-e-.-t-a-g-l-i-n-e-,-
--}-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -R-o-o-t-L-a-y-o-u-t-(-{-
-- - -c-h-i-l-d-r-e-n-,-
--}-:- -{-
-- - -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-.-R-e-a-c-t-N-o-d-e-;-
--}-)- -{-
-- - -c-o-n-s-t- -{- -l-a-n-g-u-a-g-e-,- -d-i-r-e-c-t-i-o-n- -}- -=- -a-w-a-i-t- -g-e-t-S-e-r-v-e-r-I-1-8-n-(-)-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-h-t-m-l- -l-a-n-g-=-{-l-a-n-g-u-a-g-e-}- -d-i-r-=-{-d-i-r-e-c-t-i-o-n-}->-
-- - - - - - -<-h-e-a-d->-
-- - - - - - - - -<-l-i-n-k- -r-e-l-=-"-p-r-e-c-o-n-n-e-c-t-"- -h-r-e-f-=-"-h-t-t-p-s-:-/-/-f-o-n-t-s-.-g-o-o-g-l-e-a-p-i-s-.-c-o-m-"- -/->-
-- - - - - - - - -<-l-i-n-k- -r-e-l-=-"-p-r-e-c-o-n-n-e-c-t-"- -h-r-e-f-=-"-h-t-t-p-s-:-/-/-f-o-n-t-s-.-g-s-t-a-t-i-c-.-c-o-m-"- -c-r-o-s-s-O-r-i-g-i-n-=-"-"- -/->-
-- - - - - - - - -<-l-i-n-k-
-- - - - - - - - - - -h-r-e-f-=-"-h-t-t-p-s-:-/-/-f-o-n-t-s-.-g-o-o-g-l-e-a-p-i-s-.-c-o-m-/-c-s-s-2-?-f-a-m-i-l-y-=-F-r-a-u-n-c-e-s-:-o-p-s-z-,-w-g-h-t-@-9-.-.-1-4-4-,-5-0-0-;-9-.-.-1-4-4-,-6-0-0-&-f-a-m-i-l-y-=-W-o-r-k-+-S-a-n-s-:-w-g-h-t-@-4-0-0-;-5-0-0-;-6-0-0-;-7-0-0-&-f-a-m-i-l-y-=-C-a-v-e-a-t-:-w-g-h-t-@-5-0-0-;-6-0-0-&-d-i-s-p-l-a-y-=-s-w-a-p-"-
-- - - - - - - - - - -r-e-l-=-"-s-t-y-l-e-s-h-e-e-t-"-
-- - - - - - - - -/->-
-- - - - - - -<-/-h-e-a-d->-
--
-- - - - - - -<-b-o-d-y- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---p-a-p-e-r---s-i-t-e-"->-
-- - - - - - - - -<-V-i-s-i-t-T-r-a-c-k-e-r- -/->-
-- - - - - - - - -<-A-u-t-o-T-r-a-n-s-l-a-t-o-r- -l-a-n-g-u-a-g-e-=-{-l-a-n-g-u-a-g-e-}- -/->-
--
-- - - - - - - - -<-P-a-p-e-r-R-e-v-e-a-l-S-h-e-l-l->-
-- - - - - - - - - - -<-L-e-x-P-a-p-e-r-N-a-v-b-a-r- -/->-
-- - - - - - - - - - -{-c-h-i-l-d-r-e-n-}-
-- - - - - - - - -<-/-P-a-p-e-r-R-e-v-e-a-l-S-h-e-l-l->-
-- - - - - - -<-/-b-o-d-y->-
-- - - - -<-/-h-t-m-l->-
-- - -)-;-
--}-
+import type { Metadata } from "next";
+import LexPaperNavbar from "@/components/LexPaperNavbar";
+import VisitTracker from "@/components/VisitTracker";
+import AutoTranslator from "@/components/AutoTranslator";
+import PaperRevealShell from "@/components/PaperRevealShell";
+import { site } from "@/lib/site";
+import { getServerI18n } from "@/lib/language-server";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: `${site.name} | Data-driven Research Training Platform`,
+  description: site.tagline,
+};
+
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { language, direction } = await getServerI18n();
+
+  return (
+    <html lang={language} dir={direction}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+
+      <body className="lex-paper-site">
+        <VisitTracker />
+        <AutoTranslator language={language} />
+
+        <PaperRevealShell>
+          <LexPaperNavbar />
+          {children}
+        </PaperRevealShell>
+      </body>
+    </html>
+  );
+}

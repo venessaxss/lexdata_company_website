@@ -1,5 +1,5 @@
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -H-o-m-e-V-2-P-a-g-e-(-)- -{-
-- - -r-e-d-i-r-e-c-t-(-"-/-"-)-;-
--}-
+import { redirect } from "next/navigation";
+
+export default function HomeV2Page() {
+  redirect("/");
+}

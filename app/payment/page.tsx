@@ -1,25 +1,24 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-a-y-m-e-n-t-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---4-x-l- -p-x---4- -p-y---1-2-"->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e- -i-n-l-i-n-e---b-l-o-c-k-"->-P-a-y-m-e-n-t-<-/-p->-
-- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t-"->-W-o-r-k-s-h-o-p- -p-a-y-m-e-n-t- -i-n-f-o-r-m-a-t-i-o-n-<-/-h-1->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -l-e-a-d-i-n-g---7- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - -K-e-e-p- -p-a-y-m-e-n-t- -d-e-t-a-i-l-s- -h-e-r-e- -o-n-l-y- -a-f-t-e-r- -c-o-n-f-i-r-m-i-n-g- -t-h-e- -f-i-n-a-l- -b-a-n-k- -a-c-c-o-u-n-t- -a-n-d- -r-e-g-i-s-t-r-a-t-i-o-n- -w-o-r-k-f-l-o-w-.- -F-o-r- -p-r-o-d-u-c-t-i-o-n-,- -c-o-n-n-e-c-t- -t-h-i-s- -p-a-g-e- -w-i-t-h- -a-n- -a-d-m-i-n---m-a-n-a-g-e-d- -p-a-y-m-e-n-t- -s-e-t-t-i-n-g-s- -t-a-b-l-e- -o-r- -a- -s-e-c-u-r-e- -p-a-y-m-e-n-t- -p-r-o-v-i-d-e-r-.-
-- - - - - - -<-/-p->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -m-t---8- -p---6-"->-
-- - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-o-l-d-"->-M-a-n-u-a-l- -p-a-y-m-e-n-t- -w-o-r-k-f-l-o-w-<-/-h-2->-
-- - - - - - - - -<-o-l- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -s-p-a-c-e---y---3- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - -<-l-i->-1-.- -S-t-u-d-e-n-t- -r-e-g-i-s-t-e-r-s- -f-o-r- -t-h-e- -w-o-r-k-s-h-o-p-.-<-/-l-i->-
-- - - - - - - - - - -<-l-i->-2-.- -S-t-u-d-e-n-t- -c-o-m-p-l-e-t-e-s- -b-a-n-k- -t-r-a-n-s-f-e-r- -o-r- -a-p-p-r-o-v-e-d- -p-a-y-m-e-n-t- -m-e-t-h-o-d-.-<-/-l-i->-
-- - - - - - - - - - -<-l-i->-3-.- -S-t-u-d-e-n-t- -s-e-n-d-s- -r-e-c-e-i-p-t- -w-i-t-h- -f-u-l-l- -n-a-m-e- -a-n-d- -i-n-s-t-i-t-u-t-i-o-n-.-<-/-l-i->-
-- - - - - - - - - - -<-l-i->-4-.- -A-d-m-i-n- -c-o-n-f-i-r-m-s- -e-n-r-o-l-l-m-e-n-t- -a-n-d- -c-e-r-t-i-f-i-c-a-t-e- -e-l-i-g-i-b-i-l-i-t-y-.-<-/-l-i->-
-- - - - - - - - -<-/-o-l->-
-- - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-n-t-a-c-t-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y- -m-t---6- -i-n-l-i-n-e---b-l-o-c-k-"->-C-o-n-t-a-c-t- -f-o-r- -p-a-y-m-e-n-t- -c-o-n-f-i-r-m-a-t-i-o-n-<-/-L-i-n-k->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+
+export default function PaymentPage() {
+  return (
+    <section className="mx-auto max-w-4xl px-4 py-12">
+      <p className="badge inline-block">Payment</p>
+      <h1 className="mt-4 text-4xl font-black tracking-tight">Workshop payment information</h1>
+      <p className="mt-5 leading-7 text-slate-600">
+        Keep payment details here only after confirming the final bank account and registration workflow. For production, connect this page with an admin-managed payment settings table or a secure payment provider.
+      </p>
+
+      <div className="card mt-8 p-6">
+        <h2 className="text-xl font-bold">Manual payment workflow</h2>
+        <ol className="mt-5 space-y-3 text-sm text-slate-700">
+          <li>1. Student registers for the workshop.</li>
+          <li>2. Student completes bank transfer or approved payment method.</li>
+          <li>3. Student sends receipt with full name and institution.</li>
+          <li>4. Admin confirms enrollment and certificate eligibility.</li>
+        </ol>
+        <Link href="/contact" className="btn-primary mt-6 inline-block">Contact for payment confirmation</Link>
+      </div>
+    </section>
+  );
+}

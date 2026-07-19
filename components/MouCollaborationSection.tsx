@@ -1,74 +1,74 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -M-o-u-C-o-l-l-a-b-o-r-a-t-i-o-n-S-e-c-t-i-o-n-(-)- -{--
-- - -r-e-t-u-r-n- -(--
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-b-g---w-h-i-t-e- -p-x---4- -p-y---2-0-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l-"->--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---[-2-r-e-m-]- -b-g---s-l-a-t-e---9-5-0- -p-x---6- -p-y---1-2- -t-e-x-t---w-h-i-t-e- -m-d-:-p-x---1-2-"->--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---1-0- -l-g-:-g-r-i-d---c-o-l-s---[-1-.-1-f-r-_-0-.-9-f-r-]- -l-g-:-i-t-e-m-s---c-e-n-t-e-r-"->--
-- - - - - - - - - - - - -<-d-i-v->--
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-3-5-e-m-]- -t-e-x-t---b-l-u-e---3-0-0-"->--
-- - - - - - - - - - - - - - - - -M-o-U- -&- -C-o-l-l-a-b-o-r-a-t-i-o-n--
-- - - - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---3-x-l- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->--
-- - - - - - - - - - - - - - - - -B-u-i-l-d- -a-c-a-d-e-m-i-c- -b-r-i-d-g-e-s- -w-i-t-h- -L-e-x-D-a-t-a-.--
-- - - - - - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -m-a-x---w---2-x-l- -t-e-x-t---l-g- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---3-0-0-"->--
-- - - - - - - - - - - - - - - - -W-e- -w-e-l-c-o-m-e- -u-n-i-v-e-r-s-i-t-i-e-s-,- -r-e-s-e-a-r-c-h- -c-e-n-t-e-r-s-,- -l-a-b-o-r-a-t-o-r-i-e-s-,--
-- - - - - - - - - - - - - - - - -j-o-u-r-n-a-l-s-,- -t-r-a-i-n-i-n-g- -i-n-s-t-i-t-u-t-e-s-,- -a-n-d- -p-r-o-f-e-s-s-i-o-n-a-l- -o-r-g-a-n-i-z-a-t-i-o-n-s--
-- - - - - - - - - - - - - - - - -t-o- -c-o-l-l-a-b-o-r-a-t-e- -o-n- -w-o-r-k-s-h-o-p-s-,- -r-e-s-e-a-r-c-h- -t-r-a-i-n-i-n-g-,- -d-a-t-a---d-r-i-v-e-n--
-- - - - - - - - - - - - - - - - -l-a-n-g-u-a-g-e- -s-t-u-d-i-e-s-,- -A-I- -l-i-t-e-r-a-c-y-,- -a-n-d- -a-c-a-d-e-m-i-c- -c-a-p-a-c-i-t-y- -b-u-i-l-d-i-n-g-.--
-- - - - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3-"->--
-- - - - - - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - - - - - -h-r-e-f-=-"-/-c-o-n-t-a-c-t-"--
-- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-g---b-l-u-e---6-0-0- -p-x---6- -p-y---4- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---b-l-u-e---7-0-0-"--
-- - - - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - - - -P-r-o-p-o-s-e- -C-o-l-l-a-b-o-r-a-t-i-o-n--
-- - - - - - - - - - - - - - - - -<-/-L-i-n-k->--
---
-- - - - - - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - - - - - -h-r-e-f-=-"-/-w-o-r-k-s-h-o-p-s-"--
-- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---w-h-i-t-e-/-2-0- -p-x---6- -p-y---4- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---w-h-i-t-e-/-1-0-"--
-- - - - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - - - -E-x-p-l-o-r-e- -W-o-r-k-s-h-o-p-s--
-- - - - - - - - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4-"->--
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e-/-1-0- -p---6- -r-i-n-g---1- -r-i-n-g---w-h-i-t-e-/-1-0-"->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k-"->-I-n-s-t-i-t-u-t-i-o-n-a-l- -M-o-U-<-/-p->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---3-0-0-"->--
-- - - - - - - - - - - - - - - - - - -P-a-r-t-n-e-r- -w-i-t-h- -L-e-x-D-a-t-a- -f-o-r- -t-r-a-i-n-i-n-g- -p-r-o-g-r-a-m-s-,- -a-c-a-d-e-m-i-c- -e-v-e-n-t-s-,--
-- - - - - - - - - - - - - - - - - - -r-e-s-e-a-r-c-h- -c-o-l-l-a-b-o-r-a-t-i-o-n-,- -a-n-d- -s-t-u-d-e-n-t- -d-e-v-e-l-o-p-m-e-n-t- -i-n-i-t-i-a-t-i-v-e-s-.--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e-/-1-0- -p---6- -r-i-n-g---1- -r-i-n-g---w-h-i-t-e-/-1-0-"->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k-"->-J-o-i-n-t- -W-o-r-k-s-h-o-p-s-<-/-p->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---3-0-0-"->--
-- - - - - - - - - - - - - - - - - - -C-o---h-o-s-t- -s-h-o-r-t- -c-o-u-r-s-e-s-,- -e-x-p-e-r-t- -l-e-c-t-u-r-e-s-,- -s-u-m-m-e-r- -c-a-m-p-s-,--
-- - - - - - - - - - - - - - - - - - -p-u-b-l-i-c-a-t-i-o-n- -t-r-a-i-n-i-n-g-,- -c-o-r-p-u-s- -m-e-t-h-o-d-s-,- -a-n-d- -A-I---a-s-s-i-s-t-e-d--
-- - - - - - - - - - - - - - - - - - -r-e-s-e-a-r-c-h- -p-r-o-g-r-a-m-s-.--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e-/-1-0- -p---6- -r-i-n-g---1- -r-i-n-g---w-h-i-t-e-/-1-0-"->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k-"->-R-e-s-e-a-r-c-h- -&- -D-a-t-a- -P-r-o-j-e-c-t-s-<-/-p->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---3-0-0-"->--
-- - - - - - - - - - - - - - - - - - -C-o-l-l-a-b-o-r-a-t-e- -o-n- -a-p-p-l-i-e-d- -l-i-n-g-u-i-s-t-i-c-s-,- -l-e-g-a-l- -l-a-n-g-u-a-g-e-,--
-- - - - - - - - - - - - - - - - - - -m-u-l-t-i-m-o-d-a-l- -d-a-t-a-,- -d-i-s-c-o-u-r-s-e- -a-n-a-l-y-s-i-s-,- -c-o-r-p-u-s- -r-e-s-e-a-r-c-h-,- -a-n-d--
-- - - - - - - - - - - - - - - - - - -r-e-s-p-o-n-s-i-b-l-e- -A-I- -i-n- -e-d-u-c-a-t-i-o-n-.--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-d-i-v->--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-s-e-c-t-i-o-n->--
-- - -)-;--
--}-
+import Link from "next/link";
+
+export default function MouCollaborationSection() {
+  return (
+    <section className="bg-white px-4 py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-[2rem] bg-slate-950 px-6 py-12 text-white md:px-12">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.35em] text-blue-300">
+                MoU & Collaboration
+              </p>
+
+              <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-tight md:text-5xl">
+                Build academic bridges with LexData.
+              </h2>
+
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+                We welcome universities, research centers, laboratories,
+                journals, training institutes, and professional organizations
+                to collaborate on workshops, research training, data-driven
+                language studies, AI literacy, and academic capacity building.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/contact"
+                  className="rounded-2xl bg-blue-600 px-6 py-4 text-sm font-black text-white hover:bg-blue-700"
+                >
+                  Propose Collaboration
+                </Link>
+
+                <Link
+                  href="/workshops"
+                  className="rounded-2xl border border-white/20 px-6 py-4 text-sm font-black text-white hover:bg-white/10"
+                >
+                  Explore Workshops
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+                <p className="text-xl font-black">Institutional MoU</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">
+                  Partner with LexData for training programs, academic events,
+                  research collaboration, and student development initiatives.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+                <p className="text-xl font-black">Joint Workshops</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">
+                  Co-host short courses, expert lectures, summer camps,
+                  publication training, corpus methods, and AI-assisted
+                  research programs.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white/10 p-6 ring-1 ring-white/10">
+                <p className="text-xl font-black">Research & Data Projects</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">
+                  Collaborate on applied linguistics, legal language,
+                  multimodal data, discourse analysis, corpus research, and
+                  responsible AI in education.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

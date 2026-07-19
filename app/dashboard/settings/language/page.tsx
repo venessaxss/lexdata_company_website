@@ -1,72 +1,72 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -L-A-N-G-U-A-G-E-_-L-A-B-E-L-S- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
--i-m-p-o-r-t- -{- -g-e-t-S-e-r-v-e-r-I-1-8-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e---s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -L-a-n-g-u-a-g-e-S-w-i-t-c-h-e-r- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-a-n-g-u-a-g-e-S-w-i-t-c-h-e-r-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -L-a-n-g-u-a-g-e-S-e-t-t-i-n-g-s-P-a-g-e-(-)- -{-
-- - -n-o-S-t-o-r-e-(-)-;-
--
-- - -c-o-n-s-t- -{- -l-a-n-g-u-a-g-e-,- -t- -}- -=- -a-w-a-i-t- -g-e-t-S-e-r-v-e-r-I-1-8-n-(-)-;-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-l-a-n-g-u-a-g-e-"-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---4-x-l- -p-x---4- -p-y---1-0-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0-"->-
-- - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - -h-r-e-f-=-"-/-d-a-s-h-b-o-a-r-d-"-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---6-0-0- -h-o-v-e-r-:-t-e-x-t---s-l-a-t-e---9-5-0-"-
-- - - - - - - - ->-
-- - - - - - - - - - ---&-g-t-;-{-t-(-"-c-o-m-m-o-n-.-b-a-c-k-D-a-s-h-b-o-a-r-d-"-)-}-
-- - - - - - - - -<-/-L-i-n-k->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---b-l-u-e---7-0-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-t-i-t-l-e-"-)-}-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-t-i-t-l-e-"-)-}-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---2-x-l- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-s-u-b-t-i-t-l-e-"-)-}-
-- - - - - - - - -<-/-p->-
-- - - - - - -<-/-d-i-v->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---8- -s-h-a-d-o-w---s-m-"->-
-- - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-p-r-e-f-e-r-r-e-d-"-)-}-
-- - - - - - - - -<-/-h-2->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-c-u-r-r-e-n-t-"-)-}-:-{-"- -"-}-
-- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - - - -{-L-A-N-G-U-A-G-E-_-L-A-B-E-L-S-[-l-a-n-g-u-a-g-e-]-}-
-- - - - - - - - - - -<-/-s-p-a-n->-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6-"->-
-- - - - - - - - - - -<-L-a-n-g-u-a-g-e-S-w-i-t-c-h-e-r- -c-u-r-r-e-n-t-L-a-n-g-u-a-g-e-=-{-l-a-n-g-u-a-g-e-}- -/->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---5-0- -p---5- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -{-t-(-"-l-a-n-g-u-a-g-e-.-a-v-a-i-l-a-b-l-e-"-)-}-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { LANGUAGE_LABELS } from "@/lib/languages";
+import { getServerI18n } from "@/lib/language-server";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function LanguageSettingsPage() {
+  noStore();
+
+  const { language, t } = await getServerI18n();
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?redirect=/dashboard/settings/language");
+  }
+
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mb-10">
+        <Link
+          href="/dashboard"
+          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+        >
+          -&gt;{t("common.backDashboard")}
+        </Link>
+
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+          {t("language.title")}
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950">
+          {t("language.title")}
+        </h1>
+
+        <p className="mt-4 max-w-2xl text-slate-600">
+          {t("language.subtitle")}
+        </p>
+      </div>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h2 className="text-2xl font-black text-slate-950">
+          {t("language.preferred")}
+        </h2>
+
+        <p className="mt-3 text-slate-600">
+          {t("language.current")}:{" "}
+          <span className="font-bold text-slate-950">
+            {LANGUAGE_LABELS[language]}
+          </span>
+        </p>
+
+        <div className="mt-6">
+          <LanguageSwitcher currentLanguage={language} />
+        </div>
+
+        <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-sm leading-6 text-slate-600">
+          {t("language.available")}
+        </div>
+      </section>
+    </main>
+  );
+}

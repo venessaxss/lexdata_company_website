@@ -1,67 +1,67 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--i-m-p-o-r-t- -{- -u-s-e-E-f-f-e-c-t-,- -u-s-e-M-e-m-o-,- -u-s-e-S-t-a-t-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-a-p-e-r-T-y-p-e-w-r-i-t-e-r-L-i-n-e-(-{-
-- - -m-e-s-s-a-g-e-s-,-
--}-:- -{-
-- - -m-e-s-s-a-g-e-s-:- -s-t-r-i-n-g-[-]-;-
--}-)- -{-
-- - -c-o-n-s-t- -c-l-e-a-n-M-e-s-s-a-g-e-s- -=- -u-s-e-M-e-m-o-(-
-- - - - -(-)- -=->- -m-e-s-s-a-g-e-s-.-f-i-l-t-e-r-(-(-i-t-e-m-)- -=->- -i-t-e-m-.-t-r-i-m-(-)-.-l-e-n-g-t-h- ->- -0-)-,-
-- - - - -[-m-e-s-s-a-g-e-s-]-
-- - -)-;-
--
-- - -c-o-n-s-t- -[-m-e-s-s-a-g-e-I-n-d-e-x-,- -s-e-t-M-e-s-s-a-g-e-I-n-d-e-x-]- -=- -u-s-e-S-t-a-t-e-(-0-)-;-
-- - -c-o-n-s-t- -[-l-e-t-t-e-r-I-n-d-e-x-,- -s-e-t-L-e-t-t-e-r-I-n-d-e-x-]- -=- -u-s-e-S-t-a-t-e-(-0-)-;-
-- - -c-o-n-s-t- -[-d-e-l-e-t-i-n-g-,- -s-e-t-D-e-l-e-t-i-n-g-]- -=- -u-s-e-S-t-a-t-e-(-f-a-l-s-e-)-;-
--
-- - -c-o-n-s-t- -c-u-r-r-e-n-t-M-e-s-s-a-g-e- -=-
-- - - - -c-l-e-a-n-M-e-s-s-a-g-e-s-[-m-e-s-s-a-g-e-I-n-d-e-x-]- -|-|-
-- - - - -"-L-e-x-D-a-t-a- -b-r-i-d-g-e-s- -l-a-n-g-u-a-g-e-,- -A-I-,- -a-n-d- -d-a-t-a- -s-c-i-e-n-c-e-.-"-;-
--
-- - -c-o-n-s-t- -v-i-s-i-b-l-e-T-e-x-t- -=- -c-u-r-r-e-n-t-M-e-s-s-a-g-e-.-s-l-i-c-e-(-0-,- -l-e-t-t-e-r-I-n-d-e-x-)-;-
--
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -f-u-l-l-L-e-n-g-t-h- -=- -c-u-r-r-e-n-t-M-e-s-s-a-g-e-.-l-e-n-g-t-h-;-
--
-- - - - -l-e-t- -d-e-l-a-y- -=- -d-e-l-e-t-i-n-g- -?- -2-8- -:- -4-8-;-
--
-- - - - -i-f- -(-!-d-e-l-e-t-i-n-g- -&-&- -l-e-t-t-e-r-I-n-d-e-x- -=-=-=- -f-u-l-l-L-e-n-g-t-h-)- -{-
-- - - - - - -d-e-l-a-y- -=- -1-6-0-0-;-
-- - - - -}-
--
-- - - - -i-f- -(-d-e-l-e-t-i-n-g- -&-&- -l-e-t-t-e-r-I-n-d-e-x- -=-=-=- -0-)- -{-
-- - - - - - -d-e-l-a-y- -=- -3-5-0-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -t-i-m-e-r- -=- -w-i-n-d-o-w-.-s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -{-
-- - - - - - -i-f- -(-!-d-e-l-e-t-i-n-g- -&-&- -l-e-t-t-e-r-I-n-d-e-x- -<- -f-u-l-l-L-e-n-g-t-h-)- -{-
-- - - - - - - - -s-e-t-L-e-t-t-e-r-I-n-d-e-x-(-(-v-a-l-u-e-)- -=->- -v-a-l-u-e- -+- -1-)-;-
-- - - - - - - - -r-e-t-u-r-n-;-
-- - - - - - -}-
--
-- - - - - - -i-f- -(-!-d-e-l-e-t-i-n-g- -&-&- -l-e-t-t-e-r-I-n-d-e-x- -=-=-=- -f-u-l-l-L-e-n-g-t-h-)- -{-
-- - - - - - - - -s-e-t-D-e-l-e-t-i-n-g-(-t-r-u-e-)-;-
-- - - - - - - - -r-e-t-u-r-n-;-
-- - - - - - -}-
--
-- - - - - - -i-f- -(-d-e-l-e-t-i-n-g- -&-&- -l-e-t-t-e-r-I-n-d-e-x- ->- -0-)- -{-
-- - - - - - - - -s-e-t-L-e-t-t-e-r-I-n-d-e-x-(-(-v-a-l-u-e-)- -=->- -v-a-l-u-e- --- -1-)-;-
-- - - - - - - - -r-e-t-u-r-n-;-
-- - - - - - -}-
--
-- - - - - - -s-e-t-D-e-l-e-t-i-n-g-(-f-a-l-s-e-)-;-
-- - - - - - -s-e-t-M-e-s-s-a-g-e-I-n-d-e-x-(-(-v-a-l-u-e-)- -=->- -(-v-a-l-u-e- -+- -1-)- -%- -c-l-e-a-n-M-e-s-s-a-g-e-s-.-l-e-n-g-t-h-)-;-
-- - - - -}-,- -d-e-l-a-y-)-;-
--
-- - - - -r-e-t-u-r-n- -(-)- -=->- -w-i-n-d-o-w-.-c-l-e-a-r-T-i-m-e-o-u-t-(-t-i-m-e-r-)-;-
-- - -}-,- -[-c-l-e-a-n-M-e-s-s-a-g-e-s-.-l-e-n-g-t-h-,- -c-u-r-r-e-n-t-M-e-s-s-a-g-e-,- -d-e-l-e-t-i-n-g-,- -l-e-t-t-e-r-I-n-d-e-x-]-)-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---h-e-r-o---s-u-b- -p-a-p-e-r---r-e-v- -p-a-p-e-r---t-y-p-e-w-r-i-t-e-r---l-i-n-e-"->-
-- - - - - - -<-s-p-a-n->-{-v-i-s-i-b-l-e-T-e-x-t-}-<-/-s-p-a-n->-
-- - - - - - -<-b- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"- -/->-
-- - - - -<-/-p->-
-- - -)-;-
--}-
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+
+export default function PaperTypewriterLine({
+  messages,
+}: {
+  messages: string[];
+}) {
+  const cleanMessages = useMemo(
+    () => messages.filter((item) => item.trim().length > 0),
+    [messages]
+  );
+
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [letterIndex, setLetterIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  const currentMessage =
+    cleanMessages[messageIndex] ||
+    "LexData bridges language, AI, and data science.";
+
+  const visibleText = currentMessage.slice(0, letterIndex);
+
+  useEffect(() => {
+    const fullLength = currentMessage.length;
+
+    let delay = deleting ? 28 : 48;
+
+    if (!deleting && letterIndex === fullLength) {
+      delay = 1600;
+    }
+
+    if (deleting && letterIndex === 0) {
+      delay = 350;
+    }
+
+    const timer = window.setTimeout(() => {
+      if (!deleting && letterIndex < fullLength) {
+        setLetterIndex((value) => value + 1);
+        return;
+      }
+
+      if (!deleting && letterIndex === fullLength) {
+        setDeleting(true);
+        return;
+      }
+
+      if (deleting && letterIndex > 0) {
+        setLetterIndex((value) => value - 1);
+        return;
+      }
+
+      setDeleting(false);
+      setMessageIndex((value) => (value + 1) % cleanMessages.length);
+    }, delay);
+
+    return () => window.clearTimeout(timer);
+  }, [cleanMessages.length, currentMessage, deleting, letterIndex]);
+
+  return (
+    <p className="paper-hero-sub paper-rev paper-typewriter-line">
+      <span>{visibleText}</span>
+      <b aria-hidden="true" />
+    </p>
+  );
+}

@@ -1,94 +1,94 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-h-a-n-g-e-P-a-s-s-w-o-r-d- -}- -f-r-o-m- -"-.-/-a-c-t-i-o-n-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -C-h-a-n-g-e-P-a-s-s-w-o-r-d-P-a-g-e-(-{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-,-
--}-:- -{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -m-e-s-s-a-g-e-?-:- -s-t-r-i-n-g- -}->-;-
--}-)- -{-
-- - -n-o-S-t-o-r-e-(-)-;-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -m-e-s-s-a-g-e- -}- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---x-l- -p-x---4- -p-y---1-0-"->-
-- - - - - - -<-L-i-n-k-
-- - - - - - - - -h-r-e-f-=-"-/-d-a-s-h-b-o-a-r-d-"-
-- - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---6-0-0- -h-o-v-e-r-:-t-e-x-t---s-l-a-t-e---9-5-0-"-
-- - - - - - ->-
-- - - - - - - - ---&-g-t-;-B-a-c-k- -t-o- -d-a-s-h-b-o-a-r-d-
-- - - - - - -<-/-L-i-n-k->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---8- -s-h-a-d-o-w---s-m-"->-
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - -C-h-a-n-g-e- -p-a-s-s-w-o-r-d-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -U-p-d-a-t-e- -t-h-e- -p-a-s-s-w-o-r-d- -f-o-r- -y-o-u-r- -L-e-x-D-a-t-a- -a-c-c-o-u-n-t-.-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -{-m-e-s-s-a-g-e- -?- -(-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---s-l-a-t-e---5-0- -p-x---4- -p-y---3- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - -{-m-e-s-s-a-g-e-}-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -)- -:- -n-u-l-l-}-
--
-- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-c-h-a-n-g-e-P-a-s-s-w-o-r-d-}- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -g-r-i-d- -g-a-p---5-"->-
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -N-e-w- -p-a-s-s-w-o-r-d-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -m-i-n-L-e-n-g-t-h-=-{-8-}-
-- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-A-t- -l-e-a-s-t- -8- -c-h-a-r-a-c-t-e-r-s-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -C-o-n-f-i-r-m- -n-e-w- -p-a-s-s-w-o-r-d-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-c-o-n-f-i-r-m-_-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -m-i-n-L-e-n-g-t-h-=-{-8-}-
-- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-R-e-p-e-a-t- -n-e-w- -p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-b-u-t-t-o-n-
-- - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---5- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -C-h-a-n-g-e- -p-a-s-s-w-o-r-d-
-- - - - - - - - - - -<-/-b-u-t-t-o-n->-
-- - - - - - - - -<-/-f-o-r-m->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { changePassword } from "./actions";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function ChangePasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string }>;
+}) {
+  noStore();
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { message } = await searchParams;
+
+  return (
+    <main className="mx-auto max-w-xl px-4 py-10">
+      <Link
+        href="/dashboard"
+        className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+      >
+        -&gt;Back to dashboard
+      </Link>
+
+      <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h1 className="text-4xl font-black text-slate-950">
+          Change password
+        </h1>
+
+        <p className="mt-3 text-slate-600">
+          Update the password for your LexData account.
+        </p>
+
+        {message ? (
+          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            {message}
+          </div>
+        ) : null}
+
+        <form action={changePassword} className="mt-6 grid gap-5">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              New password
+            </label>
+
+            <input
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              placeholder="At least 8 characters"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Confirm new password
+            </label>
+
+            <input
+              name="confirm_password"
+              type="password"
+              required
+              minLength={8}
+              placeholder="Repeat new password"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Change password
+          </button>
+        </form>
+      </div>
+    </main>
+  );
+}

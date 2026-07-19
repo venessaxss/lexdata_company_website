@@ -1,87 +1,87 @@
--t-y-p-e- -T-e-a-m-M-e-d-i-a-P-r-o-p-s- -=- -{-
-- - -n-a-m-e-:- -s-t-r-i-n-g-;-
-- - -i-n-i-t-i-a-l-s-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -m-e-d-i-a-T-y-p-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -m-e-d-i-a-U-r-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -v-i-d-e-o-U-r-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -s-t-y-l-e-P-r-e-s-e-t-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -l-a-r-g-e-?-:- -b-o-o-l-e-a-n-;-
--}-;-
--
--f-u-n-c-t-i-o-n- -g-e-t-P-r-e-s-e-t-C-l-a-s-s-(-s-t-y-l-e-P-r-e-s-e-t-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-)- -{-
-- - -s-w-i-t-c-h- -(-s-t-y-l-e-P-r-e-s-e-t-)- -{-
-- - - - -c-a-s-e- -"-r-o-y-a-l-"-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---b-l-u-e---9-5-0- -v-i-a---b-l-u-e---8-0-0- -t-o---i-n-d-i-g-o---7-0-0-"-;-
-- - - - -c-a-s-e- -"-a-c-a-d-e-m-i-c-"-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---s-l-a-t-e---9-5-0- -v-i-a---s-l-a-t-e---8-0-0- -t-o---b-l-u-e---9-0-0-"-;-
-- - - - -c-a-s-e- -"-p-u-r-p-l-e-"-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---v-i-o-l-e-t---9-5-0- -v-i-a---p-u-r-p-l-e---8-0-0- -t-o---i-n-d-i-g-o---8-0-0-"-;-
-- - - - -c-a-s-e- -"-e-m-e-r-a-l-d-"-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---e-m-e-r-a-l-d---9-5-0- -v-i-a---t-e-a-l---8-0-0- -t-o---s-l-a-t-e---9-0-0-"-;-
-- - - - -c-a-s-e- -"-g-o-l-d-"-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---y-e-l-l-o-w---9-0-0- -v-i-a---a-m-b-e-r---7-0-0- -t-o---s-l-a-t-e---9-5-0-"-;-
-- - - - -c-a-s-e- -"-n-a-v-y-"-:-
-- - - - -d-e-f-a-u-l-t-:-
-- - - - - - -r-e-t-u-r-n- -"-f-r-o-m---s-l-a-t-e---9-5-0- -v-i-a---b-l-u-e---9-5-0- -t-o---b-l-u-e---8-0-0-"-;-
-- - -}-
--}-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -T-e-a-m-M-e-d-i-a-(-{-
-- - -n-a-m-e-,-
-- - -i-n-i-t-i-a-l-s-,-
-- - -m-e-d-i-a-T-y-p-e-,-
-- - -m-e-d-i-a-U-r-l-,-
-- - -v-i-d-e-o-U-r-l-,-
-- - -s-t-y-l-e-P-r-e-s-e-t-,-
-- - -l-a-r-g-e- -=- -f-a-l-s-e-,-
--}-:- -T-e-a-m-M-e-d-i-a-P-r-o-p-s-)- -{-
-- - -c-o-n-s-t- -h-e-i-g-h-t-C-l-a-s-s- -=- -l-a-r-g-e- -?- -"-h---[-4-2-0-p-x-]-"- -:- -"-h---7-2-"-;-
-- - -c-o-n-s-t- -d-i-s-p-l-a-y-I-n-i-t-i-a-l-s- -=-
-- - - - -i-n-i-t-i-a-l-s- -|-|-
-- - - - -n-a-m-e-
-- - - - - - -.-s-p-l-i-t-(-"- -"-)-
-- - - - - - -.-m-a-p-(-(-p-a-r-t-)- -=->- -p-a-r-t-[-0-]-)-
-- - - - - - -.-j-o-i-n-(-"-"-)-
-- - - - - - -.-s-l-i-c-e-(-0-,- -2-)-
-- - - - - - -.-t-o-U-p-p-e-r-C-a-s-e-(-)-;-
--
-- - -i-f- -(-m-e-d-i-a-T-y-p-e- -=-=-=- -"-v-i-d-e-o-"- -&-&- -v-i-d-e-o-U-r-l-)- -{-
-- - - - -r-e-t-u-r-n- -(-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-{-`-r-e-l-a-t-i-v-e- -o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---t---2-x-l- -$-{-h-e-i-g-h-t-C-l-a-s-s-}- -b-g---s-l-a-t-e---9-5-0-`-}->-
-- - - - - - - - -<-v-i-d-e-o-
-- - - - - - - - - - -s-r-c-=-{-v-i-d-e-o-U-r-l-}-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"-
-- - - - - - - - - - -a-u-t-o-P-l-a-y-
-- - - - - - - - - - -m-u-t-e-d-
-- - - - - - - - - - -l-o-o-p-
-- - - - - - - - - - -p-l-a-y-s-I-n-l-i-n-e-
-- - - - - - - - -/->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-a-b-s-o-l-u-t-e- -i-n-s-e-t---0- -b-g---g-r-a-d-i-e-n-t---t-o---t- -f-r-o-m---s-l-a-t-e---9-5-0-/-5-0- -t-o---t-r-a-n-s-p-a-r-e-n-t-"- -/->-
-- - - - - - -<-/-d-i-v->-
-- - - - -)-;-
-- - -}-
--
-- - -i-f- -(-m-e-d-i-a-T-y-p-e- -=-=-=- -"-i-m-a-g-e-"- -&-&- -m-e-d-i-a-U-r-l-)- -{-
-- - - - -r-e-t-u-r-n- -(-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-{-`-o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---t---2-x-l- -$-{-h-e-i-g-h-t-C-l-a-s-s-}- -b-g---s-l-a-t-e---1-0-0-`-}->-
-- - - - - - - - -<-i-m-g-
-- - - - - - - - - - -s-r-c-=-{-m-e-d-i-a-U-r-l-}-
-- - - - - - - - - - -a-l-t-=-{-n-a-m-e-}-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r- -t-r-a-n-s-i-t-i-o-n- -d-u-r-a-t-i-o-n---5-0-0- -h-o-v-e-r-:-s-c-a-l-e---1-0-5-"-
-- - - - - - - - -/->-
-- - - - - - -<-/-d-i-v->-
-- - - - -)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-d-i-v-
-- - - - - - -c-l-a-s-s-N-a-m-e-=-{-`-f-l-e-x- -$-{-h-e-i-g-h-t-C-l-a-s-s-}- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -r-o-u-n-d-e-d---t---2-x-l- -b-g---g-r-a-d-i-e-n-t---t-o---b-r- -$-{-g-e-t-P-r-e-s-e-t-C-l-a-s-s-(-
-- - - - - - - - -s-t-y-l-e-P-r-e-s-e-t-
-- - - - - - -)-}-`-}-
-- - - - ->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-o-r-d-e-r- -b-o-r-d-e-r---w-h-i-t-e-/-2-0- -b-g---w-h-i-t-e-/-1-0- -p-x---8- -p-y---6- -t-e-x-t---5-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -t-e-x-t---w-h-i-t-e- -s-h-a-d-o-w---2-x-l- -b-a-c-k-d-r-o-p---b-l-u-r-"->-
-- - - - - - - - -{-d-i-s-p-l-a-y-I-n-i-t-i-a-l-s-}-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-d-i-v->-
-- - -)-;-
--}-
+type TeamMediaProps = {
+  name: string;
+  initials?: string | null;
+  mediaType?: string | null;
+  mediaUrl?: string | null;
+  videoUrl?: string | null;
+  stylePreset?: string | null;
+  large?: boolean;
+};
+
+function getPresetClass(stylePreset?: string | null) {
+  switch (stylePreset) {
+    case "royal":
+      return "from-blue-950 via-blue-800 to-indigo-700";
+    case "academic":
+      return "from-slate-950 via-slate-800 to-blue-900";
+    case "purple":
+      return "from-violet-950 via-purple-800 to-indigo-800";
+    case "emerald":
+      return "from-emerald-950 via-teal-800 to-slate-900";
+    case "gold":
+      return "from-yellow-900 via-amber-700 to-slate-950";
+    case "navy":
+    default:
+      return "from-slate-950 via-blue-950 to-blue-800";
+  }
+}
+
+export default function TeamMedia({
+  name,
+  initials,
+  mediaType,
+  mediaUrl,
+  videoUrl,
+  stylePreset,
+  large = false,
+}: TeamMediaProps) {
+  const heightClass = large ? "h-[420px]" : "h-72";
+  const displayInitials =
+    initials ||
+    name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+  if (mediaType === "video" && videoUrl) {
+    return (
+      <div className={`relative overflow-hidden rounded-t-2xl ${heightClass} bg-slate-950`}>
+        <video
+          src={videoUrl}
+          className="h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 to-transparent" />
+      </div>
+    );
+  }
+
+  if (mediaType === "image" && mediaUrl) {
+    return (
+      <div className={`overflow-hidden rounded-t-2xl ${heightClass} bg-slate-100`}>
+        <img
+          src={mediaUrl}
+          alt={name}
+          className="h-full w-full object-cover transition duration-500 hover:scale-105"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`flex ${heightClass} items-center justify-center rounded-t-2xl bg-gradient-to-br ${getPresetClass(
+        stylePreset
+      )}`}
+    >
+      <div className="rounded-full border border-white/20 bg-white/10 px-8 py-6 text-5xl font-black tracking-tight text-white shadow-2xl backdrop-blur">
+        {displayInitials}
+      </div>
+    </div>
+  );
+}

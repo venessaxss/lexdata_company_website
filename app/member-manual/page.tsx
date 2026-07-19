@@ -1,62 +1,62 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--c-o-n-s-t- -m-a-n-u-a-l-U-r-l- -=- -"-/-m-a-n-u-a-l-s-/-L-e-x-D-a-t-a-_-G-e-n-e-r-a-l-_-M-e-m-b-e-r-_-U-s-e-r-_-M-a-n-u-a-l-.-p-d-f-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -M-e-m-b-e-r-M-a-n-u-a-l-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l- -p-x---4- -p-y---1-0-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---8-"->-
-- - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - -h-r-e-f-=-"-/-"-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---6-0-0- -h-o-v-e-r-:-t-e-x-t---s-l-a-t-e---9-5-0-"-
-- - - - - - - - ->-
-- - - - - - - - - - -←- -B-a-c-k- -t-o- -h-o-m-e-p-a-g-e-
-- - - - - - - - -<-/-L-i-n-k->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---b-l-u-e---7-0-0-"->-
-- - - - - - - - - - -L-e-x-D-a-t-a- -U-s-e-r- -G-u-i-d-e-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -t-e-x-t---s-l-a-t-e---9-5-0- -m-d-:-t-e-x-t---5-x-l-"->-
-- - - - - - - - - - -G-e-n-e-r-a-l- -M-e-m-b-e-r- -U-s-e-r- -M-a-n-u-a-l-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---3-x-l- -t-e-x-t---l-g- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -T-h-i-s- -g-u-i-d-e- -e-x-p-l-a-i-n-s- -h-o-w- -n-e-w- -m-e-m-b-e-r-s- -c-a-n- -c-r-e-a-t-e- -a-n- -a-c-c-o-u-n-t-,- -l-o-g-i-n-,-
-- - - - - - - - - - -u-s-e- -t-h-e- -d-a-s-h-b-o-a-r-d-,- -v-i-e-w- -m-e-s-s-a-g-e-s-,- -r-e-g-i-s-t-e-r- -f-o-r- -w-o-r-k-s-h-o-p-s-,- -a-n-d- -m-a-n-a-g-e-
-- - - - - - - - - - -t-h-e-i-r- -a-c-c-o-u-n-t-.-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3-"->-
-- - - - - - - - - - -<-a-
-- - - - - - - - - - - - -h-r-e-f-=-{-m-a-n-u-a-l-U-r-l-}-
-- - - - - - - - - - - - -t-a-r-g-e-t-=-"-_-b-l-a-n-k-"-
-- - - - - - - - - - - - -r-e-l-=-"-n-o-o-p-e-n-e-r- -n-o-r-e-f-e-r-r-e-r-"-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---5- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -O-p-e-n- -P-D-F-
-- - - - - - - - - - -<-/-a->-
--
-- - - - - - - - - - -<-a-
-- - - - - - - - - - - - -h-r-e-f-=-{-m-a-n-u-a-l-U-r-l-}-
-- - - - - - - - - - - - -d-o-w-n-l-o-a-d-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -p-x---5- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0- -h-o-v-e-r-:-b-g---s-l-a-t-e---5-0-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -D-o-w-n-l-o-a-d- -P-D-F-
-- - - - - - - - - - -<-/-a->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -s-h-a-d-o-w---s-m-"->-
-- - - - - - - - -<-i-f-r-a-m-e-
-- - - - - - - - - - -s-r-c-=-{-m-a-n-u-a-l-U-r-l-}-
-- - - - - - - - - - -t-i-t-l-e-=-"-L-e-x-D-a-t-a- -G-e-n-e-r-a-l- -M-e-m-b-e-r- -U-s-e-r- -M-a-n-u-a-l-"-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---[-8-0-v-h-]- -w---f-u-l-l-"-
-- - - - - - - - -/->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const manualUrl = "/manuals/LexData_General_Member_User_Manual.pdf";
+
+export default function MemberManualPage() {
+  return (
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-8">
+        <Link
+          href="/"
+          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+        >
+          ← Back to homepage
+        </Link>
+
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-blue-700">
+          LexData User Guide
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+          General Member User Manual
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+          This guide explains how new members can create an account, login,
+          use the dashboard, view messages, register for workshops, and manage
+          their account.
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href={manualUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Open PDF
+          </a>
+
+          <a
+            href={manualUrl}
+            download
+            className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+          >
+            Download PDF
+          </a>
+        </div>
+      </div>
+
+      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <iframe
+          src={manualUrl}
+          title="LexData General Member User Manual"
+          className="h-[80vh] w-full"
+        />
+      </section>
+    </main>
+  );
+}

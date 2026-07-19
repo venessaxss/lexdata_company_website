@@ -1,77 +1,77 @@
--"-u-s-e- -s-e-r-v-e-r-"-;--
---
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
---
--f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{--
-- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
--}--
---
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-M-e-m-b-e-r-P-r-o-f-i-l-e-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -{--
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
---
-- - -i-f- -(-!-u-s-e-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-d-a-s-h-b-o-a-r-d-/-p-r-o-f-i-l-e-"-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -f-u-l-l-N-a-m-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-f-u-l-l-_-n-a-m-e-"-)-;--
-- - -c-o-n-s-t- -i-n-s-t-i-t-u-t-i-o-n- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-n-s-t-i-t-u-t-i-o-n-"-)-;--
-- - -c-o-n-s-t- -a-f-f-i-l-i-a-t-i-o-n- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-a-f-f-i-l-i-a-t-i-o-n-"-)-;--
-- - -c-o-n-s-t- -a-f-f-i-l-i-a-t-i-o-n-S-t-a-t-u-s- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-a-f-f-i-l-i-a-t-i-o-n-_-s-t-a-t-u-s-"-)-;--
-- - -c-o-n-s-t- -p-r-o-f-e-s-s-i-o-n-S-t-a-t-u-s- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-o-f-e-s-s-i-o-n-_-s-t-a-t-u-s-"-)-;--
-- - -c-o-n-s-t- -p-r-o-f-e-s-s-i-o-n-T-i-t-l-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-o-f-e-s-s-i-o-n-_-t-i-t-l-e-"-)-;--
-- - -c-o-n-s-t- -d-e-p-a-r-t-m-e-n-t- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-d-e-p-a-r-t-m-e-n-t-"-)-;--
-- - -c-o-n-s-t- -d-e-g-r-e-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-d-e-g-r-e-e-"-)-;--
-- - -c-o-n-s-t- -c-o-u-n-t-r-y- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-c-o-u-n-t-r-y-"-)-;--
-- - -c-o-n-s-t- -c-i-t-y- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-c-i-t-y-"-)-;--
-- - -c-o-n-s-t- -p-h-o-n-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-h-o-n-e-"-)-;--
-- - -c-o-n-s-t- -r-e-s-e-a-r-c-h-I-n-t-e-r-e-s-t- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-r-e-s-e-a-r-c-h-_-i-n-t-e-r-e-s-t-"-)-;--
-- - -c-o-n-s-t- -b-i-o- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-i-o-"-)-;--
---
-- - -c-o-n-s-t- -p-r-o-f-i-l-e-C-o-m-p-l-e-t-e-d- -=- -B-o-o-l-e-a-n-(--
-- - - - -f-u-l-l-N-a-m-e- -&-&--
-- - - - - - -i-n-s-t-i-t-u-t-i-o-n- -&-&--
-- - - - - - -p-r-o-f-e-s-s-i-o-n-S-t-a-t-u-s- -&-&--
-- - - - - - -c-o-u-n-t-r-y--
-- - -)-;--
---
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-.-u-p-s-e-r-t-(-{--
-- - - - -i-d-:- -u-s-e-r-.-i-d-,--
-- - - - -e-m-a-i-l-:- -u-s-e-r-.-e-m-a-i-l- -|-|- -n-u-l-l-,--
-- - - - -f-u-l-l-_-n-a-m-e-:- -f-u-l-l-N-a-m-e- -|-|- -u-s-e-r-.-u-s-e-r-_-m-e-t-a-d-a-t-a-?-.-f-u-l-l-_-n-a-m-e- -|-|- -u-s-e-r-.-e-m-a-i-l-,--
-- - - - -i-n-s-t-i-t-u-t-i-o-n-:- -i-n-s-t-i-t-u-t-i-o-n- -|-|- -n-u-l-l-,--
-- - - - -a-f-f-i-l-i-a-t-i-o-n-:- -a-f-f-i-l-i-a-t-i-o-n- -|-|- -n-u-l-l-,--
-- - - - -a-f-f-i-l-i-a-t-i-o-n-_-s-t-a-t-u-s-:- -a-f-f-i-l-i-a-t-i-o-n-S-t-a-t-u-s- -|-|- -n-u-l-l-,--
-- - - - -p-r-o-f-e-s-s-i-o-n-_-s-t-a-t-u-s-:- -p-r-o-f-e-s-s-i-o-n-S-t-a-t-u-s- -|-|- -n-u-l-l-,--
-- - - - -p-r-o-f-e-s-s-i-o-n-_-t-i-t-l-e-:- -p-r-o-f-e-s-s-i-o-n-T-i-t-l-e- -|-|- -n-u-l-l-,--
-- - - - -d-e-p-a-r-t-m-e-n-t-:- -d-e-p-a-r-t-m-e-n-t- -|-|- -n-u-l-l-,--
-- - - - -d-e-g-r-e-e-:- -d-e-g-r-e-e- -|-|- -n-u-l-l-,--
-- - - - -c-o-u-n-t-r-y-:- -c-o-u-n-t-r-y- -|-|- -n-u-l-l-,--
-- - - - -c-i-t-y-:- -c-i-t-y- -|-|- -n-u-l-l-,--
-- - - - -p-h-o-n-e-:- -p-h-o-n-e- -|-|- -n-u-l-l-,--
-- - - - -r-e-s-e-a-r-c-h-_-i-n-t-e-r-e-s-t-:- -r-e-s-e-a-r-c-h-I-n-t-e-r-e-s-t- -|-|- -n-u-l-l-,--
-- - - - -b-i-o-:- -b-i-o- -|-|- -n-u-l-l-,--
-- - - - -p-r-o-f-i-l-e-_-c-o-m-p-l-e-t-e-d-:- -p-r-o-f-i-l-e-C-o-m-p-l-e-t-e-d-,--
-- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - -}-)-;--
---
-- - -i-f- -(-e-r-r-o-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-`-/-d-a-s-h-b-o-a-r-d-/-p-r-o-f-i-l-e-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;--
-- - -}--
---
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-/-p-r-o-f-i-l-e-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-m-e-m-b-e-r---p-r-o-f-i-l-e-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-m-e-m-b-e-r---p-r-o-f-i-l-e-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
---
-- - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-/-p-r-o-f-i-l-e-?-m-e-s-s-a-g-e-=-P-r-o-f-i-l-e- -i-n-f-o-r-m-a-t-i-o-n- -s-a-v-e-d-.-"-)-;--
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+function field(formData: FormData, key: string) {
+  return String(formData.get(key) || "").trim();
+}
+
+export async function updateMemberProfileAction(formData: FormData) {
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?redirect=/dashboard/profile");
+  }
+
+  const fullName = field(formData, "full_name");
+  const institution = field(formData, "institution");
+  const affiliation = field(formData, "affiliation");
+  const affiliationStatus = field(formData, "affiliation_status");
+  const professionStatus = field(formData, "profession_status");
+  const professionTitle = field(formData, "profession_title");
+  const department = field(formData, "department");
+  const degree = field(formData, "degree");
+  const country = field(formData, "country");
+  const city = field(formData, "city");
+  const phone = field(formData, "phone");
+  const researchInterest = field(formData, "research_interest");
+  const bio = field(formData, "bio");
+
+  const profileCompleted = Boolean(
+    fullName &&
+      institution &&
+      professionStatus &&
+      country
+  );
+
+  const { error } = await admin.from("profiles").upsert({
+    id: user.id,
+    email: user.email || null,
+    full_name: fullName || user.user_metadata?.full_name || user.email,
+    institution: institution || null,
+    affiliation: affiliation || null,
+    affiliation_status: affiliationStatus || null,
+    profession_status: professionStatus || null,
+    profession_title: professionTitle || null,
+    department: department || null,
+    degree: degree || null,
+    country: country || null,
+    city: city || null,
+    phone: phone || null,
+    research_interest: researchInterest || null,
+    bio: bio || null,
+    profile_completed: profileCompleted,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    redirect(`/dashboard/profile?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/profile");
+  revalidatePath("/manager/member-profiles");
+  revalidatePath("/admin/member-profiles");
+  revalidatePath("/manager/registrations");
+  revalidatePath("/admin/registrations");
+
+  redirect("/dashboard/profile?message=Profile information saved.");
+}

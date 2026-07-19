@@ -1,93 +1,93 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--i-m-p-o-r-t- -{- -u-s-e-S-t-a-t-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-c-l-i-e-n-t-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -S-e-s-s-i-o-n-M-e-d-i-a-U-p-l-o-a-d-e-r-(-)- -{-
-- - -c-o-n-s-t- -[-m-e-d-i-a-U-r-l-,- -s-e-t-M-e-d-i-a-U-r-l-]- -=- -u-s-e-S-t-a-t-e-(-"-"-)-;-
-- - -c-o-n-s-t- -[-m-e-d-i-a-T-y-p-e-,- -s-e-t-M-e-d-i-a-T-y-p-e-]- -=- -u-s-e-S-t-a-t-e-(-"-n-o-n-e-"-)-;-
-- - -c-o-n-s-t- -[-s-t-a-t-u-s-,- -s-e-t-S-t-a-t-u-s-]- -=- -u-s-e-S-t-a-t-e-(-"-"-)-;-
--
-- - -a-s-y-n-c- -f-u-n-c-t-i-o-n- -h-a-n-d-l-e-U-p-l-o-a-d-(-e-v-e-n-t-:- -R-e-a-c-t-.-C-h-a-n-g-e-E-v-e-n-t-<-H-T-M-L-I-n-p-u-t-E-l-e-m-e-n-t->-)- -{-
-- - - - -c-o-n-s-t- -f-i-l-e- -=- -e-v-e-n-t-.-t-a-r-g-e-t-.-f-i-l-e-s-?-.-[-0-]-;-
--
-- - - - -i-f- -(-!-f-i-l-e-)- -r-e-t-u-r-n-;-
--
-- - - - -c-o-n-s-t- -i-s-I-m-a-g-e- -=- -f-i-l-e-.-t-y-p-e-.-s-t-a-r-t-s-W-i-t-h-(-"-i-m-a-g-e-/-"-)-;-
-- - - - -c-o-n-s-t- -i-s-V-i-d-e-o- -=- -f-i-l-e-.-t-y-p-e-.-s-t-a-r-t-s-W-i-t-h-(-"-v-i-d-e-o-/-"-)-;-
--
-- - - - -i-f- -(-!-i-s-I-m-a-g-e- -&-&- -!-i-s-V-i-d-e-o-)- -{-
-- - - - - - -s-e-t-S-t-a-t-u-s-(-"-P-l-e-a-s-e- -u-p-l-o-a-d- -a-n- -i-m-a-g-e- -o-r- -v-i-d-e-o- -f-i-l-e-.-"-)-;-
-- - - - - - -r-e-t-u-r-n-;-
-- - - - -}-
--
-- - - - -s-e-t-S-t-a-t-u-s-(-`-U-p-l-o-a-d-i-n-g- -$-{-f-i-l-e-.-n-a-m-e-}-.-.-.-`-)-;-
--
-- - - - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - - - -c-o-n-s-t- -s-a-f-e-N-a-m-e- -=- -f-i-l-e-.-n-a-m-e-.-r-e-p-l-a-c-e-(-/-[-^-a---z-A---Z-0---9-.-\---_-]-/-g-,- -"-_-"-)-;-
-- - - - -c-o-n-s-t- -f-i-l-e-P-a-t-h- -=- -`-$-{-D-a-t-e-.-n-o-w-(-)-}---$-{-c-r-y-p-t-o-.-r-a-n-d-o-m-U-U-I-D-(-)-}---$-{-s-a-f-e-N-a-m-e-}-`-;-
--
-- - - - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-s-t-o-r-a-g-e-
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p---s-e-s-s-i-o-n---m-e-d-i-a-"-)-
-- - - - - - -.-u-p-l-o-a-d-(-f-i-l-e-P-a-t-h-,- -f-i-l-e-,- -{-
-- - - - - - - - -c-a-c-h-e-C-o-n-t-r-o-l-:- -"-3-6-0-0-"-,-
-- - - - - - - - -u-p-s-e-r-t-:- -f-a-l-s-e-,-
-- - - - - - - - -c-o-n-t-e-n-t-T-y-p-e-:- -f-i-l-e-.-t-y-p-e- -|-|- -"-a-p-p-l-i-c-a-t-i-o-n-/-o-c-t-e-t---s-t-r-e-a-m-"-,-
-- - - - - - -}-)-;-
--
-- - - - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - - - -s-e-t-S-t-a-t-u-s-(-`-U-p-l-o-a-d- -f-a-i-l-e-d-:- -$-{-e-r-r-o-r-.-m-e-s-s-a-g-e-}-`-)-;-
-- - - - - - -r-e-t-u-r-n-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -{- -d-a-t-a- -}- -=- -s-u-p-a-b-a-s-e-.-s-t-o-r-a-g-e-
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p---s-e-s-s-i-o-n---m-e-d-i-a-"-)-
-- - - - - - -.-g-e-t-P-u-b-l-i-c-U-r-l-(-f-i-l-e-P-a-t-h-)-;-
--
-- - - - -s-e-t-M-e-d-i-a-U-r-l-(-d-a-t-a-.-p-u-b-l-i-c-U-r-l-)-;-
-- - - - -s-e-t-M-e-d-i-a-T-y-p-e-(-i-s-V-i-d-e-o- -?- -"-v-i-d-e-o-"- -:- -"-i-m-a-g-e-"-)-;-
-- - - - -s-e-t-S-t-a-t-u-s-(-"-U-p-l-o-a-d- -c-o-m-p-l-e-t-e-"-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---s-l-a-t-e---5-0- -p---4-"->-
-- - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - -S-e-s-s-i-o-n- -p-i-c-t-u-r-e- -o-r- -s-m-a-l-l- -v-i-d-e-o-
-- - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - -<-i-n-p-u-t-
-- - - - - - - - -t-y-p-e-=-"-f-i-l-e-"-
-- - - - - - - - -a-c-c-e-p-t-=-"-i-m-a-g-e-/-*-,-v-i-d-e-o-/-m-p-4-,-v-i-d-e-o-/-w-e-b-m-,-v-i-d-e-o-/-q-u-i-c-k-t-i-m-e-"-
-- - - - - - - - -o-n-C-h-a-n-g-e-=-{-h-a-n-d-l-e-U-p-l-o-a-d-}-
-- - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-g---w-h-i-t-e- -p-x---4- -p-y---3-"-
-- - - - - - -/->-
--
-- - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-s-e-s-s-i-o-n-_-m-e-d-i-a-_-u-r-l-"- -v-a-l-u-e-=-{-m-e-d-i-a-U-r-l-}- -/->-
-- - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-s-e-s-s-i-o-n-_-m-e-d-i-a-_-t-y-p-e-"- -v-a-l-u-e-=-{-m-e-d-i-a-T-y-p-e-}- -/->-
--
-- - - - - - -{-s-t-a-t-u-s- -?- -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---6-0-0-"->-{-s-t-a-t-u-s-}-<-/-p->- -:- -n-u-l-l-}-
--
-- - - - - - -{-m-e-d-i-a-U-r-l- -&-&- -m-e-d-i-a-T-y-p-e- -=-=-=- -"-i-m-a-g-e-"- -?- -(-
-- - - - - - - - -<-i-m-g-
-- - - - - - - - - - -s-r-c-=-{-m-e-d-i-a-U-r-l-}-
-- - - - - - - - - - -a-l-t-=-"-U-p-l-o-a-d-e-d- -s-e-s-s-i-o-n- -m-e-d-i-a-"-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -h---4-8- -w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -o-b-j-e-c-t---c-o-v-e-r-"-
-- - - - - - - - -/->-
-- - - - - - -)- -:- -n-u-l-l-}-
--
-- - - - - - -{-m-e-d-i-a-U-r-l- -&-&- -m-e-d-i-a-T-y-p-e- -=-=-=- -"-v-i-d-e-o-"- -?- -(-
-- - - - - - - - -<-v-i-d-e-o-
-- - - - - - - - - - -s-r-c-=-{-m-e-d-i-a-U-r-l-}-
-- - - - - - - - - - -c-o-n-t-r-o-l-s-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -h---4-8- -w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -o-b-j-e-c-t---c-o-v-e-r-"-
-- - - - - - - - -/->-
-- - - - - - -)- -:- -n-u-l-l-}-
--
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---x-s- -t-e-x-t---s-l-a-t-e---5-0-0-"->-
-- - - - - - - - -F-o-r- -l-a-r-g-e- -v-i-d-e-o-s-,- -u-s-e- -t-h-e- -Y-o-u-T-u-b-e- -/- -J-i-a-n-y-i-n-g- -e-x-t-e-r-n-a-l- -v-i-d-e-o- -l-i-n-k- -f-i-e-l-d-
-- - - - - - - - -b-e-l-o-w-.-
-- - - - - - -<-/-p->-
-- - - - -<-/-d-i-v->-
-- - -)-;-
--}-
+"use client";
+
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+export default function SessionMediaUploader() {
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [mediaType, setMediaType] = useState("none");
+  const [status, setStatus] = useState("");
+
+  async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+
+    if (!isImage && !isVideo) {
+      setStatus("Please upload an image or video file.");
+      return;
+    }
+
+    setStatus(`Uploading ${file.name}...`);
+
+    const supabase = createClient();
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+    const filePath = `${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+
+    const { error } = await supabase.storage
+      .from("workshop-session-media")
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type || "application/octet-stream",
+      });
+
+    if (error) {
+      setStatus(`Upload failed: ${error.message}`);
+      return;
+    }
+
+    const { data } = supabase.storage
+      .from("workshop-session-media")
+      .getPublicUrl(filePath);
+
+    setMediaUrl(data.publicUrl);
+    setMediaType(isVideo ? "video" : "image");
+    setStatus("Upload complete");
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <label className="mb-2 block text-sm font-semibold text-slate-700">
+        Session picture or small video
+      </label>
+
+      <input
+        type="file"
+        accept="image/*,video/mp4,video/webm,video/quicktime"
+        onChange={handleUpload}
+        className="w-full rounded-xl border bg-white px-4 py-3"
+      />
+
+      <input type="hidden" name="session_media_url" value={mediaUrl} />
+      <input type="hidden" name="session_media_type" value={mediaType} />
+
+      {status ? <p className="mt-2 text-sm text-slate-600">{status}</p> : null}
+
+      {mediaUrl && mediaType === "image" ? (
+        <img
+          src={mediaUrl}
+          alt="Uploaded session media"
+          className="mt-4 h-48 w-full rounded-xl object-cover"
+        />
+      ) : null}
+
+      {mediaUrl && mediaType === "video" ? (
+        <video
+          src={mediaUrl}
+          controls
+          className="mt-4 h-48 w-full rounded-xl object-cover"
+        />
+      ) : null}
+
+      <p className="mt-3 text-xs text-slate-500">
+        For large videos, use the YouTube / Jianying external video link field
+        below.
+      </p>
+    </div>
+  );
+}

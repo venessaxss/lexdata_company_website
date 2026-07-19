@@ -1,214 +1,214 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-A-d-m-i-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--f-u-n-c-t-i-o-n- -s-l-u-g-i-f-y-(-v-a-l-u-e-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -v-a-l-u-e-
-- - - - -.-t-o-L-o-w-e-r-C-a-s-e-(-)-
-- - - - -.-t-r-i-m-(-)-
-- - - - -.-r-e-p-l-a-c-e-(-/-[-^-a---z-0---9-]-+-/-g-,- -"---"-)-
-- - - - -.-r-e-p-l-a-c-e-(-/-(-^---|---$-)-+-/-g-,- -"-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-r-e-a-t-e-C-o-u-r-s-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -u-s-e-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-t-i-t-l-e-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -s-l-u-g- -=- -s-l-u-g-i-f-y-(-S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-l-u-g-"-)- -|-|- -t-i-t-l-e-)-)-;-
-- - -c-o-n-s-t- -c-a-t-e-g-o-r-y-_-i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-a-t-e-g-o-r-y-_-i-d-"-)- -|-|- -"-"-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n- -=- -S-t-r-i-n-g-(-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-"-)- -?-?- -"-"-
-- - -)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -i-n-t-r-o- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-n-t-r-o-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -l-e-v-e-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-l-e-v-e-l-"-)- -?-?- -"-B-e-g-i-n-n-e-r-"-)-;-
-- - -c-o-n-s-t- -l-a-n-g-u-a-g-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-l-a-n-g-u-a-g-e-"-)- -?-?- -"-E-n-g-l-i-s-h-"-)-;-
-- - -c-o-n-s-t- -c-o-v-e-r-_-u-r-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-o-v-e-r-_-u-r-l-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -p-r-i-c-e-_-c-e-n-t-s- -=- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-r-i-c-e-_-c-e-n-t-s-"-)- -|-|- -0-)-;-
-- - -c-o-n-s-t- -c-u-r-r-e-n-c-y- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-u-r-r-e-n-c-y-"-)- -|-|- -"-u-s-d-"-)-.-t-o-L-o-w-e-r-C-a-s-e-(-)-;-
-- - -c-o-n-s-t- -s-t-r-i-p-e-_-p-r-i-c-e-_-i-d- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -i-s-_-p-u-b-l-i-s-h-e-d- -=- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-)- -=-=-=- -"-o-n-"-;-
--
-- - -c-o-n-s-t- -i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d- -=-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d-"-)- -=-=-=- -"-o-n-"-;-
-- - -c-o-n-s-t- -h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r- -=- -N-u-m-b-e-r-(-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r-"-)- -|-|- -0-
-- - -)-;-
-- - -c-o-n-s-t- -h-o-m-e-_-b-a-d-g-e- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-b-a-d-g-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -"-F-e-a-t-u-r-e-d- -C-o-u-r-s-e-"-;-
-- - -c-o-n-s-t- -h-o-m-e-_-c-t-a- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-c-t-a-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -"-V-i-e-w- -C-o-u-r-s-e-"-;-
--
-- - -i-f- -(-!-t-i-t-l-e- -|-|- -!-s-l-u-g-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-n-e-w-?-m-e-s-s-a-g-e-=-T-i-t-l-e- -a-n-d- -s-l-u-g- -a-r-e- -r-e-q-u-i-r-e-d-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-.-i-n-s-e-r-t-(-{-
-- - - - -t-i-t-l-e-,-
-- - - - -s-l-u-g-,-
-- - - - -c-a-t-e-g-o-r-y-_-i-d-,-
-- - - - -s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-,-
-- - - - -i-n-t-r-o-,-
-- - - - -l-e-v-e-l-,-
-- - - - -l-a-n-g-u-a-g-e-,-
-- - - - -c-o-v-e-r-_-u-r-l-,-
-- - - - -p-r-i-c-e-_-c-e-n-t-s-,-
-- - - - -c-u-r-r-e-n-c-y-,-
-- - - - -s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-,-
-- - - - -i-s-_-p-u-b-l-i-s-h-e-d-,-
-- - - - -i-n-s-t-r-u-c-t-o-r-_-i-d-:- -u-s-e-r-.-i-d-,-
--
-- - - - -i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d-,-
-- - - - -h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r-,-
-- - - - -h-o-m-e-_-b-a-d-g-e-,-
-- - - - -h-o-m-e-_-c-t-a-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-n-e-w-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-
-- - - - -)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-c-o-u-r-s-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-`-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-C-o-u-r-s-e-(-c-o-u-r-s-e-I-d-:- -s-t-r-i-n-g-,- -f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-t-i-t-l-e-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -s-l-u-g- -=- -s-l-u-g-i-f-y-(-S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-l-u-g-"-)- -|-|- -t-i-t-l-e-)-)-;-
-- - -c-o-n-s-t- -c-a-t-e-g-o-r-y-_-i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-a-t-e-g-o-r-y-_-i-d-"-)- -|-|- -"-"-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n- -=- -S-t-r-i-n-g-(-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-"-)- -?-?- -"-"-
-- - -)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -i-n-t-r-o- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-n-t-r-o-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -l-e-v-e-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-l-e-v-e-l-"-)- -?-?- -"-B-e-g-i-n-n-e-r-"-)-;-
-- - -c-o-n-s-t- -l-a-n-g-u-a-g-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-l-a-n-g-u-a-g-e-"-)- -?-?- -"-E-n-g-l-i-s-h-"-)-;-
-- - -c-o-n-s-t- -c-o-v-e-r-_-u-r-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-o-v-e-r-_-u-r-l-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -p-r-i-c-e-_-c-e-n-t-s- -=- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-r-i-c-e-_-c-e-n-t-s-"-)- -|-|- -0-)-;-
-- - -c-o-n-s-t- -c-u-r-r-e-n-c-y- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-u-r-r-e-n-c-y-"-)- -|-|- -"-u-s-d-"-)-.-t-o-L-o-w-e-r-C-a-s-e-(-)-;-
-- - -c-o-n-s-t- -s-t-r-i-p-e-_-p-r-i-c-e-_-i-d- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -i-s-_-p-u-b-l-i-s-h-e-d- -=- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-)- -=-=-=- -"-o-n-"-;-
--
-- - -c-o-n-s-t- -i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d- -=-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d-"-)- -=-=-=- -"-o-n-"-;-
-- - -c-o-n-s-t- -h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r- -=- -N-u-m-b-e-r-(-
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r-"-)- -|-|- -0-
-- - -)-;-
-- - -c-o-n-s-t- -h-o-m-e-_-b-a-d-g-e- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-b-a-d-g-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -"-F-e-a-t-u-r-e-d- -C-o-u-r-s-e-"-;-
-- - -c-o-n-s-t- -h-o-m-e-_-c-t-a- -=-
-- - - - -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-h-o-m-e-_-c-t-a-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -"-V-i-e-w- -C-o-u-r-s-e-"-;-
--
-- - -i-f- -(-!-t-i-t-l-e- -|-|- -!-s-l-u-g-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-e-d-i-t-?-m-e-s-s-a-g-e-=-T-i-t-l-e- -a-n-d- -s-l-u-g- -a-r-e- -r-e-q-u-i-r-e-d-`-
-- - - - -)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-
-- - - - -.-u-p-d-a-t-e-(-{-
-- - - - - - -t-i-t-l-e-,-
-- - - - - - -s-l-u-g-,-
-- - - - - - -c-a-t-e-g-o-r-y-_-i-d-,-
-- - - - - - -s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-,-
-- - - - - - -i-n-t-r-o-,-
-- - - - - - -l-e-v-e-l-,-
-- - - - - - -l-a-n-g-u-a-g-e-,-
-- - - - - - -c-o-v-e-r-_-u-r-l-,-
-- - - - - - -p-r-i-c-e-_-c-e-n-t-s-,-
-- - - - - - -c-u-r-r-e-n-c-y-,-
-- - - - - - -s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-,-
-- - - - - - -i-s-_-p-u-b-l-i-s-h-e-d-,-
--
-- - - - - - -i-s-_-h-o-m-e-_-h-i-g-h-l-i-g-h-t-e-d-,-
-- - - - - - -h-o-m-e-_-h-i-g-h-l-i-g-h-t-_-o-r-d-e-r-,-
-- - - - - - -h-o-m-e-_-b-a-d-g-e-,-
-- - - - - - -h-o-m-e-_-c-t-a-,-
--
-- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -}-)-
-- - - - -.-e-q-(-"-i-d-"-,- -c-o-u-r-s-e-I-d-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-e-d-i-t-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-
-- - - - - - - - -e-r-r-o-r-.-m-e-s-s-a-g-e-
-- - - - - - -)-}-`-
-- - - - -)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-c-o-u-r-s-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-`-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-r-e-a-t-e-L-e-s-s-o-n-(-c-o-u-r-s-e-I-d-:- -s-t-r-i-n-g-,- -f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-t-i-t-l-e-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -c-o-n-t-e-n-t- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-o-n-t-e-n-t-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
-- - -c-o-n-s-t- -v-i-d-e-o-_-u-r-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-v-i-d-e-o-_-u-r-l-"-)- -?-?- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-;-
-- - -c-o-n-s-t- -p-o-s-i-t-i-o-n- -=- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-o-s-i-t-i-o-n-"-)- -?-?- -1-)-;-
-- - -c-o-n-s-t- -i-s-_-p-u-b-l-i-s-h-e-d- -=- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-)- -=-=-=- -"-o-n-"-;-
--
-- - -i-f- -(-!-t-i-t-l-e-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-l-e-s-s-o-n-s-?-m-e-s-s-a-g-e-=-L-e-s-s-o-n- -t-i-t-l-e- -i-s- -r-e-q-u-i-r-e-d-`-
-- - - - -)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-l-e-s-s-o-n-s-"-)-.-i-n-s-e-r-t-(-{-
-- - - - -c-o-u-r-s-e-_-i-d-:- -c-o-u-r-s-e-I-d-,-
-- - - - -t-i-t-l-e-,-
-- - - - -c-o-n-t-e-n-t-,-
-- - - - -v-i-d-e-o-_-u-r-l-,-
-- - - - -p-o-s-i-t-i-o-n-,-
-- - - - -i-s-_-p-u-b-l-i-s-h-e-d-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-l-e-s-s-o-n-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-
-- - - - - - - - -e-r-r-o-r-.-m-e-s-s-a-g-e-
-- - - - - - -)-}-`-
-- - - - -)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-c-o-u-r-s-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-l-e-s-s-o-n-s-`-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-`-/-a-d-m-i-n-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-I-d-}-/-l-e-s-s-o-n-s-`-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -d-e-l-e-t-e-C-o-u-r-s-e-(-c-o-u-r-s-e-I-d-:- -s-t-r-i-n-g-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-.-d-e-l-e-t-e-(-)-.-e-q-(-"-i-d-"-,- -c-o-u-r-s-e-I-d-)-;-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-c-o-u-r-s-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-)-;-
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
+export async function createCourse(formData: FormData) {
+  const user = await requireAdmin();
+  const supabase = await createClient();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const slug = slugify(String(formData.get("slug") || title));
+  const category_id = String(formData.get("category_id") || "") || null;
+  const short_description = String(
+    formData.get("short_description") ?? ""
+  ).trim();
+  const intro = String(formData.get("intro") ?? "").trim();
+  const level = String(formData.get("level") ?? "Beginner");
+  const language = String(formData.get("language") ?? "English");
+  const cover_url = String(formData.get("cover_url") ?? "").trim() || null;
+  const price_cents = Number(formData.get("price_cents") || 0);
+  const currency = String(formData.get("currency") || "usd").toLowerCase();
+  const stripe_price_id =
+    String(formData.get("stripe_price_id") || "").trim() || null;
+  const is_published = formData.get("is_published") === "on";
+
+  const is_home_highlighted =
+    formData.get("is_home_highlighted") === "on";
+  const home_highlight_order = Number(
+    formData.get("home_highlight_order") || 0
+  );
+  const home_badge =
+    String(formData.get("home_badge") || "").trim() || "Featured Course";
+  const home_cta =
+    String(formData.get("home_cta") || "").trim() || "View Course";
+
+  if (!title || !slug) {
+    redirect("/admin/courses/new?message=Title and slug are required");
+  }
+
+  const { error } = await supabase.from("courses").insert({
+    title,
+    slug,
+    category_id,
+    short_description,
+    intro,
+    level,
+    language,
+    cover_url,
+    price_cents,
+    currency,
+    stripe_price_id,
+    is_published,
+    instructor_id: user.id,
+
+    is_home_highlighted,
+    home_highlight_order,
+    home_badge,
+    home_cta,
+  });
+
+  if (error) {
+    redirect(
+      `/admin/courses/new?message=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  revalidatePath("/");
+  revalidatePath("/courses");
+  revalidatePath(`/courses/${slug}`);
+  revalidatePath("/admin/courses");
+
+  redirect("/admin/courses");
+}
+
+export async function updateCourse(courseId: string, formData: FormData) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const slug = slugify(String(formData.get("slug") || title));
+  const category_id = String(formData.get("category_id") || "") || null;
+  const short_description = String(
+    formData.get("short_description") ?? ""
+  ).trim();
+  const intro = String(formData.get("intro") ?? "").trim();
+  const level = String(formData.get("level") ?? "Beginner");
+  const language = String(formData.get("language") ?? "English");
+  const cover_url = String(formData.get("cover_url") ?? "").trim() || null;
+  const price_cents = Number(formData.get("price_cents") || 0);
+  const currency = String(formData.get("currency") || "usd").toLowerCase();
+  const stripe_price_id =
+    String(formData.get("stripe_price_id") || "").trim() || null;
+  const is_published = formData.get("is_published") === "on";
+
+  const is_home_highlighted =
+    formData.get("is_home_highlighted") === "on";
+  const home_highlight_order = Number(
+    formData.get("home_highlight_order") || 0
+  );
+  const home_badge =
+    String(formData.get("home_badge") || "").trim() || "Featured Course";
+  const home_cta =
+    String(formData.get("home_cta") || "").trim() || "View Course";
+
+  if (!title || !slug) {
+    redirect(
+      `/admin/courses/${courseId}/edit?message=Title and slug are required`
+    );
+  }
+
+  const { error } = await supabase
+    .from("courses")
+    .update({
+      title,
+      slug,
+      category_id,
+      short_description,
+      intro,
+      level,
+      language,
+      cover_url,
+      price_cents,
+      currency,
+      stripe_price_id,
+      is_published,
+
+      is_home_highlighted,
+      home_highlight_order,
+      home_badge,
+      home_cta,
+
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", courseId);
+
+  if (error) {
+    redirect(
+      `/admin/courses/${courseId}/edit?message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  revalidatePath("/");
+  revalidatePath("/courses");
+  revalidatePath(`/courses/${slug}`);
+  revalidatePath("/admin/courses");
+
+  redirect("/admin/courses");
+}
+
+export async function createLesson(courseId: string, formData: FormData) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const title = String(formData.get("title") ?? "").trim();
+  const content = String(formData.get("content") ?? "").trim();
+  const video_url = String(formData.get("video_url") ?? "").trim() || null;
+  const position = Number(formData.get("position") ?? 1);
+  const is_published = formData.get("is_published") === "on";
+
+  if (!title) {
+    redirect(
+      `/admin/courses/${courseId}/lessons?message=Lesson title is required`
+    );
+  }
+
+  const { error } = await supabase.from("lessons").insert({
+    course_id: courseId,
+    title,
+    content,
+    video_url,
+    position,
+    is_published,
+  });
+
+  if (error) {
+    redirect(
+      `/admin/courses/${courseId}/lessons?message=${encodeURIComponent(
+        error.message
+      )}`
+    );
+  }
+
+  revalidatePath("/");
+  revalidatePath("/courses");
+  revalidatePath("/admin/courses");
+  revalidatePath(`/admin/courses/${courseId}/lessons`);
+
+  redirect(`/admin/courses/${courseId}/lessons`);
+}
+
+export async function deleteCourse(courseId: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  await supabase.from("courses").delete().eq("id", courseId);
+
+  revalidatePath("/");
+  revalidatePath("/courses");
+  revalidatePath("/admin/courses");
+
+  redirect("/admin/courses");
+}

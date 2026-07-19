@@ -1,208 +1,208 @@
--"-u-s-e- -s-e-r-v-e-r-"-;--
---
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
---
--a-s-y-n-c- -f-u-n-c-t-i-o-n- -n-o-t-i-f-y-U-s-e-r-(-i-n-p-u-t-:- -{--
-- - -u-s-e-r-I-d-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
-- - -e-m-a-i-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
-- - -t-i-t-l-e-:- -s-t-r-i-n-g-;--
-- - -b-o-d-y-:- -s-t-r-i-n-g-;--
-- - -s-o-u-r-c-e-T-y-p-e-:- -s-t-r-i-n-g-;--
-- - -s-o-u-r-c-e-I-d-:- -s-t-r-i-n-g-;--
--}-)- -{--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-i-n-t-e-r-n-a-l-_-m-e-s-s-a-g-e-s-"-)-.-i-n-s-e-r-t-(-{--
-- - - - -u-s-e-r-_-i-d-:- -i-n-p-u-t-.-u-s-e-r-I-d- -|-|- -n-u-l-l-,--
-- - - - -r-e-c-i-p-i-e-n-t-_-e-m-a-i-l-:- -i-n-p-u-t-.-e-m-a-i-l- -|-|- -n-u-l-l-,--
-- - - - -t-i-t-l-e-:- -i-n-p-u-t-.-t-i-t-l-e-,--
-- - - - -b-o-d-y-:- -i-n-p-u-t-.-b-o-d-y-,--
-- - - - -s-o-u-r-c-e-_-t-y-p-e-:- -i-n-p-u-t-.-s-o-u-r-c-e-T-y-p-e-,--
-- - - - -s-o-u-r-c-e-_-i-d-:- -i-n-p-u-t-.-s-o-u-r-c-e-I-d-,--
-- - -}-)-;--
---
-- - -i-f- -(-!-i-n-p-u-t-.-e-m-a-i-l- -|-|- -!-p-r-o-c-e-s-s-.-e-n-v-.-R-E-S-E-N-D-_-A-P-I-_-K-E-Y-)- -r-e-t-u-r-n-;--
---
-- - -a-w-a-i-t- -f-e-t-c-h-(-"-h-t-t-p-s-:-/-/-a-p-i-.-r-e-s-e-n-d-.-c-o-m-/-e-m-a-i-l-s-"-,- -{--
-- - - - -m-e-t-h-o-d-:- -"-P-O-S-T-"-,--
-- - - - -h-e-a-d-e-r-s-:- -{--
-- - - - - - -A-u-t-h-o-r-i-z-a-t-i-o-n-:- -`-B-e-a-r-e-r- -$-{-p-r-o-c-e-s-s-.-e-n-v-.-R-E-S-E-N-D-_-A-P-I-_-K-E-Y-}-`-,--
-- - - - - - -"-C-o-n-t-e-n-t---T-y-p-e-"-:- -"-a-p-p-l-i-c-a-t-i-o-n-/-j-s-o-n-"-,--
-- - - - -}-,--
-- - - - -b-o-d-y-:- -J-S-O-N-.-s-t-r-i-n-g-i-f-y-(-{--
-- - - - - - -f-r-o-m-:- -p-r-o-c-e-s-s-.-e-n-v-.-E-M-A-I-L-_-F-R-O-M- -|-|- -"-L-e-x-D-a-t-a- -<-n-o-r-e-p-l-y-@-l-e-x-d-a-t-a-a-i-.-c-o-m->-"-,--
-- - - - - - -t-o-:- -i-n-p-u-t-.-e-m-a-i-l-,--
-- - - - - - -s-u-b-j-e-c-t-:- -i-n-p-u-t-.-t-i-t-l-e-,--
-- - - - - - -t-e-x-t-:- -i-n-p-u-t-.-b-o-d-y-,--
-- - - - -}-)-,--
-- - -}-)-;--
--}--
---
--a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-v-a-l-i-d-a-t-e-R-e-g-i-s-t-r-a-t-i-o-n-P-a-g-e-s-(-w-o-r-k-s-h-o-p-I-d-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-)- -{--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -i-f- -(-w-o-r-k-s-h-o-p-I-d-)- -{--
-- - - - -c-o-n-s-t- -{- -d-a-t-a-:- -w-o-r-k-s-h-o-p- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)--
-- - - - - - -.-s-e-l-e-c-t-(-"-s-l-u-g-"-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -w-o-r-k-s-h-o-p-I-d-)--
-- - - - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - - - -i-f- -(-w-o-r-k-s-h-o-p-?-.-s-l-u-g-)- -{--
-- - - - - - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-w-o-r-k-s-h-o-p-s-/-$-{-w-o-r-k-s-h-o-p-.-s-l-u-g-}-`-)-;--
-- - - - -}--
-- - -}--
---
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-m-o-n-i-t-o-r-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-/-m-y---l-e-a-r-n-i-n-g-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-y-/-w-o-r-k-s-h-o-p-s-"-)-;--
--}--
---
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -h-a-n-d-l-e-R-e-g-i-s-t-r-a-t-i-o-n-M-a-n-a-g-e-m-e-n-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -i-n-t-e-n-t- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-n-t-e-n-t-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -r-e-g-i-s-t-r-a-t-i-o-n-I-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-r-e-g-i-s-t-r-a-t-i-o-n-_-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
---
-- - -c-o-n-s-t- -r-e-g-i-s-t-r-a-t-i-o-n-S-t-a-t-u-s- -=- -S-t-r-i-n-g-(--
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-"-)- -|-|- -"-p-e-n-d-i-n-g-"--
-- - -)-;--
---
-- - -c-o-n-s-t- -p-a-y-m-e-n-t-S-t-a-t-u-s- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-y-m-e-n-t-_-s-t-a-t-u-s-"-)- -|-|- -"-p-e-n-d-i-n-g-"-)-;--
-- - -c-o-n-s-t- -p-a-y-m-e-n-t-L-i-n-k- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-y-m-e-n-t-_-l-i-n-k-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -p-a-y-m-e-n-t-N-o-t-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-y-m-e-n-t-_-n-o-t-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -p-a-y-m-e-n-t-C-u-r-r-e-n-c-y- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-y-m-e-n-t-_-c-u-r-r-e-n-c-y-"-)- -|-|- -"-U-S-D-"-)-;--
-- - -c-o-n-s-t- -a-m-o-u-n-t-R-e-c-e-i-v-e-d- -=- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-a-m-o-u-n-t-_-r-e-c-e-i-v-e-d-"-)- -|-|- -0-)-;--
---
-- - -i-f- -(-!-r-e-g-i-s-t-r-a-t-i-o-n-I-d-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -r-e-g-i-s-t-r-a-t-i-o-n- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,- -u-s-e-r-_-i-d-,- -e-m-a-i-l-,- -f-u-l-l-_-n-a-m-e-,- -w-o-r-k-s-h-o-p-_-i-d-"-)--
-- - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)--
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - -i-f- -(-!-r-e-g-i-s-t-r-a-t-i-o-n-)- -r-e-t-u-r-n-;--
---
-- - -i-f- -(-i-n-t-e-n-t- -=-=-=- -"-s-a-v-e-_-s-t-a-t-u-s-e-s-"-)- -{--
-- - - - -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-:- -r-e-g-i-s-t-r-a-t-i-o-n-S-t-a-t-u-s-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -p-a-y-m-e-n-t-S-t-a-t-u-s-,--
-- - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - - - -}-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - - - -a-w-a-i-t- -r-e-v-a-l-i-d-a-t-e-R-e-g-i-s-t-r-a-t-i-o-n-P-a-g-e-s-(-r-e-g-i-s-t-r-a-t-i-o-n-.-w-o-r-k-s-h-o-p-_-i-d-)-;--
-- - - - -r-e-t-u-r-n-;--
-- - -}--
---
-- - -i-f- -(-i-n-t-e-n-t- -=-=-=- -"-s-e-n-d-_-p-a-y-m-e-n-t-_-m-e-s-s-a-g-e-"-)- -{--
-- - - - -c-o-n-s-t- -m-e-s-s-a-g-e-B-o-d-y- -=--
-- - - - - - -p-a-y-m-e-n-t-N-o-t-e- -|-|--
-- - - - - - -(-p-a-y-m-e-n-t-L-i-n-k--
-- - - - - - - - -?- -`-P-a-y-m-e-n-t- -i-n-s-t-r-u-c-t-i-o-n-s- -h-a-v-e- -b-e-e-n- -s-e-n-t-.- -P-l-e-a-s-e- -c-o-m-p-l-e-t-e- -p-a-y-m-e-n-t- -u-s-i-n-g- -t-h-i-s- -l-i-n-k-:- -$-{-p-a-y-m-e-n-t-L-i-n-k-}-`--
-- - - - - - - - -:- -"-P-a-y-m-e-n-t- -i-n-s-t-r-u-c-t-i-o-n-s- -h-a-v-e- -b-e-e-n- -s-e-n-t-.- -P-l-e-a-s-e- -c-o-m-p-l-e-t-e- -p-a-y-m-e-n-t- -a-n-d- -u-p-l-o-a-d- -y-o-u-r- -r-e-c-e-i-p-t-.-"-)-;--
---
-- - - - -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-:- -"-p-e-n-d-i-n-g-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-i-n-s-t-r-u-c-t-i-o-n-s-_-s-e-n-t-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-l-i-n-k-:- -p-a-y-m-e-n-t-L-i-n-k- -|-|- -n-u-l-l-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-n-o-t-e-:- -p-a-y-m-e-n-t-N-o-t-e- -|-|- -n-u-l-l-,--
-- - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - - - -}-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - - - -a-w-a-i-t- -n-o-t-i-f-y-U-s-e-r-(-{--
-- - - - - - -u-s-e-r-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d-,--
-- - - - - - -e-m-a-i-l-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-e-m-a-i-l-,--
-- - - - - - -t-i-t-l-e-:- -"-P-a-y-m-e-n-t- -i-n-s-t-r-u-c-t-i-o-n-s- -s-e-n-t-"-,--
-- - - - - - -b-o-d-y-:- -m-e-s-s-a-g-e-B-o-d-y-,--
-- - - - - - -s-o-u-r-c-e-T-y-p-e-:- -"-p-a-y-m-e-n-t-_-i-n-s-t-r-u-c-t-i-o-n-s-"-,--
-- - - - - - -s-o-u-r-c-e-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
-- - - - -}-)-;--
-- - -}--
---
-- - -i-f- -(-i-n-t-e-n-t- -=-=-=- -"-r-e-c-o-r-d-_-p-a-y-m-e-n-t-_-r-e-c-e-i-v-e-d-"-)- -{--
-- - - - -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-:- -"-p-e-n-d-i-n-g-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-u-n-d-e-r-_-r-e-v-i-e-w-"-,--
-- - - - - - - - -a-m-o-u-n-t-_-r-e-c-e-i-v-e-d-:- -N-u-m-b-e-r-.-i-s-F-i-n-i-t-e-(-a-m-o-u-n-t-R-e-c-e-i-v-e-d-)- -?- -a-m-o-u-n-t-R-e-c-e-i-v-e-d- -:- -0-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-c-u-r-r-e-n-c-y-:- -p-a-y-m-e-n-t-C-u-r-r-e-n-c-y- -|-|- -"-U-S-D-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-n-o-t-e-:- -p-a-y-m-e-n-t-N-o-t-e- -|-|- -n-u-l-l-,--
-- - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - - - -}-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - - - -a-w-a-i-t- -n-o-t-i-f-y-U-s-e-r-(-{--
-- - - - - - -u-s-e-r-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d-,--
-- - - - - - -e-m-a-i-l-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-e-m-a-i-l-,--
-- - - - - - -t-i-t-l-e-:- -"-P-a-y-m-e-n-t- -i-n-f-o-r-m-a-t-i-o-n- -r-e-c-e-i-v-e-d-"-,--
-- - - - - - -b-o-d-y-:- -"-Y-o-u-r- -p-a-y-m-e-n-t- -i-n-f-o-r-m-a-t-i-o-n- -h-a-s- -b-e-e-n- -r-e-c-o-r-d-e-d- -a-n-d- -i-s- -n-o-w- -u-n-d-e-r- -r-e-v-i-e-w-.-"-,--
-- - - - - - -s-o-u-r-c-e-T-y-p-e-:- -"-p-a-y-m-e-n-t-_-r-e-c-e-i-v-e-d-"-,--
-- - - - - - -s-o-u-r-c-e-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
-- - - - -}-)-;--
-- - -}--
---
-- - -i-f- -(-i-n-t-e-n-t- -=-=-=- -"-c-o-n-f-i-r-m-_-p-a-y-m-e-n-t-"-)- -{--
-- - - - -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-:- -"-c-o-n-f-i-r-m-e-d-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-c-o-n-f-i-r-m-e-d-"-,--
-- - - - - - - - -a-m-o-u-n-t-_-r-e-c-e-i-v-e-d-:- -N-u-m-b-e-r-.-i-s-F-i-n-i-t-e-(-a-m-o-u-n-t-R-e-c-e-i-v-e-d-)- -?- -a-m-o-u-n-t-R-e-c-e-i-v-e-d- -:- -0-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-c-u-r-r-e-n-c-y-:- -p-a-y-m-e-n-t-C-u-r-r-e-n-c-y- -|-|- -"-U-S-D-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-n-o-t-e-:- -p-a-y-m-e-n-t-N-o-t-e- -|-|- -n-u-l-l-,--
-- - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - - - -}-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - - - -a-w-a-i-t- -n-o-t-i-f-y-U-s-e-r-(-{--
-- - - - - - -u-s-e-r-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d-,--
-- - - - - - -e-m-a-i-l-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-e-m-a-i-l-,--
-- - - - - - -t-i-t-l-e-:- -"-P-a-y-m-e-n-t- -c-o-n-f-i-r-m-e-d-"-,--
-- - - - - - -b-o-d-y-:- -"-Y-o-u-r- -p-a-y-m-e-n-t- -h-a-s- -b-e-e-n- -c-o-n-f-i-r-m-e-d-.- -Y-o-u-r- -w-o-r-k-s-h-o-p- -a-c-c-e-s-s- -i-s- -n-o-w- -u-n-l-o-c-k-e-d-.-"-,--
-- - - - - - -s-o-u-r-c-e-T-y-p-e-:- -"-p-a-y-m-e-n-t-_-c-o-n-f-i-r-m-e-d-"-,--
-- - - - - - -s-o-u-r-c-e-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
-- - - - -}-)-;--
-- - -}--
---
-- - -i-f- -(-i-n-t-e-n-t- -=-=-=- -"-w-a-i-v-e-_-p-a-y-m-e-n-t-"-)- -{--
-- - - - -a-w-a-i-t- -a-d-m-i-n--
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-:- -"-c-o-n-f-i-r-m-e-d-"-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-w-a-i-v-e-d-"-,--
-- - - - - - - - -a-m-o-u-n-t-_-r-e-c-e-i-v-e-d-:- -0-,--
-- - - - - - - - -p-a-y-m-e-n-t-_-n-o-t-e-:- -p-a-y-m-e-n-t-N-o-t-e- -|-|- -n-u-l-l-,--
-- - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - - - -}-)--
-- - - - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - - - -a-w-a-i-t- -n-o-t-i-f-y-U-s-e-r-(-{--
-- - - - - - -u-s-e-r-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d-,--
-- - - - - - -e-m-a-i-l-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-e-m-a-i-l-,--
-- - - - - - -t-i-t-l-e-:- -"-W-o-r-k-s-h-o-p- -a-c-c-e-s-s- -u-n-l-o-c-k-e-d-"-,--
-- - - - - - -b-o-d-y-:- -"-Y-o-u-r- -p-a-y-m-e-n-t- -h-a-s- -b-e-e-n- -w-a-i-v-e-d-.- -Y-o-u-r- -w-o-r-k-s-h-o-p- -a-c-c-e-s-s- -i-s- -n-o-w- -u-n-l-o-c-k-e-d-.-"-,--
-- - - - - - -s-o-u-r-c-e-T-y-p-e-:- -"-p-a-y-m-e-n-t-_-w-a-i-v-e-d-"-,--
-- - - - - - -s-o-u-r-c-e-I-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
-- - - - -}-)-;--
-- - -}--
---
-- - -a-w-a-i-t- -r-e-v-a-l-i-d-a-t-e-R-e-g-i-s-t-r-a-t-i-o-n-P-a-g-e-s-(-r-e-g-i-s-t-r-a-t-i-o-n-.-w-o-r-k-s-h-o-p-_-i-d-)-;--
--}--
---
--e-x-p-o-r-t- -c-o-n-s-t- -s-e-n-d-P-a-y-m-e-n-t-I-n-s-t-r-u-c-t-i-o-n-s-A-c-t-i-o-n- -=- -h-a-n-d-l-e-R-e-g-i-s-t-r-a-t-i-o-n-M-a-n-a-g-e-m-e-n-t-A-c-t-i-o-n-;--
--e-x-p-o-r-t- -c-o-n-s-t- -u-p-d-a-t-e-W-o-r-k-s-h-o-p-R-e-g-i-s-t-r-a-t-i-o-n-P-a-y-m-e-n-t-A-c-t-i-o-n- -=--
-- - -h-a-n-d-l-e-R-e-g-i-s-t-r-a-t-i-o-n-M-a-n-a-g-e-m-e-n-t-A-c-t-i-o-n-;--
--e-x-p-o-r-t- -c-o-n-s-t- -u-p-d-a-t-e-P-a-y-m-e-n-t-A-c-t-i-o-n- -=- -h-a-n-d-l-e-R-e-g-i-s-t-r-a-t-i-o-n-M-a-n-a-g-e-m-e-n-t-A-c-t-i-o-n-;--
--e-x-p-o-r-t- -c-o-n-s-t- -u-p-d-a-t-e-W-o-r-k-s-h-o-p-R-e-g-i-s-t-r-a-t-i-o-n- -=- -h-a-n-d-l-e-R-e-g-i-s-t-r-a-t-i-o-n-M-a-n-a-g-e-m-e-n-t-A-c-t-i-o-n-;-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+async function notifyUser(input: {
+  userId?: string | null;
+  email?: string | null;
+  title: string;
+  body: string;
+  sourceType: string;
+  sourceId: string;
+}) {
+  const admin = createAdminClient();
+
+  await admin.from("internal_messages").insert({
+    user_id: input.userId || null,
+    recipient_email: input.email || null,
+    title: input.title,
+    body: input.body,
+    source_type: input.sourceType,
+    source_id: input.sourceId,
+  });
+
+  if (!input.email || !process.env.RESEND_API_KEY) return;
+
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: process.env.EMAIL_FROM || "LexData <noreply@lexdataai.com>",
+      to: input.email,
+      subject: input.title,
+      text: input.body,
+    }),
+  });
+}
+
+async function revalidateRegistrationPages(workshopId?: string | null) {
+  const admin = createAdminClient();
+
+  if (workshopId) {
+    const { data: workshop } = await admin
+      .from("workshops")
+      .select("slug")
+      .eq("id", workshopId)
+      .maybeSingle();
+
+    if (workshop?.slug) {
+      revalidatePath(`/workshops/${workshop.slug}`);
+    }
+  }
+
+  revalidatePath("/manager/registrations");
+  revalidatePath("/admin/registrations");
+  revalidatePath("/manager/monitor");
+  revalidatePath("/dashboard/messages");
+  revalidatePath("/dashboard/my-learning");
+  revalidatePath("/my/workshops");
+}
+
+export async function handleRegistrationManagementAction(formData: FormData) {
+  const admin = createAdminClient();
+
+  const intent = String(formData.get("intent") || "").trim();
+  const registrationId = String(formData.get("registration_id") || "").trim();
+
+  const registrationStatus = String(
+    formData.get("registration_status") || "pending"
+  );
+
+  const paymentStatus = String(formData.get("payment_status") || "pending");
+  const paymentLink = String(formData.get("payment_link") || "").trim();
+  const paymentNote = String(formData.get("payment_note") || "").trim();
+  const paymentCurrency = String(formData.get("payment_currency") || "USD");
+  const amountReceived = Number(formData.get("amount_received") || 0);
+
+  if (!registrationId) return;
+
+  const { data: registration } = await admin
+    .from("workshop_registrations")
+    .select("id, user_id, email, full_name, workshop_id")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (!registration) return;
+
+  if (intent === "save_statuses") {
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: registrationStatus,
+        payment_status: paymentStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await revalidateRegistrationPages(registration.workshop_id);
+    return;
+  }
+
+  if (intent === "send_payment_message") {
+    const messageBody =
+      paymentNote ||
+      (paymentLink
+        ? `Payment instructions have been sent. Please complete payment using this link: ${paymentLink}`
+        : "Payment instructions have been sent. Please complete payment and upload your receipt.");
+
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: "pending",
+        payment_status: "instructions_sent",
+        payment_link: paymentLink || null,
+        payment_note: paymentNote || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await notifyUser({
+      userId: registration.user_id,
+      email: registration.email,
+      title: "Payment instructions sent",
+      body: messageBody,
+      sourceType: "payment_instructions",
+      sourceId: registrationId,
+    });
+  }
+
+  if (intent === "record_payment_received") {
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: "pending",
+        payment_status: "under_review",
+        amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
+        payment_currency: paymentCurrency || "USD",
+        payment_note: paymentNote || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await notifyUser({
+      userId: registration.user_id,
+      email: registration.email,
+      title: "Payment information received",
+      body: "Your payment information has been recorded and is now under review.",
+      sourceType: "payment_received",
+      sourceId: registrationId,
+    });
+  }
+
+  if (intent === "confirm_payment") {
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: "confirmed",
+        payment_status: "confirmed",
+        amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
+        payment_currency: paymentCurrency || "USD",
+        payment_note: paymentNote || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await notifyUser({
+      userId: registration.user_id,
+      email: registration.email,
+      title: "Payment confirmed",
+      body: "Your payment has been confirmed. Your workshop access is now unlocked.",
+      sourceType: "payment_confirmed",
+      sourceId: registrationId,
+    });
+  }
+
+  if (intent === "waive_payment") {
+    await admin
+      .from("workshop_registrations")
+      .update({
+        registration_status: "confirmed",
+        payment_status: "waived",
+        amount_received: 0,
+        payment_note: paymentNote || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", registrationId);
+
+    await notifyUser({
+      userId: registration.user_id,
+      email: registration.email,
+      title: "Workshop access unlocked",
+      body: "Your payment has been waived. Your workshop access is now unlocked.",
+      sourceType: "payment_waived",
+      sourceId: registrationId,
+    });
+  }
+
+  await revalidateRegistrationPages(registration.workshop_id);
+}
+
+export const sendPaymentInstructionsAction = handleRegistrationManagementAction;
+export const updateWorkshopRegistrationPaymentAction =
+  handleRegistrationManagementAction;
+export const updatePaymentAction = handleRegistrationManagementAction;
+export const updateWorkshopRegistration = handleRegistrationManagementAction;

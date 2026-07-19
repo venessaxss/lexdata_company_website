@@ -1,90 +1,90 @@
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--i-m-p-o-r-t- -{- -c-o-n-f-i-r-m-R-e-g-i-s-t-r-a-t-i-o-n- -}- -f-r-o-m- -"-@-/-a-p-p-/-a-d-m-i-n-/-r-e-g-i-s-t-r-a-t-i-o-n-s-/-a-c-t-i-o-n-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -M-a-n-a-g-e-r-R-e-g-i-s-t-r-a-t-i-o-n-s-P-a-g-e-(-)- -{-
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -r-e-g-i-s-t-r-a-t-i-o-n-s-,- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-`-
-- - - - - - -i-d-,-
-- - - - - - -f-u-l-l-_-n-a-m-e-,-
-- - - - - - -e-m-a-i-l-,-
-- - - - - - -w-o-r-k-s-h-o-p-_-i-d-,-
-- - - - - - -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-,-
-- - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-,-
-- - - - - - -r-e-c-e-i-p-t-_-u-r-l-,-
-- - - - - - -w-o-r-k-s-h-o-p-s- -(-
-- - - - - - - - -t-i-t-l-e-,-
-- - - - - - - - -s-l-u-g-
-- - - - - - -)-
-- - - - -`-)-
-- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -c-o-n-s-o-l-e-.-e-r-r-o-r-(-"-r-e-g-i-s-t-r-a-t-i-o-n-s- -e-r-r-o-r-:-"-,- -e-r-r-o-r-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -l-i-s-t- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s- -?-?- -[-]-;-
--
-- - -a-s-y-n-c- -f-u-n-c-t-i-o-n- -h-a-n-d-l-e-C-o-n-f-i-r-m-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - - - -"-u-s-e- -s-e-r-v-e-r-"-;-
-- - - - -c-o-n-s-t- -i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-d-"-)-)-;-
-- - - - -a-w-a-i-t- -c-o-n-f-i-r-m-R-e-g-i-s-t-r-a-t-i-o-n-(-i-d-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-p---6-"->-
-- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -m-b---6-"->-
-- - - - - - - - -M-a-n-a-g-e-r- -R-e-g-i-s-t-r-a-t-i-o-n-s-
-- - - - - - -<-/-h-1->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-s-p-a-c-e---y---3-"->-
-- - - - - - - - -{-l-i-s-t-.-m-a-p-(-(-r-:- -a-n-y-)- -=->- -(-
-- - - - - - - - - - -<-d-i-v-
-- - - - - - - - - - - - -k-e-y-=-{-r-.-i-d-}-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---w-h-i-t-e- -p---4- -s-h-a-d-o-w- -f-l-e-x- -j-u-s-t-i-f-y---b-e-t-w-e-e-n-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -{-/-*- -L-E-F-T- -S-I-D-E- -*-/-}-
-- - - - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---b-l-a-c-k-"->-{-r-.-f-u-l-l-_-n-a-m-e-}-<-/-p->-
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---5-0-0-"->-{-r-.-e-m-a-i-l-}-<-/-p->-
--
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -m-t---2-"->-
-- - - - - - - - - - - - - - - - -{-r-.-w-o-r-k-s-h-o-p-s-?-.-t-i-t-l-e- -?-?- -"-U-n-k-n-o-w-n- -W-o-r-k-s-h-o-p-"-}-
-- - - - - - - - - - - - - - -<-/-p->-
--
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -m-t---2- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - - - - - - - -{-r-.-r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-}- -/- -{-r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s-}-
-- - - - - - - - - - - - - - -<-/-p->-
--
-- - - - - - - - - - - - - - -{-r-.-r-e-c-e-i-p-t-_-u-r-l- -?- -(-
-- - - - - - - - - - - - - - - - -<-a-
-- - - - - - - - - - - - - - - - - - -h-r-e-f-=-{-r-.-r-e-c-e-i-p-t-_-u-r-l-}-
-- - - - - - - - - - - - - - - - - - -t-a-r-g-e-t-=-"-_-b-l-a-n-k-"-
-- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -t-e-x-t---b-l-u-e---6-0-0- -u-n-d-e-r-l-i-n-e-"-
-- - - - - - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - - - - - -V-i-e-w- -R-e-c-e-i-p-t-
-- - - - - - - - - - - - - - - - -<-/-a->-
-- - - - - - - - - - - - - - -)- -:- -n-u-l-l-}-
-- - - - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - - - -{-/-*- -R-I-G-H-T- -S-I-D-E- -*-/-}-
-- - - - - - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-h-a-n-d-l-e-C-o-n-f-i-r-m-}->-
-- - - - - - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-i-d-"- -v-a-l-u-e-=-{-r-.-i-d-}- -/->-
-- - - - - - - - - - - - - - -<-b-u-t-t-o-n-
-- - - - - - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"-
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-b-g---g-r-e-e-n---6-0-0- -t-e-x-t---w-h-i-t-e- -p-x---3- -p-y---2- -r-o-u-n-d-e-d---l-g- -t-e-x-t---s-m-"-
-- - - - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - - - -C-o-n-f-i-r-m-
-- - - - - - - - - - - - - - -<-/-b-u-t-t-o-n->-
-- - - - - - - - - - - - -<-/-f-o-r-m->-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -)-)-}-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+export const revalidate = 0;
+import { createAdminClient } from "@/lib/supabase/admin";
+import { confirmRegistration } from "@/app/admin/registrations/actions";
+
+export const dynamic = "force-dynamic";
+
+export default async function ManagerRegistrationsPage() {
+  const admin = createAdminClient();
+
+  const { data: registrations, error } = await admin
+    .from("workshop_registrations")
+    .select(`
+      id,
+      full_name,
+      email,
+      workshop_id,
+      registration_status,
+      payment_status,
+      receipt_url,
+      workshops (
+        title,
+        slug
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("registrations error:", error);
+  }
+
+  const list = registrations ?? [];
+
+  async function handleConfirm(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id"));
+    await confirmRegistration(id);
+  }
+
+  return (
+    <main className="p-6">
+      <h1 className="text-xl font-black mb-6">
+        Manager Registrations
+      </h1>
+
+      <div className="space-y-3">
+        {list.map((r: any) => (
+          <div
+            key={r.id}
+            className="rounded-xl bg-white p-4 shadow flex justify-between"
+          >
+            {/* LEFT SIDE */}
+            <div>
+              <p className="font-black">{r.full_name}</p>
+              <p className="text-sm text-slate-500">{r.email}</p>
+
+              <p className="text-sm font-bold mt-2">
+                {r.workshops?.title ?? "Unknown Workshop"}
+              </p>
+
+              <p className="text-xs mt-2 text-slate-600">
+                {r.registration_status} / {r.payment_status}
+              </p>
+
+              {r.receipt_url ? (
+                <a
+                  href={r.receipt_url}
+                  target="_blank"
+                  className="text-xs text-blue-600 underline"
+                >
+                  View Receipt
+                </a>
+              ) : null}
+            </div>
+
+            {/* RIGHT SIDE */}
+            <form action={handleConfirm}>
+              <input type="hidden" name="id" value={r.id} />
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm"
+              >
+                Confirm
+              </button>
+            </form>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}

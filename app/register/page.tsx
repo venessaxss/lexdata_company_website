@@ -1,5 +1,5 @@
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -R-e-g-i-s-t-e-r-P-a-g-e-(-)- -{-
-- - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
--}-
+import { redirect } from "next/navigation";
+
+export default function RegisterPage() {
+  redirect("/login");
+}

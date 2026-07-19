@@ -1,64 +1,175 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--f-u-n-c-t-i-o-n- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
--}-
--
--f-u-n-c-t-i-o-n- -s-a-f-e-N-e-x-t-P-a-t-h-(-v-a-l-u-e-:- -s-t-r-i-n-g-)- -{-
-- - -i-f- -(-!-v-a-l-u-e-)- -r-e-t-u-r-n- -"-/-d-a-s-h-b-o-a-r-d-"-;-
-- - -i-f- -(-!-v-a-l-u-e-.-s-t-a-r-t-s-W-i-t-h-(-"-/-"-)-)- -r-e-t-u-r-n- -"-/-d-a-s-h-b-o-a-r-d-"-;-
-- - -i-f- -(-v-a-l-u-e-.-s-t-a-r-t-s-W-i-t-h-(-"-/-/-"-)-)- -r-e-t-u-r-n- -"-/-d-a-s-h-b-o-a-r-d-"-;-
-- - -r-e-t-u-r-n- -v-a-l-u-e-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -l-o-g-i-n-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -e-m-a-i-l- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-e-m-a-i-l-"-)-;-
-- - -c-o-n-s-t- -p-a-s-s-w-o-r-d- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-p-a-s-s-w-o-r-d-"-)-;-
-- - -c-o-n-s-t- -n-e-x-t- -=- -s-a-f-e-N-e-x-t-P-a-t-h-(-r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-n-e-x-t-"-)-)-;-
--
-- - -i-f- -(-!-e-m-a-i-l- -|-|- -!-p-a-s-s-w-o-r-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-l-o-g-i-n-?-e-r-r-o-r-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-"-P-l-e-a-s-e- -e-n-t-e-r- -y-o-u-r- -e-m-a-i-l- -a-n-d- -p-a-s-s-w-o-r-d-.-"-)-}-&-n-e-x-t-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-n-e-x-t-)-}-`-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-s-i-g-n-I-n-W-i-t-h-P-a-s-s-w-o-r-d-(-{-
-- - - - -e-m-a-i-l-,-
-- - - - -p-a-s-s-w-o-r-d-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-l-o-g-i-n-?-e-r-r-o-r-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-&-n-e-x-t-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-n-e-x-t-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-,- -"-l-a-y-o-u-t-"-)-;-
-- - -r-e-d-i-r-e-c-t-(-n-e-x-t-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -s-i-g-n-u-p-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -e-m-a-i-l- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-e-m-a-i-l-"-)-;-
-- - -c-o-n-s-t- -p-a-s-s-w-o-r-d- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-p-a-s-s-w-o-r-d-"-)-;-
-- - -c-o-n-s-t- -n-e-x-t- -=- -s-a-f-e-N-e-x-t-P-a-t-h-(-r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-n-e-x-t-"-)- -|-|- -"-/-d-a-s-h-b-o-a-r-d-"-)-;-
--
-- - -i-f- -(-!-e-m-a-i-l- -|-|- -!-p-a-s-s-w-o-r-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-l-o-g-i-n-?-e-r-r-o-r-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-"-P-l-e-a-s-e- -e-n-t-e-r- -y-o-u-r- -e-m-a-i-l- -a-n-d- -p-a-s-s-w-o-r-d-.-"-)-}-&-n-e-x-t-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-n-e-x-t-)-}-`-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-s-i-g-n-U-p-(-{-
-- - - - -e-m-a-i-l-,-
-- - - - -p-a-s-s-w-o-r-d-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-l-o-g-i-n-?-e-r-r-o-r-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-&-n-e-x-t-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-n-e-x-t-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-,- -"-l-a-y-o-u-t-"-)-;-
-- - -r-e-d-i-r-e-c-t-(-n-e-x-t-)-;-
--}-
+"use server";
+
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+function normalizeEmail(value: FormDataEntryValue | null) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+async function getOrigin() {
+  const headerStore = await headers();
+  return (
+    headerStore.get("origin") ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "http://localhost:3000"
+  );
+}
+
+export async function loginWithPassword(formData: FormData) {
+  const email = normalizeEmail(formData.get("email"));
+  const password = String(formData.get("password") ?? "");
+
+  const requestedRedirect = String(formData.get("redirect") ?? "").trim();
+  // Only allow internal paths to avoid open redirects.
+  const redirectTo =
+    requestedRedirect.startsWith("/") && !requestedRedirect.startsWith("//")
+      ? requestedRedirect
+      : "/dashboard";
+
+  if (!email || !password) {
+    redirect("/login?message=Please enter both email and password");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    redirect(`/login?message=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect(redirectTo);
+}
+
+export async function registerWithPassword(formData: FormData) {
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const email = normalizeEmail(formData.get("email"));
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirm_password") ?? "");
+
+  if (!email || !password) {
+    redirect("/register?message=Please enter email and password");
+  }
+
+  if (password.length < 8) {
+    redirect("/register?message=Password must be at least 8 characters");
+  }
+
+  if (password !== confirmPassword) {
+    redirect("/register?message=Passwords do not match");
+  }
+
+  const origin = await getOrigin();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback?next=/dashboard`,
+      data: {
+        full_name: fullName || email.split("@")[0]
+      }
+    }
+  });
+
+  if (error) {
+    redirect(`/register?message=${encodeURIComponent(error.message)}`);
+  }
+
+  // If Supabase email confirmation is OFF, a session is returned and the user can enter directly.
+  if (data.session) {
+    redirect("/dashboard");
+  }
+
+  // If email confirmation is ON, Supabase still sends an email. Turn it OFF to avoid email limits during development.
+  redirect(
+    "/login?message=Account created. If email confirmation is enabled, confirm your email before logging in."
+  );
+}
+
+export async function loginWithGoogle() {
+  const origin = await getOrigin();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${origin}/auth/callback?next=/dashboard`
+    }
+  });
+
+  if (error) {
+    redirect(`/login?message=${encodeURIComponent(error.message)}`);
+  }
+
+  if (data.url) {
+    redirect(data.url);
+  }
+
+  redirect("/login?message=Could not start Google login");
+}
+
+export async function loginWithGithub() {
+  const origin = await getOrigin();
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: `${origin}/auth/callback?next=/dashboard`
+    }
+  });
+
+  if (error) {
+    redirect(`/login?message=${encodeURIComponent(error.message)}`);
+  }
+
+  if (data.url) {
+    redirect(data.url);
+  }
+
+  redirect("/login?message=Could not start GitHub login");
+}
+
+// Keep this as backup only. Magic links are useful, but they hit Supabase email limits quickly.
+export async function loginWithMagicLink(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  if (!email) {
+    redirect("/login?message=Please enter your email");
+  }
+
+  const headerStore = await headers();
+
+  const origin =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    headerStore.get("origin") ||
+    "http://localhost:3000";
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: true,
+      emailRedirectTo: `${origin}/auth/callback?next=/dashboard`,
+    },
+  });
+
+  if (error) {
+    redirect(`/login?message=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect("/login?message=Check your email for the magic login link");
+}
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
+}

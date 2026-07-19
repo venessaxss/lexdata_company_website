@@ -1,153 +1,153 @@
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-A-d-m-i-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;--
---
--c-o-n-s-t- -a-d-m-i-n-C-a-r-d-s- -=- -[--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-C-o-u-r-s-e-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:- -"-C-r-e-a-t-e-,- -e-d-i-t-,- -p-u-b-l-i-s-h-,- -a-n-d- -m-a-n-a-g-e- -c-o-u-r-s-e- -c-o-n-t-e-n-t-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-c-o-u-r-s-e-s-"-,--
-- - -}-,--
-- - -{--
-- - -t-i-t-l-e-:- -"-C-o-u-r-s-e- -E-n-r-o-l-l-m-e-n-t-s-"-,--
-- - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - -"-V-i-e-w- -c-o-u-r-s-e- -e-n-r-o-l-l-m-e-n-t- -r-e-q-u-e-s-t-s-,- -a-p-p-r-o-v-e- -c-o-u-r-s-e- -a-c-c-e-s-s-,- -c-h-e-c-k- -p-a-y-m-e-n-t- -s-t-a-t-u-s-,- -a-n-d- -m-a-n-a-g-e- -s-t-u-d-e-n-t- -p-a-r-t-i-c-i-p-a-t-i-o-n-.-"-,--
-- - -h-r-e-f-:- -"-/-a-d-m-i-n-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-,--
--}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-W-o-r-k-s-h-o-p- -R-e-g-i-s-t-r-a-t-i-o-n-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-V-i-e-w- -r-e-g-i-s-t-r-a-t-i-o-n- -r-e-c-o-r-d-s- -s-u-b-m-i-t-t-e-d- -f-r-o-m- -p-u-b-l-i-c- -w-o-r-k-s-h-o-p- -p-a-g-e-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-,--
-- - -}-,--
-- - -{--
-- - -t-i-t-l-e-:- -"-Q-&-A- -H-e-l-p- -D-e-s-k-"-,--
-- - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - -"-V-i-e-w- -a-l-l- -p-a-r-t-i-c-i-p-a-n-t- -Q-&-A- -r-e-q-u-e-s-t-s-,- -a-n-s-w-e-r- -t-h-e-m-,- -c-l-o-s-e- -r-e-s-o-l-v-e-d- -i-s-s-u-e-s-,- -a-n-d- -m-a-n-a-g-e- -s-u-p-p-o-r-t- -c-o-m-m-u-n-i-c-a-t-i-o-n-.-"-,--
-- - -h-r-e-f-:- -"-/-a-d-m-i-n-/-l-i-v-e---h-e-l-p-"-,--
-- - -}-,--
---
-- - -{--
-- - - - -t-i-t-l-e-:- -"-W-o-r-k-s-h-o-p-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-C-r-e-a-t-e-,- -e-d-i-t-,- -p-u-b-l-i-s-h-,- -d-e-l-e-t-e-,- -a-n-d- -m-a-n-a-g-e- -w-o-r-k-s-h-o-p-s-,- -s-e-s-s-i-o-n-s-,- -s-u-b-s-e-s-s-i-o-n-s-,- -l-e-v-e-l-s-,- -m-a-t-e-r-i-a-l-s-,- -Y-o-u-T-u-b-e- -l-i-n-k-s-,- -a-n-d- -J-i-a-n-y-i-n-g- -l-i-n-k-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-w-o-r-k-s-h-o-p-s-"-,--
-- - -}-,--
-- - -{--
-- - -t-i-t-l-e-:- -"-M-e-m-b-e-r- -P-r-o-f-i-l-e-s-"-,--
-- - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - -"-V-i-e-w- -m-e-m-b-e-r- -p-r-o-f-i-l-e- -i-n-f-o-r-m-a-t-i-o-n- -i-n-c-l-u-d-i-n-g- -i-n-s-t-i-t-u-t-i-o-n-,- -p-r-o-f-e-s-s-i-o-n-,- -c-o-u-n-t-r-y-,- -d-e-g-r-e-e-,- -a-n-d- -r-e-s-e-a-r-c-h- -i-n-t-e-r-e-s-t-s-.-"-,--
-- - -h-r-e-f-:- -"-/-a-d-m-i-n-/-m-e-m-b-e-r---p-r-o-f-i-l-e-s-"-,--
--}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-S-e-n-d- -M-e-s-s-a-g-e-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-S-e-n-d- -m-e-s-s-a-g-e-s- -t-o- -a-l-l- -u-s-e-r-s- -o-r- -s-e-l-e-c-t-e-d- -r-o-l-e- -g-r-o-u-p-s- -s-u-c-h- -a-s- -m-e-m-b-e-r-s-,- -s-p-e-a-k-e-r-s-,- -m-a-n-a-g-e-r-s-,- -s-t-a-f-f-,- -o-r- -a-d-m-i-n-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-/-s-e-n-d-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-M-e-s-s-a-g-e- -B-o-x-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-O-p-e-n- -y-o-u-r- -m-e-s-s-a-g-e- -b-o-x- -t-o- -v-i-e-w- -r-e-c-e-i-v-e-d- -m-e-s-s-a-g-e-s-,- -w-o-r-k-s-h-o-p- -n-o-t-i-c-e-s-,- -p-a-y-m-e-n-t- -u-p-d-a-t-e-s-,- -a-n-d- -t-e-a-m- -m-e-s-s-a-g-e-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-H-o-m-e-p-a-g-e- -H-e-r-o-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-E-d-i-t- -h-o-m-e-p-a-g-e- -h-e-r-o- -b-a-c-k-g-r-o-u-n-d- -i-m-a-g-e-s-,- -u-p-l-o-a-d-e-d- -v-i-d-e-o-s-,- -Y-o-u-T-u-b-e- -h-e-r-o- -v-i-d-e-o-s-,- -b-u-t-t-o-n-s-,- -a-n-d- -c-a-r-o-u-s-e-l- -s-l-i-d-e-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-h-e-r-o-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-H-o-m-e-p-a-g-e- -V-i-d-e-o- -S-p-o-t-l-i-g-h-t-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-M-a-n-a-g-e-d- -t-h-r-o-u-g-h- -H-o-m-e-p-a-g-e- -H-e-r-o-.- -A-c-t-i-v-e- -v-i-d-e-o- -s-l-i-d-e-s- -c-a-n- -a-p-p-e-a-r- -a-s- -t-h-e- -s-e-p-a-r-a-t-e- -a-u-t-o-p-l-a-y- -h-o-m-e-p-a-g-e- -v-i-d-e-o- -s-e-c-t-i-o-n-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-h-e-r-o-"-,--
-- - -}-,--
-- - -{--
-- - -t-i-t-l-e-:- -"-N-o-t-i-c-e- -C-e-n-t-e-r-"-,--
-- - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - -"-P-u-b-l-i-s-h- -w-e-b-s-i-t-e- -n-o-t-i-c-e-s-,- -a-n-n-o-u-n-c-e-m-e-n-t-s-,- -m-e-d-i-a- -r-e-l-e-a-s-e-s-,- -i-m-a-g-e-s-,- -a-u-d-i-o-,- -v-i-d-e-o-s-,- -a-n-d- -p-u-b-l-i-c- -u-p-d-a-t-e-s-.-"-,--
-- - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-,--
--}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-L-a-t-e-s-t- -W-o-r-k-s-h-o-p- -V-i-d-e-o-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-M-a-n-a-g-e-d- -t-h-r-o-u-g-h- -W-o-r-k-s-h-o-p-s-.- -A-d-d- -s-e-s-s-i-o-n- -v-i-d-e-o-s- -o-r- -Y-o-u-T-u-b-e-/-J-i-a-n-y-i-n-g- -l-i-n-k-s- -t-o- -s-h-o-w- -t-h-e-m- -i-n- -t-h-e- -h-o-m-e-p-a-g-e- -l-a-t-e-s-t- -v-i-d-e-o- -s-e-c-t-i-o-n-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-w-o-r-k-s-h-o-p-s-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-T-e-a-m- -M-a-n-a-g-e-m-e-n-t-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-E-d-i-t- -t-e-a-m- -m-e-m-b-e-r-s-,- -p-r-o-f-i-l-e- -p-h-o-t-o-s-,- -b-i-o-s-,- -r-o-l-e-s-,- -a-n-d- -v-i-s-i-b-i-l-i-t-y-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-t-e-a-m-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-U-s-e-r-s- -a-n-d- -R-o-l-e-s-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:- -"-A-s-s-i-g-n- -m-e-m-b-e-r-,- -s-p-e-a-k-e-r-,- -m-a-n-a-g-e-r-,- -s-t-a-f-f-,- -a-n-d- -a-d-m-i-n- -r-o-l-e-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-u-s-e-r-s-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-M-e-d-i-a- -L-i-b-r-a-r-y-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:- -"-M-a-n-a-g-e- -u-p-l-o-a-d-e-d- -i-m-a-g-e-s-,- -b-a-n-n-e-r-s-,- -a-n-d- -w-e-b-s-i-t-e- -m-e-d-i-a-.-"-,--
-- - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-m-e-d-i-a-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-M-y- -D-a-s-h-b-o-a-r-d-"-,--
-- - - - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - - - -"-O-p-e-n- -y-o-u-r- -p-e-r-s-o-n-a-l- -d-a-s-h-b-o-a-r-d- -f-o-r- -l-e-a-r-n-i-n-g-,- -m-e-s-s-a-g-e-s-,- -p-a-s-s-w-o-r-d- -s-e-t-t-i-n-g-s-,- -a-n-d- -a-c-c-o-u-n-t- -t-o-o-l-s-.-"-,--
-- - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-"-,--
-- - -}-,--
-- - -{--
-- - -t-i-t-l-e-:- -"-O-v-e-r-a-l-l- -M-o-n-i-t-o-r-i-n-g- -B-o-a-r-d-"-,--
-- - -d-e-s-c-r-i-p-t-i-o-n-:--
-- - - - -"-V-i-e-w- -r-e-g-i-s-t-r-a-t-i-o-n- -s-t-a-t-i-s-t-i-c-s-,- -p-a-y-m-e-n-t- -s-t-a-t-i-s-t-i-c-s-,- -w-e-b-s-i-t-e- -v-i-s-i-t- -r-e-c-o-r-d-s-,- -w-o-r-k-s-h-o-p- -s-t-a-t-u-s-,- -c-o-u-r-s-e- -s-t-a-t-u-s-,- -a-n-d- -u-s-e-r- -a-c-t-i-v-i-t-y-.-"-,--
-- - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-m-o-n-i-t-o-r-"-,--
--}-,--
--]-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -A-d-m-i-n-P-a-g-e-(-)- -{--
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l- -p-x---4- -p-y---1-0-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0-"->--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---s-l-a-t-e---5-0-0-"->--
-- - - - - - - - - - -A-d-m-i-n- -D-a-s-h-b-o-a-r-d--
-- - - - - - - - -<-/-p->--
---
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - -W-e-b-s-i-t-e- -M-a-n-a-g-e-m-e-n-t--
-- - - - - - - - -<-/-h-1->--
---
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---2-x-l- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - -M-a-n-a-g-e- -L-e-x-D-a-t-a- -c-o-u-r-s-e-s-,- -w-o-r-k-s-h-o-p-s-,- -h-o-m-e-p-a-g-e- -h-e-r-o- -s-l-i-d-e-s-,- -h-o-m-e-p-a-g-e--
-- - - - - - - - - - -v-i-d-e-o- -s-e-c-t-i-o-n-s-,- -t-e-a-m- -m-e-m-b-e-r-s-,- -u-s-e-r-s-,- -r-o-l-e-s-,- -m-e-s-s-a-g-e-s-,- -a-n-d- -u-p-l-o-a-d-e-d--
-- - - - - - - - - - -m-e-d-i-a- -f-r-o-m- -o-n-e- -p-l-a-c-e-.--
-- - - - - - - - -<-/-p->--
-- - - - - - -<-/-d-i-v->--
---
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---6- -m-d-:-g-r-i-d---c-o-l-s---2- -l-g-:-g-r-i-d---c-o-l-s---3-"->--
-- - - - - - - - -{-a-d-m-i-n-C-a-r-d-s-.-m-a-p-(-(-c-a-r-d-)- -=->- -(--
-- - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - -k-e-y-=-{-`-$-{-c-a-r-d-.-t-i-t-l-e-}---$-{-c-a-r-d-.-h-r-e-f-}-`-}--
-- - - - - - - - - - - - -h-r-e-f-=-{-c-a-r-d-.-h-r-e-f-}--
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---7- -s-h-a-d-o-w---s-m- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---x-l-"--
-- - - - - - - - - - ->--
-- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - - - -{-c-a-r-d-.-t-i-t-l-e-}--
-- - - - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -l-e-a-d-i-n-g---7- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - - - -{-c-a-r-d-.-d-e-s-c-r-i-p-t-i-o-n-}--
-- - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -i-n-l-i-n-e---f-l-e-x- -r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---4- -p-y---2- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---w-h-i-t-e-"->--
-- - - - - - - - - - - - - - -O-p-e-n--
-- - - - - - - - - - - - -<-/-s-p-a-n->--
-- - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - -)-)-}--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-m-a-i-n->--
-- - -)-;--
--}-
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+import Link from "next/link";
+import { requireAdmin } from "@/lib/auth";
+
+const adminCards = [
+  {
+    title: "Courses",
+    description: "Create, edit, publish, and manage course content.",
+    href: "/admin/courses",
+  },
+  {
+  title: "Course Enrollments",
+  description:
+    "View course enrollment requests, approve course access, check payment status, and manage student participation.",
+  href: "/admin/course-enrollments",
+},
+  {
+    title: "Workshop Registrations",
+    description:
+      "View registration records submitted from public workshop pages.",
+    href: "/admin/registrations",
+  },
+  {
+  title: "Q&A Help Desk",
+  description:
+    "View all participant Q&A requests, answer them, close resolved issues, and manage support communication.",
+  href: "/admin/live-help",
+  },
+
+  {
+    title: "Workshops",
+    description:
+      "Create, edit, publish, delete, and manage workshops, sessions, subsessions, levels, materials, YouTube links, and Jianying links.",
+    href: "/admin/workshops",
+  },
+  {
+  title: "Member Profiles",
+  description:
+    "View member profile information including institution, profession, country, degree, and research interests.",
+  href: "/admin/member-profiles",
+},
+  {
+    title: "Send Messages",
+    description:
+      "Send messages to all users or selected role groups such as members, speakers, managers, staff, or admins.",
+    href: "/dashboard/messages/send",
+  },
+  {
+    title: "Message Box",
+    description:
+      "Open your message box to view received messages, workshop notices, payment updates, and team messages.",
+    href: "/dashboard/messages",
+  },
+  {
+    title: "Homepage Hero",
+    description:
+      "Edit homepage hero background images, uploaded videos, YouTube hero videos, buttons, and carousel slides.",
+    href: "/admin/hero",
+  },
+  {
+    title: "Homepage Video Spotlight",
+    description:
+      "Managed through Homepage Hero. Active video slides can appear as the separate autoplay homepage video section.",
+    href: "/admin/hero",
+  },
+  {
+  title: "Notice Center",
+  description:
+    "Publish website notices, announcements, media releases, images, audio, videos, and public updates.",
+  href: "/manager/notices",
+},
+  {
+    title: "Latest Workshop Videos",
+    description:
+      "Managed through Workshops. Add session videos or YouTube/Jianying links to show them in the homepage latest video section.",
+    href: "/admin/workshops",
+  },
+  {
+    title: "Team Management",
+    description:
+      "Edit team members, profile photos, bios, roles, and visibility.",
+    href: "/admin/team",
+  },
+  {
+    title: "Users and Roles",
+    description: "Assign member, speaker, manager, staff, and admin roles.",
+    href: "/admin/users",
+  },
+  {
+    title: "Media Library",
+    description: "Manage uploaded images, banners, and website media.",
+    href: "/admin/media",
+  },
+  {
+    title: "My Dashboard",
+    description:
+      "Open your personal dashboard for learning, messages, password settings, and account tools.",
+    href: "/dashboard",
+  },
+  {
+  title: "Overall Monitoring Board",
+  description:
+    "View registration statistics, payment statistics, website visit records, workshop status, course status, and user activity.",
+  href: "/manager/monitor",
+},
+];
+
+export default async function AdminPage() {
+  await requireAdmin();
+
+  return (
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <div className="mb-10">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+          Admin Dashboard
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950">
+          Website Management
+        </h1>
+
+        <p className="mt-4 max-w-2xl text-slate-600">
+          Manage LexData courses, workshops, homepage hero slides, homepage
+          video sections, team members, users, roles, messages, and uploaded
+          media from one place.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {adminCards.map((card) => (
+          <Link
+            key={`${card.title}-${card.href}`}
+            href={card.href}
+            className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+          >
+            <h2 className="text-xl font-black text-slate-950">
+              {card.title}
+            </h2>
+
+            <p className="mt-3 leading-7 text-slate-600">
+              {card.description}
+            </p>
+
+            <span className="mt-6 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
+              Open
+            </span>
+          </Link>
+        ))}
+      </div>
+    </main>
+  );
+}

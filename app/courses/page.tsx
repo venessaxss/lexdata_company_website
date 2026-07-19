@@ -1,38 +1,37 @@
--i-m-p-o-r-t- -C-o-u-r-s-e-C-a-r-d- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-C-o-u-r-s-e-C-a-r-d-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -C-o-u-r-s-e-s-P-a-g-e-(-{- -s-e-a-r-c-h-P-a-r-a-m-s- -}-:- -{- -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -q-?-:- -s-t-r-i-n-g- -}->- -}-)- -{-
-- - -c-o-n-s-t- -p-a-r-a-m-s- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
-- - -c-o-n-s-t- -q- -=- -p-a-r-a-m-s-.-q-?-.-t-r-i-m-(-)- -?-?- -"-"-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -l-e-t- -q-u-e-r-y- -=- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-s-l-u-g-,-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-,-l-e-v-e-l-,-l-a-n-g-u-a-g-e-,-c-o-v-e-r-_-u-r-l-,-c-a-t-e-g-o-r-i-e-s-(-n-a-m-e-)-"-)-
-- - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
-- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-;-
--
-- - -i-f- -(-q-)- -q-u-e-r-y- -=- -q-u-e-r-y-.-i-l-i-k-e-(-"-t-i-t-l-e-"-,- -`-%-$-{-q-}-%-`-)-;-
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -c-o-u-r-s-e-s- -}- -=- -a-w-a-i-t- -q-u-e-r-y-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-2-"->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e- -i-n-l-i-n-e---b-l-o-c-k-"->-L-e-x-D-a-t-a- -l-e-a-r-n-i-n-g- -p-l-a-t-f-o-r-m-<-/-p->-
-- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->-C-o-u-r-s-e- -c-a-t-a-l-o-g-<-/-h-1->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---2-x-l- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - -B-r-o-w-s-e- -p-u-b-l-i-s-h-e-d- -L-e-x-D-a-t-a- -c-o-u-r-s-e-s- -a-n-d- -w-o-r-k-s-h-o-p-s- -i-n- -P-y-t-h-o-n-,- -c-o-r-p-u-s- -d-e-v-e-l-o-p-m-e-n-t-,- -N-L-P-,- -s-t-a-t-i-s-t-i-c-s-,- -v-i-s-u-a-l-i-z-a-t-i-o-n-,- -a-n-d- -r-e-s-e-a-r-c-h- -m-e-t-h-o-d-s-.-
-- - - - - - -<-/-p->-
--
-- - - - - - -<-f-o-r-m- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -f-l-e-x- -g-a-p---3-"->-
-- - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-q-"- -d-e-f-a-u-l-t-V-a-l-u-e-=-{-q-}- -c-l-a-s-s-N-a-m-e-=-"-i-n-p-u-t- -m-a-x---w---m-d-"- -p-l-a-c-e-h-o-l-d-e-r-=-"-S-e-a-r-c-h- -c-o-u-r-s-e- -t-i-t-l-e-.-.-.-"- -/->-
-- - - - - - - - -<-b-u-t-t-o-n- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y-"->-S-e-a-r-c-h-<-/-b-u-t-t-o-n->-
-- - - - - - -<-/-f-o-r-m->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -g-r-i-d- -g-a-p---6- -m-d-:-g-r-i-d---c-o-l-s---3-"->-
-- - - - - - - - -{-(-c-o-u-r-s-e-s- -?-?- -[-]-)-.-m-a-p-(-(-c-o-u-r-s-e-:- -a-n-y-)- -=->- -<-C-o-u-r-s-e-C-a-r-d- -k-e-y-=-{-c-o-u-r-s-e-.-i-d-}- -c-o-u-r-s-e-=-{-c-o-u-r-s-e-}- -/->-)-}-
-- - - - - - -<-/-d-i-v->-
-- - - - - - -{-(-!-c-o-u-r-s-e-s- -|-|- -c-o-u-r-s-e-s-.-l-e-n-g-t-h- -=-=-=- -0-)- -?- -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -t-e-x-t---s-l-a-t-e---6-0-0-"->-N-o- -c-o-u-r-s-e-s- -f-o-u-n-d-.-<-/-p->- -:- -n-u-l-l-}-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import CourseCard from "@/components/CourseCard";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function CoursesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const params = await searchParams;
+  const q = params.q?.trim() ?? "";
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("courses")
+    .select("id,title,slug,short_description,level,language,cover_url,categories(name)")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (q) query = query.ilike("title", `%${q}%`);
+  const { data: courses } = await query;
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <p className="badge inline-block">LexData learning platform</p>
+      <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">Course catalog</h1>
+      <p className="mt-4 max-w-2xl text-slate-600">
+        Browse published LexData courses and workshops in Python, corpus development, NLP, statistics, visualization, and research methods.
+      </p>
+
+      <form className="mt-8 flex gap-3">
+        <input name="q" defaultValue={q} className="input max-w-md" placeholder="Search course title..." />
+        <button className="btn-primary">Search</button>
+      </form>
+
+      <div className="mt-8 grid gap-6 md:grid-cols-3">
+        {(courses ?? []).map((course: any) => <CourseCard key={course.id} course={course} />)}
+      </div>
+      {(!courses || courses.length === 0) ? <p className="mt-8 text-slate-600">No courses found.</p> : null}
+    </section>
+  );
+}

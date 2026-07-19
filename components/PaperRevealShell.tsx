@@ -1,130 +1,130 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--i-m-p-o-r-t- -{- -u-s-e-E-f-f-e-c-t-,- -t-y-p-e- -R-e-a-c-t-N-o-d-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-a-p-e-r-R-e-v-e-a-l-S-h-e-l-l-(-{- -c-h-i-l-d-r-e-n- -}-:- -{- -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-N-o-d-e- -}-)- -{-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -r-o-o-t- -=- -d-o-c-u-m-e-n-t-.-d-o-c-u-m-e-n-t-E-l-e-m-e-n-t-;-
-- - - - -c-o-n-s-t- -n-a-v- -=- -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-h-e-a-d-e-r-"-)-;-
--
-- - - - -r-o-o-t-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-p-a-p-e-r---m-o-t-i-o-n---r-e-a-d-y-"-)-;-
--
-- - - - -f-u-n-c-t-i-o-n- -c-l-a-m-p-(-v-a-l-u-e-:- -n-u-m-b-e-r-,- -m-i-n-:- -n-u-m-b-e-r-,- -m-a-x-:- -n-u-m-b-e-r-)- -{-
-- - - - - - -r-e-t-u-r-n- -M-a-t-h-.-m-i-n-(-M-a-t-h-.-m-a-x-(-v-a-l-u-e-,- -m-i-n-)-,- -m-a-x-)-;-
-- - - - -}-
--
-- - - - -f-u-n-c-t-i-o-n- -r-e-v-e-a-l-E-l-e-m-e-n-t-(-e-l-e-m-e-n-t-:- -E-l-e-m-e-n-t-)- -{-
-- - - - - - -e-l-e-m-e-n-t-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-i-n-"-)-;-
--
-- - - - - - -e-l-e-m-e-n-t-
-- - - - - - - - -.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-(-"-.-p-a-p-e-r---d-r-a-w-,- -.-p-a-p-e-r---r-e-v-,- -.-p-a-p-e-r---p-a-g-e-,- -.-p-a-p-e-r---t-u-r-n-"-)-
-- - - - - - - - -.-f-o-r-E-a-c-h-(-(-i-t-e-m-)- -=->- -i-t-e-m-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-i-n-"-)-)-;-
-- - - - -}-
--
-- - - - -f-u-n-c-t-i-o-n- -r-e-v-e-a-l-V-i-s-i-b-l-e-E-l-e-m-e-n-t-s-(-)- -{-
-- - - - - - -c-o-n-s-t- -e-l-e-m-e-n-t-s- -=- -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-(-
-- - - - - - - - -"-.-p-a-p-e-r---r-e-v-,- -.-p-a-p-e-r---d-r-a-w-,- -.-p-a-p-e-r---p-a-g-e-,- -.-p-a-p-e-r---t-u-r-n-"-
-- - - - - - -)-;-
--
-- - - - - - -e-l-e-m-e-n-t-s-.-f-o-r-E-a-c-h-(-(-e-l-e-m-e-n-t-)- -=->- -{-
-- - - - - - - - -c-o-n-s-t- -r-e-c-t- -=- -e-l-e-m-e-n-t-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
-- - - - - - - - -c-o-n-s-t- -i-s-N-e-a-r-V-i-e-w-p-o-r-t- -=-
-- - - - - - - - - - -r-e-c-t-.-t-o-p- -<- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -*- -1-.-1-5- -&-&- -r-e-c-t-.-b-o-t-t-o-m- ->- ---w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-2-5-;-
--
-- - - - - - - - -i-f- -(-i-s-N-e-a-r-V-i-e-w-p-o-r-t-)- -{-
-- - - - - - - - - - -r-e-v-e-a-l-E-l-e-m-e-n-t-(-e-l-e-m-e-n-t-)-;-
-- - - - - - - - -}-
-- - - - - - -}-)-;-
-- - - - -}-
--
-- - - - -f-u-n-c-t-i-o-n- -h-a-n-d-l-e-S-c-r-o-l-l-(-)- -{-
-- - - - - - -c-o-n-s-t- -s-c-r-o-l-l-Y- -=- -w-i-n-d-o-w-.-s-c-r-o-l-l-Y-;-
--
-- - - - - - -i-f- -(-n-a-v-)- -{-
-- - - - - - - - -n-a-v-.-c-l-a-s-s-L-i-s-t-.-t-o-g-g-l-e-(-"-p-a-p-e-r---s-c-r-o-l-l-e-d-"-,- -s-c-r-o-l-l-Y- ->- -1-2-)-;-
-- - - - - - - - -n-a-v-.-c-l-a-s-s-L-i-s-t-.-t-o-g-g-l-e-(-"-p-a-p-e-r---n-a-v---h-e-r-o-"-,- -s-c-r-o-l-l-Y- -<- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-7-2-)-;-
-- - - - - - -}-
--
-- - - - - - -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---p-a-p-e-r---c-o-v-e-r-]-"-)-.-f-o-r-E-a-c-h-(-(-s-e-c-t-i-o-n-)- -=->- -{-
-- - - - - - - - -c-o-n-s-t- -r-e-c-t- -=- -s-e-c-t-i-o-n-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
-- - - - - - - - -c-o-n-s-t- -s-t-a-r-t- -=- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-8-8-;-
-- - - - - - - - -c-o-n-s-t- -e-n-d- -=- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-1-8-;-
-- - - - - - - - -c-o-n-s-t- -p-r-o-g-r-e-s-s- -=- -c-l-a-m-p-(-(-s-t-a-r-t- --- -r-e-c-t-.-t-o-p-)- -/- -(-s-t-a-r-t- --- -e-n-d-)-,- -0-,- -1-)-;-
-- - - - - - - - -s-e-c-t-i-o-n-.-s-t-y-l-e-.-s-e-t-P-r-o-p-e-r-t-y-(-"-----p-a-p-e-r---c-o-v-e-r-"-,- -p-r-o-g-r-e-s-s-.-t-o-F-i-x-e-d-(-3-)-)-;-
-- - - - - - -}-)-;-
--
-- - - - - - -r-e-v-e-a-l-V-i-s-i-b-l-e-E-l-e-m-e-n-t-s-(-)-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -o-b-s-e-r-v-e-r- -=- -n-e-w- -I-n-t-e-r-s-e-c-t-i-o-n-O-b-s-e-r-v-e-r-(-
-- - - - - - -(-e-n-t-r-i-e-s-)- -=->- -{-
-- - - - - - - - -e-n-t-r-i-e-s-.-f-o-r-E-a-c-h-(-(-e-n-t-r-y-)- -=->- -{-
-- - - - - - - - - - -i-f- -(-e-n-t-r-y-.-i-s-I-n-t-e-r-s-e-c-t-i-n-g-)- -{-
-- - - - - - - - - - - - -r-e-v-e-a-l-E-l-e-m-e-n-t-(-e-n-t-r-y-.-t-a-r-g-e-t-)-;-
-- - - - - - - - - - -}-
-- - - - - - - - -}-)-;-
-- - - - - - -}-,-
-- - - - - - -{-
-- - - - - - - - -t-h-r-e-s-h-o-l-d-:- -0-.-0-5-,-
-- - - - - - - - -r-o-o-t-M-a-r-g-i-n-:- -"-0-p-x- -0-p-x- -1-8-%- -0-p-x-"-,-
-- - - - - - -}-
-- - - - -)-;-
--
-- - - - -f-u-n-c-t-i-o-n- -o-b-s-e-r-v-e-A-l-l-(-)- -{-
-- - - - - - -d-o-c-u-m-e-n-t-
-- - - - - - - - -.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-(-"-.-p-a-p-e-r---r-e-v-,- -.-p-a-p-e-r---d-r-a-w-,- -.-p-a-p-e-r---p-a-g-e-,- -.-p-a-p-e-r---t-u-r-n-"-)-
-- - - - - - - - -.-f-o-r-E-a-c-h-(-(-e-l-e-m-e-n-t-)- -=->- -{-
-- - - - - - - - - - -o-b-s-e-r-v-e-r-.-o-b-s-e-r-v-e-(-e-l-e-m-e-n-t-)-;-
-- - - - - - - - -}-)-;-
--
-- - - - - - -r-e-v-e-a-l-V-i-s-i-b-l-e-E-l-e-m-e-n-t-s-(-)-;-
-- - - - -}-
--
-- - - - -o-b-s-e-r-v-e-A-l-l-(-)-;-
-- - - - -h-a-n-d-l-e-S-c-r-o-l-l-(-)-;-
--
-- - - - -c-o-n-s-t- -m-u-t-a-t-i-o-n-O-b-s-e-r-v-e-r- -=- -n-e-w- -M-u-t-a-t-i-o-n-O-b-s-e-r-v-e-r-(-(-)- -=->- -{-
-- - - - - - -o-b-s-e-r-v-e-A-l-l-(-)-;-
-- - - - - - -w-i-n-d-o-w-.-r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-r-e-v-e-a-l-V-i-s-i-b-l-e-E-l-e-m-e-n-t-s-)-;-
-- - - - -}-)-;-
--
-- - - - -m-u-t-a-t-i-o-n-O-b-s-e-r-v-e-r-.-o-b-s-e-r-v-e-(-d-o-c-u-m-e-n-t-.-b-o-d-y-,- -{-
-- - - - - - -c-h-i-l-d-L-i-s-t-:- -t-r-u-e-,-
-- - - - - - -s-u-b-t-r-e-e-:- -t-r-u-e-,-
-- - - - -}-)-;-
--
-- - - - -f-u-n-c-t-i-o-n- -h-a-n-d-l-e-P-o-i-n-t-e-r-M-o-v-e-(-e-v-e-n-t-:- -P-o-i-n-t-e-r-E-v-e-n-t-)- -{-
-- - - - - - -c-o-n-s-t- -x- -=- -e-v-e-n-t-.-c-l-i-e-n-t-X- -/- -w-i-n-d-o-w-.-i-n-n-e-r-W-i-d-t-h- --- -0-.-5-;-
-- - - - - - -c-o-n-s-t- -y- -=- -e-v-e-n-t-.-c-l-i-e-n-t-Y- -/- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- --- -0-.-5-;-
--
-- - - - - - -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---p-a-p-e-r---f-l-o-a-t-]-"-)-.-f-o-r-E-a-c-h-(-(-e-l-)- -=->- -{-
-- - - - - - - - -c-o-n-s-t- -s-t-r-e-n-g-t-h- -=- -N-u-m-b-e-r-(-e-l-.-d-a-t-a-s-e-t-.-p-a-p-e-r-F-l-o-a-t- -|-|- -"-1-2-"-)-;-
-- - - - - - - - -e-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-3-d-(-$-{-x- -*- -s-t-r-e-n-g-t-h-}-p-x-,- -$-{-
-- - - - - - - - - - -y- -*- -s-t-r-e-n-g-t-h-
-- - - - - - - - -}-p-x-,- -0-)- -r-o-t-a-t-e-(-v-a-r-(-----r-,- -0-d-e-g-)-)-`-;-
-- - - - - - -}-)-;-
-- - - - -}-
--
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-,- -{- -p-a-s-s-i-v-e-:- -t-r-u-e- -}-)-;-
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-r-e-s-i-z-e-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-)-;-
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-a-g-e-s-h-o-w-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-)-;-
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -h-a-n-d-l-e-P-o-i-n-t-e-r-M-o-v-e-)-;-
--
-- - - - -c-o-n-s-t- -f-a-i-l-S-a-f-e-T-i-m-e-r- -=- -w-i-n-d-o-w-.-s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -{-
-- - - - - - -r-o-o-t-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-p-a-p-e-r---e-f-f-e-c-t-s---f-a-i-l-s-a-f-e-"-)-;-
-- - - - - - -r-e-v-e-a-l-V-i-s-i-b-l-e-E-l-e-m-e-n-t-s-(-)-;-
-- - - - -}-,- -2-2-0-0-)-;-
--
-- - - - -r-e-t-u-r-n- -(-)- -=->- -{-
-- - - - - - -w-i-n-d-o-w-.-c-l-e-a-r-T-i-m-e-o-u-t-(-f-a-i-l-S-a-f-e-T-i-m-e-r-)-;-
-- - - - - - -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-)-;-
-- - - - - - -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-r-e-s-i-z-e-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-)-;-
-- - - - - - -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-a-g-e-s-h-o-w-"-,- -h-a-n-d-l-e-S-c-r-o-l-l-)-;-
-- - - - - - -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -h-a-n-d-l-e-P-o-i-n-t-e-r-M-o-v-e-)-;-
-- - - - - - -o-b-s-e-r-v-e-r-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - - - - - -m-u-t-a-t-i-o-n-O-b-s-e-r-v-e-r-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - - - -}-;-
-- - -}-,- -[-]-)-;-
--
-- - -r-e-t-u-r-n- -<->-{-c-h-i-l-d-r-e-n-}-<-/->-;-
--}-
+"use client";
+
+import { useEffect, type ReactNode } from "react";
+
+export default function PaperRevealShell({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const nav = document.querySelector<HTMLElement>("header");
+
+    root.classList.add("paper-motion-ready");
+
+    function clamp(value: number, min: number, max: number) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function revealElement(element: Element) {
+      element.classList.add("in");
+
+      element
+        .querySelectorAll(".paper-draw, .paper-rev, .paper-page, .paper-turn")
+        .forEach((item) => item.classList.add("in"));
+    }
+
+    function revealVisibleElements() {
+      const elements = document.querySelectorAll(
+        ".paper-rev, .paper-draw, .paper-page, .paper-turn"
+      );
+
+      elements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isNearViewport =
+          rect.top < window.innerHeight * 1.15 && rect.bottom > -window.innerHeight * 0.25;
+
+        if (isNearViewport) {
+          revealElement(element);
+        }
+      });
+    }
+
+    function handleScroll() {
+      const scrollY = window.scrollY;
+
+      if (nav) {
+        nav.classList.toggle("paper-scrolled", scrollY > 12);
+        nav.classList.toggle("paper-nav-hero", scrollY < window.innerHeight * 0.72);
+      }
+
+      document.querySelectorAll<HTMLElement>("[data-paper-cover]").forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const start = window.innerHeight * 0.88;
+        const end = window.innerHeight * 0.18;
+        const progress = clamp((start - rect.top) / (start - end), 0, 1);
+        section.style.setProperty("--paper-cover", progress.toFixed(3));
+      });
+
+      revealVisibleElements();
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            revealElement(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px 18% 0px",
+      }
+    );
+
+    function observeAll() {
+      document
+        .querySelectorAll(".paper-rev, .paper-draw, .paper-page, .paper-turn")
+        .forEach((element) => {
+          observer.observe(element);
+        });
+
+      revealVisibleElements();
+    }
+
+    observeAll();
+    handleScroll();
+
+    const mutationObserver = new MutationObserver(() => {
+      observeAll();
+      window.requestAnimationFrame(revealVisibleElements);
+    });
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    function handlePointerMove(event: PointerEvent) {
+      const x = event.clientX / window.innerWidth - 0.5;
+      const y = event.clientY / window.innerHeight - 0.5;
+
+      document.querySelectorAll<HTMLElement>("[data-paper-float]").forEach((el) => {
+        const strength = Number(el.dataset.paperFloat || "12");
+        el.style.transform = `translate3d(${x * strength}px, ${
+          y * strength
+        }px, 0) rotate(var(--r, 0deg))`;
+      });
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    window.addEventListener("pageshow", handleScroll);
+    window.addEventListener("pointermove", handlePointerMove);
+
+    const failSafeTimer = window.setTimeout(() => {
+      root.classList.add("paper-effects-failsafe");
+      revealVisibleElements();
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(failSafeTimer);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("pageshow", handleScroll);
+      window.removeEventListener("pointermove", handlePointerMove);
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, []);
+
+  return <>{children}</>;
+}

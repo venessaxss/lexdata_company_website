@@ -1,28 +1,28 @@
--i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -F-e-a-t-u-r-e-s-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
-- - - - - - -k-i-c-k-e-r-=-"-F-e-a-t-u-r-e-s-"-
-- - - - - - -t-i-t-l-e-=-"-L-a-n-g-u-a-g-e---d-a-t-a- -t-o-o-l-s- -f-o-r- -r-e-s-e-a-r-c-h-,- -t-e-a-c-h-i-n-g-,- -a-n-d- -t-r-a-n-s-l-a-t-i-o-n-.-"-
-- - - - - - -b-o-d-y-=-"-E-x-p-l-o-r-e- -L-e-x-D-a-t-a- -w-o-r-k-f-l-o-w-s- -f-o-r- -c-o-r-p-u-s- -b-u-i-l-d-i-n-g-,- -N-L-P-,- -a-n-n-o-t-a-t-i-o-n-,- -A-I---a-s-s-i-s-t-e-d- -r-e-s-e-a-r-c-h-,- -a-n-d- -t-r-a-i-n-i-n-g-.-"-
-- - - - - - -c-a-r-d-s-=-{-[-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-A-I- -r-e-s-e-a-r-c-h- -w-o-r-k-f-l-o-w-s-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-U-s-e- -A-I- -c-a-r-e-f-u-l-l-y- -f-o-r- -l-i-t-e-r-a-t-u-r-e- -r-e-v-i-e-w-,- -c-o-d-i-n-g- -s-u-p-p-o-r-t-,- -a-n-n-o-t-a-t-i-o-n- -p-l-a-n-n-i-n-g-,- -a-n-d- -r-e-s-e-a-r-c-h- -w-r-i-t-i-n-g-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-f-e-a-t-u-r-e-s-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-N-L-P- -s-t-u-d-i-o-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-M-o-v-e- -f-r-o-m- -r-a-w- -t-e-x-t- -t-o- -c-l-e-a-n-e-d- -c-o-r-p-o-r-a-,- -k-e-y-w-o-r-d-s-,- -e-m-b-e-d-d-i-n-g-s-,- -t-o-p-i-c-s-,- -a-n-d- -e-v-a-l-u-a-t-i-o-n-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-f-e-a-t-u-r-e-s-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-C-o-u-r-s-e- -p-l-a-t-f-o-r-m-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-C-o-n-n-e-c-t- -c-o-u-r-s-e-s-,- -w-o-r-k-s-h-o-p-s-,- -v-i-d-e-o-s-,- -a-n-d- -d-a-s-h-b-o-a-r-d-s- -i-n-t-o- -o-n-e- -l-e-a-r-n-i-n-g- -e-n-v-i-r-o-n-m-e-n-t-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-c-o-u-r-s-e-s-"-,-
-- - - - - - - - -}-,-
-- - - - - - -]-}-
-- - - - -/->-
-- - -)-;-
--}-
+import LexPaperSubPage from "@/components/LexPaperSubPage";
+
+export default function FeaturesPage() {
+  return (
+    <LexPaperSubPage
+      kicker="Features"
+      title="Language-data tools for research, teaching, and translation."
+      body="Explore LexData workflows for corpus building, NLP, annotation, AI-assisted research, and training."
+      cards={[
+        {
+          title: "AI research workflows",
+          body: "Use AI carefully for literature review, coding support, annotation planning, and research writing.",
+          href: "/features",
+        },
+        {
+          title: "NLP studio",
+          body: "Move from raw text to cleaned corpora, keywords, embeddings, topics, and evaluation.",
+          href: "/features",
+        },
+        {
+          title: "Course platform",
+          body: "Connect courses, workshops, videos, and dashboards into one learning environment.",
+          href: "/courses",
+        },
+      ]}
+    />
+  );
+}

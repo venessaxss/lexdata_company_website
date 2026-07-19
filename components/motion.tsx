@@ -1,213 +1,212 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--/-*-*-
-- -*- -L-e-x-D-a-t-a- -m-o-t-i-o-n- -p-r-i-m-i-t-i-v-e-s- -—- -z-e-r-o- -d-e-p-e-n-d-e-n-c-i-e-s-.-
-- -*- -R-e-v-e-a-l-,- -C-o-u-n-t-e-r-,- -W-o-r-d-C-y-c-l-e-r-,- -P-a-r-a-l-l-a-x-,- -S-t-i-c-k-y-N-a-v-E-f-f-e-c-t-,- -C-o-r-p-u-s-F-i-e-l-d-
-- -*-/-
--
--i-m-p-o-r-t- -{-
-- - -u-s-e-E-f-f-e-c-t-,-
-- - -u-s-e-R-e-f-,-
-- - -u-s-e-S-t-a-t-e-,-
-- - -t-y-p-e- -R-e-a-c-t-N-o-d-e-,-
-- - -t-y-p-e- -C-S-S-P-r-o-p-e-r-t-i-e-s-,-
--}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--
--/-*- --------------------------------- -R-e-v-e-a-l-:- -s-c-r-o-l-l---t-r-i-g-g-e-r-e-d- -f-a-d-e-/-s-l-i-d-e- --------------------------------- -*-/-
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -R-e-v-e-a-l-(-{-
-- - -c-h-i-l-d-r-e-n-,-
-- - -d-e-l-a-y- -=- -0-,-
-- - -c-l-a-s-s-N-a-m-e- -=- -"-"-,-
--}-:- -{-
-- - -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-N-o-d-e-;-
-- - -d-e-l-a-y-?-:- -n-u-m-b-e-r-;-
-- - -c-l-a-s-s-N-a-m-e-?-:- -s-t-r-i-n-g-;-
--}-)- -{-
-- - -c-o-n-s-t- -r-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t- -|- -n-u-l-l->-(-n-u-l-l-)-;-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -e-l- -=- -r-e-f-.-c-u-r-r-e-n-t-;-
-- - - - -i-f- -(-!-e-l-)- -r-e-t-u-r-n-;-
-- - - - -c-o-n-s-t- -i-o- -=- -n-e-w- -I-n-t-e-r-s-e-c-t-i-o-n-O-b-s-e-r-v-e-r-(-
-- - - - - - -(-[-e-n-t-r-y-]-)- -=->- -{-
-- - - - - - - - -i-f- -(-e-n-t-r-y-.-i-s-I-n-t-e-r-s-e-c-t-i-n-g-)- -{-
-- - - - - - - - - - -e-l-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-i-s---v-i-s-i-b-l-e-"-)-;-
-- - - - - - - - - - -i-o-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - - - - - - - -}-
-- - - - - - -}-,-
-- - - - - - -{- -t-h-r-e-s-h-o-l-d-:- -0-.-1-5- -}-
-- - - - -)-;-
-- - - - -i-o-.-o-b-s-e-r-v-e-(-e-l-)-;-
-- - - - -r-e-t-u-r-n- -(-)- -=->- -i-o-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - -}-,- -[-]-)-;-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-d-i-v-
-- - - - - - -r-e-f-=-{-r-e-f-}-
-- - - - - - -c-l-a-s-s-N-a-m-e-=-{-`-l-d---r-e-v-e-a-l- -$-{-c-l-a-s-s-N-a-m-e-}-`-}-
-- - - - - - -s-t-y-l-e-=-{-{- -"-----l-d---d-e-l-a-y-"-:- -`-$-{-d-e-l-a-y-}-s-`- -}- -a-s- -C-S-S-P-r-o-p-e-r-t-i-e-s-}-
-- - - - ->-
-- - - - - - -{-c-h-i-l-d-r-e-n-}-
-- - - - -<-/-d-i-v->-
-- - -)-;-
--}-
--
--/-*- --------------------------------- -C-o-u-n-t-e-r-:- -a-n-i-m-a-t-e-s- -a- -n-u-m-b-e-r- -w-h-e-n- -i-n- -v-i-e-w- --------------------------------- -*-/-
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -C-o-u-n-t-e-r-(-{-
-- - -t-o-,-
-- - -s-u-f-f-i-x- -=- -"-"-,-
-- - -d-u-r-a-t-i-o-n- -=- -1-6-0-0-,-
--}-:- -{-
-- - -t-o-:- -n-u-m-b-e-r-;-
-- - -s-u-f-f-i-x-?-:- -s-t-r-i-n-g-;-
-- - -d-u-r-a-t-i-o-n-?-:- -n-u-m-b-e-r-;-
--}-)- -{-
-- - -c-o-n-s-t- -r-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
-- - -c-o-n-s-t- -[-v-a-l-u-e-,- -s-e-t-V-a-l-u-e-]- -=- -u-s-e-S-t-a-t-e-(-0-)-;-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -e-l- -=- -r-e-f-.-c-u-r-r-e-n-t-;-
-- - - - -i-f- -(-!-e-l-)- -r-e-t-u-r-n-;-
-- - - - -c-o-n-s-t- -r-e-d-u-c-e-d- -=- -w-i-n-d-o-w-.-m-a-t-c-h-M-e-d-i-a-(-"-(-p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n-:- -r-e-d-u-c-e-)-"-)-.-m-a-t-c-h-e-s-;-
-- - - - -c-o-n-s-t- -i-o- -=- -n-e-w- -I-n-t-e-r-s-e-c-t-i-o-n-O-b-s-e-r-v-e-r-(-
-- - - - - - -(-[-e-n-t-r-y-]-)- -=->- -{-
-- - - - - - - - -i-f- -(-!-e-n-t-r-y-.-i-s-I-n-t-e-r-s-e-c-t-i-n-g-)- -r-e-t-u-r-n-;-
-- - - - - - - - -i-o-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - - - - - - - -i-f- -(-r-e-d-u-c-e-d-)- -r-e-t-u-r-n- -s-e-t-V-a-l-u-e-(-t-o-)-;-
-- - - - - - - - -c-o-n-s-t- -s-t-a-r-t- -=- -p-e-r-f-o-r-m-a-n-c-e-.-n-o-w-(-)-;-
-- - - - - - - - -c-o-n-s-t- -t-i-c-k- -=- -(-n-o-w-:- -n-u-m-b-e-r-)- -=->- -{-
-- - - - - - - - - - -c-o-n-s-t- -p- -=- -M-a-t-h-.-m-i-n-(-(-n-o-w- --- -s-t-a-r-t-)- -/- -d-u-r-a-t-i-o-n-,- -1-)-;-
-- - - - - - - - - - -c-o-n-s-t- -e-a-s-e-d- -=- -1- --- -M-a-t-h-.-p-o-w-(-1- --- -p-,- -3-)-;-
-- - - - - - - - - - -s-e-t-V-a-l-u-e-(-M-a-t-h-.-r-o-u-n-d-(-t-o- -*- -e-a-s-e-d-)-)-;-
-- - - - - - - - - - -i-f- -(-p- -<- -1-)- -r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-t-i-c-k-)-;-
-- - - - - - - - -}-;-
-- - - - - - - - -r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-t-i-c-k-)-;-
-- - - - - - -}-,-
-- - - - - - -{- -t-h-r-e-s-h-o-l-d-:- -0-.-4- -}-
-- - - - -)-;-
-- - - - -i-o-.-o-b-s-e-r-v-e-(-e-l-)-;-
-- - - - -r-e-t-u-r-n- -(-)- -=->- -i-o-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
-- - -}-,- -[-t-o-,- -d-u-r-a-t-i-o-n-]-)-;-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-b- -r-e-f-=-{-r-e-f-}->-
-- - - - - - -{-v-a-l-u-e-.-t-o-L-o-c-a-l-e-S-t-r-i-n-g-(-)-}-
-- - - - - - -<-e-m->-{-s-u-f-f-i-x-}-<-/-e-m->-
-- - - - -<-/-b->-
-- - -)-;-
--}-
--
--/-*- --------------------------------- -W-o-r-d-C-y-c-l-e-r-:- -h-e-r-o- -w-o-r-d- -t-r-a-n-s-l-a-t-i-n-g- -a-c-r-o-s-s- -l-a-n-g-u-a-g-e-s- --------------------------------- -*-/-
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -W-o-r-d-C-y-c-l-e-r-(-{-
-- - -w-o-r-d-s-,-
-- - -i-n-t-e-r-v-a-l- -=- -3-2-0-0-,-
--}-:- -{-
-- - -w-o-r-d-s-:- -{- -t-e-x-t-:- -s-t-r-i-n-g-;- -l-a-n-g-:- -s-t-r-i-n-g- -}-[-]-;-
-- - -i-n-t-e-r-v-a-l-?-:- -n-u-m-b-e-r-;-
--}-)- -{-
-- - -c-o-n-s-t- -[-i-n-d-e-x-,- -s-e-t-I-n-d-e-x-]- -=- -u-s-e-S-t-a-t-e-(-0-)-;-
-- - -c-o-n-s-t- -[-p-h-a-s-e-,- -s-e-t-P-h-a-s-e-]- -=- -u-s-e-S-t-a-t-e-<-"-i-n-"- -|- -"-o-u-t-"->-(-"-i-n-"-)-;-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -r-e-d-u-c-e-d- -=- -w-i-n-d-o-w-.-m-a-t-c-h-M-e-d-i-a-(-"-(-p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n-:- -r-e-d-u-c-e-)-"-)-.-m-a-t-c-h-e-s-;-
-- - - - -i-f- -(-r-e-d-u-c-e-d-)- -r-e-t-u-r-n-;-
-- - - - -c-o-n-s-t- -c-y-c-l-e- -=- -s-e-t-I-n-t-e-r-v-a-l-(-(-)- -=->- -{-
-- - - - - - -s-e-t-P-h-a-s-e-(-"-o-u-t-"-)-;-
-- - - - - - -s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -{-
-- - - - - - - - -s-e-t-I-n-d-e-x-(-(-i-)- -=->- -(-i- -+- -1-)- -%- -w-o-r-d-s-.-l-e-n-g-t-h-)-;-
-- - - - - - - - -s-e-t-P-h-a-s-e-(-"-i-n-"-)-;-
-- - - - - - -}-,- -3-5-0-)-;-
-- - - - -}-,- -i-n-t-e-r-v-a-l-)-;-
-- - - - -r-e-t-u-r-n- -(-)- -=->- -c-l-e-a-r-I-n-t-e-r-v-a-l-(-c-y-c-l-e-)-;-
-- - -}-,- -[-w-o-r-d-s-.-l-e-n-g-t-h-,- -i-n-t-e-r-v-a-l-]-)-;-
-- - -c-o-n-s-t- -c-u-r-r-e-n-t- -=- -w-o-r-d-s-[-i-n-d-e-x-]-;-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-y-c-l-e-"->-
-- - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-y-c-l-e---l-a-n-g-"->-{-c-u-r-r-e-n-t-.-l-a-n-g-}-<-/-s-p-a-n->-
-- - - - - - -<-s-p-a-n-
-- - - - - - - - -k-e-y-=-{-i-n-d-e-x- -+- -p-h-a-s-e-}-
-- - - - - - - - -c-l-a-s-s-N-a-m-e-=-{-`-l-d---c-y-c-l-e---w-o-r-d- -$-{-p-h-a-s-e- -=-=-=- -"-o-u-t-"- -?- -"-i-s---o-u-t-"- -:- -"-i-s---i-n-"-}-`-}-
-- - - - - - ->-
-- - - - - - - - -{-c-u-r-r-e-n-t-.-t-e-x-t-}-
-- - - - - - -<-/-s-p-a-n->-
-- - - - -<-/-s-p-a-n->-
-- - -)-;-
--}-
--
--/-*- --------------------------------- -P-a-r-a-l-l-a-x-:- -s-h-i-f-t-s- -c-h-i-l-d-r-e-n- -o-n- -s-c-r-o-l-l- --------------------------------- -*-/-
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -P-a-r-a-l-l-a-x-(-{-
-- - -c-h-i-l-d-r-e-n-,-
-- - -s-p-e-e-d- -=- -0-.-2-5-,-
-- - -c-l-a-s-s-N-a-m-e- -=- -"-"-,-
--}-:- -{-
-- - -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-N-o-d-e-;-
-- - -s-p-e-e-d-?-:- -n-u-m-b-e-r-;-
-- - -c-l-a-s-s-N-a-m-e-?-:- -s-t-r-i-n-g-;-
--}-)- -{-
-- - -c-o-n-s-t- -r-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -e-l- -=- -r-e-f-.-c-u-r-r-e-n-t-;-
-- - - - -i-f- -(-!-e-l-)- -r-e-t-u-r-n-;-
-- - - - -i-f- -(-w-i-n-d-o-w-.-m-a-t-c-h-M-e-d-i-a-(-"-(-p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n-:- -r-e-d-u-c-e-)-"-)-.-m-a-t-c-h-e-s-)- -r-e-t-u-r-n-;-
-- - - - -l-e-t- -r-a-f- -=- -0-;-
-- - - - -c-o-n-s-t- -o-n-S-c-r-o-l-l- -=- -(-)- -=->- -{-
-- - - - - - -c-a-n-c-e-l-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-r-a-f-)-;-
-- - - - - - -r-a-f- -=- -r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-(-)- -=->- -{-
-- - - - - - - - -c-o-n-s-t- -r-e-c-t- -=- -e-l-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
-- - - - - - - - -c-o-n-s-t- -o-f-f-s-e-t- -=- -(-r-e-c-t-.-t-o-p- -+- -r-e-c-t-.-h-e-i-g-h-t- -/- -2- --- -w-i-n-d-o-w-.-i-n-n-e-r-H-e-i-g-h-t- -/- -2-)- -*- -s-p-e-e-d-;-
-- - - - - - - - -e-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-Y-(-$-{-o-f-f-s-e-t-}-p-x-)-`-;-
-- - - - - - -}-)-;-
-- - - - -}-;-
-- - - - -o-n-S-c-r-o-l-l-(-)-;-
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -o-n-S-c-r-o-l-l-,- -{- -p-a-s-s-i-v-e-:- -t-r-u-e- -}-)-;-
-- - - - -r-e-t-u-r-n- -(-)- -=->- -{-
-- - - - - - -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -o-n-S-c-r-o-l-l-)-;-
-- - - - - - -c-a-n-c-e-l-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-r-a-f-)-;-
-- - - - -}-;-
-- - -}-,- -[-s-p-e-e-d-]-)-;-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-d-i-v- -r-e-f-=-{-r-e-f-}- -c-l-a-s-s-N-a-m-e-=-{-c-l-a-s-s-N-a-m-e-}->-
-- - - - - - -{-c-h-i-l-d-r-e-n-}-
-- - - - -<-/-d-i-v->-
-- - -)-;-
--}-
--
--/-*- --------------------------------- -S-t-i-c-k-y-N-a-v-E-f-f-e-c-t-:- -t-o-g-g-l-e-s- -.-i-s---s-c-r-o-l-l-e-d- -o-n- -t-h-e- -n-a-v- --------------------------------- -*-/-
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -S-t-i-c-k-y-N-a-v-E-f-f-e-c-t-(-{- -t-a-r-g-e-t-I-d- -=- -"-l-d---n-a-v-"- -}-:- -{- -t-a-r-g-e-t-I-d-?-:- -s-t-r-i-n-g- -}-)- -{-
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -c-o-n-s-t- -n-a-v- -=- -d-o-c-u-m-e-n-t-.-g-e-t-E-l-e-m-e-n-t-B-y-I-d-(-t-a-r-g-e-t-I-d-)-;-
-- - - - -i-f- -(-!-n-a-v-)- -r-e-t-u-r-n-;-
-- - - - -c-o-n-s-t- -o-n-S-c-r-o-l-l- -=- -(-)- -=->- -n-a-v-.-c-l-a-s-s-L-i-s-t-.-t-o-g-g-l-e-(-"-i-s---s-c-r-o-l-l-e-d-"-,- -w-i-n-d-o-w-.-s-c-r-o-l-l-Y- ->- -2-4-)-;-
-- - - - -o-n-S-c-r-o-l-l-(-)-;-
-- - - - -w-i-n-d-o-w-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -o-n-S-c-r-o-l-l-,- -{- -p-a-s-s-i-v-e-:- -t-r-u-e- -}-)-;-
-- - - - -r-e-t-u-r-n- -(-)- -=->- -w-i-n-d-o-w-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-s-c-r-o-l-l-"-,- -o-n-S-c-r-o-l-l-)-;-
-- - -}-,- -[-t-a-r-g-e-t-I-d-]-)-;-
-- - -r-e-t-u-r-n- -n-u-l-l-;-
--}-
--
--/-*- --------------------------------- -C-o-r-p-u-s-F-i-e-l-d-:- -d-r-i-f-t-i-n-g- -m-u-l-t-i-l-i-n-g-u-a-l- -b-a-c-k-g-r-o-u-n-d- -l-i-n-e-s- --------------------------------- -*-/-
--c-o-n-s-t- -C-O-R-P-U-S-_-L-I-N-E-S- -=- -[-
-- - -"-l-a-n-g-u-a-g-e- -·- -语-言- -·- -l-e-n-g-u-a- -·- -ل-غ-ة- -·- -l-a-n-g-u-e- -·- -s-p-r-a-c-h-e- -·- -언-어- -·- -भ-ा-ष-ा- -·- -l-u-g-h-a- -·- -d-i-l- -·-"-,-
-- - -"-d-a-t-a- -→- -t-o-k-e-n-s- -→- -a-n-n-o-t-a-t-i-o-n- -→- -c-o-r-p-u-s- -→- -m-o-d-e-l- -→- -i-n-s-i-g-h-t- -→- -d-a-t-a- -→- -t-o-k-e-n-s- -→-"-,-
-- - -"-t-r-a-n-s-l-a-t-i-o-n- -·- -翻-译- -·- -t-r-a-d-u-c-c-i-ó-n- -·- -ت-ر-ج-م-ة- -·- -t-r-a-d-u-c-t-i-o-n- -·- -ü-b-e-r-s-e-t-z-u-n-g- -·- -번-역- -·-"-,-
-- - -"-e-d-u-c-a-t-i-o-n- -·- -教-育- -·- -e-d-u-c-a-c-i-ó-n- -·- -ت-ع-ل-ي-م- -·- -é-d-u-c-a-t-i-o-n- -·- -b-i-l-d-u-n-g- -·- -교-육- -·- -श-ि-क-्-ष-ा- -·-"-,-
-- - -"-s-o-c-i-e-t-y- -·- -社-会- -·- -s-o-c-i-e-d-a-d- -·- -م-ج-ت-م-ع- -·- -s-o-c-i-é-t-é- -·- -g-e-s-e-l-l-s-c-h-a-f-t- -·- -사-회- -·- -स-म-ा-ज- -·-"-,-
-- - -"-h-u-m-a-n-i-t-i-e-s- -×- -d-a-t-a- -s-c-i-e-n-c-e- -×- -h-u-m-a-n-i-t-i-e-s- -×- -d-a-t-a- -s-c-i-e-n-c-e- -×- -h-u-m-a-n-i-t-i-e-s- -×-"-,-
--]-;-
--
--e-x-p-o-r-t- -f-u-n-c-t-i-o-n- -C-o-r-p-u-s-F-i-e-l-d-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-o-r-p-u-s-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"->-
-- - - - - - -{-C-O-R-P-U-S-_-L-I-N-E-S-.-m-a-p-(-(-l-i-n-e-,- -i-)- -=->- -(-
-- - - - - - - - -<-s-p-a-n-
-- - - - - - - - - - -k-e-y-=-{-i-}-
-- - - - - - - - - - -s-t-y-l-e-=-{-{-
-- - - - - - - - - - - - -t-o-p-:- -`-$-{-8- -+- -i- -*- -1-5-}-%-`-,-
-- - - - - - - - - - - - -l-e-f-t-:- -0-,-
-- - - - - - - - - - - - -f-o-n-t-S-i-z-e-:- -`-$-{-1-3- -+- -(-i- -%- -3-)- -*- -3-}-p-x-`-,-
-- - - - - - - - - - - - -a-n-i-m-a-t-i-o-n-D-u-r-a-t-i-o-n-:- -`-$-{-4-6- -+- -i- -*- -1-4-}-s-`-,-
-- - - - - - - - - - - - -a-n-i-m-a-t-i-o-n-D-i-r-e-c-t-i-o-n-:- -i- -%- -2- -?- -"-r-e-v-e-r-s-e-"- -:- -"-n-o-r-m-a-l-"-,-
-- - - - - - - - - - -}-}-
-- - - - - - - - ->-
-- - - - - - - - - - -{-(-l-i-n-e- -+- -"- -"-)-.-r-e-p-e-a-t-(-6-)-}-
-- - - - - - - - -<-/-s-p-a-n->-
-- - - - - - -)-)-}-
-- - - - -<-/-d-i-v->-
-- - -)-;-
--}-
--
+"use client";
+
+/**
+ * LexData motion primitives — zero dependencies.
+ * Reveal, Counter, WordCycler, Parallax, StickyNavEffect, CorpusField
+ */
+
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type CSSProperties,
+} from "react";
+
+/* ---------------- Reveal: scroll-triggered fade/slide ---------------- */
+export function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("is-visible");
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div
+      ref={ref}
+      className={`ld-reveal ${className}`}
+      style={{ "--ld-delay": `${delay}s` } as CSSProperties}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ---------------- Counter: animates a number when in view ---------------- */
+export function Counter({
+  to,
+  suffix = "",
+  duration = 1600,
+}: {
+  to: number;
+  suffix?: string;
+  duration?: number;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        if (reduced) return setValue(to);
+        const start = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          setValue(Math.round(to * eased));
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [to, duration]);
+  return (
+    <b ref={ref}>
+      {value.toLocaleString()}
+      <em>{suffix}</em>
+    </b>
+  );
+}
+
+/* ---------------- WordCycler: hero word translating across languages ---------------- */
+export function WordCycler({
+  words,
+  interval = 3200,
+}: {
+  words: { text: string; lang: string }[];
+  interval?: number;
+}) {
+  const [index, setIndex] = useState(0);
+  const [phase, setPhase] = useState<"in" | "out">("in");
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    const cycle = setInterval(() => {
+      setPhase("out");
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % words.length);
+        setPhase("in");
+      }, 350);
+    }, interval);
+    return () => clearInterval(cycle);
+  }, [words.length, interval]);
+  const current = words[index];
+  return (
+    <span className="ld-cycle">
+      <span className="ld-cycle-lang">{current.lang}</span>
+      <span
+        key={index + phase}
+        className={`ld-cycle-word ${phase === "out" ? "is-out" : "is-in"}`}
+      >
+        {current.text}
+      </span>
+    </span>
+  );
+}
+
+/* ---------------- Parallax: shifts children on scroll ---------------- */
+export function Parallax({
+  children,
+  speed = 0.25,
+  className = "",
+}: {
+  children: ReactNode;
+  speed?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        const offset = (rect.top + rect.height / 2 - window.innerHeight / 2) * speed;
+        el.style.transform = `translateY(${offset}px)`;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, [speed]);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+}
+
+/* ---------------- StickyNavEffect: toggles .is-scrolled on the nav ---------------- */
+export function StickyNavEffect({ targetId = "ld-nav" }: { targetId?: string }) {
+  useEffect(() => {
+    const nav = document.getElementById(targetId);
+    if (!nav) return;
+    const onScroll = () => nav.classList.toggle("is-scrolled", window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [targetId]);
+  return null;
+}
+
+/* ---------------- CorpusField: drifting multilingual background lines ---------------- */
+const CORPUS_LINES = [
+  "language · 语言 · lengua · لغة · langue · sprache · 언어 · भाषा · lugha · dil ·",
+  "data → tokens → annotation → corpus → model → insight → data → tokens →",
+  "translation · 翻译 · traducción · ترجمة · traduction · übersetzung · 번역 ·",
+  "education · 教育 · educación · تعليم · éducation · bildung · 교육 · शिक्षा ·",
+  "society · 社会 · sociedad · مجتمع · société · gesellschaft · 사회 · समाज ·",
+  "humanities × data science × humanities × data science × humanities ×",
+];
+
+export function CorpusField() {
+  return (
+    <div className="ld-corpus" aria-hidden="true">
+      {CORPUS_LINES.map((line, i) => (
+        <span
+          key={i}
+          style={{
+            top: `${8 + i * 15}%`,
+            left: 0,
+            fontSize: `${13 + (i % 3) * 3}px`,
+            animationDuration: `${46 + i * 14}s`,
+            animationDirection: i % 2 ? "reverse" : "normal",
+          }}
+        >
+          {(line + " ").repeat(6)}
+        </span>
+      ))}
+    </div>
+  );
+}

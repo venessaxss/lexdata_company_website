@@ -1,63 +1,63 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--i-m-p-o-r-t- -{- -u-s-e-E-f-f-e-c-t- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--i-m-p-o-r-t- -{- -u-s-e-P-a-t-h-n-a-m-e- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--
--f-u-n-c-t-i-o-n- -g-e-t-V-i-s-i-t-o-r-I-d-(-)- -{-
-- - -c-o-n-s-t- -k-e-y- -=- -"-l-e-x-d-a-t-a-_-v-i-s-i-t-o-r-_-i-d-"-;-
--
-- - -c-o-n-s-t- -e-x-i-s-t-i-n-g- -=- -w-i-n-d-o-w-.-l-o-c-a-l-S-t-o-r-a-g-e-.-g-e-t-I-t-e-m-(-k-e-y-)-;-
--
-- - -i-f- -(-e-x-i-s-t-i-n-g-)- -{-
-- - - - -r-e-t-u-r-n- -e-x-i-s-t-i-n-g-;-
-- - -}-
--
-- - -c-o-n-s-t- -c-r-e-a-t-e-d- -=-
-- - - - -t-y-p-e-o-f- -c-r-y-p-t-o- -!-=-=- -"-u-n-d-e-f-i-n-e-d-"- -&-&- -"-r-a-n-d-o-m-U-U-I-D-"- -i-n- -c-r-y-p-t-o-
-- - - - - - -?- -c-r-y-p-t-o-.-r-a-n-d-o-m-U-U-I-D-(-)-
-- - - - - - -:- -`-$-{-D-a-t-e-.-n-o-w-(-)-}---$-{-M-a-t-h-.-r-a-n-d-o-m-(-)-.-t-o-S-t-r-i-n-g-(-1-6-)-.-s-l-i-c-e-(-2-)-}-`-;-
--
-- - -w-i-n-d-o-w-.-l-o-c-a-l-S-t-o-r-a-g-e-.-s-e-t-I-t-e-m-(-k-e-y-,- -c-r-e-a-t-e-d-)-;-
--
-- - -r-e-t-u-r-n- -c-r-e-a-t-e-d-;-
--}-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -V-i-s-i-t-T-r-a-c-k-e-r-(-)- -{-
-- - -c-o-n-s-t- -p-a-t-h-n-a-m-e- -=- -u-s-e-P-a-t-h-n-a-m-e-(-)-;-
--
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
-- - - - -i-f- -(-!-p-a-t-h-n-a-m-e-)- -r-e-t-u-r-n-;-
--
-- - - - -c-o-n-s-t- -i-g-n-o-r-e-d-P-r-e-f-i-x-e-s- -=- -[-"-/-a-p-i-"-,- -"-/-_-n-e-x-t-"-]-;-
--
-- - - - -i-f- -(-i-g-n-o-r-e-d-P-r-e-f-i-x-e-s-.-s-o-m-e-(-(-p-r-e-f-i-x-)- -=->- -p-a-t-h-n-a-m-e-.-s-t-a-r-t-s-W-i-t-h-(-p-r-e-f-i-x-)-)-)- -{-
-- - - - - - -r-e-t-u-r-n-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -c-o-n-t-r-o-l-l-e-r- -=- -n-e-w- -A-b-o-r-t-C-o-n-t-r-o-l-l-e-r-(-)-;-
--
-- - - - -c-o-n-s-t- -t-i-m-e-r- -=- -w-i-n-d-o-w-.-s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -{-
-- - - - - - -f-e-t-c-h-(-"-/-a-p-i-/-v-i-s-i-t-"-,- -{-
-- - - - - - - - -m-e-t-h-o-d-:- -"-P-O-S-T-"-,-
-- - - - - - - - -h-e-a-d-e-r-s-:- -{-
-- - - - - - - - - - -"-C-o-n-t-e-n-t---T-y-p-e-"-:- -"-a-p-p-l-i-c-a-t-i-o-n-/-j-s-o-n-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -s-i-g-n-a-l-:- -c-o-n-t-r-o-l-l-e-r-.-s-i-g-n-a-l-,-
-- - - - - - - - -b-o-d-y-:- -J-S-O-N-.-s-t-r-i-n-g-i-f-y-(-{-
-- - - - - - - - - - -v-i-s-i-t-o-r-_-i-d-:- -g-e-t-V-i-s-i-t-o-r-I-d-(-)-,-
-- - - - - - - - - - -p-a-t-h-:- -p-a-t-h-n-a-m-e-,-
-- - - - - - - - - - -t-i-t-l-e-:- -d-o-c-u-m-e-n-t-.-t-i-t-l-e-,-
-- - - - - - - - - - -r-e-f-e-r-r-e-r-:- -d-o-c-u-m-e-n-t-.-r-e-f-e-r-r-e-r-,-
-- - - - - - - - - - -u-s-e-r-_-a-g-e-n-t-:- -n-a-v-i-g-a-t-o-r-.-u-s-e-r-A-g-e-n-t-,-
-- - - - - - - - -}-)-,-
-- - - - - - -}-)-.-c-a-t-c-h-(-(-)- -=->- -{-}-)-;-
-- - - - -}-,- -8-0-0-)-;-
--
-- - - - -r-e-t-u-r-n- -(-)- -=->- -{-
-- - - - - - -w-i-n-d-o-w-.-c-l-e-a-r-T-i-m-e-o-u-t-(-t-i-m-e-r-)-;-
-- - - - - - -c-o-n-t-r-o-l-l-e-r-.-a-b-o-r-t-(-)-;-
-- - - - -}-;-
-- - -}-,- -[-p-a-t-h-n-a-m-e-]-)-;-
--
-- - -r-e-t-u-r-n- -n-u-l-l-;-
--}-
+"use client";
+
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+
+function getVisitorId() {
+  const key = "lexdata_visitor_id";
+
+  const existing = window.localStorage.getItem(key);
+
+  if (existing) {
+    return existing;
+  }
+
+  const created =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  window.localStorage.setItem(key, created);
+
+  return created;
+}
+
+export default function VisitTracker() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!pathname) return;
+
+    const ignoredPrefixes = ["/api", "/_next"];
+
+    if (ignoredPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timer = window.setTimeout(() => {
+      fetch("/api/visit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          visitor_id: getVisitorId(),
+          path: pathname,
+          title: document.title,
+          referrer: document.referrer,
+          user_agent: navigator.userAgent,
+        }),
+      }).catch(() => {});
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [pathname]);
+
+  return null;
+}

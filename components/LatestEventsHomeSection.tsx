@@ -1,67 +1,67 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -f-o-r-m-a-t-E-v-e-n-t-D-a-t-e-,- -g-e-t-L-e-x-D-a-t-a-E-v-e-n-t-s- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-e-x-d-a-t-a---e-v-e-n-t-s-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -L-a-t-e-s-t-E-v-e-n-t-s-H-o-m-e-S-e-c-t-i-o-n-(-)- -{-
-- - -c-o-n-s-t- -e-v-e-n-t-s- -=- -a-w-a-i-t- -g-e-t-L-e-x-D-a-t-a-E-v-e-n-t-s-(-{-
-- - - - -a-c-t-i-v-e-O-n-l-y-:- -t-r-u-e-,-
-- - - - -f-e-a-t-u-r-e-d-O-n-l-y-:- -t-r-u-e-,-
-- - - - -l-i-m-i-t-:- -4-,-
-- - -}-)-;-
--
-- - -i-f- -(-!-e-v-e-n-t-s-.-l-e-n-g-t-h-)- -{-
-- - - - -r-e-t-u-r-n- -n-u-l-l-;-
-- - -}-
--
-- - -c-o-n-s-t- -p-r-i-m-a-r-y- -=- -e-v-e-n-t-s-[-0-]-;-
-- - -c-o-n-s-t- -s-e-c-o-n-d-a-r-y- -=- -e-v-e-n-t-s-.-s-l-i-c-e-(-1-)-;-
-- - -c-o-n-s-t- -v-i-s-u-a-l- -=- -p-r-i-m-a-r-y-.-p-o-s-t-e-r-_-u-r-l- -|-|- -p-r-i-m-a-r-y-.-i-m-a-g-e-_-u-r-l-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t-s- -p-a-p-e-r---p-a-g-e-"- -i-d-=-"-l-a-t-e-s-t---e-v-e-n-t-s-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---w-r-a-p-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t-s---h-e-a-d- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - -<-p->-W-h-a-t-'-s- -n-e-w-<-/-p->-
-- - - - - - - - - - -<-h-2->-N-e-w- -e-v-e-n-t-s-,- -w-o-r-k-s-h-o-p-s-,- -a-n-d- -L-e-x-D-a-t-a- -u-p-d-a-t-e-s-.-<-/-h-2->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-b-l-o-g-/-w-h-a-t-s---n-e-w-"->-V-i-e-w- -a-l-l- -u-p-d-a-t-e-s- ---&-g-t-;-<-/-L-i-n-k->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t-s---g-r-i-d-"->-
-- - - - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - - - -h-r-e-f-=-{-`-/-b-l-o-g-/-w-h-a-t-s---n-e-w-/-$-{-p-r-i-m-a-r-y-.-s-l-u-g-}-`-}-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t---p-r-i-m-a-r-y- -p-a-p-e-r---r-e-v- -p-a-p-e-r---t-u-r-n-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -{-v-i-s-u-a-l- -?- -(-
-- - - - - - - - - - - - - - -<-i-m-g- -s-r-c-=-{-v-i-s-u-a-l-}- -a-l-t-=-{-p-r-i-m-a-r-y-.-t-i-t-l-e-}- -/->-
-- - - - - - - - - - - - -)- -:- -(-
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t---f-a-l-l-b-a-c-k-"->-
-- - - - - - - - - - - - - - - - -<-s-p-a-n->-{-p-r-i-m-a-r-y-.-c-a-t-e-g-o-r-y-}-<-/-s-p-a-n->-
-- - - - - - - - - - - - - - - - -<-b->-L-e-x-D-a-t-a-<-/-b->-
-- - - - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - - - -)-}-
--
-- - - - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - - - -<-s-m-a-l-l->-{-f-o-r-m-a-t-E-v-e-n-t-D-a-t-e-(-p-r-i-m-a-r-y-.-e-v-e-n-t-_-d-a-t-e-)-}-<-/-s-m-a-l-l->-
-- - - - - - - - - - - - - - -<-h-3->-{-p-r-i-m-a-r-y-.-t-i-t-l-e-}-<-/-h-3->-
-- - - - - - - - - - - - - - -<-p->-{-p-r-i-m-a-r-y-.-e-x-c-e-r-p-t-}-<-/-p->-
-- - - - - - - - - - - - - - -<-s-t-r-o-n-g->-{-p-r-i-m-a-r-y-.-c-t-a-_-l-a-b-e-l- -|-|- -"-R-e-a-d- -m-o-r-e-"-}- ---&-g-t-;-<-/-s-t-r-o-n-g->-
-- - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - -<-/-L-i-n-k->-
--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t-s---s-t-a-c-k-"->-
-- - - - - - - - - - - - -{-s-e-c-o-n-d-a-r-y-.-m-a-p-(-(-e-v-e-n-t-)- -=->- -(-
-- - - - - - - - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - - - - - - - -k-e-y-=-{-e-v-e-n-t-.-i-d-}-
-- - - - - - - - - - - - - - - - -h-r-e-f-=-{-`-/-b-l-o-g-/-w-h-a-t-s---n-e-w-/-$-{-e-v-e-n-t-.-s-l-u-g-}-`-}-
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-l-e-x---h-o-m-e---e-v-e-n-t---s-m-a-l-l- -p-a-p-e-r---r-e-v- -p-a-p-e-r---t-u-r-n-"-
-- - - - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - - - -<-s-m-a-l-l->-{-e-v-e-n-t-.-c-a-t-e-g-o-r-y-}- -·- -{-f-o-r-m-a-t-E-v-e-n-t-D-a-t-e-(-e-v-e-n-t-.-e-v-e-n-t-_-d-a-t-e-)-}-<-/-s-m-a-l-l->-
-- - - - - - - - - - - - - - - - -<-h-3->-{-e-v-e-n-t-.-t-i-t-l-e-}-<-/-h-3->-
-- - - - - - - - - - - - - - - - -<-p->-{-e-v-e-n-t-.-e-x-c-e-r-p-t-}-<-/-p->-
-- - - - - - - - - - - - - - -<-/-L-i-n-k->-
-- - - - - - - - - - - - -)-)-}-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { formatEventDate, getLexDataEvents } from "@/lib/lexdata-events";
+
+export default async function LatestEventsHomeSection() {
+  const events = await getLexDataEvents({
+    activeOnly: true,
+    featuredOnly: true,
+    limit: 4,
+  });
+
+  if (!events.length) {
+    return null;
+  }
+
+  const primary = events[0];
+  const secondary = events.slice(1);
+  const visual = primary.poster_url || primary.image_url;
+
+  return (
+    <section className="lex-home-events paper-page" id="latest-events">
+      <div className="paper-wrap">
+        <div className="lex-home-events-head paper-rev">
+          <p>What's new</p>
+          <h2>New events, workshops, and LexData updates.</h2>
+          <Link href="/blog/whats-new">View all updates -&gt;</Link>
+        </div>
+
+        <div className="lex-home-events-grid">
+          <Link
+            href={`/blog/whats-new/${primary.slug}`}
+            className="lex-home-event-primary paper-rev paper-turn"
+          >
+            {visual ? (
+              <img src={visual} alt={primary.title} />
+            ) : (
+              <div className="lex-home-event-fallback">
+                <span>{primary.category}</span>
+                <b>LexData</b>
+              </div>
+            )}
+
+            <div>
+              <small>{formatEventDate(primary.event_date)}</small>
+              <h3>{primary.title}</h3>
+              <p>{primary.excerpt}</p>
+              <strong>{primary.cta_label || "Read more"} -&gt;</strong>
+            </div>
+          </Link>
+
+          <div className="lex-home-events-stack">
+            {secondary.map((event) => (
+              <Link
+                key={event.id}
+                href={`/blog/whats-new/${event.slug}`}
+                className="lex-home-event-small paper-rev paper-turn"
+              >
+                <small>{event.category} · {formatEventDate(event.event_date)}</small>
+                <h3>{event.title}</h3>
+                <p>{event.excerpt}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,63 +1,63 @@
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--i-m-p-o-r-t- -D-y-n-a-m-i-c-H-o-m-e-S-h-o-w-c-a-s-e-C-l-i-e-n-t- -f-r-o-m- -"-.-/-D-y-n-a-m-i-c-H-o-m-e-S-h-o-w-c-a-s-e-C-l-i-e-n-t-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--t-y-p-e- -N-o-t-i-c-e- -=- -{-
-- - -i-d-:- -s-t-r-i-n-g-;-
-- - -t-i-t-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -s-u-m-m-a-r-y-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -n-o-t-i-c-e-_-t-y-p-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
--}-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -D-y-n-a-m-i-c-H-o-m-e-S-h-o-w-c-a-s-e-(-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -n-o-w- -=- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-;-
--
-- - -c-o-n-s-t- -[-
-- - - - -w-o-r-k-s-h-o-p-s-R-e-s-u-l-t-,-
-- - - - -r-e-g-i-s-t-r-a-t-i-o-n-s-R-e-s-u-l-t-,-
-- - - - -u-s-e-r-s-R-e-s-u-l-t-,-
-- - - - -n-o-t-i-c-e-s-R-e-s-u-l-t-,-
-- - - - -f-e-a-t-u-r-e-d-N-o-t-i-c-e-s-R-e-s-u-l-t-,-
-- - -]- -=- -a-w-a-i-t- -P-r-o-m-i-s-e-.-a-l-l-(-[-
-- - - - -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-,-
--
-- - - - -s-u-p-a-b-a-s-e-
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-
-- - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-,-
--
-- - - - -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-,-
--
-- - - - -s-u-p-a-b-a-s-e-
-- - - - - - -.-f-r-o-m-(-"-n-o-t-i-c-e-s-"-)-
-- - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-
-- - - - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
-- - - - - - -.-l-t-e-(-"-p-u-b-l-i-s-h-_-a-t-"-,- -n-o-w-)-
-- - - - - - -.-o-r-(-`-e-x-p-i-r-e-_-a-t-.-i-s-.-n-u-l-l-,-e-x-p-i-r-e-_-a-t-.-g-t-e-.-$-{-n-o-w-}-`-)-,-
--
-- - - - -s-u-p-a-b-a-s-e-
-- - - - - - -.-f-r-o-m-(-"-n-o-t-i-c-e-s-"-)-
-- - - - - - -.-s-e-l-e-c-t-(-"-i-d-,- -t-i-t-l-e-,- -s-u-m-m-a-r-y-,- -n-o-t-i-c-e-_-t-y-p-e-"-)-
-- - - - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
-- - - - - - -.-e-q-(-"-i-s-_-f-e-a-t-u-r-e-d-"-,- -t-r-u-e-)-
-- - - - - - -.-l-t-e-(-"-p-u-b-l-i-s-h-_-a-t-"-,- -n-o-w-)-
-- - - - - - -.-o-r-(-`-e-x-p-i-r-e-_-a-t-.-i-s-.-n-u-l-l-,-e-x-p-i-r-e-_-a-t-.-g-t-e-.-$-{-n-o-w-}-`-)-
-- - - - - - -.-o-r-d-e-r-(-"-p-r-i-o-r-i-t-y-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-
-- - - - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-
-- - - - - - -.-l-i-m-i-t-(-5-)-,-
-- - -]-)-;-
--
-- - -c-o-n-s-t- -s-t-a-t-s- -=- -{-
-- - - - -w-o-r-k-s-h-o-p-s-:- -w-o-r-k-s-h-o-p-s-R-e-s-u-l-t-.-c-o-u-n-t- -?-?- -0-,-
-- - - - -r-e-g-i-s-t-r-a-t-i-o-n-s-:- -r-e-g-i-s-t-r-a-t-i-o-n-s-R-e-s-u-l-t-.-c-o-u-n-t- -?-?- -0-,-
-- - - - -u-s-e-r-s-:- -u-s-e-r-s-R-e-s-u-l-t-.-c-o-u-n-t- -?-?- -0-,-
-- - - - -n-o-t-i-c-e-s-:- -n-o-t-i-c-e-s-R-e-s-u-l-t-.-c-o-u-n-t- -?-?- -0-,-
-- - -}-;-
--
-- - -c-o-n-s-t- -n-o-t-i-c-e-s- -=- -(-f-e-a-t-u-r-e-d-N-o-t-i-c-e-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-)- -a-s- -N-o-t-i-c-e-[-]-;-
--
-- - -r-e-t-u-r-n- -<-D-y-n-a-m-i-c-H-o-m-e-S-h-o-w-c-a-s-e-C-l-i-e-n-t- -s-t-a-t-s-=-{-s-t-a-t-s-}- -n-o-t-i-c-e-s-=-{-n-o-t-i-c-e-s-}- -/->-;-
--}-
+import { createAdminClient } from "@/lib/supabase/admin";
+import DynamicHomeShowcaseClient from "./DynamicHomeShowcaseClient";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type Notice = {
+  id: string;
+  title?: string | null;
+  summary?: string | null;
+  notice_type?: string | null;
+};
+
+export default async function DynamicHomeShowcase() {
+  const supabase = createAdminClient();
+
+  const now = new Date().toISOString();
+
+  const [
+    workshopsResult,
+    registrationsResult,
+    usersResult,
+    noticesResult,
+    featuredNoticesResult,
+  ] = await Promise.all([
+    supabase.from("workshops").select("id", { count: "exact", head: true }),
+
+    supabase
+      .from("workshop_registrations")
+      .select("id", { count: "exact", head: true }),
+
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+
+    supabase
+      .from("notices")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true)
+      .lte("publish_at", now)
+      .or(`expire_at.is.null,expire_at.gte.${now}`),
+
+    supabase
+      .from("notices")
+      .select("id, title, summary, notice_type")
+      .eq("is_published", true)
+      .eq("is_featured", true)
+      .lte("publish_at", now)
+      .or(`expire_at.is.null,expire_at.gte.${now}`)
+      .order("priority", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const stats = {
+    workshops: workshopsResult.count ?? 0,
+    registrations: registrationsResult.count ?? 0,
+    users: usersResult.count ?? 0,
+    notices: noticesResult.count ?? 0,
+  };
+
+  const notices = (featuredNoticesResult.data ?? []) as Notice[];
+
+  return <DynamicHomeShowcaseClient stats={stats} notices={notices} />;
+}

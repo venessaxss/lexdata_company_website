@@ -1,43 +1,43 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-A-d-m-i-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--
--c-o-n-s-t- -a-l-l-o-w-e-d-R-o-l-e-s- -=- -[-"-m-e-m-b-e-r-"-,- -"-s-p-e-a-k-e-r-"-,- -"-m-a-n-a-g-e-r-"-,- -"-s-t-a-f-f-"-,- -"-a-d-m-i-n-"-]- -a-s- -c-o-n-s-t-;-
--t-y-p-e- -A-p-p-R-o-l-e- -=- -(-t-y-p-e-o-f- -a-l-l-o-w-e-d-R-o-l-e-s-)-[-n-u-m-b-e-r-]-;-
--
--f-u-n-c-t-i-o-n- -i-s-V-a-l-i-d-R-o-l-e-(-r-o-l-e-:- -s-t-r-i-n-g-)-:- -r-o-l-e- -i-s- -A-p-p-R-o-l-e- -{-
-- - -r-e-t-u-r-n- -a-l-l-o-w-e-d-R-o-l-e-s-.-i-n-c-l-u-d-e-s-(-r-o-l-e- -a-s- -A-p-p-R-o-l-e-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-U-s-e-r-R-o-l-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -c-u-r-r-e-n-t-U-s-e-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
--
-- - -c-o-n-s-t- -u-s-e-r-I-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-u-s-e-r-_-i-d-"-)- -?-?- -"-"-)-;-
-- - -c-o-n-s-t- -r-o-l-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-r-o-l-e-"-)- -?-?- -"-"-)-;-
--
-- - -i-f- -(-!-u-s-e-r-I-d- -|-|- -!-i-s-V-a-l-i-d-R-o-l-e-(-r-o-l-e-)-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-u-s-e-r-s-?-m-e-s-s-a-g-e-=-I-n-v-a-l-i-d- -u-s-e-r- -o-r- -r-o-l-e-"-)-;-
-- - -}-
--
-- - -/-/- -S-a-f-e-t-y-:- -d-o- -n-o-t- -a-c-c-i-d-e-n-t-a-l-l-y- -r-e-m-o-v-e- -y-o-u-r- -o-w-n- -a-d-m-i-n- -a-c-c-e-s-s-
-- - -i-f- -(-u-s-e-r-I-d- -=-=-=- -c-u-r-r-e-n-t-U-s-e-r-.-i-d- -&-&- -r-o-l-e- -!-=-=- -"-a-d-m-i-n-"-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-u-s-e-r-s-?-m-e-s-s-a-g-e-=-Y-o-u- -c-a-n-n-o-t- -r-e-m-o-v-e- -y-o-u-r- -o-w-n- -a-d-m-i-n- -r-o-l-e-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e-A-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-A-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - -.-u-p-d-a-t-e-(-{- -r-o-l-e- -}-)-
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-I-d-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-a-d-m-i-n-/-u-s-e-r-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-u-s-e-r-s-"-)-;-
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-u-s-e-r-s-?-m-e-s-s-a-g-e-=-R-o-l-e- -u-p-d-a-t-e-d- -s-u-c-c-e-s-s-f-u-l-l-y-"-)-;-
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+const allowedRoles = ["member", "speaker", "manager", "staff", "admin"] as const;
+type AppRole = (typeof allowedRoles)[number];
+
+function isValidRole(role: string): role is AppRole {
+  return allowedRoles.includes(role as AppRole);
+}
+
+export async function updateUserRole(formData: FormData) {
+  const currentUser = await requireAdmin();
+
+  const userId = String(formData.get("user_id") ?? "");
+  const role = String(formData.get("role") ?? "");
+
+  if (!userId || !isValidRole(role)) {
+    redirect("/admin/users?message=Invalid user or role");
+  }
+
+  // Safety: do not accidentally remove your own admin access
+  if (userId === currentUser.id && role !== "admin") {
+    redirect("/admin/users?message=You cannot remove your own admin role");
+  }
+
+  const supabaseAdmin = createAdminClient();
+
+  const { error } = await supabaseAdmin
+    .from("profiles")
+    .update({ role })
+    .eq("id", userId);
+
+  if (error) {
+    redirect(`/admin/users?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/admin/users");
+  redirect("/admin/users?message=Role updated successfully");
+}

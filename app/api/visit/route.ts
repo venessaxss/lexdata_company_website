@@ -1,62 +1,62 @@
--i-m-p-o-r-t- -{- -N-e-x-t-R-e-s-p-o-n-s-e- -}- -f-r-o-m- -"-n-e-x-t-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-u-n-t-i-m-e- -=- -"-n-o-d-e-j-s-"-;-
--
--t-y-p-e- -V-i-s-i-t-P-a-y-l-o-a-d- -=- -{-
-- - -v-i-s-i-t-o-r-_-i-d-?-:- -s-t-r-i-n-g-;-
-- - -p-a-t-h-?-:- -s-t-r-i-n-g-;-
-- - -t-i-t-l-e-?-:- -s-t-r-i-n-g-;-
-- - -r-e-f-e-r-r-e-r-?-:- -s-t-r-i-n-g-;-
-- - -u-s-e-r-_-a-g-e-n-t-?-:- -s-t-r-i-n-g-;-
--}-;-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -P-O-S-T-(-r-e-q-u-e-s-t-:- -R-e-q-u-e-s-t-)- -{-
-- - -t-r-y- -{-
-- - - - -c-o-n-s-t- -p-a-y-l-o-a-d- -=- -(-a-w-a-i-t- -r-e-q-u-e-s-t-.-j-s-o-n-(-)-)- -a-s- -V-i-s-i-t-P-a-y-l-o-a-d-;-
--
-- - - - -c-o-n-s-t- -p-a-t-h- -=- -S-t-r-i-n-g-(-p-a-y-l-o-a-d-.-p-a-t-h- -|-|- -"-"-)-.-t-r-i-m-(-)-;-
--
-- - - - -i-f- -(-!-p-a-t-h- -|-|- -p-a-t-h-.-s-t-a-r-t-s-W-i-t-h-(-"-/-a-p-i-"-)- -|-|- -p-a-t-h-.-s-t-a-r-t-s-W-i-t-h-(-"-/-_-n-e-x-t-"-)-)- -{-
-- - - - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{- -o-k-:- -t-r-u-e- -}-)-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - - - -c-o-n-s-t- -{-
-- - - - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - - - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - - - -l-e-t- -u-s-e-r-R-o-l-e-:- -s-t-r-i-n-g- -|- -n-u-l-l- -=- -n-u-l-l-;-
--
-- - - - -i-f- -(-u-s-e-r-)- -{-
-- - - - - - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - - - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - - - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-"-)-
-- - - - - - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
-- - - - - - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
--
-- - - - - - -u-s-e-r-R-o-l-e- -=- -n-o-r-m-a-l-i-z-e-R-o-l-e-(-p-r-o-f-i-l-e-?-.-r-o-l-e-)-;-
-- - - - -}-
--
-- - - - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - - - -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-s-i-t-e-_-v-i-s-i-t-_-r-e-c-o-r-d-s-"-)-.-i-n-s-e-r-t-(-{-
-- - - - - - -v-i-s-i-t-o-r-_-i-d-:- -p-a-y-l-o-a-d-.-v-i-s-i-t-o-r-_-i-d- -|-|- -n-u-l-l-,-
-- - - - - - -u-s-e-r-_-i-d-:- -u-s-e-r-?-.-i-d- -|-|- -n-u-l-l-,-
-- - - - - - -u-s-e-r-_-r-o-l-e-:- -u-s-e-r-R-o-l-e-,-
-- - - - - - -p-a-t-h-,-
-- - - - - - -t-i-t-l-e-:- -p-a-y-l-o-a-d-.-t-i-t-l-e- -|-|- -n-u-l-l-,-
-- - - - - - -r-e-f-e-r-r-e-r-:- -p-a-y-l-o-a-d-.-r-e-f-e-r-r-e-r- -|-|- -n-u-l-l-,-
-- - - - - - -u-s-e-r-_-a-g-e-n-t-:- -p-a-y-l-o-a-d-.-u-s-e-r-_-a-g-e-n-t- -|-|- -n-u-l-l-,-
-- - - - - - -c-r-e-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -}-)-;-
--
-- - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{- -o-k-:- -t-r-u-e- -}-)-;-
-- - -}- -c-a-t-c-h- -{-
-- - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{- -o-k-:- -t-r-u-e- -}-)-;-
-- - -}-
--}-
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeRole } from "@/lib/roles";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+type VisitPayload = {
+  visitor_id?: string;
+  path?: string;
+  title?: string;
+  referrer?: string;
+  user_agent?: string;
+};
+
+export async function POST(request: Request) {
+  try {
+    const payload = (await request.json()) as VisitPayload;
+
+    const path = String(payload.path || "").trim();
+
+    if (!path || path.startsWith("/api") || path.startsWith("/_next")) {
+      return NextResponse.json({ ok: true });
+    }
+
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    let userRole: string | null = null;
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      userRole = normalizeRole(profile?.role);
+    }
+
+    const admin = createAdminClient();
+
+    await admin.from("site_visit_records").insert({
+      visitor_id: payload.visitor_id || null,
+      user_id: user?.id || null,
+      user_role: userRole,
+      path,
+      title: payload.title || null,
+      referrer: payload.referrer || null,
+      user_agent: payload.user_agent || null,
+      created_at: new Date().toISOString(),
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ ok: true });
+  }
+}

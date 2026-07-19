@@ -1,12 +1,12 @@
--i-m-p-o-r-t- -M-a-n-a-g-e-r-C-o-u-r-s-e-E-n-r-o-l-l-m-e-n-t-s-P-a-g-e- -f-r-o-m- -"-@-/-a-p-p-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-/-p-a-g-e-"-;--
---
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -A-d-m-i-n-C-o-u-r-s-e-E-n-r-o-l-l-m-e-n-t-s-P-a-g-e-(-{--
-- - -s-e-a-r-c-h-P-a-r-a-m-s-,--
--}-:- -{--
-- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -m-e-s-s-a-g-e-?-:- -s-t-r-i-n-g- -}->-;--
--}-)- -{--
-- - -r-e-t-u-r-n- -<-M-a-n-a-g-e-r-C-o-u-r-s-e-E-n-r-o-l-l-m-e-n-t-s-P-a-g-e- -s-e-a-r-c-h-P-a-r-a-m-s-=-{-s-e-a-r-c-h-P-a-r-a-m-s-}- -/->-;--
--}-
+import ManagerCourseEnrollmentsPage from "@/app/manager/course-enrollments/page";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function AdminCourseEnrollmentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string }>;
+}) {
+  return <ManagerCourseEnrollmentsPage searchParams={searchParams} />;
+}

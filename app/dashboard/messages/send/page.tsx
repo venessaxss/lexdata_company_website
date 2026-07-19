@@ -1,154 +1,154 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -s-e-n-d-R-o-l-e-M-e-s-s-a-g-e- -}- -f-r-o-m- -"-.-/-a-c-t-i-o-n-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-M-e-s-s-a-g-e-S-e-n-d-e-r-(-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-,- -f-u-l-l-_-n-a-m-e-"-)-
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
-- - - - -.-s-i-n-g-l-e-(-)-;-
--
-- - -i-f- -(-!-p-r-o-f-i-l-e- -|-|- -!-[-"-a-d-m-i-n-"-,- -"-m-a-n-a-g-e-r-"-,- -"-s-p-e-a-k-e-r-"-]-.-i-n-c-l-u-d-e-s-(-p-r-o-f-i-l-e-.-r-o-l-e-)-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-"-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -p-r-o-f-i-l-e-;-
--}-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -S-e-n-d-M-e-s-s-a-g-e-P-a-g-e-(-{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-,-
--}-:- -{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -m-e-s-s-a-g-e-?-:- -s-t-r-i-n-g- -}->-;-
--}-)- -{-
-- - -n-o-S-t-o-r-e-(-)-;-
--
-- - -c-o-n-s-t- -p-r-o-f-i-l-e- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-M-e-s-s-a-g-e-S-e-n-d-e-r-(-)-;-
-- - -c-o-n-s-t- -{- -m-e-s-s-a-g-e- -}- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---4-x-l- -p-x---4- -p-y---1-0-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---8-"->-
-- - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - -h-r-e-f-=-"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-"-
-- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---6-0-0- -h-o-v-e-r-:-t-e-x-t---s-l-a-t-e---9-5-0-"-
-- - - - - - - - ->-
-- - - - - - - - - - ---&-g-t-;-B-a-c-k- -t-o- -m-e-s-s-a-g-e- -b-o-x-
-- - - - - - - - -<-/-L-i-n-k->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---s-l-a-t-e---5-0-0-"->-
-- - - - - - - - - - -M-e-s-s-a-g-e- -S-e-n-d-e-r-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - -S-e-n-d- -m-e-s-s-a-g-e- -t-o- -u-s-e-r-s-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -A-d-m-i-n-s-,- -m-a-n-a-g-e-r-s-,- -a-n-d- -s-p-e-a-k-e-r-s- -c-a-n- -s-e-n-d- -m-e-s-s-a-g-e-s- -t-o- -a-l-l- -u-s-e-r-s- -o-r- -t-o- -a-
-- - - - - - - - - - -s-e-l-e-c-t-e-d- -r-o-l-e- -g-r-o-u-p-.-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---5-0-0-"->-
-- - - - - - - - - - -C-u-r-r-e-n-t- -r-o-l-e-:- -{-p-r-o-f-i-l-e-.-r-o-l-e-}-
-- - - - - - - - -<-/-p->-
-- - - - - - -<-/-d-i-v->-
--
-- - - - - - -{-m-e-s-s-a-g-e- -?- -(-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---6- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---s-l-a-t-e---5-0- -p-x---4- -p-y---3- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - -{-m-e-s-s-a-g-e-}-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -)- -:- -n-u-l-l-}-
--
-- - - - - - -<-f-o-r-m-
-- - - - - - - - -a-c-t-i-o-n-=-{-s-e-n-d-R-o-l-e-M-e-s-s-a-g-e-}-
-- - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m-"-
-- - - - - - ->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---5-"->-
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -S-e-n-d- -t-o-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
-- - - - - - - - - - - - -<-s-e-l-e-c-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-t-a-r-g-e-t-_-r-o-l-e-"-
-- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-a-l-l-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-a-l-l-"->-A-l-l- -r-o-l-e-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-m-e-m-b-e-r-"->-M-e-m-b-e-r-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-s-p-e-a-k-e-r-"->-S-p-e-a-k-e-r-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-m-a-n-a-g-e-r-"->-M-a-n-a-g-e-r-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-a-d-m-i-n-"->-A-d-m-i-n-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-s-t-a-f-f-"->-S-t-a-f-f- -/- -B-o-a-r-d- -/- -C-o-m-p-a-n-y- -M-e-m-b-e-r-s-<-/-o-p-t-i-o-n->-
-- - - - - - - - - - - - -<-/-s-e-l-e-c-t->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -M-e-s-s-a-g-e- -t-i-t-l-e-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-t-i-t-l-e-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-W-o-r-k-s-h-o-p- -u-p-d-a-t-e-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -M-e-s-s-a-g-e- -b-o-d-y-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
-- - - - - - - - - - - - -<-t-e-x-t-a-r-e-a-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-b-o-d-y-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -r-o-w-s-=-{-8-}-
-- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-W-r-i-t-e- -t-h-e- -m-e-s-s-a-g-e- -h-e-r-e-.-.-.-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v->-
-- - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-m-b---2- -b-l-o-c-k- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - - - -O-p-t-i-o-n-a-l- -l-i-n-k-
-- - - - - - - - - - - - -<-/-l-a-b-e-l->-
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-l-i-n-k-_-u-r-l-"-
-- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-/-w-o-r-k-s-h-o-p-s- -o-r- -h-t-t-p-s-:-/-/-.-.-.-"-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -g-a-p---3- -r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p-x---4- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - -<-i-n-p-u-t-
-- - - - -n-a-m-e-=-"-s-e-n-d-_-e-m-a-i-l-"-
-- - - - -t-y-p-e-=-"-c-h-e-c-k-b-o-x-"-
-- - - - -d-e-f-a-u-l-t-C-h-e-c-k-e-d-
-- - - - -c-l-a-s-s-N-a-m-e-=-"-h---4- -w---4-"-
-- - -/->-
-- - -A-l-s-o- -s-e-n-d- -t-h-i-s- -m-e-s-s-a-g-e- -t-o- -r-e-c-i-p-i-e-n-t-s- -b-y- -e-m-a-i-l-
--<-/-l-a-b-e-l->-
--
-- - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-s-u-b-m-i-t-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y- -w---f-i-t-"->-
-- - - - - - - - - - - - -S-e-n-d- -M-e-s-s-a-g-e-
-- - - - - - - - - - -<-/-b-u-t-t-o-n->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-f-o-r-m->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { sendRoleMessage } from "./actions";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+async function requireMessageSender() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role, full_name")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || !["admin", "manager", "speaker"].includes(profile.role)) {
+    redirect("/dashboard/messages");
+  }
+
+  return profile;
+}
+
+export default async function SendMessagePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string }>;
+}) {
+  noStore();
+
+  const profile = await requireMessageSender();
+  const { message } = await searchParams;
+
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mb-8">
+        <Link
+          href="/dashboard/messages"
+          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+        >
+          -&gt;Back to message box
+        </Link>
+
+        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+          Message Sender
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black text-slate-950">
+          Send message to users
+        </h1>
+
+        <p className="mt-3 text-slate-600">
+          Admins, managers, and speakers can send messages to all users or to a
+          selected role group.
+        </p>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Current role: {profile.role}
+        </p>
+      </div>
+
+      {message ? (
+        <div className="mb-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+          {message}
+        </div>
+      ) : null}
+
+      <form
+        action={sendRoleMessage}
+        className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+      >
+        <div className="grid gap-5">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Send to
+            </label>
+            <select
+              name="target_role"
+              defaultValue="all"
+              className="w-full rounded-xl border px-4 py-3"
+            >
+              <option value="all">All roles</option>
+              <option value="member">Members</option>
+              <option value="speaker">Speakers</option>
+              <option value="manager">Managers</option>
+              <option value="admin">Admins</option>
+              <option value="staff">Staff / Board / Company Members</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Message title
+            </label>
+            <input
+              name="title"
+              required
+              placeholder="Workshop update"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Message body
+            </label>
+            <textarea
+              name="body"
+              required
+              rows={8}
+              placeholder="Write the message here..."
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Optional link
+            </label>
+            <input
+              name="link_url"
+              placeholder="/workshops or https://..."
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+         <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700">
+  <input
+    name="send_email"
+    type="checkbox"
+    defaultChecked
+    className="h-4 w-4"
+  />
+  Also send this message to recipients by email
+</label>
+
+          <button type="submit" className="btn-primary w-fit">
+            Send Message
+          </button>
+        </div>
+      </form>
+    </main>
+  );
+}

@@ -1,118 +1,321 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -T-e-a-m-S-h-o-w-c-a-s-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-T-e-a-m-S-h-o-w-c-a-s-e-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--c-o-n-s-t- -v-a-l-u-e-s- -=- -[-
-- - -{-
-- - - - -t-i-t-l-e-:- -"-F-o-r- -l-a-n-g-u-a-g-e- -p-e-o-p-l-e-,- -b-y- -l-a-n-g-u-a-g-e- -p-e-o-p-l-e-"-,-
-- - - - -b-o-d-y-:-
-- - - - - - -"-L-e-x-D-a-t-a- -i-s- -b-u-i-l-t- -f-o-r- -r-e-s-e-a-r-c-h-e-r-s-,- -t-r-a-n-s-l-a-t-o-r-s-,- -e-d-u-c-a-t-o-r-s-,- -s-t-u-d-e-n-t-s-,- -a-n-d- -t-e-a-m-s- -w-h-o- -w-o-r-k- -s-e-r-i-o-u-s-l-y- -w-i-t-h- -l-a-n-g-u-a-g-e-.-"-,-
-- - -}-,-
-- - -{-
-- - - - -t-i-t-l-e-:- -"-H-u-m-a-n- -j-u-d-g-m-e-n-t- -s-t-a-y-s- -c-e-n-t-r-a-l-"-,-
-- - - - -b-o-d-y-:-
-- - - - - - -"-A-I- -c-a-n- -s-u-p-p-o-r-t- -t-h-e- -w-o-r-k-f-l-o-w-,- -b-u-t- -i-n-t-e-r-p-r-e-t-a-t-i-o-n-,- -e-t-h-i-c-s-,- -e-v-a-l-u-a-t-i-o-n-,- -a-n-d- -m-e-a-n-i-n-g- -r-e-m-a-i-n- -h-u-m-a-n- -r-e-s-p-o-n-s-i-b-i-l-i-t-i-e-s-.-"-,-
-- - -}-,-
-- - -{-
-- - - - -t-i-t-l-e-:- -"-L-a-n-g-u-a-g-e- -d-a-t-a- -s-h-o-u-l-d- -b-e- -t-r-a-n-s-p-a-r-e-n-t-"-,-
-- - - - -b-o-d-y-:-
-- - - - - - -"-W-e- -c-a-r-e- -a-b-o-u-t- -c-l-e-a-n- -c-o-r-p-o-r-a-,- -d-o-c-u-m-e-n-t-e-d- -m-e-t-h-o-d-s-,- -r-e-s-p-o-n-s-i-b-l-e- -a-n-n-o-t-a-t-i-o-n-,- -a-n-d- -r-e-s-e-a-r-c-h- -t-h-a-t- -o-t-h-e-r-s- -c-a-n- -u-n-d-e-r-s-t-a-n-d-.-"-,-
-- - -}-,-
-- - -{-
-- - - - -t-i-t-l-e-:- -"-L-e-a-r-n-i-n-g- -s-h-o-u-l-d- -l-e-a-d- -t-o- -r-e-a-l- -w-o-r-k-"-,-
-- - - - -b-o-d-y-:-
-- - - - - - -"-O-u-r- -c-o-u-r-s-e-s- -a-n-d- -w-o-r-k-s-h-o-p-s- -a-r-e- -d-e-s-i-g-n-e-d- -a-r-o-u-n-d- -r-e-a-l- -a-c-a-d-e-m-i-c-,- -i-n-s-t-i-t-u-t-i-o-n-a-l-,- -a-n-d- -p-r-o-f-e-s-s-i-o-n-a-l- -l-a-n-g-u-a-g-e---d-a-t-a- -t-a-s-k-s-.-"-,-
-- - -}-,-
--]-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -A-b-o-u-t-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---p-a-g-e-"->-
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---h-e-r-o-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---f-l-o-a-t---w-o-r-d-s-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"->-
-- - - - - - - - - - -<-s-p-a-n->-c-o-r-p-u-s-<-/-s-p-a-n->-
-- - - - - - - - - - -<-s-p-a-n->-N-L-P-<-/-s-p-a-n->-
-- - - - - - - - - - -<-s-p-a-n->-t-r-a-n-s-l-a-t-i-o-n-<-/-s-p-a-n->-
-- - - - - - - - - - -<-s-p-a-n->-A-I-<-/-s-p-a-n->-
-- - - - - - - - - - -<-s-p-a-n->-r-e-s-e-a-r-c-h-<-/-s-p-a-n->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---r-e-v-"->-A-b-o-u-t- -u-s-<-/-p->-
--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - -W-e- -b-e-l-i-e-v-e- -l-a-n-g-u-a-g-e- -d-a-t-a- -c-a-n- -c-h-a-n-g-e- -h-o-w- -p-e-o-p-l-e- -r-e-s-e-a-r-c-h-,- -t-e-a-c-h-,- -a-n-d-
-- - - - - - - - - - -u-n-d-e-r-s-t-a-n-d- -t-h-e- -w-o-r-l-d-.-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---i-n-t-r-o- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - -<-p->-
-- - - - - - - - - - - - -L-e-x-D-a-t-a- -i-s- -a-n- -i-n-t-e-l-l-i-g-e-n-t- -d-a-t-a- -s-o-l-u-t-i-o-n-s- -s-t-u-d-i-o- -f-o-c-u-s-e-d- -o-n- -l-a-n-g-u-a-g-e-,-
-- - - - - - - - - - - - -t-r-a-n-s-l-a-t-i-o-n-,- -e-d-u-c-a-t-i-o-n-,- -A-I-,- -N-L-P-,- -a-n-d- -c-o-r-p-u-s---b-a-s-e-d- -r-e-s-e-a-r-c-h-.-
-- - - - - - - - - - -<-/-p->-
--
-- - - - - - - - - - -<-p->-
-- - - - - - - - - - - - -W-e- -b-r-i-n-g- -t-o-g-e-t-h-e-r- -h-u-m-a-n-i-t-i-e-s- -t-h-i-n-k-i-n-g- -a-n-d- -c-o-m-p-u-t-a-t-i-o-n-a-l- -m-e-t-h-o-d-s- -s-o-
-- - - - - - - - - - - - -l-a-n-g-u-a-g-e- -p-e-o-p-l-e- -c-a-n- -b-u-i-l-d- -b-e-t-t-e-r- -c-o-r-p-o-r-a-,- -e-v-a-l-u-a-t-e- -m-o-d-e-l-s-,- -d-e-s-i-g-n-
-- - - - - - - - - - - - -r-e-s-e-a-r-c-h- -w-o-r-k-f-l-o-w-s-,- -a-n-d- -l-e-a-r-n- -p-r-a-c-t-i-c-a-l- -A-I- -s-k-i-l-l-s-.-
-- - - - - - - - - - -<-/-p->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---j-u-m-p- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - -<-a- -h-r-e-f-=-"-#-v-a-l-u-e-s-"->-O-u-r- -v-a-l-u-e-s-<-/-a->-
-- - - - - - - - - - -<-a- -h-r-e-f-=-"-#-t-e-a-m-"->-M-e-e-t- -t-h-e- -t-e-a-m-<-/-a->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---v-a-l-u-e-s- -p-a-p-e-r---p-a-g-e-"- -i-d-=-"-v-a-l-u-e-s-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---w-r-a-p-"->-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---s-e-c-t-i-o-n---h-e-a-d- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - - - -<-p->-O-u-r- -v-a-l-u-e-s-<-/-p->-
-- - - - - - - - - - - - -<-h-2->-C-a-r-e-f-u-l- -l-a-n-g-u-a-g-e- -w-o-r-k-.- -R-e-s-p-o-n-s-i-b-l-e- -A-I-.- -H-u-m-a-n- -e-x-p-e-r-t-i-s-e-.-<-/-h-2->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---v-a-l-u-e-s---g-r-i-d-"->-
-- - - - - - - - - - - - -{-v-a-l-u-e-s-.-m-a-p-(-(-v-a-l-u-e-,- -i-n-d-e-x-)- -=->- -(-
-- - - - - - - - - - - - - - -<-a-r-t-i-c-l-e-
-- - - - - - - - - - - - - - - - -k-e-y-=-{-v-a-l-u-e-.-t-i-t-l-e-}-
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---v-a-l-u-e---c-a-r-d- -p-a-p-e-r---r-e-v- -p-a-p-e-r---t-u-r-n-"-
-- - - - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - - - -<-s-p-a-n->-{-S-t-r-i-n-g-(-i-n-d-e-x- -+- -1-)-.-p-a-d-S-t-a-r-t-(-2-,- -"-0-"-)-}-<-/-s-p-a-n->-
-- - - - - - - - - - - - - - - - -<-h-3->-{-v-a-l-u-e-.-t-i-t-l-e-}-<-/-h-3->-
-- - - - - - - - - - - - - - - - -<-p->-{-v-a-l-u-e-.-b-o-d-y-}-<-/-p->-
-- - - - - - - - - - - - - - -<-/-a-r-t-i-c-l-e->-
-- - - - - - - - - - - - -)-)-}-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---t-e-a-m- -p-a-p-e-r---p-a-g-e-"- -i-d-=-"-t-e-a-m-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---w-r-a-p-"->-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---s-e-c-t-i-o-n---h-e-a-d- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - - - -<-p->-M-e-e-t- -t-h-e- -t-e-a-m-<-/-p->-
-- - - - - - - - - - - - -<-h-2->-T-h-e- -p-e-o-p-l-e- -b-e-h-i-n-d- -L-e-x-D-a-t-a-.-<-/-h-2->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---t-e-a-m---s-h-e-l-l- -p-a-p-e-r---r-e-v- -p-a-p-e-r---t-u-r-n-"->-
-- - - - - - - - - - - - -<-T-e-a-m-S-h-o-w-c-a-s-e- -/->-
-- - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---t-e-a-m---a-c-t-i-o-n-s- -p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-m-a-n-a-g-e-r-/-t-e-a-m-"->-M-a-n-a-g-e- -t-e-a-m-<-/-L-i-n-k->-
-- - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-n-t-a-c-t-"->-W-o-r-k- -w-i-t-h- -u-s-<-/-L-i-n-k->-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-b-o-u-t---c-t-a- -p-a-p-e-r---p-a-g-e-"->-
-- - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---r-e-v-"->-B-u-i-l-d- -b-e-t-t-e-r- -l-a-n-g-u-a-g-e---d-a-t-a- -w-o-r-k- -w-i-t-h- -u-s-.-<-/-h-2->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p-a-p-e-r---r-e-v-"->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-u-r-s-e-s-"->-B-r-o-w-s-e- -c-o-u-r-s-e-s-<-/-L-i-n-k->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-w-o-r-k-s-h-o-p-s-"->-U-p-c-o-m-i-n-g- -w-o-r-k-s-h-o-p-s-<-/-L-i-n-k->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import type { CSSProperties } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import AboutReveal from "@/components/AboutReveal";
+import { getCurrentProfile } from "@/lib/auth";
+import { isManagerRole } from "@/lib/roles";
+import "./about.css";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type AboutSection = {
+  id: string;
+  kicker: string | null;
+  heading: string | null;
+  body: string | null;
+  items: string[] | null;
+  is_active: boolean;
+};
+
+type TeamMember = {
+  id: string;
+  full_name: string | null;
+  title: string | null;
+  photo_url: string | null;
+};
+
+/* Fallbacks keep the page whole before the 004 migration runs
+   or if a section is deactivated in the editor. */
+const FALLBACK: Record<string, AboutSection> = {
+  intro: {
+    id: "intro",
+    kicker: "Who we are",
+    heading: "We're humanists who build data systems.",
+    body: "LexData is a research-driven data solutions company focused on language sciences, translation, education, ELT, and social sciences. We specialize in the collection, processing, analysis, and interpretation of large datasets using Python, R, NLP, and data science workflows.",
+    items: [],
+    is_active: true,
+  },
+  mission: {
+    id: "mission",
+    kicker: "Our mission",
+    heading: "Bridging humanities and data science for real-world impact.",
+    body: "We help researchers, translators, and educators turn language into evidence — with methods that stand up to review and results you can explain.",
+    items: [],
+    is_active: true,
+  },
+  why: {
+    id: "why",
+    kicker: "Why LexData?",
+    heading: "The bridge, not just the code.",
+    body: null,
+    items: [
+      "Built by researchers who publish, not just ship",
+      "Multilingual by default — English, 中文, العربية and beyond",
+      "Every claim backed by an evaluation you can see",
+      "Training that meets humanists where they are",
+    ],
+    is_active: true,
+  },
+  aims: {
+    id: "aims",
+    kicker: "Our aims",
+    heading: "Three things we're building toward.",
+    body: null,
+    items: [
+      "Research-grade language data | Corpora and annotation pipelines with the care of a critical edition.",
+      "Honest, useful models | Trained on documented data, benchmarked in the open, never oversold.",
+      "A wider door into data science | Courses and workshops that turn language people into data people.",
+    ],
+    is_active: true,
+  },
+  stance: {
+    id: "stance",
+    kicker: "A principled alternative",
+    heading: "By humanists, for humanists.",
+    body: "We think researchers and learners should be free to work with language — away from black boxes, inflated claims, and the prying eyes of data brokers.",
+    items: [
+      "Your data is YOURS.",
+      "Human-annotated — always.",
+      "Honest benchmarks. No hype.",
+    ],
+    is_active: true,
+  },
+  quote: {
+    id: "quote",
+    kicker: null,
+    heading: null,
+    body: "The limits of my language mean the limits of my world.",
+    items: ["Ludwig Wittgenstein"],
+    is_active: true,
+  },
+};
+
+const AIM_STYLES = [
+  { emoji: "📚", bg: "var(--ab-peri-soft)", tilt: "-2deg" },
+  { emoji: "🔬", bg: "var(--ab-butter)", tilt: "1.5deg" },
+  { emoji: "🎓", bg: "#f9c9bb", tilt: "-1deg" },
+];
+
+function Check() {
+  return (
+    <svg className="ab-draw" viewBox="0 0 26 26" aria-hidden="true">
+      <path d="M3 14 L10 21 L23 4" />
+    </svg>
+  );
+}
+
+export default async function AboutPage() {
+  const supabase = await createClient();
+
+  const { data: sectionRows } = await supabase
+    .from("about_sections")
+    .select("id,kicker,heading,body,items,is_active")
+    .order("sort", { ascending: true });
+
+  const sections: Record<string, AboutSection> = { ...FALLBACK };
+  (sectionRows ?? []).forEach((row) => {
+    if (row?.id && FALLBACK[row.id]) {
+      sections[row.id] = {
+        ...FALLBACK[row.id],
+        ...row,
+        items: Array.isArray(row.items) ? (row.items as string[]) : [],
+      };
+    }
+  });
+
+  let team: TeamMember[] = [];
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("team_members")
+      .select("id,full_name,title,photo_url")
+      .eq("is_published", true)
+      .order("display_order", { ascending: true })
+      .limit(8);
+    team = (data ?? []) as TeamMember[];
+  } catch {
+    team = [];
+  }
+
+  const profile = await getCurrentProfile();
+  const canEdit = isManagerRole(profile?.role);
+  const editHref =
+    profile?.role === "admin" ? "/admin/about" : "/manager/about";
+
+  const { intro, mission, why, aims, stance, quote } = sections as {
+    [k: string]: AboutSection;
+  };
+
+  return (
+    <div className="ab-root">
+      <AboutReveal />
+
+      {/* ---------- hero ---------- */}
+      <section className="ab-hero">
+        <div className="ab-doodle ab-float" style={{ "--r": "-8deg", top: 90, left: "7%", width: 52 } as CSSProperties}>
+          <svg viewBox="0 0 40 40"><path d="M20 4 L20 36 M4 20 L36 20 M9 9 L31 31 M31 9 L9 31" /></svg>
+        </div>
+        <div className="ab-doodle ab-float slow coral" style={{ "--r": "10deg", top: 70, right: "8%", width: 66 } as CSSProperties}>
+          <svg viewBox="0 0 60 40"><path d="M4 30 Q14 8 24 24 T44 20 T58 12" /></svg>
+        </div>
+        <div className="ab-wrap">
+          {canEdit ? (
+            <p style={{ marginBottom: 16 }}>
+              <Link href={editHref} className="ab-btn" style={{ fontSize: 14, padding: "8px 18px" }}>
+                ✏️ Edit this page
+              </Link>
+            </p>
+          ) : null}
+          <span className="ab-kicker ab-rev">{intro.kicker}</span>
+          <h1 className="ab-rev" style={{ "--d": ".08s" } as CSSProperties}>
+            We&rsquo;re{" "}
+            <span className="ab-squig">
+              humanists
+              <svg viewBox="0 0 300 24" preserveAspectRatio="none">
+                <path d="M4 14 Q 30 4 55 13 T 105 13 T 155 12 T 205 14 T 255 12 T 296 13" />
+              </svg>
+            </span>{" "}
+            who build data systems.
+          </h1>
+          <p className="ab-sub ab-rev" style={{ "--d": ".16s" } as CSSProperties}>
+            {intro.body}
+          </p>
+          <p className="ab-note ab-hand ab-rev" style={{ "--d": ".28s" } as CSSProperties}>
+            ↓ scroll for the whole story ↓
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- mission + why ---------- */}
+      <section className="ab-block" style={{ paddingTop: 20 }}>
+        <div className="ab-wrap">
+          <div className="ab-grid2">
+            {mission.is_active ? (
+              <div className="ab-card ab-sticker ab-rev" style={{ "--tilt": "-1.5deg" } as CSSProperties}>
+                <span className="ab-kicker">{mission.kicker}</span>
+                <h3 style={{ marginTop: 10 }}>{mission.heading}</h3>
+                <p style={{ marginTop: 10 }}>{mission.body}</p>
+              </div>
+            ) : null}
+            {why.is_active ? (
+              <div className="ab-card ab-sticker ab-rev" style={{ "--tilt": "1.5deg", "--d": ".1s" } as CSSProperties}>
+                <span className="ab-kicker">{why.kicker}</span>
+                <h3 style={{ marginTop: 10 }}>{why.heading}</h3>
+                <ul className="ab-checks">
+                  {(why.items ?? []).map((item) => (
+                    <li key={item}>
+                      <Check />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- aims ---------- */}
+      {aims.is_active ? (
+        <section className="ab-block ab-center" style={{ paddingTop: 10 }}>
+          <div className="ab-wrap">
+            <span className="ab-kicker ab-rev">{aims.kicker}</span>
+            <h2 className="ab-rev" style={{ "--d": ".08s" } as CSSProperties}>{aims.heading}</h2>
+            <div className="ab-grid3">
+              {(aims.items ?? []).map((raw, i) => {
+                const [title, body] = raw.split("|").map((s) => s.trim());
+                const s = AIM_STYLES[i % AIM_STYLES.length];
+                return (
+                  <div
+                    key={raw}
+                    className="ab-card ab-sticker ab-rev"
+                    style={{ "--tilt": s.tilt, "--d": `${i * 0.1}s`, textAlign: "left" } as CSSProperties}
+                  >
+                    <div className="ab-emoji" style={{ "--bg": s.bg } as CSSProperties}>{s.emoji}</div>
+                    <h3>{title}</h3>
+                    <p style={{ marginTop: 8 }}>{body}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ---------- team ---------- */}
+      {team.length > 0 ? (
+        <section className="ab-block ab-center" style={{ paddingTop: 10 }}>
+          <div className="ab-doodle ab-float peri" style={{ "--r": "6deg", top: 40, right: "10%", width: 46 } as CSSProperties}>
+            <svg viewBox="0 0 40 40"><path d="M20 2 L24 15 L38 16 L27 25 L31 38 L20 30 L9 38 L13 25 L2 16 L16 15 Z" /></svg>
+          </div>
+          <div className="ab-wrap">
+            <span className="ab-kicker ab-rev">The people</span>
+            <h2 className="ab-rev" style={{ "--d": ".08s" } as CSSProperties}>That&rsquo;s us, collaborating!</h2>
+            <div className="ab-team">
+              {team.map((member, i) => (
+                <div key={member.id} className="ab-member ab-rev" style={{ "--d": `${i * 0.08}s` } as CSSProperties}>
+                  <div className="ab-photo" style={{ "--tilt": i % 2 ? "2deg" : "-2deg" } as CSSProperties}>
+                    {member.photo_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={member.photo_url} alt={member.full_name ?? "Team member"} />
+                    ) : (
+                      <span>{(member.full_name ?? "?").charAt(0)}</span>
+                    )}
+                  </div>
+                  <h3>{member.full_name}</h3>
+                  <p className="ab-role">{member.title}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ marginTop: 30 }} className="ab-rev">
+              <Link href="/team" className="ab-btn">Meet the whole team →</Link>
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ---------- stance band ---------- */}
+      {stance.is_active ? (
+        <section className="ab-band">
+          <div className="ab-doodle ab-float" style={{ "--r": "-6deg", top: 40, right: "6%", width: 56 } as CSSProperties}>
+            <svg viewBox="0 0 50 50"><path d="M25 4 C 12 4 6 14 6 24 C 6 36 16 44 25 46 C 34 44 44 36 44 24 C 44 14 38 4 25 4 Z M17 22 Q25 30 33 22" /></svg>
+          </div>
+          <div className="ab-wrap">
+            <span className="ab-kicker ab-rev" style={{ color: "var(--ab-ink)" }}>{stance.kicker}</span>
+            <h2 className="ab-rev" style={{ "--d": ".08s" } as CSSProperties}>{stance.heading}</h2>
+            <p className="ab-lead ab-rev" style={{ "--d": ".16s" } as CSSProperties}>{stance.body}</p>
+            <div className="ab-badges">
+              {(stance.items ?? []).map((badge, i) => (
+                <span
+                  key={badge}
+                  className="ab-badge ab-rev"
+                  style={{ "--tilt": i % 2 ? "2deg" : "-2deg", "--d": `${0.2 + i * 0.1}s` } as CSSProperties}
+                >
+                  {badge}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ---------- quote + CTA ---------- */}
+      <section className="ab-quotewrap">
+        <div className="ab-wrap">
+          {quote.is_active && quote.body ? (
+            <blockquote className="ab-quote ab-rev">
+              &ldquo;{quote.body}&rdquo;
+              <cite>— {(quote.items ?? [])[0] ?? ""}</cite>
+            </blockquote>
+          ) : null}
+          <p style={{ marginTop: 40 }} className="ab-rev">
+            <Link href="/workshops" className="ab-btn coral">Join a workshop →</Link>{" "}
+            <Link href="/contact" className="ab-btn" style={{ marginLeft: 10 }}>Say hello</Link>
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}

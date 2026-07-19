@@ -1,59 +1,58 @@
--i-m-p-o-r-t- -{- -N-e-x-t-R-e-s-p-o-n-s-e- -}- -f-r-o-m- -"-n-e-x-t-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-u-n-t-i-m-e- -=- -"-n-o-d-e-j-s-"-;-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -G-E-T-(-r-e-q-u-e-s-t-:- -R-e-q-u-e-s-t-)- -{-
-- - -c-o-n-s-t- -u-r-l- -=- -n-e-w- -U-R-L-(-r-e-q-u-e-s-t-.-u-r-l-)-;-
--
-- - -c-o-n-s-t- -s-l-u-g- -=-
-- - - - -u-r-l-.-s-e-a-r-c-h-P-a-r-a-m-s-.-g-e-t-(-"-s-l-u-g-"-)- -|-|- -"-f-r-o-m---r-e-s-e-a-r-c-h---i-d-e-a---t-o---p-u-b-l-i-c-a-t-i-o-n-s-"-;-
--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -e-x-a-c-t-W-o-r-k-s-h-o-p-,- -e-r-r-o-r-:- -e-x-a-c-t-E-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-
-- - - - - - -`-
-- - - - - - -i-d-,-
-- - - - - - -t-i-t-l-e-,-
-- - - - - - -s-l-u-g-,-
-- - - - - - -i-s-_-p-u-b-l-i-s-h-e-d-,-
-- - - - - - -r-e-c-r-u-i-t-m-e-n-t-_-s-t-a-t-u-s-,-
-- - - - - - -p-r-o-c-e-s-s-_-s-t-a-t-u-s-,-
-- - - - - - -c-r-e-a-t-e-d-_-a-t-,-
-- - - - - - -u-p-d-a-t-e-d-_-a-t-
-- - - - -`-
-- - - - -)-
-- - - - -.-e-q-(-"-s-l-u-g-"-,- -s-l-u-g-)-
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -s-i-m-i-l-a-r-W-o-r-k-s-h-o-p-s-,- -e-r-r-o-r-:- -s-i-m-i-l-a-r-E-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-
-- - - - - - -`-
-- - - - - - -i-d-,-
-- - - - - - -t-i-t-l-e-,-
-- - - - - - -s-l-u-g-,-
-- - - - - - -i-s-_-p-u-b-l-i-s-h-e-d-,-
-- - - - - - -c-r-e-a-t-e-d-_-a-t-,-
-- - - - - - -u-p-d-a-t-e-d-_-a-t-
-- - - - -`-
-- - - - -)-
-- - - - -.-o-r-(-"-t-i-t-l-e-.-i-l-i-k-e-.-%-r-e-s-e-a-r-c-h-%-,-t-i-t-l-e-.-i-l-i-k-e-.-%-p-u-b-l-i-c-a-t-i-o-n-%-,-s-l-u-g-.-i-l-i-k-e-.-%-r-e-s-e-a-r-c-h-%-"-)-
-- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-
-- - - - -.-l-i-m-i-t-(-1-0-)-;-
--
-- - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
-- - - - -o-k-:- -t-r-u-e-,-
-- - - - -c-h-e-c-k-e-d-S-l-u-g-:- -s-l-u-g-,-
-- - - - -s-u-p-a-b-a-s-e-U-r-l-:- -p-r-o-c-e-s-s-.-e-n-v-.-N-E-X-T-_-P-U-B-L-I-C-_-S-U-P-A-B-A-S-E-_-U-R-L-,-
-- - - - -h-a-s-S-e-r-v-i-c-e-R-o-l-e-K-e-y-:- -B-o-o-l-e-a-n-(-p-r-o-c-e-s-s-.-e-n-v-.-S-U-P-A-B-A-S-E-_-S-E-R-V-I-C-E-_-R-O-L-E-_-K-E-Y-)-,-
-- - - - -e-x-a-c-t-W-o-r-k-s-h-o-p-,-
-- - - - -e-x-a-c-t-E-r-r-o-r-,-
-- - - - -s-i-m-i-l-a-r-W-o-r-k-s-h-o-p-s-,-
-- - - - -s-i-m-i-l-a-r-E-r-r-o-r-,-
-- - -}-)-;-
--}-
--
+import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+
+  const slug =
+    url.searchParams.get("slug") || "from-research-idea-to-publications";
+
+  const admin = createAdminClient();
+
+  const { data: exactWorkshop, error: exactError } = await admin
+    .from("workshops")
+    .select(
+      `
+      id,
+      title,
+      slug,
+      is_published,
+      recruitment_status,
+      process_status,
+      created_at,
+      updated_at
+    `
+    )
+    .eq("slug", slug)
+    .maybeSingle();
+
+  const { data: similarWorkshops, error: similarError } = await admin
+    .from("workshops")
+    .select(
+      `
+      id,
+      title,
+      slug,
+      is_published,
+      created_at,
+      updated_at
+    `
+    )
+    .or("title.ilike.%research%,title.ilike.%publication%,slug.ilike.%research%")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  return NextResponse.json({
+    ok: true,
+    checkedSlug: slug,
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    exactWorkshop,
+    exactError,
+    similarWorkshops,
+    similarError,
+  });
+}

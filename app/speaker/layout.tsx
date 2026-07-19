@@ -1,7 +1,6 @@
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -S-p-e-a-k-e-r-L-a-y-o-u-t-(-{- -c-h-i-l-d-r-e-n- -}-:- -{- -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-.-R-e-a-c-t-N-o-d-e- -}-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-R-o-l-e-(-[-"-s-p-e-a-k-e-r-"-]-)-;-
-- - -r-e-t-u-r-n- -<->-{-c-h-i-l-d-r-e-n-}-<-/->-;-
--}-
--
+import { requireRole } from "@/lib/auth";
+
+export default async function SpeakerLayout({ children }: { children: React.ReactNode }) {
+  await requireRole(["speaker"]);
+  return <>{children}</>;
+}

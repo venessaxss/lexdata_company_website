@@ -1,46 +1,45 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-S-p-e-a-k-e-r-O-r-A-d-m-i-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -S-p-e-a-k-e-r-S-e-s-s-i-o-n-s-P-a-g-e-(-)- -{-
-- - -c-o-n-s-t- -{- -u-s-e-r-,- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-S-p-e-a-k-e-r-O-r-A-d-m-i-n-(-)-;-
-- - -c-o-n-s-t- -r-o-l-e- -=- -p-r-o-f-i-l-e-.-r-o-l-e-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -l-e-t- -q-u-e-r-y- -=- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-s-e-s-s-i-o-n-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-s-t-a-r-t-s-_-a-t-,-e-n-d-s-_-a-t-,-c-a-p-a-c-i-t-y-,-i-s-_-p-u-b-l-i-s-h-e-d-,-w-o-r-k-s-h-o-p-s-(-t-i-t-l-e-,-s-l-u-g-)-"-)-
-- - - - -.-o-r-d-e-r-(-"-s-t-a-r-t-s-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -t-r-u-e- -}-)-;-
--
-- - -i-f- -(-r-o-l-e- -!-=-=- -"-a-d-m-i-n-"-)- -q-u-e-r-y- -=- -q-u-e-r-y-.-e-q-(-"-s-p-e-a-k-e-r-_-i-d-"-,- -u-s-e-r-.-i-d-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -s-e-s-s-i-o-n-s- -}- -=- -a-w-a-i-t- -q-u-e-r-y-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-2-"->-
-- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d-"->-M-y- -t-r-a-i-n-i-n-g- -s-e-s-s-i-o-n-s-<-/-h-1->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-l-a-t-e---6-0-0-"->-S-e-s-s-i-o-n-s- -a-s-s-i-g-n-e-d- -t-o- -y-o-u- -a-s- -a- -s-p-e-a-k-e-r-/-t-r-a-i-n-e-r-.-<-/-p->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -m-t---8- -o-v-e-r-f-l-o-w---h-i-d-d-e-n-"->-
-- - - - - - - - -<-t-a-b-l-e- -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -t-e-x-t---l-e-f-t- -t-e-x-t---s-m-"->-
-- - - - - - - - - - -<-t-h-e-a-d- -c-l-a-s-s-N-a-m-e-=-"-b-g---s-l-a-t-e---5-0- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - - - -<-t-r->-<-t-h- -c-l-a-s-s-N-a-m-e-=-"-p---4-"->-S-e-s-s-i-o-n-<-/-t-h->-<-t-h->-W-o-r-k-s-h-o-p-<-/-t-h->-<-t-h->-T-i-m-e-<-/-t-h->-<-t-h->-S-t-a-t-u-s-<-/-t-h->-<-t-h->-A-c-t-i-o-n-s-<-/-t-h->-<-/-t-r->-
-- - - - - - - - - - -<-/-t-h-e-a-d->-
-- - - - - - - - - - -<-t-b-o-d-y->-
-- - - - - - - - - - - - -{-(-s-e-s-s-i-o-n-s- -?-?- -[-]-)-.-m-a-p-(-(-s-e-s-s-i-o-n-:- -a-n-y-)- -=->- -(-
-- - - - - - - - - - - - - - -<-t-r- -k-e-y-=-{-s-e-s-s-i-o-n-.-i-d-}- -c-l-a-s-s-N-a-m-e-=-"-b-o-r-d-e-r---t- -b-o-r-d-e-r---s-l-a-t-e---1-0-0-"->-
-- - - - - - - - - - - - - - - - -<-t-d- -c-l-a-s-s-N-a-m-e-=-"-p---4- -f-o-n-t---m-e-d-i-u-m-"->-{-s-e-s-s-i-o-n-.-t-i-t-l-e-}-<-/-t-d->-
-- - - - - - - - - - - - - - - - -<-t-d->-{-s-e-s-s-i-o-n-.-w-o-r-k-s-h-o-p-s-?-.-t-i-t-l-e-}-<-/-t-d->-
-- - - - - - - - - - - - - - - - -<-t-d->-{-n-e-w- -D-a-t-e-(-s-e-s-s-i-o-n-.-s-t-a-r-t-s-_-a-t-)-.-t-o-L-o-c-a-l-e-S-t-r-i-n-g-(-)-}-<-/-t-d->-
-- - - - - - - - - - - - - - - - -<-t-d->-<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e-"->-{-s-e-s-s-i-o-n-.-i-s-_-p-u-b-l-i-s-h-e-d- -?- -"-P-u-b-l-i-s-h-e-d-"- -:- -"-D-r-a-f-t-"-}-<-/-s-p-a-n->-<-/-t-d->-
-- - - - - - - - - - - - - - - - -<-t-d->-<-L-i-n-k- -h-r-e-f-=-"-/-s-p-e-a-k-e-r-/-a-t-t-e-n-d-e-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---l-i-g-h-t-"->-A-t-t-e-n-d-e-e-s-<-/-L-i-n-k->-<-/-t-d->-
-- - - - - - - - - - - - - - -<-/-t-r->-
-- - - - - - - - - - - - -)-)-}-
-- - - - - - - - - - - - -{-(-!-s-e-s-s-i-o-n-s- -|-|- -s-e-s-s-i-o-n-s-.-l-e-n-g-t-h- -=-=-=- -0-)- -?- -<-t-r->-<-t-d- -c-l-a-s-s-N-a-m-e-=-"-p---4- -t-e-x-t---s-l-a-t-e---6-0-0-"- -c-o-l-S-p-a-n-=-{-5-}->-N-o- -s-e-s-s-i-o-n-s- -a-s-s-i-g-n-e-d- -y-e-t-.-<-/-t-d->-<-/-t-r->- -:- -n-u-l-l-}-
-- - - - - - - - - - -<-/-t-b-o-d-y->-
-- - - - - - - - -<-/-t-a-b-l-e->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+import { requireSpeakerOrAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function SpeakerSessionsPage() {
+  const { user, profile } = await requireSpeakerOrAdmin();
+  const role = profile.role;
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("workshop_sessions")
+    .select("id,title,starts_at,ends_at,capacity,is_published,workshops(title,slug)")
+    .order("starts_at", { ascending: true });
+
+  if (role !== "admin") query = query.eq("speaker_id", user.id);
+
+  const { data: sessions } = await query;
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <h1 className="text-3xl font-bold">My training sessions</h1>
+      <p className="mt-2 text-slate-600">Sessions assigned to you as a speaker/trainer.</p>
+
+      <div className="card mt-8 overflow-hidden">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-slate-50 text-slate-600">
+            <tr><th className="p-4">Session</th><th>Workshop</th><th>Time</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {(sessions ?? []).map((session: any) => (
+              <tr key={session.id} className="border-t border-slate-100">
+                <td className="p-4 font-medium">{session.title}</td>
+                <td>{session.workshops?.title}</td>
+                <td>{new Date(session.starts_at).toLocaleString()}</td>
+                <td><span className="badge">{session.is_published ? "Published" : "Draft"}</span></td>
+                <td><Link href="/speaker/attendees" className="btn-light">Attendees</Link></td>
+              </tr>
+            ))}
+            {(!sessions || sessions.length === 0) ? <tr><td className="p-4 text-slate-600" colSpan={5}>No sessions assigned yet.</td></tr> : null}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}

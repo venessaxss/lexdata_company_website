@@ -1,58 +1,58 @@
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
---
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -D-a-s-h-b-o-a-r-d-M-e-s-s-a-g-e-s-P-a-g-e-(-)- -{--
-- - -n-o-S-t-o-r-e-(-)-;--
---
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -{--
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
---
-- - -i-f- -(-!-u-s-e-r-)- -{--
-- - - - -r-e-t-u-r-n- -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-p---8-"->-P-l-e-a-s-e- -l-o-g- -i-n- -t-o- -v-i-e-w- -m-e-s-s-a-g-e-s-.-<-/-m-a-i-n->-;--
-- - -}--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -m-e-s-s-a-g-e-s- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-i-n-t-e-r-n-a-l-_-m-e-s-s-a-g-e-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-*-"-)--
-- - - - -.-o-r-(-`-u-s-e-r-_-i-d-.-e-q-.-$-{-u-s-e-r-.-i-d-}-,-r-e-c-i-p-i-e-n-t-_-e-m-a-i-l-.-e-q-.-$-{-u-s-e-r-.-e-m-a-i-l-}-`-)--
-- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -f-a-l-s-e- -}-)-;--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-i-n---h---s-c-r-e-e-n- -b-g---s-l-a-t-e---5-0- -p-x---4- -p-y---8-"->--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---4-x-l- -s-p-a-c-e---y---5-"->--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---3-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-M-e-s-s-a-g-e-s-<-/-h-1->--
---
-- - - - - - - - -{-(-m-e-s-s-a-g-e-s- -?-?- -[-]-)-.-m-a-p-(-(-m-e-s-s-a-g-e-:- -a-n-y-)- -=->- -(--
-- - - - - - - - - - -<-a-r-t-i-c-l-e--
-- - - - - - - - - - - - -k-e-y-=-{-m-e-s-s-a-g-e-.-i-d-}--
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -r-i-n-g---1- -r-i-n-g---s-l-a-t-e---2-0-0-"--
-- - - - - - - - - - ->--
-- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---l-g- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - - - -{-m-e-s-s-a-g-e-.-t-i-t-l-e-}--
-- - - - - - - - - - - - -<-/-h-2->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -w-h-i-t-e-s-p-a-c-e---p-r-e---w-r-a-p- -t-e-x-t---s-m- -l-e-a-d-i-n-g---7- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - - - -{-m-e-s-s-a-g-e-.-b-o-d-y-}--
-- - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---x-s- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---4-0-0-"->--
-- - - - - - - - - - - - - - -{-n-e-w- -D-a-t-e-(-m-e-s-s-a-g-e-.-c-r-e-a-t-e-d-_-a-t-)-.-t-o-L-o-c-a-l-e-S-t-r-i-n-g-(-)-}--
-- - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - -<-/-a-r-t-i-c-l-e->--
-- - - - - - - - -)-)-}--
---
-- - - - - - - - -{-(-m-e-s-s-a-g-e-s- -?-?- -[-]-)-.-l-e-n-g-t-h- -=-=-=- -0- -?- -(--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---8- -t-e-x-t---c-e-n-t-e-r- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---4-0-0-"->--
-- - - - - - - - - - - - -N-o- -m-e-s-s-a-g-e-s- -y-e-t-.--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -)- -:- -n-u-l-l-}--
-- - - - - - -<-/-s-e-c-t-i-o-n->--
-- - - - -<-/-m-a-i-n->--
-- - -)-;--
--}-
+import { unstable_noStore as noStore } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function DashboardMessagesPage() {
+  noStore();
+
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return <main className="p-8">Please log in to view messages.</main>;
+  }
+
+  const { data: messages } = await admin
+    .from("internal_messages")
+    .select("*")
+    .or(`user_id.eq.${user.id},recipient_email.eq.${user.email}`)
+    .order("created_at", { ascending: false });
+
+  return (
+    <main className="min-h-screen bg-slate-50 px-4 py-8">
+      <section className="mx-auto max-w-4xl space-y-5">
+        <h1 className="text-3xl font-black text-slate-950">Messages</h1>
+
+        {(messages ?? []).map((message: any) => (
+          <article
+            key={message.id}
+            className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+          >
+            <h2 className="text-lg font-black text-slate-950">
+              {message.title}
+            </h2>
+            <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">
+              {message.body}
+            </p>
+            <p className="mt-4 text-xs font-bold text-slate-400">
+              {new Date(message.created_at).toLocaleString()}
+            </p>
+          </article>
+        ))}
+
+        {(messages ?? []).length === 0 ? (
+          <div className="rounded-3xl bg-white p-8 text-center font-bold text-slate-400">
+            No messages yet.
+          </div>
+        ) : null}
+      </section>
+    </main>
+  );
+}

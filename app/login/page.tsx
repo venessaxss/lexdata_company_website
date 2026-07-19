@@ -1,74 +1,101 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -l-o-g-i-n-A-c-t-i-o-n-,- -s-i-g-n-u-p-A-c-t-i-o-n- -}- -f-r-o-m- -"-.-/-a-c-t-i-o-n-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -L-o-g-i-n-P-a-g-e-(-{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-,-
--}-:- -{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -e-r-r-o-r-?-:- -s-t-r-i-n-g-;- -n-e-x-t-?-:- -s-t-r-i-n-g- -}->-;-
--}-)- -{-
-- - -c-o-n-s-t- -p-a-r-a-m-s- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---p-a-g-e-"->-
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---c-a-r-d-"->-
-- - - - - - - - -<-p->-M-e-m-b-e-r- -a-c-c-e-s-s-<-/-p->-
-- - - - - - - - -<-h-1->-A-c-c-e-s-s- -y-o-u-r- -L-e-x-D-a-t-a- -a-c-c-o-u-n-t-<-/-h-1->-
-- - - - - - - - -<-s-p-a-n->-
-- - - - - - - - - - -L-o-g- -i-n- -o-n-c-e- -t-o- -a-c-c-e-s-s- -y-o-u-r- -d-a-s-h-b-o-a-r-d-,- -w-o-r-k-s-h-o-p-s-,- -a-d-m-i-n- -t-o-o-l-s-,- -m-a-n-a-g-e-r-
-- - - - - - - - - - -p-a-g-e-s-,- -a-n-d- -l-e-a-r-n-i-n-g- -m-a-t-e-r-i-a-l-s-.-
-- - - - - - - - -<-/-s-p-a-n->-
--
-- - - - - - - - -{-p-a-r-a-m-s-.-e-r-r-o-r- -?- -(-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---e-r-r-o-r-"->-{-p-a-r-a-m-s-.-e-r-r-o-r-}-<-/-d-i-v->-
-- - - - - - - - -)- -:- -n-u-l-l-}-
--
-- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-l-o-g-i-n-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---f-o-r-m-"->--
-- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-n-e-x-t-"- -v-a-l-u-e-=-{-p-a-r-a-m-s-.-n-e-x-t- -|-|- -"-/-d-a-s-h-b-o-a-r-d-"-}- -/->-
-- - - - - - - - - - -<-l-a-b-e-l->-
-- - - - - - - - - - - - -E-m-a-i-l-
-- - - - - - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-e-m-a-i-l-"- -t-y-p-e-=-"-e-m-a-i-l-"- -r-e-q-u-i-r-e-d- -a-u-t-o-C-o-m-p-l-e-t-e-=-"-e-m-a-i-l-"- -/->-
-- - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - -<-l-a-b-e-l->-
-- - - - - - - - - - - - -P-a-s-s-w-o-r-d-
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -a-u-t-o-C-o-m-p-l-e-t-e-=-"-c-u-r-r-e-n-t---p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-s-u-b-m-i-t-"->-L-o-g- -i-n-<-/-b-u-t-t-o-n->-
-- - - - - - - - -<-/-f-o-r-m->-
--
-- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-s-i-g-n-u-p-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---f-o-r-m- -l-e-x---a-u-t-h---s-i-g-n-u-p-"->--
-- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-n-e-x-t-"- -v-a-l-u-e-=-{-p-a-r-a-m-s-.-n-e-x-t- -|-|- -"-/-d-a-s-h-b-o-a-r-d-"-}- -/->-
-- - - - - - - - - - -<-h-2->-C-r-e-a-t-e- -a-c-c-o-u-n-t-<-/-h-2->-
--
-- - - - - - - - - - -<-l-a-b-e-l->-
-- - - - - - - - - - - - -E-m-a-i-l-
-- - - - - - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-e-m-a-i-l-"- -t-y-p-e-=-"-e-m-a-i-l-"- -r-e-q-u-i-r-e-d- -a-u-t-o-C-o-m-p-l-e-t-e-=-"-e-m-a-i-l-"- -/->-
-- - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - -<-l-a-b-e-l->-
-- - - - - - - - - - - - -P-a-s-s-w-o-r-d-
-- - - - - - - - - - - - -<-i-n-p-u-t-
-- - - - - - - - - - - - - - -n-a-m-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
-- - - - - - - - - - - - - - -a-u-t-o-C-o-m-p-l-e-t-e-=-"-n-e-w---p-a-s-s-w-o-r-d-"-
-- - - - - - - - - - - - -/->-
-- - - - - - - - - - -<-/-l-a-b-e-l->-
--
-- - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-s-u-b-m-i-t-"->-C-r-e-a-t-e- -a-c-c-o-u-n-t-<-/-b-u-t-t-o-n->-
-- - - - - - - - -<-/-f-o-r-m->-
--
-- - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-"->-B-a-c-k- -t-o- -h-o-m-e-p-a-g-e-<-/-L-i-n-k->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { loginWithPassword } from "./actions";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string; redirect?: string }>;
+}) {
+  const { message, redirect: redirectPath } = await searchParams;
+
+  return (
+    <main className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4 py-16">
+      <div className="w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <Link
+          href="/"
+          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
+        >
+          ← Back to homepage
+        </Link>
+
+        <h1 className="mt-6 text-4xl font-black text-slate-950">Login</h1>
+
+        <p className="mt-3 text-slate-600">
+          Login to access your LexData dashboard, workshop registrations,
+          messages, and learning materials.
+        </p>
+
+        {message ? (
+          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            {message}
+          </div>
+        ) : null}
+
+        <form action={loginWithPassword} className="mt-6 grid gap-5">
+          <input
+            type="hidden"
+            name="redirect"
+            value={redirectPath || "/dashboard"}
+          />
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Email address
+            </label>
+
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Password
+            </label>
+
+            <input
+              name="password"
+              type="password"
+              required
+              placeholder="Your password"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="mt-6 flex flex-col gap-3 text-sm">
+          <Link
+            href="/forgot-password"
+            className="font-semibold text-slate-600 hover:text-slate-950"
+          >
+            Forgot password?
+          </Link>
+
+          <p className="text-slate-600">
+            Do not have an account?{" "}
+            <Link
+              href="/signup"
+              className="font-semibold text-slate-950 hover:underline"
+            >
+              Create account
+            </Link>
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}

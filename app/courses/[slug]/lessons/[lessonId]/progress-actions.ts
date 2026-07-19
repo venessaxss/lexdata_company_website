@@ -1,22 +1,21 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -m-a-r-k-L-e-s-s-o-n-C-o-m-p-l-e-t-e-(-l-e-s-s-o-n-I-d-:- -s-t-r-i-n-g-,- -s-l-u-g-:- -s-t-r-i-n-g-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
-- - -c-o-n-s-t- -{- -d-a-t-a- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
-- - -i-f- -(-!-d-a-t-a-.-u-s-e-r-)- -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
--
-- - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-l-e-s-s-o-n-_-p-r-o-g-r-e-s-s-"-)-.-u-p-s-e-r-t-(-{-
-- - - - -u-s-e-r-_-i-d-:- -d-a-t-a-.-u-s-e-r-.-i-d-,-
-- - - - -l-e-s-s-o-n-_-i-d-:- -l-e-s-s-o-n-I-d-,-
-- - - - -c-o-m-p-l-e-t-e-d-:- -t-r-u-e-,-
-- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-
-- - -}-)-;-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;-
-- - -r-e-d-i-r-e-c-t-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-`-)-;-
--}-
--
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export async function markLessonComplete(lessonId: string, slug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) redirect("/login");
+
+  await supabase.from("lesson_progress").upsert({
+    user_id: data.user.id,
+    lesson_id: lessonId,
+    completed: true,
+    updated_at: new Date().toISOString()
+  });
+
+  revalidatePath("/dashboard");
+  redirect(`/courses/${slug}`);
+}

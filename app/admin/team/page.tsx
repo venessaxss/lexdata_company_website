@@ -1,8 +1,8 @@
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -A-d-m-i-n-T-e-a-m-P-a-g-e-(-)- -{-
-- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-t-e-a-m-"-)-;-
--}-
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default function AdminTeamPage() {
+  redirect("/manager/team");
+}

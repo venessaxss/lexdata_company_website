@@ -1,125 +1,124 @@
--﻿-"-u-s-e- -c-l-i-e-n-t-"-;--
---
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
--i-m-p-o-r-t- -{- -u-s-e-E-f-f-e-c-t-,- -u-s-e-S-t-a-t-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;--
---
--c-o-n-s-t- -l-i-n-e-s- -=- -[--
-- - -"-l-a-n-g-u-a-g-e- -路- -璇--█- -路- -l-e-n-g-u-a- -路- -賱-睾-丞- -路- -l-a-n-g-u-e- -路- -s-p-r-a-c-h-e- -路- -鞏-胳-柎- -路- -啶--ぞ-啶-粪-ぞ- -路- -l-u-g-h-a- -路- -d-i-l- -路- -"-,--
-- - -"-d-a-t-a- --->-t-o-k-e-n-s- --->-a-n-n-o-t-a-t-i-o-n- --->-c-o-r-p-u-s- --->-m-o-d-e-l- --->-i-n-s-i-g-h-t- --->-d-a-t-a- --->-t-o-k-e-n-s- --->-"-,--
-- - -"-t-r-a-n-s-l-a-t-i-o-n- -路- -缈-昏-瘧- -路- -t-r-a-d-u-c-c-i-贸-n- -路- -鬲-乇-噩-賲-丞- -路- -t-r-a-d-u-c-t-i-o-n- -路- -眉-b-e-r-s-e-t-z-u-n-g- -路- -氩-堨-棴- -路- -"-,--
-- - -"-e-d-u-c-a-t-i-o-n- -路- -鏁-欒-偛- -路- -e-d-u-c-a-c-i-贸-n- -路- -鬲-毓-賱-賷-賲- -路- -茅-d-u-c-a-t-i-o-n- -路- -b-i-l-d-u-n-g- -路- -甑-愳-湣- -路- -啶-多-た-啶-曕--啶-粪-ぞ- -路- -"-,--
-- - -"-s-o-c-i-e-t-y- -路- -绀-句-細- -路- -s-o-c-i-e-d-a-d- -路- -賲-噩-鬲-賲-毓- -路- -s-o-c-i-茅-t-茅- -路- -g-e-s-e-l-l-s-c-h-a-f-t- -路- -靷--殞- -路- -啶-膏-ぎ-啶-距-- -路- -"-,--
-- - -"-h-u-m-a-n-i-t-i-e-s- -脳- -d-a-t-a- -s-c-i-e-n-c-e- -脳- -h-u-m-a-n-i-t-i-e-s- -脳- -d-a-t-a- -s-c-i-e-n-c-e- -脳- -h-u-m-a-n-i-t-i-e-s- -脳- -"-,--
--]-;--
---
--c-o-n-s-t- -w-o-r-d-s- -=- -[--
-- - -[-"-L-a-n-g-u-a-g-e-"-,- -"-E-N-"-]-,--
-- - -[-"-璇--█-"-,- -"-Z-H-"-]-,--
-- - -[-"-L-e-n-g-u-a-"-,- -"-E-S-"-]-,--
-- - -[-"-丕-賱-賱-睾-丞-"-,- -"-A-R-"-]-,--
-- - -[-"-L-a-n-g-u-e-"-,- -"-F-R-"-]-,--
-- - -[-"-鞏-胳-柎-"-,- -"-K-O-"-]-,--
-- - -[-"-啶--ぞ-啶-粪-ぞ-"-,- -"-H-I-"-]-,--
-- - -[-"-S-p-r-a-c-h-e-"-,- -"-D-E-"-]-,--
--]-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -L-e-x-D-a-t-a-A-n-i-m-a-t-e-d-H-e-r-o-(-)- -{--
-- - -c-o-n-s-t- -[-i-n-d-e-x-,- -s-e-t-I-n-d-e-x-]- -=- -u-s-e-S-t-a-t-e-(-0-)-;--
-- - -c-o-n-s-t- -[-v-i-s-i-b-l-e-,- -s-e-t-V-i-s-i-b-l-e-]- -=- -u-s-e-S-t-a-t-e-(-t-r-u-e-)-;--
---
-- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{--
-- - - - -c-o-n-s-t- -p-r-e-f-e-r-s-R-e-d-u-c-e-d-M-o-t-i-o-n- -=- -w-i-n-d-o-w-.-m-a-t-c-h-M-e-d-i-a-(--
-- - - - - - -"-(-p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n-:- -r-e-d-u-c-e-)-"--
-- - - - -)-.-m-a-t-c-h-e-s-;--
---
-- - - - -i-f- -(-p-r-e-f-e-r-s-R-e-d-u-c-e-d-M-o-t-i-o-n-)- -r-e-t-u-r-n-;--
---
-- - - - -c-o-n-s-t- -t-i-m-e-r- -=- -w-i-n-d-o-w-.-s-e-t-I-n-t-e-r-v-a-l-(-(-)- -=->- -{--
-- - - - - - -s-e-t-V-i-s-i-b-l-e-(-f-a-l-s-e-)-;--
---
-- - - - - - -w-i-n-d-o-w-.-s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -{--
-- - - - - - - - -s-e-t-I-n-d-e-x-(-(-c-u-r-r-e-n-t-)- -=->- -(-c-u-r-r-e-n-t- -+- -1-)- -%- -w-o-r-d-s-.-l-e-n-g-t-h-)-;--
-- - - - - - - - -s-e-t-V-i-s-i-b-l-e-(-t-r-u-e-)-;--
-- - - - - - -}-,- -2-5-0-)-;--
-- - - - -}-,- -3-2-0-0-)-;--
---
-- - - - -r-e-t-u-r-n- -(-)- -=->- -w-i-n-d-o-w-.-c-l-e-a-r-I-n-t-e-r-v-a-l-(-t-i-m-e-r-)-;--
-- - -}-,- -[-]-)-;--
---
-- - -c-o-n-s-t- -[-w-o-r-d-,- -l-a-n-g-]- -=- -w-o-r-d-s-[-i-n-d-e-x-]-;--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---p-a-g-e-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---h-e-r-o- -l-d---h-o-m-e---h-e-r-o-"->--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-o-r-p-u-s-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"->--
-- - - - - - - - - - -{-l-i-n-e-s-.-m-a-p-(-(-l-i-n-e-,- -i-)- -=->- -(--
-- - - - - - - - - - - - -<-s-p-a-n--
-- - - - - - - - - - - - - - -k-e-y-=-{-l-i-n-e-}--
-- - - - - - - - - - - - - - -s-t-y-l-e-=-{-{--
-- - - - - - - - - - - - - - - - -t-o-p-:- -`-$-{-8- -+- -i- -*- -1-5-}-%-`-,--
-- - - - - - - - - - - - - - - - -l-e-f-t-:- -0-,--
-- - - - - - - - - - - - - - - - -f-o-n-t-S-i-z-e-:- -`-$-{-1-3- -+- -(-i- -%- -3-)- -*- -3-}-p-x-`-,--
-- - - - - - - - - - - - - - - - -a-n-i-m-a-t-i-o-n-D-u-r-a-t-i-o-n-:- -`-$-{-4-6- -+- -i- -*- -1-4-}-s-`-,--
-- - - - - - - - - - - - - - - - -a-n-i-m-a-t-i-o-n-D-i-r-e-c-t-i-o-n-:- -i- -%- -2- -?- -"-r-e-v-e-r-s-e-"- -:- -"-n-o-r-m-a-l-"-,--
-- - - - - - - - - - - - - - -}-}--
-- - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - -{-l-i-n-e-.-r-e-p-e-a-t-(-6-)-}--
-- - - - - - - - - - - - -<-/-s-p-a-n->--
-- - - - - - - - - - -)-)-}--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-o-n-t-a-i-n-e-r-"->--
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---r-e-v-e-a-l- -i-s---v-i-s-i-b-l-e-"->--
-- - - - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---e-y-e-b-r-o-w-"->--
-- - - - - - - - - - - - - - -I-n-t-e-l-l-i-g-e-n-t- -d-a-t-a- -s-o-l-u-t-i-o-n-s- -路- -l-a-n-g-u-a-g-e- -/- -t-r-a-n-s-l-a-t-i-o-n- -/- -e-d-u-c-a-t-i-o-n- -/--
-- - - - - - - - - - - - - - -s-o-c-i-e-t-y--
-- - - - - - - - - - - - -<-/-s-p-a-n->--
-- - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---r-e-v-e-a-l- -i-s---v-i-s-i-b-l-e-"- -s-t-y-l-e-=-{-{- -t-r-a-n-s-i-t-i-o-n-D-e-l-a-y-:- -"-.-1-s-"- -}-}->--
-- - - - - - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-l-d---d-i-s-p-l-a-y-"->--
-- - - - - - - - - - - - - - -W-h-e-r-e-{-"- -"-}--
-- - - - - - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-y-c-l-e-"->--
-- - - - - - - - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---c-y-c-l-e---l-a-n-g-"->-{-l-a-n-g-}-<-/-s-p-a-n->--
-- - - - - - - - - - - - - - - - -<-s-p-a-n--
-- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-{-`-l-d---c-y-c-l-e---w-o-r-d- -$-{--
-- - - - - - - - - - - - - - - - - - - - -v-i-s-i-b-l-e- -?- -"-i-s---i-n-"- -:- -"-i-s---o-u-t-"--
-- - - - - - - - - - - - - - - - - - -}-`-}--
-- - - - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - - - -{-w-o-r-d-}--
-- - - - - - - - - - - - - - - - -<-/-s-p-a-n->--
-- - - - - - - - - - - - - - -<-/-s-p-a-n->-{-"- -"-}--
-- - - - - - - - - - - - - - -m-e-e-t-s- -d-a-t-a- -s-c-i-e-n-c-e-.--
-- - - - - - - - - - - - -<-/-h-1->--
-- - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---r-e-v-e-a-l- -i-s---v-i-s-i-b-l-e-"- -s-t-y-l-e-=-{-{- -t-r-a-n-s-i-t-i-o-n-D-e-l-a-y-:- -"-.-2-s-"- -}-}->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-l-d---h-e-r-o---s-u-b-"->--
-- - - - - - - - - - - - - - -L-e-x-D-a-t-a- -b-r-i-d-g-e-s- -t-h-e- -h-u-m-a-n-i-t-i-e-s- -a-n-d- -d-a-t-a- -s-c-i-e-n-c-e- -f-o-r- -r-e-a-l---w-o-r-l-d--
-- - - - - - - - - - - - - - -i-m-p-a-c-t- --?-t-u-r-n-i-n-g- -t-e-x-t-,- -t-r-a-n-s-l-a-t-i-o-n-,- -a-n-d- -t-e-a-c-h-i-n-g- -i-n-t-o- -i-n-t-e-l-l-i-g-e-n-t-,--
-- - - - - - - - - - - - - - -m-e-a-s-u-r-a-b-l-e- -s-y-s-t-e-m-s-.--
-- - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---r-e-v-e-a-l- -i-s---v-i-s-i-b-l-e-"- -s-t-y-l-e-=-{-{- -t-r-a-n-s-i-t-i-o-n-D-e-l-a-y-:- -"-.-3-s-"- -}-}->--
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-d---h-e-r-o---c-t-a-s-"->--
-- - - - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-u-r-s-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-l-d---b-t-n- -l-d---b-t-n---p-r-i-m-a-r-y-"->--
-- - - - - - - - - - - - - - - - -E-x-p-l-o-r-e- -c-o-u-r-s-e-s- -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-l-d---a-r-r-o-w-"->---&-g-t-;-<-/-s-p-a-n->--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
---
-- - - - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-s-e-r-v-i-c-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-l-d---b-t-n- -l-d---b-t-n---g-h-o-s-t-"->--
-- - - - - - - - - - - - - - - - -O-u-r- -s-e-r-v-i-c-e-s--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
---
-- - - - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-w-o-r-k-s-h-o-p-s-"- -c-l-a-s-s-N-a-m-e-=-"-l-d---b-t-n- -l-d---b-t-n---g-h-o-s-t-"->--
-- - - - - - - - - - - - - - - - -W-o-r-k-s-h-o-p-s--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-d-i-v->--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-s-e-c-t-i-o-n->--
-- - -)-;--
--}--
---
--
+﻿"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const lines = [
+  "language 路 璇█ 路 lengua 路 賱睾丞 路 langue 路 sprache 路 鞏胳柎 路 啶ぞ啶粪ぞ 路 lugha 路 dil 路 ",
+  "data ->tokens ->annotation ->corpus ->model ->insight ->data ->tokens ->",
+  "translation 路 缈昏瘧 路 traducci贸n 路 鬲乇噩賲丞 路 traduction 路 眉bersetzung 路 氩堨棴 路 ",
+  "education 路 鏁欒偛 路 educaci贸n 路 鬲毓賱賷賲 路 茅ducation 路 bildung 路 甑愳湣 路 啶多た啶曕啶粪ぞ 路 ",
+  "society 路 绀句細 路 sociedad 路 賲噩鬲賲毓 路 soci茅t茅 路 gesellschaft 路 靷殞 路 啶膏ぎ啶距 路 ",
+  "humanities 脳 data science 脳 humanities 脳 data science 脳 humanities 脳 ",
+];
+
+const words = [
+  ["Language", "EN"],
+  ["璇█", "ZH"],
+  ["Lengua", "ES"],
+  ["丕賱賱睾丞", "AR"],
+  ["Langue", "FR"],
+  ["鞏胳柎", "KO"],
+  ["啶ぞ啶粪ぞ", "HI"],
+  ["Sprache", "DE"],
+];
+
+export default function LexDataAnimatedHero() {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) return;
+
+    const timer = window.setInterval(() => {
+      setVisible(false);
+
+      window.setTimeout(() => {
+        setIndex((current) => (current + 1) % words.length);
+        setVisible(true);
+      }, 250);
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const [word, lang] = words[index];
+
+  return (
+    <section className="ld-page">
+      <div className="ld-hero ld-home-hero">
+        <div className="ld-corpus" aria-hidden="true">
+          {lines.map((line, i) => (
+            <span
+              key={line}
+              style={{
+                top: `${8 + i * 15}%`,
+                left: 0,
+                fontSize: `${13 + (i % 3) * 3}px`,
+                animationDuration: `${46 + i * 14}s`,
+                animationDirection: i % 2 ? "reverse" : "normal",
+              }}
+            >
+              {line.repeat(6)}
+            </span>
+          ))}
+        </div>
+
+        <div className="ld-container">
+          <div className="ld-reveal is-visible">
+            <span className="ld-eyebrow">
+              Intelligent data solutions 路 language / translation / education /
+              society
+            </span>
+          </div>
+
+          <div className="ld-reveal is-visible" style={{ transitionDelay: ".1s" }}>
+            <h1 className="ld-display">
+              Where{" "}
+              <span className="ld-cycle">
+                <span className="ld-cycle-lang">{lang}</span>
+                <span
+                  className={`ld-cycle-word ${
+                    visible ? "is-in" : "is-out"
+                  }`}
+                >
+                  {word}
+                </span>
+              </span>{" "}
+              meets data science.
+            </h1>
+          </div>
+
+          <div className="ld-reveal is-visible" style={{ transitionDelay: ".2s" }}>
+            <p className="ld-hero-sub">
+              LexData bridges the humanities and data science for real-world
+              impact ?turning text, translation, and teaching into intelligent,
+              measurable systems.
+            </p>
+          </div>
+
+          <div className="ld-reveal is-visible" style={{ transitionDelay: ".3s" }}>
+            <div className="ld-hero-ctas">
+              <Link href="/courses" className="ld-btn ld-btn-primary">
+                Explore courses <span className="ld-arrow">-&gt;</span>
+              </Link>
+
+              <Link href="/services" className="ld-btn ld-btn-ghost">
+                Our services
+              </Link>
+
+              <Link href="/workshops" className="ld-btn ld-btn-ghost">
+                Workshops
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+

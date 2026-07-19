@@ -1,70 +1,70 @@
--"-u-s-e- -s-e-r-v-e-r-"-;--
---
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;--
---
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-l-o-a-d-R-e-c-e-i-p-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
-- - -c-o-n-s-t- -r-e-g-i-s-t-r-a-t-i-o-n-I-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-r-e-g-i-s-t-r-a-t-i-o-n-I-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -s-l-u-g- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-l-u-g-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -f-i-l-e- -=- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-r-e-c-e-i-p-t-"-)- -a-s- -F-i-l-e- -|- -n-u-l-l-;--
---
-- - -i-f- -(-!-r-e-g-i-s-t-r-a-t-i-o-n-I-d- -|-|- -!-f-i-l-e- -|-|- -f-i-l-e-.-s-i-z-e- -=-=-=- -0-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -{--
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
---
-- - -i-f- -(-!-u-s-e-r-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -r-e-g-i-s-t-r-a-t-i-o-n- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,- -u-s-e-r-_-i-d-,- -e-m-a-i-l-"-)--
-- - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)--
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - -i-f- -(-!-r-e-g-i-s-t-r-a-t-i-o-n- -|-|- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d- -!-=-=- -u-s-e-r-.-i-d-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -s-a-f-e-N-a-m-e- -=- -f-i-l-e-.-n-a-m-e-.-r-e-p-l-a-c-e-(-/-[-^-a---z-A---Z-0---9-.-_---]-/-g-,- -"-_-"-)-;--
-- - -c-o-n-s-t- -p-a-t-h- -=- -`-$-{-u-s-e-r-.-i-d-}-/-$-{-r-e-g-i-s-t-r-a-t-i-o-n-I-d-}---$-{-D-a-t-e-.-n-o-w-(-)-}---$-{-s-a-f-e-N-a-m-e-}-`-;--
-- - -c-o-n-s-t- -b-y-t-e-s- -=- -a-w-a-i-t- -f-i-l-e-.-a-r-r-a-y-B-u-f-f-e-r-(-)-;--
---
-- - -c-o-n-s-t- -{- -e-r-r-o-r-:- -u-p-l-o-a-d-E-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-.-s-t-o-r-a-g-e--
-- - - - -.-f-r-o-m-(-"-p-a-y-m-e-n-t---r-e-c-e-i-p-t-s-"-)--
-- - - - -.-u-p-l-o-a-d-(-p-a-t-h-,- -b-y-t-e-s-,- -{--
-- - - - - - -c-o-n-t-e-n-t-T-y-p-e-:- -f-i-l-e-.-t-y-p-e- -|-|- -"-a-p-p-l-i-c-a-t-i-o-n-/-o-c-t-e-t---s-t-r-e-a-m-"-,--
-- - - - - - -u-p-s-e-r-t-:- -t-r-u-e-,--
-- - - - -}-)-;--
---
-- - -i-f- -(-u-p-l-o-a-d-E-r-r-o-r-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-u-b-l-i-c-U-r-l-D-a-t-a- -}- -=- -a-d-m-i-n-.-s-t-o-r-a-g-e--
-- - - - -.-f-r-o-m-(-"-p-a-y-m-e-n-t---r-e-c-e-i-p-t-s-"-)--
-- - - - -.-g-e-t-P-u-b-l-i-c-U-r-l-(-p-a-t-h-)-;--
---
-- - -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)--
-- - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - -r-e-c-e-i-p-t-_-u-r-l-:- -p-u-b-l-i-c-U-r-l-D-a-t-a-.-p-u-b-l-i-c-U-r-l-,--
-- - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-u-n-d-e-r-_-r-e-v-i-e-w-"-,--
-- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - -}-)--
-- - - - -.-e-q-(-"-i-d-"-,- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-)-;--
---
-- - -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-i-n-t-e-r-n-a-l-_-m-e-s-s-a-g-e-s-"-)-.-i-n-s-e-r-t-(-{--
-- - - - -u-s-e-r-_-i-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-u-s-e-r-_-i-d-,--
-- - - - -r-e-c-i-p-i-e-n-t-_-e-m-a-i-l-:- -r-e-g-i-s-t-r-a-t-i-o-n-.-e-m-a-i-l-,--
-- - - - -t-i-t-l-e-:- -"-P-a-y-m-e-n-t- -r-e-c-e-i-p-t- -u-p-l-o-a-d-e-d-"-,--
-- - - - -b-o-d-y-:- -"-Y-o-u-r- -r-e-c-e-i-p-t- -w-a-s- -u-p-l-o-a-d-e-d- -s-u-c-c-e-s-s-f-u-l-l-y- -a-n-d- -i-s- -n-o-w- -u-n-d-e-r- -r-e-v-i-e-w-.-"-,--
-- - - - -s-o-u-r-c-e-_-t-y-p-e-:- -"-p-a-y-m-e-n-t-_-r-e-c-e-i-p-t-_-u-p-l-o-a-d-e-d-"-,--
-- - - - -s-o-u-r-c-e-_-i-d-:- -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
-- - -}-)-;--
---
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-w-o-r-k-s-h-o-p-s-/-$-{-s-l-u-g-}-`-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-m-o-n-i-t-o-r-"-)-;--
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+
+export async function uploadReceiptAction(formData: FormData) {
+  const registrationId = String(formData.get("registrationId") || "").trim();
+  const slug = String(formData.get("slug") || "").trim();
+  const file = formData.get("receipt") as File | null;
+
+  if (!registrationId || !file || file.size === 0) return;
+
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const { data: registration } = await admin
+    .from("workshop_registrations")
+    .select("id, user_id, email")
+    .eq("id", registrationId)
+    .maybeSingle();
+
+  if (!registration || registration.user_id !== user.id) return;
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${user.id}/${registrationId}-${Date.now()}-${safeName}`;
+  const bytes = await file.arrayBuffer();
+
+  const { error: uploadError } = await admin.storage
+    .from("payment-receipts")
+    .upload(path, bytes, {
+      contentType: file.type || "application/octet-stream",
+      upsert: true,
+    });
+
+  if (uploadError) return;
+
+  const { data: publicUrlData } = admin.storage
+    .from("payment-receipts")
+    .getPublicUrl(path);
+
+  await admin
+    .from("workshop_registrations")
+    .update({
+      receipt_url: publicUrlData.publicUrl,
+      payment_status: "under_review",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", registrationId);
+
+  await admin.from("internal_messages").insert({
+    user_id: registration.user_id,
+    recipient_email: registration.email,
+    title: "Payment receipt uploaded",
+    body: "Your receipt was uploaded successfully and is now under review.",
+    source_type: "payment_receipt_uploaded",
+    source_id: registrationId,
+  });
+
+  revalidatePath(`/workshops/${slug}`);
+  revalidatePath("/manager/registrations");
+  revalidatePath("/admin/registrations");
+  revalidatePath("/manager/monitor");
+}

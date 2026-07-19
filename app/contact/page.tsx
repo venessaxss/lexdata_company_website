@@ -1,41 +1,40 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -s-i-t-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-i-t-e-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -C-o-n-t-a-c-t-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-2-"->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e- -i-n-l-i-n-e---b-l-o-c-k-"->-C-o-n-t-a-c-t-<-/-p->-
-- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->-C-o-n-n-e-c-t- -w-i-t-h- -L-e-x-D-a-t-a-<-/-h-1->-
-- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -m-a-x---w---3-x-l- -t-e-x-t---l-g- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - -C-o-n-t-a-c-t- -u-s- -f-o-r- -w-o-r-k-s-h-o-p-s-,- -c-u-s-t-o-m-i-z-e-d- -i-n-s-t-i-t-u-t-i-o-n-a-l- -t-r-a-i-n-i-n-g-,- -c-o-r-p-u-s- -d-e-v-e-l-o-p-m-e-n-t-,- -r-e-s-e-a-r-c-h- -c-o-n-s-u-l-t-i-n-g-,- -a-n-d- -l-o-n-g---t-e-r-m- -b-u-s-i-n-e-s-s- -p-a-r-t-n-e-r-s-h-i-p- -p-l-a-n-s-.-
-- - - - - - -<-/-p->-
--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---1-0- -g-r-i-d- -g-a-p---6- -m-d-:-g-r-i-d---c-o-l-s---2-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---6-"->-
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-o-l-d-"->-C-o-n-t-a-c-t- -d-e-t-a-i-l-s-<-/-h-2->-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -s-p-a-c-e---y---4- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - -<-p->-<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---s-e-m-i-b-o-l-d-"->-E-m-a-i-l-:-<-/-s-p-a-n->- -{-s-i-t-e-.-e-m-a-i-l-}-<-/-p->-
-- - - - - - - - - - - - -<-p->-<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---s-e-m-i-b-o-l-d-"->-O-r-g-a-n-i-z-a-t-i-o-n-:-<-/-s-p-a-n->- -{-s-i-t-e-.-l-e-g-a-l-N-a-m-e-}-<-/-p->-
-- - - - - - - - - - - - -<-p->-<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---s-e-m-i-b-o-l-d-"->-F-o-c-u-s-:-<-/-s-p-a-n->- -L-a-n-g-u-a-g-e-,- -t-r-a-n-s-l-a-t-i-o-n-,- -e-d-u-c-a-t-i-o-n-,- -E-L-T-,- -a-n-d- -s-o-c-i-a-l- -s-c-i-e-n-c-e- -d-a-t-a- -s-o-l-u-t-i-o-n-s-<-/-p->-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3-"->-
-- - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-u-r-s-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y-"->-V-i-e-w- -c-o-u-r-s-e-s-<-/-L-i-n-k->-
-- - - - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-s-e-r-v-i-c-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---l-i-g-h-t-"->-V-i-e-w- -s-e-r-v-i-c-e-s-<-/-L-i-n-k->-
-- - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---6-"->-
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-o-l-d-"->-W-h-a-t- -t-o- -s-e-n-d- -u-s-<-/-h-2->-
-- - - - - - - - - - -<-u-l- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -s-p-a-c-e---y---3- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
-- - - - - - - - - - - - -<-l-i->-•- -Y-o-u-r- -i-n-s-t-i-t-u-t-i-o-n- -o-r- -r-e-s-e-a-r-c-h- -f-i-e-l-d-<-/-l-i->-
-- - - - - - - - - - - - -<-l-i->-•- -C-o-u-r-s-e-/-w-o-r-k-s-h-o-p- -t-o-p-i-c- -y-o-u- -n-e-e-d-<-/-l-i->-
-- - - - - - - - - - - - -<-l-i->-•- -D-a-t-a-s-e-t- -t-y-p-e-:- -t-e-x-t-,- -s-p-e-e-c-h-,- -s-u-r-v-e-y-,- -c-o-r-p-u-s-,- -o-r- -m-i-x-e-d- -d-a-t-a-<-/-l-i->-
-- - - - - - - - - - - - -<-l-i->-•- -E-x-p-e-c-t-e-d- -o-u-t-p-u-t-:- -c-o-u-r-s-e-,- -r-e-p-o-r-t-,- -c-o-r-p-u-s-,- -d-a-s-h-b-o-a-r-d-,- -o-r- -p-u-b-l-i-c-a-t-i-o-n- -s-u-p-p-o-r-t-<-/-l-i->-
-- - - - - - - - - - - - -<-l-i->-•- -Y-o-u-r- -p-r-e-f-e-r-r-e-d- -t-i-m-e-l-i-n-e- -a-n-d- -d-e-l-i-v-e-r-y- -m-o-d-e-<-/-l-i->-
-- - - - - - - - - - -<-/-u-l->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+import { site } from "@/lib/site";
+
+export default function ContactPage() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12">
+      <p className="badge inline-block">Contact</p>
+      <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">Connect with LexData</h1>
+      <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+        Contact us for workshops, customized institutional training, corpus development, research consulting, and long-term business partnership plans.
+      </p>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="card p-6">
+          <h2 className="text-2xl font-bold">Contact details</h2>
+          <div className="mt-5 space-y-4 text-sm text-slate-700">
+            <p><span className="font-semibold">Email:</span> {site.email}</p>
+            <p><span className="font-semibold">Organization:</span> {site.legalName}</p>
+            <p><span className="font-semibold">Focus:</span> Language, translation, education, ELT, and social science data solutions</p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/courses" className="btn-primary">View courses</Link>
+            <Link href="/services" className="btn-light">View services</Link>
+          </div>
+        </div>
+
+        <div className="card p-6">
+          <h2 className="text-2xl font-bold">What to send us</h2>
+          <ul className="mt-5 space-y-3 text-sm text-slate-700">
+            <li>• Your institution or research field</li>
+            <li>• Course/workshop topic you need</li>
+            <li>• Dataset type: text, speech, survey, corpus, or mixed data</li>
+            <li>• Expected output: course, report, corpus, dashboard, or publication support</li>
+            <li>• Your preferred timeline and delivery mode</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,162 +1,162 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
--i-m-p-o-r-t- -{- -g-e-t-S-e-r-v-e-r-I-1-8-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e---s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -t-r-a-n-s-l-a-t-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
--
--t-y-p-e- -P-r-o-f-i-l-e- -=- -{-
-- - -f-u-l-l-_-n-a-m-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -r-o-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
--}-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -D-a-s-h-b-o-a-r-d-P-a-g-e-(-)- -{-
-- - -n-o-S-t-o-r-e-(-)-;-
--
-- - -c-o-n-s-t- -{- -l-a-n-g-u-a-g-e-,- -t- -}- -=- -a-w-a-i-t- -g-e-t-S-e-r-v-e-r-I-1-8-n-(-)-;-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-d-a-s-h-b-o-a-r-d-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e-D-a-t-a- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-f-u-l-l-_-n-a-m-e-,- -r-o-l-e-"-)-
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
--
-- - -c-o-n-s-t- -p-r-o-f-i-l-e- -=- -p-r-o-f-i-l-e-D-a-t-a- -a-s- -P-r-o-f-i-l-e- -|- -n-u-l-l-;-
--
-- - -c-o-n-s-t- -r-o-l-e- -=- -n-o-r-m-a-l-i-z-e-R-o-l-e-(-p-r-o-f-i-l-e-?-.-r-o-l-e-)-;-
--
-- - -c-o-n-s-t- -d-i-s-p-l-a-y-N-a-m-e- -=-
-- - - - -p-r-o-f-i-l-e-?-.-f-u-l-l-_-n-a-m-e- -|-|- -u-s-e-r-.-u-s-e-r-_-m-e-t-a-d-a-t-a-?-.-f-u-l-l-_-n-a-m-e- -|-|- -u-s-e-r-.-e-m-a-i-l-;-
--
-- - -c-o-n-s-t- -c-a-r-d-s- -=- -[-
-- - - - -{-
-- - -t-i-t-l-e-:- -"-M-y- -P-r-o-f-i-l-e-"-,-
-- - -d-e-s-c-r-i-p-t-i-o-n-:-
-- - - - -"-A-d-d- -y-o-u-r- -i-n-s-t-i-t-u-t-i-o-n-,- -p-r-o-f-e-s-s-i-o-n-,- -c-o-u-n-t-r-y-,- -a-c-a-d-e-m-i-c- -s-t-a-t-u-s-,- -a-n-d- -r-e-s-e-a-r-c-h- -i-n-t-e-r-e-s-t-s-.-"-,-
-- - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-p-r-o-f-i-l-e-"-,-
--}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-m-y-L-e-a-r-n-i-n-g-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-m-y-L-e-a-r-n-i-n-g-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-m-y---l-e-a-r-n-i-n-g-"-,-
-- - - - -}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-m-e-s-s-a-g-e-s-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-m-e-s-s-a-g-e-s-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-m-e-s-s-a-g-e-s-"-,-
-- - - - -}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-l-a-n-g-u-a-g-e-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-l-a-n-g-u-a-g-e-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-l-a-n-g-u-a-g-e-"-,-
-- - - - -}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-p-a-s-s-w-o-r-d-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-p-a-s-s-w-o-r-d-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-"-,-
-- - - - -}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-w-o-r-k-s-h-o-p-s-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-w-o-r-k-s-h-o-p-s-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-w-o-r-k-s-h-o-p-s-"-,-
-- - - - -}-,-
-- - - - -{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-n-o-t-i-c-e-s-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-n-o-t-i-c-e-s-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-n-o-t-i-c-e-s-"-,-
-- - - - -}-,-
-- - -]-;-
--
-- - -i-f- -(-r-o-l-e- -=-=-=- -"-a-d-m-i-n-"-)- -{-
-- - - - -c-a-r-d-s-.-u-n-s-h-i-f-t-(-{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-a-d-m-i-n-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-a-d-m-i-n-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-a-d-m-i-n-"-,-
-- - - - -}-)-;-
-- - -}-
--
-- - -i-f- -(-r-o-l-e- -=-=-=- -"-m-a-n-a-g-e-r-"- -|-|- -r-o-l-e- -=-=-=- -"-a-d-m-i-n-"-)- -{-
-- - - - -c-a-r-d-s-.-u-n-s-h-i-f-t-(-{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-m-a-n-a-g-e-r-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-m-a-n-a-g-e-r-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-"-,-
-- - - - -}-)-;-
--
-- - - - -c-a-r-d-s-.-u-n-s-h-i-f-t-(-{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-m-o-n-i-t-o-r-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-m-o-n-i-t-o-r-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-m-o-n-i-t-o-r-"-,-
-- - - - -}-)-;-
-- - -}-
--
-- - -i-f- -(-r-o-l-e- -=-=-=- -"-s-p-e-a-k-e-r-"-)- -{-
-- - - - -c-a-r-d-s-.-u-n-s-h-i-f-t-(-{-
-- - - - - - -t-i-t-l-e-:- -t-(-"-c-a-r-d-.-s-p-e-a-k-e-r-.-t-i-t-l-e-"-)-,-
-- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:- -t-(-"-c-a-r-d-.-s-p-e-a-k-e-r-.-d-e-s-c-r-i-p-t-i-o-n-"-)-,-
-- - - - - - -h-r-e-f-:- -"-/-w-o-r-k-s-h-o-p-s-"-,-
-- - - - -}-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l- -p-x---4- -p-y---1-0-"->-
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0- -r-o-u-n-d-e-d---[-2-r-e-m-]- -b-g---s-l-a-t-e---9-5-0- -p---8- -t-e-x-t---w-h-i-t-e- -s-h-a-d-o-w---x-l-"->-
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---b-l-u-e---3-0-0-"->-
-- - - - - - - - - - -{-t-(-"-d-a-s-h-b-o-a-r-d-.-t-i-t-l-e-"-)-}-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->-
-- - - - - - - - - - -{-t-(-"-d-a-s-h-b-o-a-r-d-.-w-e-l-c-o-m-e-"-)-}-,- -{-d-i-s-p-l-a-y-N-a-m-e-}-
-- - - - - - - - -<-/-h-1->-
--
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---3-x-l- -t-e-x-t---s-l-a-t-e---3-0-0-"->-
-- - - - - - - - - - -{-t-(-"-d-a-s-h-b-o-a-r-d-.-s-u-b-t-i-t-l-e-"-)-}-
-- - - - - - - - -<-/-p->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d-"->-
-- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---w-h-i-t-e-/-1-0- -p-x---4- -p-y---2-"->-
-- - - - - - - - - - - - -{-t-(-"-d-a-s-h-b-o-a-r-d-.-r-o-l-e-"-)-}-:- -{-t-r-a-n-s-l-a-t-e-R-o-l-e-(-l-a-n-g-u-a-g-e-,- -r-o-l-e-)-}-
-- - - - - - - - - - -<-/-s-p-a-n->-
--
-- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---w-h-i-t-e-/-1-0- -p-x---4- -p-y---2-"->-
-- - - - - - - - - - - - -{-u-s-e-r-.-e-m-a-i-l-}-
-- - - - - - - - - - -<-/-s-p-a-n->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---5- -m-d-:-g-r-i-d---c-o-l-s---2- -l-g-:-g-r-i-d---c-o-l-s---3-"->-
-- - - - - - - - -{-c-a-r-d-s-.-m-a-p-(-(-c-a-r-d-)- -=->- -(-
-- - - - - - - - - - -<-L-i-n-k-
-- - - - - - - - - - - - -k-e-y-=-{-c-a-r-d-.-h-r-e-f-}-
-- - - - - - - - - - - - -h-r-e-f-=-{-c-a-r-d-.-h-r-e-f-}-
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---m-d-"-
-- - - - - - - - - - ->-
-- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - - - - - -{-c-a-r-d-.-t-i-t-l-e-}-
-- - - - - - - - - - - - -<-/-h-2->-
--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - - - - - -{-c-a-r-d-.-d-e-s-c-r-i-p-t-i-o-n-}-
-- - - - - - - - - - - - -<-/-p->-
--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---b-l-u-e---7-0-0-"->-
-- - - - - - - - - - - - - - -{-t-(-"-c-a-r-d-.-o-p-e-n-"-)-}- ---&-g-t-;- - - - - - - - - - - - -<-/-p->-
-- - - - - - - - - - -<-/-L-i-n-k->-
-- - - - - - - - -)-)-}-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { unstable_noStore as noStore } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { normalizeRole } from "@/lib/roles";
+import { getServerI18n } from "@/lib/language-server";
+import { translateRole } from "@/lib/languages";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type Profile = {
+  full_name?: string | null;
+  role?: string | null;
+};
+
+export default async function DashboardPage() {
+  noStore();
+
+  const { language, t } = await getServerI18n();
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?redirect=/dashboard");
+  }
+
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("full_name, role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const profile = profileData as Profile | null;
+
+  const role = normalizeRole(profile?.role);
+
+  const displayName =
+    profile?.full_name || user.user_metadata?.full_name || user.email;
+
+  const cards = [
+    {
+  title: "My Profile",
+  description:
+    "Add your institution, profession, country, academic status, and research interests.",
+  href: "/dashboard/profile",
+},
+    {
+      title: t("card.myLearning.title"),
+      description: t("card.myLearning.description"),
+      href: "/dashboard/my-learning",
+    },
+    {
+      title: t("card.messages.title"),
+      description: t("card.messages.description"),
+      href: "/dashboard/messages",
+    },
+    {
+      title: t("card.language.title"),
+      description: t("card.language.description"),
+      href: "/dashboard/settings/language",
+    },
+    {
+      title: t("card.password.title"),
+      description: t("card.password.description"),
+      href: "/dashboard/settings/password",
+    },
+    {
+      title: t("card.workshops.title"),
+      description: t("card.workshops.description"),
+      href: "/workshops",
+    },
+    {
+      title: t("card.notices.title"),
+      description: t("card.notices.description"),
+      href: "/notices",
+    },
+  ];
+
+  if (role === "admin") {
+    cards.unshift({
+      title: t("card.admin.title"),
+      description: t("card.admin.description"),
+      href: "/admin",
+    });
+  }
+
+  if (role === "manager" || role === "admin") {
+    cards.unshift({
+      title: t("card.manager.title"),
+      description: t("card.manager.description"),
+      href: "/manager",
+    });
+
+    cards.unshift({
+      title: t("card.monitor.title"),
+      description: t("card.monitor.description"),
+      href: "/manager/monitor",
+    });
+  }
+
+  if (role === "speaker") {
+    cards.unshift({
+      title: t("card.speaker.title"),
+      description: t("card.speaker.description"),
+      href: "/workshops",
+    });
+  }
+
+  return (
+    <main className="mx-auto max-w-7xl px-4 py-10">
+      <section className="mb-10 rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">
+          {t("dashboard.title")}
+        </p>
+
+        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
+          {t("dashboard.welcome")}, {displayName}
+        </h1>
+
+        <p className="mt-4 max-w-3xl text-slate-300">
+          {t("dashboard.subtitle")}
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+          <span className="rounded-full bg-white/10 px-4 py-2">
+            {t("dashboard.role")}: {translateRole(language, role)}
+          </span>
+
+          <span className="rounded-full bg-white/10 px-4 py-2">
+            {user.email}
+          </span>
+        </div>
+      </section>
+
+      <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {cards.map((card) => (
+          <Link
+            key={card.href}
+            href={card.href}
+            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+          >
+            <h2 className="text-xl font-black text-slate-950">
+              {card.title}
+            </h2>
+
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              {card.description}
+            </p>
+
+            <p className="mt-5 text-sm font-bold text-blue-700">
+              {t("card.open")} -&gt;            </p>
+          </Link>
+        ))}
+      </section>
+    </main>
+  );
+}

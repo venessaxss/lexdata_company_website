@@ -1,31 +1,30 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--i-m-p-o-r-t- -{- -g-e-t-C-u-r-r-e-n-t-P-r-o-f-i-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--i-m-p-o-r-t- -{- -R-O-L-E-_-L-A-B-E-L-S- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
--i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -U-n-a-u-t-h-o-r-i-z-e-d-P-a-g-e-(-{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-
--}-:- -{-
-- - -s-e-a-r-c-h-P-a-r-a-m-s-?-:- -P-r-o-m-i-s-e-<-{- -r-e-q-u-i-r-e-d-?-:- -s-t-r-i-n-g- -}->-;-
--}-)- -{-
-- - -c-o-n-s-t- -p-a-r-a-m-s- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
-- - -c-o-n-s-t- -p-r-o-f-i-l-e- -=- -a-w-a-i-t- -g-e-t-C-u-r-r-e-n-t-P-r-o-f-i-l-e-(-)-;-
-- - -c-o-n-s-t- -r-o-l-e- -=- -n-o-r-m-a-l-i-z-e-R-o-l-e-(-p-r-o-f-i-l-e-?-.-r-o-l-e-)-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---3-x-l- -p-x---4- -p-y---1-6-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---8-"->-
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e- -w---f-i-t-"->-A-c-c-e-s-s- -c-o-n-t-r-o-l-<-/-p->-
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d-"->-Y-o-u- -d-o- -n-o-t- -h-a-v-e- -a-c-c-e-s-s- -t-o- -t-h-i-s- -p-a-g-e-<-/-h-1->-
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -Y-o-u-r- -c-u-r-r-e-n-t- -r-o-l-e- -i-s- -<-s-t-r-o-n-g->-{-R-O-L-E-_-L-A-B-E-L-S-[-r-o-l-e-]-}-<-/-s-t-r-o-n-g->-.- -T-h-i-s- -p-a-g-e- -r-e-q-u-i-r-e-s-:- -{-p-a-r-a-m-s-?-.-r-e-q-u-i-r-e-d- -?-?- -"-a- -d-i-f-f-e-r-e-n-t- -r-o-l-e-"-}-.-
-- - - - - - - - -<-/-p->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -g-a-p---3-"->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-d-a-s-h-b-o-a-r-d-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y-"->-G-o- -t-o- -d-a-s-h-b-o-a-r-d-<-/-L-i-n-k->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-l-o-g-i-n-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---l-i-g-h-t-"->-S-w-i-t-c-h- -a-c-c-o-u-n-t-<-/-L-i-n-k->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+import { getCurrentProfile } from "@/lib/auth";
+import { ROLE_LABELS } from "@/lib/roles";
+import { normalizeRole } from "@/lib/roles";
+
+export default async function UnauthorizedPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ required?: string }>;
+}) {
+  const params = await searchParams;
+  const profile = await getCurrentProfile();
+  const role = normalizeRole(profile?.role);
+
+  return (
+    <section className="mx-auto max-w-3xl px-4 py-16">
+      <div className="card p-8">
+        <p className="badge w-fit">Access control</p>
+        <h1 className="mt-4 text-3xl font-bold">You do not have access to this page</h1>
+        <p className="mt-3 text-slate-600">
+          Your current role is <strong>{ROLE_LABELS[role]}</strong>. This page requires: {params?.required ?? "a different role"}.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Link href="/dashboard" className="btn-primary">Go to dashboard</Link>
+          <Link href="/login" className="btn-light">Switch account</Link>
+        </div>
+      </div>
+    </section>
+  );
+}

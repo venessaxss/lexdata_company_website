@@ -1,71 +1,71 @@
--"-u-s-e- -c-l-i-e-n-t-"-;--
---
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
--i-m-p-o-r-t- -{- -u-s-e-R-e-f- -}- -f-r-o-m- -"-r-e-a-c-t-"-;--
--i-m-p-o-r-t- -t-y-p-e- -{- -V-2-T-e-a-m-M-e-m-b-e-r- -}- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-H-o-m-e-V-2-T-e-a-m-S-l-i-d-e-r-"-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -H-o-m-e-V-2-T-e-a-m-S-l-i-d-e-r-C-l-i-e-n-t-(-{--
-- - -m-e-m-b-e-r-s-,--
--}-:- -{--
-- - -m-e-m-b-e-r-s-:- -V-2-T-e-a-m-M-e-m-b-e-r-[-]-;--
--}-)- -{--
-- - -c-o-n-s-t- -t-r-a-c-k-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t- -|- -n-u-l-l->-(-n-u-l-l-)-;--
---
-- - -f-u-n-c-t-i-o-n- -s-c-r-o-l-l-B-y-C-a-r-d-(-d-i-r-e-c-t-i-o-n-:- -"-l-e-f-t-"- -|- -"-r-i-g-h-t-"-)- -{--
-- - - - -c-o-n-s-t- -t-r-a-c-k- -=- -t-r-a-c-k-R-e-f-.-c-u-r-r-e-n-t-;--
-- - - - -i-f- -(-!-t-r-a-c-k-)- -r-e-t-u-r-n-;--
---
-- - - - -c-o-n-s-t- -a-m-o-u-n-t- -=- -d-i-r-e-c-t-i-o-n- -=-=-=- -"-l-e-f-t-"- -?- ---3-8-0- -:- -3-8-0-;--
-- - - - -t-r-a-c-k-.-s-c-r-o-l-l-B-y-(-{- -l-e-f-t-:- -a-m-o-u-n-t-,- -b-e-h-a-v-i-o-r-:- -"-s-m-o-o-t-h-"- -}-)-;--
-- - -}--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-v-2---s-e-c-t-i-o-n-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-v-2---c-o-n-t-a-i-n-e-r-"->--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-v-2---s-e-c-t-i-o-n---h-e-a-d-"->--
-- - - - - - - - - - -<-d-i-v->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-v-2---l-a-b-e-l-"->-L-e-x-D-a-t-a- -t-e-a-m-<-/-p->--
-- - - - - - - - - - - - -<-h-2->-M-e-e-t- -t-h-e- -r-e-s-e-a-r-c-h-e-r-s-,- -t-r-a-i-n-e-r-s-,- -a-n-d- -c-o-l-l-a-b-o-r-a-t-o-r-s-.-<-/-h-2->--
-- - - - - - - - - - - - -<-p->--
-- - - - - - - - - - - - - - -A- -d-y-n-a-m-i-c- -t-e-a-m- -p-r-e-s-e-n-t-a-t-i-o-n- -w-i-t-h- -p-r-o-f-i-l-e- -l-i-n-k-s- -a-n-d- -s-l-i-d-i-n-g- -c-a-r-d-s-.--
-- - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-v-2---s-l-i-d-e-r---b-u-t-t-o-n-s-"->--
-- - - - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-b-u-t-t-o-n-"- -o-n-C-l-i-c-k-=-{-(-)- -=->- -s-c-r-o-l-l-B-y-C-a-r-d-(-"-l-e-f-t-"-)-}->--
-- - - - - - - - - - - - - - -P-r-e-v-i-o-u-s--
-- - - - - - - - - - - - -<-/-b-u-t-t-o-n->--
-- - - - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-b-u-t-t-o-n-"- -o-n-C-l-i-c-k-=-{-(-)- -=->- -s-c-r-o-l-l-B-y-C-a-r-d-(-"-r-i-g-h-t-"-)-}->--
-- - - - - - - - - - - - - - -N-e-x-t--
-- - - - - - - - - - - - -<-/-b-u-t-t-o-n->--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-d-i-v- -r-e-f-=-{-t-r-a-c-k-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-v-2---t-e-a-m---t-r-a-c-k-"->--
-- - - - - - - - - - -{-m-e-m-b-e-r-s-.-m-a-p-(-(-m-e-m-b-e-r-)- -=->- -(--
-- - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - -k-e-y-=-{-m-e-m-b-e-r-.-i-d-}--
-- - - - - - - - - - - - - - -h-r-e-f-=-{-m-e-m-b-e-r-.-p-r-o-f-i-l-e-U-r-l-}--
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-v-2---t-e-a-m---c-a-r-d-"--
-- - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-v-2---t-e-a-m---i-m-a-g-e-"->--
-- - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-i-m-a-g-e- -?- -(--
-- - - - - - - - - - - - - - - - - - -<-i-m-g- -s-r-c-=-{-m-e-m-b-e-r-.-i-m-a-g-e-}- -a-l-t-=-{-m-e-m-b-e-r-.-n-a-m-e-}- -/->--
-- - - - - - - - - - - - - - - - -)- -:- -(--
-- - - - - - - - - - - - - - - - - - -<-s-p-a-n->-{-m-e-m-b-e-r-.-n-a-m-e-.-s-l-i-c-e-(-0-,- -1-)-}-<-/-s-p-a-n->--
-- - - - - - - - - - - - - - - - -)-}--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-v-2---t-e-a-m---b-o-d-y-"->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-v-2---l-a-b-e-l-"->-T-e-a-m- -m-e-m-b-e-r-<-/-p->--
-- - - - - - - - - - - - - - - - -<-h-3->-{-m-e-m-b-e-r-.-n-a-m-e-}-<-/-h-3->--
-- - - - - - - - - - - - - - - - -<-b->-{-m-e-m-b-e-r-.-r-o-l-e-}-<-/-b->--
-- - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-b-i-o- -?- -<-p->-{-m-e-m-b-e-r-.-b-i-o-}-<-/-p->- -:- -n-u-l-l-}--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - - - -)-)-}--
-- - - - - - - - -<-/-d-i-v->--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-s-e-c-t-i-o-n->--
-- - -)-;--
--}-
+"use client";
+
+import Link from "next/link";
+import { useRef } from "react";
+import type { V2TeamMember } from "@/components/HomeV2TeamSlider";
+
+export default function HomeV2TeamSliderClient({
+  members,
+}: {
+  members: V2TeamMember[];
+}) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  function scrollByCard(direction: "left" | "right") {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const amount = direction === "left" ? -380 : 380;
+    track.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  return (
+    <section className="v2-section">
+      <div className="v2-container">
+        <div className="v2-section-head">
+          <div>
+            <p className="v2-label">LexData team</p>
+            <h2>Meet the researchers, trainers, and collaborators.</h2>
+            <p>
+              A dynamic team presentation with profile links and sliding cards.
+            </p>
+          </div>
+
+          <div className="v2-slider-buttons">
+            <button type="button" onClick={() => scrollByCard("left")}>
+              Previous
+            </button>
+            <button type="button" onClick={() => scrollByCard("right")}>
+              Next
+            </button>
+          </div>
+        </div>
+
+        <div ref={trackRef} className="v2-team-track">
+          {members.map((member) => (
+            <Link
+              key={member.id}
+              href={member.profileUrl}
+              className="v2-team-card"
+            >
+              <div className="v2-team-image">
+                {member.image ? (
+                  <img src={member.image} alt={member.name} />
+                ) : (
+                  <span>{member.name.slice(0, 1)}</span>
+                )}
+              </div>
+
+              <div className="v2-team-body">
+                <p className="v2-label">Team member</p>
+                <h3>{member.name}</h3>
+                <b>{member.role}</b>
+                {member.bio ? <p>{member.bio}</p> : null}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

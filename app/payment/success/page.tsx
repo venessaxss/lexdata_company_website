@@ -1,20 +1,19 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-a-y-m-e-n-t-S-u-c-c-e-s-s-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---3-x-l- -p-x---4- -p-y---1-6-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---8-"->-
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e-"->-P-a-y-m-e-n-t- -c-o-m-p-l-e-t-e-<-/-p->-
-- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d-"->-T-h-a-n-k- -y-o-u-.- -Y-o-u-r- -a-c-c-e-s-s- -i-s- -b-e-i-n-g- -a-c-t-i-v-a-t-e-d-.-<-/-h-1->-
-- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - -S-t-r-i-p-e- -h-a-s- -c-o-n-f-i-r-m-e-d- -t-h-e- -c-h-e-c-k-o-u-t-.- -T-h-e- -w-e-b-h-o-o-k- -w-i-l-l- -m-a-r-k- -t-h-e- -p-a-y-m-e-n-t- -a-s- -p-a-i-d- -a-n-d- -a-d-d- -t-h-e- -c-o-u-r-s-e-/-w-o-r-k-s-h-o-p- -t-o- -y-o-u-r- -a-c-c-o-u-n-t-.-
-- - - - - - - - -<-/-p->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -g-a-p---3-"->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-m-y-/-c-o-u-r-s-e-s-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y-"->-M-y- -c-o-u-r-s-e-s-<-/-L-i-n-k->-
-- - - - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-m-y-/-w-o-r-k-s-h-o-p-s-"- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---l-i-g-h-t-"->-M-y- -w-o-r-k-s-h-o-p-s-<-/-L-i-n-k->-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
--
+import Link from "next/link";
+
+export default function PaymentSuccessPage() {
+  return (
+    <section className="mx-auto max-w-3xl px-4 py-16">
+      <div className="card p-8">
+        <p className="badge">Payment complete</p>
+        <h1 className="mt-4 text-3xl font-bold">Thank you. Your access is being activated.</h1>
+        <p className="mt-3 text-slate-600">
+          Stripe has confirmed the checkout. The webhook will mark the payment as paid and add the course/workshop to your account.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Link href="/my/courses" className="btn-primary">My courses</Link>
+          <Link href="/my/workshops" className="btn-light">My workshops</Link>
+        </div>
+      </div>
+    </section>
+  );
+}

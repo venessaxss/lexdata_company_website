@@ -1,9 +1,8 @@
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -M-a-n-a-g-e-r-L-a-y-o-u-t-(-{- -c-h-i-l-d-r-e-n- -}-:- -{- -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-.-R-e-a-c-t-N-o-d-e- -}-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-R-o-l-e-(-[-"-m-a-n-a-g-e-r-"-]-)-;-
-- - -r-e-t-u-r-n- -<->-{-c-h-i-l-d-r-e-n-}-<-/->-;-
--}-
--
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+import { requireRole } from "@/lib/auth";
+
+export default async function ManagerLayout({ children }: { children: React.ReactNode }) {
+  await requireRole(["manager"]);
+  return <>{children}</>;
+}

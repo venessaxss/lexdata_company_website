@@ -1,51 +1,51 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-h-a-n-g-e-P-a-s-s-w-o-r-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -p-a-s-s-w-o-r-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-a-s-s-w-o-r-d-"-)-;-
-- - -c-o-n-s-t- -c-o-n-f-i-r-m-P-a-s-s-w-o-r-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-c-o-n-f-i-r-m-_-p-a-s-s-w-o-r-d-"-)-;-
--
-- - -i-f- -(-!-p-a-s-s-w-o-r-d- -|-|- -!-c-o-n-f-i-r-m-P-a-s-s-w-o-r-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-P-l-e-a-s-e- -f-i-l-l- -i-n- -b-o-t-h- -p-a-s-s-w-o-r-d- -f-i-e-l-d-s-"-
-- - - - -)-;-
-- - -}-
--
-- - -i-f- -(-p-a-s-s-w-o-r-d-.-l-e-n-g-t-h- -<- -8-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-P-a-s-s-w-o-r-d- -m-u-s-t- -b-e- -a-t- -l-e-a-s-t- -8- -c-h-a-r-a-c-t-e-r-s-"-
-- - - - -)-;-
-- - -}-
--
-- - -i-f- -(-p-a-s-s-w-o-r-d- -!-=-=- -c-o-n-f-i-r-m-P-a-s-s-w-o-r-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-P-a-s-s-w-o-r-d-s- -d-o- -n-o-t- -m-a-t-c-h-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-u-p-d-a-t-e-U-s-e-r-(-{-
-- - - - -p-a-s-s-w-o-r-d-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-
-- - - - - - -`-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-
-- - - - -)-;-
-- - -}-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-/-s-e-t-t-i-n-g-s-/-p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-P-a-s-s-w-o-r-d- -c-h-a-n-g-e-d- -s-u-c-c-e-s-s-f-u-l-l-y-"-)-;-
--}-
+"use server";
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+function field(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+export async function changePassword(formData: FormData) {
+  const password = field(formData, "password");
+  const confirmPassword = field(formData, "confirm_password");
+
+  if (!password || !confirmPassword) {
+    redirect(
+      "/dashboard/settings/password?message=Please fill in both password fields"
+    );
+  }
+
+  if (password.length < 8) {
+    redirect(
+      "/dashboard/settings/password?message=Password must be at least 8 characters"
+    );
+  }
+
+  if (password !== confirmPassword) {
+    redirect("/dashboard/settings/password?message=Passwords do not match");
+  }
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (error) {
+    redirect(
+      `/dashboard/settings/password?message=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  redirect("/dashboard/settings/password?message=Password changed successfully");
+}

@@ -1,129 +1,129 @@
--"-u-s-e- -s-e-r-v-e-r-"-;--
---
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
---
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -e-n-r-o-l-l-C-o-u-r-s-e-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
-- - -c-o-n-s-t- -c-o-u-r-s-e-I-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-o-u-r-s-e-_-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -s-l-u-g- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-l-u-g-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
---
-- - -i-f- -(-!-c-o-u-r-s-e-I-d- -|-|- -!-s-l-u-g-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-"-/-c-o-u-r-s-e-s-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -c-o-u-r-s-e- -i-n-f-o-r-m-a-t-i-o-n-.-"-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -{--
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
---
-- - -i-f- -(-!-u-s-e-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-`-/-l-o-g-i-n-?-m-e-s-s-a-g-e-=-P-l-e-a-s-e- -l-o-g-i-n- -b-e-f-o-r-e- -e-n-r-o-l-l-i-n-g- -i-n- -t-h-i-s- -c-o-u-r-s-e-.-`-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-f-u-l-l-_-n-a-m-e-,- -n-a-m-e-"-)--
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)--
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - -c-o-n-s-t- -f-u-l-l-N-a-m-e- -=--
-- - - - -p-r-o-f-i-l-e-?-.-f-u-l-l-_-n-a-m-e- -|-|--
-- - - - -p-r-o-f-i-l-e-?-.-n-a-m-e- -|-|--
-- - - - -u-s-e-r-.-e-m-a-i-l-?-.-s-p-l-i-t-(-"-@-"-)-[-0-]- -|-|--
-- - - - -"-L-e-x-D-a-t-a- -M-e-m-b-e-r-"-;--
---
-- - -c-o-n-s-t- -e-m-a-i-l- -=- -u-s-e-r-.-e-m-a-i-l- -|-|- -"-"-;--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -e-x-i-s-t-i-n-g- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-_-e-n-r-o-l-l-m-e-n-t-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-i-d-"-)--
-- - - - -.-e-q-(-"-c-o-u-r-s-e-_-i-d-"-,- -c-o-u-r-s-e-I-d-)--
-- - - - -.-e-q-(-"-u-s-e-r-_-i-d-"-,- -u-s-e-r-.-i-d-)--
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - -i-f- -(-e-x-i-s-t-i-n-g-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-?-m-e-s-s-a-g-e-=-Y-o-u- -h-a-v-e- -a-l-r-e-a-d-y- -e-n-r-o-l-l-e-d- -i-n- -t-h-i-s- -c-o-u-r-s-e-.-`-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-c-o-u-r-s-e-_-e-n-r-o-l-l-m-e-n-t-s-"-)-.-i-n-s-e-r-t-(-{--
-- - - - -c-o-u-r-s-e-_-i-d-:- -c-o-u-r-s-e-I-d-,--
-- - - - -u-s-e-r-_-i-d-:- -u-s-e-r-.-i-d-,--
-- - - - -f-u-l-l-_-n-a-m-e-:- -f-u-l-l-N-a-m-e-,--
-- - - - -e-m-a-i-l-,--
-- - - - -e-n-r-o-l-l-m-e-n-t-_-s-t-a-t-u-s-:- -"-p-e-n-d-i-n-g-"-,--
-- - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-:- -"-p-e-n-d-i-n-g-"-,--
-- - -}-)-;--
---
-- - -i-f- -(-e-r-r-o-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;--
-- - -}--
---
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-`-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-/-m-y---l-e-a-r-n-i-n-g-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-)-;--
---
-- - -r-e-d-i-r-e-c-t-(--
-- - - - -`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-?-m-e-s-s-a-g-e-=-E-n-r-o-l-l-m-e-n-t- -r-e-c-e-i-v-e-d-.- -T-h-e- -L-e-x-D-a-t-a- -t-e-a-m- -w-i-l-l- -r-e-v-i-e-w- -y-o-u-r- -c-o-u-r-s-e- -a-c-c-e-s-s-.-`--
-- - -)-;--
--}--
---
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-C-o-u-r-s-e-E-n-r-o-l-l-m-e-n-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
-- - -c-o-n-s-t- -i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -e-n-r-o-l-l-m-e-n-t-_-s-t-a-t-u-s- -=- -S-t-r-i-n-g-(--
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-e-n-r-o-l-l-m-e-n-t-_-s-t-a-t-u-s-"-)- -|-|- -"-p-e-n-d-i-n-g-"--
-- - -)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=- -S-t-r-i-n-g-(--
-- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-y-m-e-n-t-_-s-t-a-t-u-s-"-)- -|-|- -"-p-e-n-d-i-n-g-"--
-- - -)-.-t-r-i-m-(-)-;--
-- - -c-o-n-s-t- -n-o-t-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-n-o-t-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
---
-- - -i-f- -(-!-i-d-)- -r-e-t-u-r-n-;--
---
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -{--
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
---
-- - -i-f- -(-!-u-s-e-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)--
-- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-"-)--
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)--
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;--
---
-- - -i-f- -(-!-p-r-o-f-i-l-e- -|-|- -!-[-"-a-d-m-i-n-"-,- -"-m-a-n-a-g-e-r-"-]-.-i-n-c-l-u-d-e-s-(-p-r-o-f-i-l-e-.-r-o-l-e-)-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;--
-- - -}--
---
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n--
-- - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-_-e-n-r-o-l-l-m-e-n-t-s-"-)--
-- - - - -.-u-p-d-a-t-e-(-{--
-- - - - - - -e-n-r-o-l-l-m-e-n-t-_-s-t-a-t-u-s-,--
-- - - - - - -p-a-y-m-e-n-t-_-s-t-a-t-u-s-,--
-- - - - - - -n-o-t-e-,--
-- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
-- - - - -}-)--
-- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;--
---
-- - -i-f- -(-e-r-r-o-r-)- -{--
-- - - - -r-e-d-i-r-e-c-t-(--
-- - - - - - -`-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`--
-- - - - -)-;--
-- - -}--
---
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-)-;--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-d-a-s-h-b-o-a-r-d-/-m-y---l-e-a-r-n-i-n-g-"-)-;--
---
-- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-?-m-e-s-s-a-g-e-=-C-o-u-r-s-e- -e-n-r-o-l-l-m-e-n-t- -u-p-d-a-t-e-d-.-"-)-;--
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export async function enrollCourseAction(formData: FormData) {
+  const courseId = String(formData.get("course_id") || "").trim();
+  const slug = String(formData.get("slug") || "").trim();
+
+  if (!courseId || !slug) {
+    redirect("/courses?message=Missing course information.");
+  }
+
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/login?message=Please login before enrolling in this course.`);
+  }
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name, name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const fullName =
+    profile?.full_name ||
+    profile?.name ||
+    user.email?.split("@")[0] ||
+    "LexData Member";
+
+  const email = user.email || "";
+
+  const { data: existing } = await admin
+    .from("course_enrollments")
+    .select("id")
+    .eq("course_id", courseId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existing) {
+    redirect(`/courses/${slug}?message=You have already enrolled in this course.`);
+  }
+
+  const { error } = await admin.from("course_enrollments").insert({
+    course_id: courseId,
+    user_id: user.id,
+    full_name: fullName,
+    email,
+    enrollment_status: "pending",
+    payment_status: "pending",
+  });
+
+  if (error) {
+    redirect(`/courses/${slug}?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath(`/courses/${slug}`);
+  revalidatePath("/dashboard/my-learning");
+  revalidatePath("/manager/course-enrollments");
+  revalidatePath("/admin/course-enrollments");
+
+  redirect(
+    `/courses/${slug}?message=Enrollment received. The LexData team will review your course access.`
+  );
+}
+
+export async function updateCourseEnrollmentAction(formData: FormData) {
+  const id = String(formData.get("id") || "").trim();
+  const enrollment_status = String(
+    formData.get("enrollment_status") || "pending"
+  ).trim();
+  const payment_status = String(
+    formData.get("payment_status") || "pending"
+  ).trim();
+  const note = String(formData.get("note") || "").trim();
+
+  if (!id) return;
+
+  const supabase = await createClient();
+  const admin = createAdminClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (!profile || !["admin", "manager"].includes(profile.role)) {
+    redirect("/dashboard");
+  }
+
+  const { error } = await admin
+    .from("course_enrollments")
+    .update({
+      enrollment_status,
+      payment_status,
+      note,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    redirect(
+      `/manager/course-enrollments?message=${encodeURIComponent(error.message)}`
+    );
+  }
+
+  revalidatePath("/manager/course-enrollments");
+  revalidatePath("/admin/course-enrollments");
+  revalidatePath("/dashboard/my-learning");
+
+  redirect("/manager/course-enrollments?message=Course enrollment updated.");
+}

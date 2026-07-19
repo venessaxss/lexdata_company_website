@@ -1,126 +1,126 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
---
--c-o-n-s-t- -n-l-p-F-e-a-t-u-r-e-s- -=- -[--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-M-u-l-t-i-l-i-n-g-u-a-l- -N-L-P-"-,--
-- - - - -t-i-t-l-e-A-r-:- -"-م-ع-ا-ل-ج-ة- -ا-ل-ل-غ-ا-ت- -ا-ل-ط-ب-ي-ع-ي-ة- -م-ت-ع-د-د-ة- -ا-ل-ل-غ-ا-ت-"-,--
-- - - - -t-e-x-t-:- -"-W-e- -h-e-l-p- -i-n-s-t-i-t-u-t-i-o-n-s- -p-r-o-c-e-s-s-,- -c-l-a-s-s-i-f-y-,- -s-e-a-r-c-h-,- -a-n-d- -a-n-a-l-y-z-e- -m-u-l-t-i-l-i-n-g-u-a-l- -t-e-x-t- -d-a-t-a- -f-o-r- -r-e-s-e-a-r-c-h-,- -e-d-u-c-a-t-i-o-n-,- -a-n-d- -b-u-s-i-n-e-s-s- -u-s-e-.-"-,--
-- - - - -t-e-x-t-A-r-:--
-- - - - - - -"-ن-س-ا-ع-د- -ا-ل-م-ؤ-س-س-ا-ت- -ع-ل-ى- -م-ع-ا-ل-ج-ة- -و-ت-ص-ن-ي-ف- -و-ب-ح-ث- -و-ت-ح-ل-ي-ل- -ا-ل-ب-ي-ا-ن-ا-ت- -ا-ل-ن-ص-ي-ة- -م-ت-ع-د-د-ة- -ا-ل-ل-غ-ا-ت- -ل-أ-غ-ر-ا-ض- -ا-ل-ب-ح-ث- -و-ا-ل-ت-ع-ل-ي-م- -و-ا-ل-أ-ع-م-ا-ل-.-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-C-o-r-p-u-s- -&- -D-i-s-c-o-u-r-s-e- -A-n-a-l-y-t-i-c-s-"-,--
-- - - - -t-i-t-l-e-A-r-:- -"-ت-ح-ل-ي-ل- -ا-ل-م-د-و-ن-ا-ت- -و-ا-ل-خ-ط-ا-ب-"-,--
-- - - - -t-e-x-t-:- -"-B-u-i-l-d- -s-e-a-r-c-h-a-b-l-e- -c-o-r-p-o-r-a-,- -e-x-t-r-a-c-t- -l-i-n-g-u-i-s-t-i-c- -p-a-t-t-e-r-n-s-,- -a-n-a-l-y-z-e- -d-i-s-c-o-u-r-s-e-,- -a-n-d- -t-r-a-n-s-f-o-r-m- -r-a-w- -t-e-x-t- -i-n-t-o- -r-e-s-e-a-r-c-h---r-e-a-d-y- -i-n-s-i-g-h-t-s-.-"-,--
-- - - - -t-e-x-t-A-r-:--
-- - - - - - -"-ن-ب-ن-ي- -م-د-و-ن-ا-ت- -ق-ا-ب-ل-ة- -ل-ل-ب-ح-ث-،- -و-ن-س-ت-خ-ر-ج- -ا-ل-أ-ن-م-ا-ط- -ا-ل-ل-غ-و-ي-ة-،- -و-ن-ح-ل-ل- -ا-ل-خ-ط-ا-ب-،- -و-ن-ح-و-ّ-ل- -ا-ل-ن-ص-و-ص- -ا-ل-خ-ا-م- -إ-ل-ى- -ر-ؤ-ى- -ج-ا-ه-ز-ة- -ل-ل-ب-ح-ث-.-"-,--
-- - -}-,--
-- - -{--
-- - - - -t-i-t-l-e-:- -"-A-I- -T-r-a-n-s-l-a-t-i-o-n- -&- -A-n-n-o-t-a-t-i-o-n-"-,--
-- - - - -t-i-t-l-e-A-r-:- -"-ا-ل-ت-ر-ج-م-ة- -و-ا-ل-و-س-م- -ب-ا-ل-ذ-ك-ا-ء- -ا-ل-ا-ص-ط-ن-ا-ع-ي-"-,--
-- - - - -t-e-x-t-:- -"-S-u-p-p-o-r-t- -h-i-g-h---q-u-a-l-i-t-y- -t-r-a-n-s-l-a-t-i-o-n- -w-o-r-k-f-l-o-w-s-,- -t-e-x-t- -a-n-n-o-t-a-t-i-o-n-,- -s-e-n-t-i-m-e-n-t- -a-n-a-l-y-s-i-s-,- -e-n-t-i-t-y- -r-e-c-o-g-n-i-t-i-o-n-,- -a-n-d- -d-o-m-a-i-n---s-p-e-c-i-f-i-c- -d-a-t-a-s-e-t-s-.-"-,--
-- - - - -t-e-x-t-A-r-:--
-- - - - - - -"-ن-د-ع-م- -س-ي-ر- -ع-م-ل- -ا-ل-ت-ر-ج-م-ة- -ع-ا-ل-ي-ة- -ا-ل-ج-و-د-ة-،- -و-و-س-م- -ا-ل-ن-ص-و-ص-،- -و-ت-ح-ل-ي-ل- -ا-ل-م-ش-ا-ع-ر-،- -و-ا-س-ت-خ-ر-ا-ج- -ا-ل-ك-ي-ا-ن-ا-ت-،- -و-ب-ن-ا-ء- -م-ج-م-و-ع-ا-ت- -ب-ي-ا-ن-ا-ت- -م-ت-خ-ص-ص-ة-.-"-,--
-- - -}-,--
--]-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -N-l-p-A-t-t-r-a-c-t-i-o-n-S-e-c-t-i-o-n-(-)- -{--
-- - -r-e-t-u-r-n- -(--
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-b-g---w-h-i-t-e- -p-x---6- -p-y---2-0-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l-"->--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---1-0- -l-g-:-g-r-i-d---c-o-l-s---[-1-.-0-5-f-r-_-0-.-9-5-f-r-]- -l-g-:-i-t-e-m-s---c-e-n-t-e-r-"->--
-- - - - - - - - - - -<-d-i-v->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-8-e-m-]- -t-e-x-t---b-l-u-e---7-0-0-"->--
-- - - - - - - - - - - - - - -N-L-P- -•- -A-I- -•- -L-a-n-g-u-a-g-e- -I-n-t-e-l-l-i-g-e-n-c-e--
-- - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -m-a-x---w---4-x-l- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -t-e-x-t---s-l-a-t-e---9-5-0- -m-d-:-t-e-x-t---6-x-l-"->--
-- - - - - - - - - - - - - - -T-u-r-n- -l-a-n-g-u-a-g-e- -d-a-t-a- -i-n-t-o- -r-e-s-e-a-r-c-h-,- -t-r-a-i-n-i-n-g-,- -a-n-d- -b-u-s-i-n-e-s-s- -v-a-l-u-e-.--
-- - - - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -m-a-x---w---3-x-l- -t-e-x-t---l-g- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - - - -L-e-x-D-a-t-a- -i-n-t-e-g-r-a-t-e-s- -N-a-t-u-r-a-l- -L-a-n-g-u-a-g-e- -P-r-o-c-e-s-s-i-n-g-,- -c-o-r-p-u-s- -m-e-t-h-o-d-s-,--
-- - - - - - - - - - - - - - -A-I---a-s-s-i-s-t-e-d- -a-n-a-l-y-s-i-s-,- -a-n-d- -m-u-l-t-i-l-i-n-g-u-a-l- -d-a-t-a- -w-o-r-k-f-l-o-w-s- -t-o- -s-u-p-p-o-r-t--
-- - - - - - - - - - - - - - -u-n-i-v-e-r-s-i-t-i-e-s-,- -r-e-s-e-a-r-c-h- -t-e-a-m-s-,- -c-o-m-p-a-n-i-e-s-,- -a-n-d- -p-u-b-l-i-c- -i-n-s-t-i-t-u-t-i-o-n-s-.--
-- - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---8- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3-"->--
-- - - - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - - - -h-r-e-f-=-"-/-c-o-n-t-a-c-t-"--
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---6- -p-y---4- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"--
-- - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - -S-t-a-r-t- -a-n- -N-L-P- -P-r-o-j-e-c-t--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
---
-- - - - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - - - -h-r-e-f-=-"-/-w-o-r-k-s-h-o-p-s-"--
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -p-x---6- -p-y---4- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---8-0-0- -h-o-v-e-r-:-b-g---s-l-a-t-e---5-0-"--
-- - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - -E-x-p-l-o-r-e- -N-L-P- -T-r-a-i-n-i-n-g--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - -<-d-i-v--
-- - - - - - - - - - - - -d-i-r-=-"-r-t-l-"--
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---[-2-r-e-m-]- -b-o-r-d-e-r- -b-o-r-d-e-r---b-l-u-e---1-0-0- -b-g---b-l-u-e---5-0- -p---8-"--
-- - - - - - - - - - ->--
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-e-m-]- -t-e-x-t---b-l-u-e---7-0-0-"->--
-- - - - - - - - - - - - - - -ا-ل-ذ-ك-ا-ء- -ا-ل-ل-غ-و-ي--
-- - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - -<-h-3- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---3-x-l- -f-o-n-t---b-l-a-c-k- -l-e-a-d-i-n-g---t-i-g-h-t- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - - - -ح-و-ّ-ل- -ا-ل-ب-ي-ا-ن-ا-ت- -ا-ل-ل-غ-و-ي-ة- -إ-ل-ى- -م-ع-ر-ف-ة- -ق-ا-ب-ل-ة- -ل-ل-ا-س-ت-خ-د-ا-م-.--
-- - - - - - - - - - - - -<-/-h-3->--
---
-- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -t-e-x-t---b-a-s-e- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---7-0-0-"->--
-- - - - - - - - - - - - - - -ت-ج-م-ع- -L-e-x-D-a-t-a- -ب-ي-ن- -م-ع-ا-ل-ج-ة- -ا-ل-ل-غ-ا-ت- -ا-ل-ط-ب-ي-ع-ي-ة-،- -و-ت-ح-ل-ي-ل- -ا-ل-خ-ط-ا-ب-،- -و-ب-ن-ا-ء--
-- - - - - - - - - - - - - - -ا-ل-م-د-و-ن-ا-ت-،- -و-ا-ل-ذ-ك-ا-ء- -ا-ل-ا-ص-ط-ن-ا-ع-ي- -ل-م-س-ا-ع-د-ة- -ا-ل-م-ؤ-س-س-ا-ت- -ع-ل-ى- -ف-ه-م- -ا-ل-ن-ص-و-ص--
-- - - - - - - - - - - - - - -م-ت-ع-د-د-ة- -ا-ل-ل-غ-ا-ت- -و-ا-ت-خ-ا-ذ- -ق-ر-ا-ر-ا-ت- -أ-ف-ض-ل-.--
-- - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---2-"->--
-- - - - - - - - - - - - - - -{-[-"-ت-ح-ل-ي-ل- -ا-ل-ن-ص-و-ص-"-,- -"-ا-ل-ت-ر-ج-م-ة- -ا-ل-ذ-ك-ي-ة-"-,- -"-ا-ل-و-س-م- -ا-ل-ل-غ-و-ي-"-,- -"-ت-ح-ل-ي-ل- -ا-ل-م-ش-ا-ع-ر-"-]-.-m-a-p-(--
-- - - - - - - - - - - - - - - - -(-i-t-e-m-)- -=->- -(--
-- - - - - - - - - - - - - - - - - - -<-s-p-a-n--
-- - - - - - - - - - - - - - - - - - - - -k-e-y-=-{-i-t-e-m-}--
-- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---w-h-i-t-e- -p-x---4- -p-y---2- -t-e-x-t---x-s- -f-o-n-t---b-l-a-c-k- -t-e-x-t---b-l-u-e---8-0-0- -r-i-n-g---1- -r-i-n-g---b-l-u-e---1-0-0-"--
-- - - - - - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - - - - - -{-i-t-e-m-}--
-- - - - - - - - - - - - - - - - - - -<-/-s-p-a-n->--
-- - - - - - - - - - - - - - - - -)--
-- - - - - - - - - - - - - - -)-}--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---1-2- -g-r-i-d- -g-a-p---5- -m-d-:-g-r-i-d---c-o-l-s---3-"->--
-- - - - - - - - - - -{-n-l-p-F-e-a-t-u-r-e-s-.-m-a-p-(-(-f-e-a-t-u-r-e-)- -=->- -(--
-- - - - - - - - - - - - -<-a-r-t-i-c-l-e--
-- - - - - - - - - - - - - - -k-e-y-=-{-f-e-a-t-u-r-e-.-t-i-t-l-e-}--
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---s-l-a-t-e---5-0- -p---6-"--
-- - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - -<-h-3- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - - - - - -{-f-e-a-t-u-r-e-.-t-i-t-l-e-}--
-- - - - - - - - - - - - - - -<-/-h-3->--
---
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - - - - - -{-f-e-a-t-u-r-e-.-t-e-x-t-}--
-- - - - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - - - -<-d-i-v- -d-i-r-=-"-r-t-l-"- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -b-o-r-d-e-r---t- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -p-t---5-"->--
-- - - - - - - - - - - - - - - - -<-h-4- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---l-g- -f-o-n-t---b-l-a-c-k- -t-e-x-t---b-l-u-e---8-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-f-e-a-t-u-r-e-.-t-i-t-l-e-A-r-}--
-- - - - - - - - - - - - - - - - -<-/-h-4->--
---
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---7- -t-e-x-t---s-l-a-t-e---7-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-f-e-a-t-u-r-e-.-t-e-x-t-A-r-}--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -<-/-a-r-t-i-c-l-e->--
-- - - - - - - - - - -)-)-}--
-- - - - - - - - -<-/-d-i-v->--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-s-e-c-t-i-o-n->--
-- - -)-;--
--}-
+import Link from "next/link";
+
+const nlpFeatures = [
+  {
+    title: "Multilingual NLP",
+    titleAr: "معالجة اللغات الطبيعية متعددة اللغات",
+    text: "We help institutions process, classify, search, and analyze multilingual text data for research, education, and business use.",
+    textAr:
+      "نساعد المؤسسات على معالجة وتصنيف وبحث وتحليل البيانات النصية متعددة اللغات لأغراض البحث والتعليم والأعمال.",
+  },
+  {
+    title: "Corpus & Discourse Analytics",
+    titleAr: "تحليل المدونات والخطاب",
+    text: "Build searchable corpora, extract linguistic patterns, analyze discourse, and transform raw text into research-ready insights.",
+    textAr:
+      "نبني مدونات قابلة للبحث، ونستخرج الأنماط اللغوية، ونحلل الخطاب، ونحوّل النصوص الخام إلى رؤى جاهزة للبحث.",
+  },
+  {
+    title: "AI Translation & Annotation",
+    titleAr: "الترجمة والوسم بالذكاء الاصطناعي",
+    text: "Support high-quality translation workflows, text annotation, sentiment analysis, entity recognition, and domain-specific datasets.",
+    textAr:
+      "ندعم سير عمل الترجمة عالية الجودة، ووسم النصوص، وتحليل المشاعر، واستخراج الكيانات، وبناء مجموعات بيانات متخصصة.",
+  },
+];
+
+export default function NlpAttractionSection() {
+  return (
+    <section className="bg-white px-6 py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.28em] text-blue-700">
+              NLP • AI • Language Intelligence
+            </p>
+
+            <h2 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
+              Turn language data into research, training, and business value.
+            </h2>
+
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+              LexData integrates Natural Language Processing, corpus methods,
+              AI-assisted analysis, and multilingual data workflows to support
+              universities, research teams, companies, and public institutions.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/contact"
+                className="rounded-2xl bg-slate-950 px-6 py-4 text-sm font-black text-white hover:bg-slate-700"
+              >
+                Start an NLP Project
+              </Link>
+
+              <Link
+                href="/workshops"
+                className="rounded-2xl border border-slate-300 px-6 py-4 text-sm font-black text-slate-800 hover:bg-slate-50"
+              >
+                Explore NLP Training
+              </Link>
+            </div>
+          </div>
+
+          <div
+            dir="rtl"
+            className="rounded-[2rem] border border-blue-100 bg-blue-50 p-8"
+          >
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-700">
+              الذكاء اللغوي
+            </p>
+
+            <h3 className="mt-4 text-3xl font-black leading-tight text-slate-950">
+              حوّل البيانات اللغوية إلى معرفة قابلة للاستخدام.
+            </h3>
+
+            <p className="mt-5 text-base leading-8 text-slate-700">
+              تجمع LexData بين معالجة اللغات الطبيعية، وتحليل الخطاب، وبناء
+              المدونات، والذكاء الاصطناعي لمساعدة المؤسسات على فهم النصوص
+              متعددة اللغات واتخاذ قرارات أفضل.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-2">
+              {["تحليل النصوص", "الترجمة الذكية", "الوسم اللغوي", "تحليل المشاعر"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="rounded-full bg-white px-4 py-2 text-xs font-black text-blue-800 ring-1 ring-blue-100"
+                  >
+                    {item}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 grid gap-5 md:grid-cols-3">
+          {nlpFeatures.map((feature) => (
+            <article
+              key={feature.title}
+              className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+            >
+              <h3 className="text-xl font-black text-slate-950">
+                {feature.title}
+              </h3>
+
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {feature.text}
+              </p>
+
+              <div dir="rtl" className="mt-6 border-t border-slate-200 pt-5">
+                <h4 className="text-lg font-black text-blue-800">
+                  {feature.titleAr}
+                </h4>
+
+                <p className="mt-3 text-sm leading-7 text-slate-700">
+                  {feature.textAr}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

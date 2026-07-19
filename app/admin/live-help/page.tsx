@@ -1,9 +1,8 @@
--i-m-p-o-r-t- -M-a-n-a-g-e-r-L-i-v-e-H-e-l-p-P-a-g-e- -f-r-o-m- -"-@-/-a-p-p-/-m-a-n-a-g-e-r-/-l-i-v-e---h-e-l-p-/-p-a-g-e-"-;--
---
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -A-d-m-i-n-L-i-v-e-H-e-l-p-P-a-g-e-(-)- -{--
-- - -r-e-t-u-r-n- -<-M-a-n-a-g-e-r-L-i-v-e-H-e-l-p-P-a-g-e- -/->-;--
--}--
--
+import ManagerLiveHelpPage from "@/app/manager/live-help/page";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function AdminLiveHelpPage() {
+  return <ManagerLiveHelpPage />;
+}

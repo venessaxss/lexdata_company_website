@@ -1,65 +1,65 @@
--"-u-s-e- -c-l-i-e-n-t-"-;-
--
--i-m-p-o-r-t- -{- -u-s-e-R-o-u-t-e-r- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -u-s-e-S-t-a-t-e-,- -u-s-e-T-r-a-n-s-i-t-i-o-n- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
--i-m-p-o-r-t- -t-y-p-e- -{- -A-p-p-L-a-n-g-u-a-g-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
--i-m-p-o-r-t- -{-
-- - -L-A-N-G-U-A-G-E-_-L-A-B-E-L-S-,-
-- - -L-A-N-G-U-A-G-E-_-S-H-O-R-T-_-L-A-B-E-L-S-,-
-- - -S-U-P-P-O-R-T-E-D-_-L-A-N-G-U-A-G-E-S-,-
-- - -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e-,-
--}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -L-a-n-g-u-a-g-e-S-w-i-t-c-h-e-r-(-{-
-- - -c-u-r-r-e-n-t-L-a-n-g-u-a-g-e- -=- -"-e-n-"-,-
-- - -c-o-m-p-a-c-t- -=- -f-a-l-s-e-,-
--}-:- -{-
-- - -c-u-r-r-e-n-t-L-a-n-g-u-a-g-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -c-o-m-p-a-c-t-?-:- -b-o-o-l-e-a-n-;-
--}-)- -{-
-- - -c-o-n-s-t- -r-o-u-t-e-r- -=- -u-s-e-R-o-u-t-e-r-(-)-;-
-- - -c-o-n-s-t- -[-i-s-P-e-n-d-i-n-g-,- -s-t-a-r-t-T-r-a-n-s-i-t-i-o-n-]- -=- -u-s-e-T-r-a-n-s-i-t-i-o-n-(-)-;-
--
-- - -c-o-n-s-t- -[-l-a-n-g-u-a-g-e-,- -s-e-t-L-a-n-g-u-a-g-e-]- -=- -u-s-e-S-t-a-t-e-<-A-p-p-L-a-n-g-u-a-g-e->-(-
-- - - - -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e-(-c-u-r-r-e-n-t-L-a-n-g-u-a-g-e-)-
-- - -)-;-
--
-- - -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-L-a-n-g-u-a-g-e-(-n-e-x-t-L-a-n-g-u-a-g-e-:- -s-t-r-i-n-g-)- -{-
-- - - - -c-o-n-s-t- -n-o-r-m-a-l-i-z-e-d-L-a-n-g-u-a-g-e- -=- -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e-(-n-e-x-t-L-a-n-g-u-a-g-e-)-;-
--
-- - - - -s-e-t-L-a-n-g-u-a-g-e-(-n-o-r-m-a-l-i-z-e-d-L-a-n-g-u-a-g-e-)-;-
--
-- - - - -s-t-a-r-t-T-r-a-n-s-i-t-i-o-n-(-a-s-y-n-c- -(-)- -=->- -{-
-- - - - - - -a-w-a-i-t- -f-e-t-c-h-(-"-/-a-p-i-/-l-a-n-g-u-a-g-e-"-,- -{-
-- - - - - - - - -m-e-t-h-o-d-:- -"-P-O-S-T-"-,-
-- - - - - - - - -h-e-a-d-e-r-s-:- -{-
-- - - - - - - - - - -"-C-o-n-t-e-n-t---T-y-p-e-"-:- -"-a-p-p-l-i-c-a-t-i-o-n-/-j-s-o-n-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -b-o-d-y-:- -J-S-O-N-.-s-t-r-i-n-g-i-f-y-(-{-
-- - - - - - - - - - -l-a-n-g-u-a-g-e-:- -n-o-r-m-a-l-i-z-e-d-L-a-n-g-u-a-g-e-,-
-- - - - - - - - -}-)-,-
-- - - - - - -}-)-;-
--
-- - - - - - -r-o-u-t-e-r-.-r-e-f-r-e-s-h-(-)-;-
-- - - - -}-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-l-e-c-t-
-- - - - - - -v-a-l-u-e-=-{-l-a-n-g-u-a-g-e-}-
-- - - - - - -d-i-s-a-b-l-e-d-=-{-i-s-P-e-n-d-i-n-g-}-
-- - - - - - -o-n-C-h-a-n-g-e-=-{-(-e-v-e-n-t-)- -=->- -u-p-d-a-t-e-L-a-n-g-u-a-g-e-(-e-v-e-n-t-.-t-a-r-g-e-t-.-v-a-l-u-e-)-}-
-- - - - - - -c-l-a-s-s-N-a-m-e-=-{-
-- - - - - - - - -c-o-m-p-a-c-t-
-- - - - - - - - - - -?- -"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p-x---3- -p-y---2- -t-e-x-t---x-s- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0- -s-h-a-d-o-w---s-m- -h-o-v-e-r-:-b-g---s-l-a-t-e---5-0- -d-i-s-a-b-l-e-d-:-o-p-a-c-i-t-y---6-0-"-
-- - - - - - - - - - -:- -"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p-x---4- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0- -s-h-a-d-o-w---s-m- -h-o-v-e-r-:-b-g---s-l-a-t-e---5-0- -d-i-s-a-b-l-e-d-:-o-p-a-c-i-t-y---6-0-"-
-- - - - - - -}-
-- - - - ->-
-- - - - - - -{-S-U-P-P-O-R-T-E-D-_-L-A-N-G-U-A-G-E-S-.-m-a-p-(-(-i-t-e-m-)- -=->- -(-
-- - - - - - - - -<-o-p-t-i-o-n- -k-e-y-=-{-i-t-e-m-}- -v-a-l-u-e-=-{-i-t-e-m-}->-
-- - - - - - - - - - -{-c-o-m-p-a-c-t- -?- -L-A-N-G-U-A-G-E-_-S-H-O-R-T-_-L-A-B-E-L-S-[-i-t-e-m-]- -:- -L-A-N-G-U-A-G-E-_-L-A-B-E-L-S-[-i-t-e-m-]-}-
-- - - - - - - - -<-/-o-p-t-i-o-n->-
-- - - - - - -)-)-}-
-- - - - -<-/-s-e-l-e-c-t->-
-- - -)-;-
--}-
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import type { AppLanguage } from "@/lib/languages";
+import {
+  LANGUAGE_LABELS,
+  LANGUAGE_SHORT_LABELS,
+  SUPPORTED_LANGUAGES,
+  normalizeLanguage,
+} from "@/lib/languages";
+
+export default function LanguageSwitcher({
+  currentLanguage = "en",
+  compact = false,
+}: {
+  currentLanguage?: string | null;
+  compact?: boolean;
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const [language, setLanguage] = useState<AppLanguage>(
+    normalizeLanguage(currentLanguage)
+  );
+
+  function updateLanguage(nextLanguage: string) {
+    const normalizedLanguage = normalizeLanguage(nextLanguage);
+
+    setLanguage(normalizedLanguage);
+
+    startTransition(async () => {
+      await fetch("/api/language", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language: normalizedLanguage,
+        }),
+      });
+
+      router.refresh();
+    });
+  }
+
+  return (
+    <select
+      value={language}
+      disabled={isPending}
+      onChange={(event) => updateLanguage(event.target.value)}
+      className={
+        compact
+          ? "rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-60"
+          : "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-60"
+      }
+    >
+      {SUPPORTED_LANGUAGES.map((item) => (
+        <option key={item} value={item}>
+          {compact ? LANGUAGE_SHORT_LABELS[item] : LANGUAGE_LABELS[item]}
+        </option>
+      ))}
+    </select>
+  );
+}

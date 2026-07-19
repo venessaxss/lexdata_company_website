@@ -1,166 +1,166 @@
--"-u-s-e- -c-l-i-e-n-t-"-;--
---
--i-m-p-o-r-t- -{- -u-s-e-M-e-m-o-,- -u-s-e-S-t-a-t-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;--
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;--
--i-m-p-o-r-t- -{- -r-e-o-r-d-e-r-T-e-a-m-M-e-m-b-e-r-s- -}- -f-r-o-m- -"-@-/-a-p-p-/-a-d-m-i-n-/-t-e-a-m-/-a-c-t-i-o-n-s-"-;--
---
--t-y-p-e- -T-e-a-m-O-r-d-e-r-I-t-e-m- -=- -{--
-- - -i-d-:- -s-t-r-i-n-g-;--
-- - -n-a-m-e-:- -s-t-r-i-n-g-;--
-- - -r-o-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
-- - -s-e-c-t-i-o-n-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
-- - -p-h-o-t-o-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
-- - -i-s-_-a-c-t-i-v-e-?-:- -b-o-o-l-e-a-n- -|- -n-u-l-l-;--
-- - -i-s-_-f-e-a-t-u-r-e-d-?-:- -b-o-o-l-e-a-n- -|- -n-u-l-l-;--
-- - -s-o-r-t-_-o-r-d-e-r-?-:- -n-u-m-b-e-r- -|- -n-u-l-l-;--
--}-;--
---
--t-y-p-e- -P-r-o-p-s- -=- -{--
-- - -m-e-m-b-e-r-s-:- -T-e-a-m-O-r-d-e-r-I-t-e-m-[-]-;--
-- - -r-e-t-u-r-n-T-o-?-:- -s-t-r-i-n-g-;--
--}-;--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -T-e-a-m-O-r-d-e-r-M-a-n-a-g-e-r-(-{--
-- - -m-e-m-b-e-r-s-,--
-- - -r-e-t-u-r-n-T-o- -=- -"-/-m-a-n-a-g-e-r-/-t-e-a-m-"-,--
--}-:- -P-r-o-p-s-)- -{--
-- - -c-o-n-s-t- -[-i-t-e-m-s-,- -s-e-t-I-t-e-m-s-]- -=- -u-s-e-S-t-a-t-e-(-m-e-m-b-e-r-s-)-;--
-- - -c-o-n-s-t- -[-d-r-a-g-g-e-d-I-d-,- -s-e-t-D-r-a-g-g-e-d-I-d-]- -=- -u-s-e-S-t-a-t-e-<-s-t-r-i-n-g- -|- -n-u-l-l->-(-n-u-l-l-)-;--
---
-- - -c-o-n-s-t- -o-r-d-e-r-J-s-o-n- -=- -u-s-e-M-e-m-o-(-(-)- -=->- -{--
-- - - - -r-e-t-u-r-n- -J-S-O-N-.-s-t-r-i-n-g-i-f-y-(--
-- - - - - - -i-t-e-m-s-.-m-a-p-(-(-i-t-e-m-,- -i-n-d-e-x-)- -=->- -(-{--
-- - - - - - - - -i-d-:- -i-t-e-m-.-i-d-,--
-- - - - - - - - -s-o-r-t-_-o-r-d-e-r-:- -i-n-d-e-x- -+- -1-,--
-- - - - - - -}-)-)--
-- - - - -)-;--
-- - -}-,- -[-i-t-e-m-s-]-)-;--
---
-- - -f-u-n-c-t-i-o-n- -m-o-v-e-I-t-e-m-(-f-r-o-m-I-n-d-e-x-:- -n-u-m-b-e-r-,- -t-o-I-n-d-e-x-:- -n-u-m-b-e-r-)- -{--
-- - - - -i-f- -(-f-r-o-m-I-n-d-e-x- -=-=-=- -t-o-I-n-d-e-x-)- -r-e-t-u-r-n-;--
---
-- - - - -c-o-n-s-t- -n-e-x-t- -=- -[-.-.-.-i-t-e-m-s-]-;--
-- - - - -c-o-n-s-t- -[-r-e-m-o-v-e-d-]- -=- -n-e-x-t-.-s-p-l-i-c-e-(-f-r-o-m-I-n-d-e-x-,- -1-)-;--
-- - - - -n-e-x-t-.-s-p-l-i-c-e-(-t-o-I-n-d-e-x-,- -0-,- -r-e-m-o-v-e-d-)-;--
-- - - - -s-e-t-I-t-e-m-s-(-n-e-x-t-)-;--
-- - -}--
---
-- - -f-u-n-c-t-i-o-n- -m-o-v-e-U-p-(-i-n-d-e-x-:- -n-u-m-b-e-r-)- -{--
-- - - - -i-f- -(-i-n-d-e-x- -<-=- -0-)- -r-e-t-u-r-n-;--
-- - - - -m-o-v-e-I-t-e-m-(-i-n-d-e-x-,- -i-n-d-e-x- --- -1-)-;--
-- - -}--
---
-- - -f-u-n-c-t-i-o-n- -m-o-v-e-D-o-w-n-(-i-n-d-e-x-:- -n-u-m-b-e-r-)- -{--
-- - - - -i-f- -(-i-n-d-e-x- ->-=- -i-t-e-m-s-.-l-e-n-g-t-h- --- -1-)- -r-e-t-u-r-n-;--
-- - - - -m-o-v-e-I-t-e-m-(-i-n-d-e-x-,- -i-n-d-e-x- -+- -1-)-;--
-- - -}--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m-"->--
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -f-l-e-x---c-o-l- -j-u-s-t-i-f-y---b-e-t-w-e-e-n- -g-a-p---4- -m-d-:-f-l-e-x---r-o-w- -m-d-:-i-t-e-m-s---c-e-n-t-e-r-"->--
-- - - - - - - - -<-d-i-v->--
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-e-m-]- -t-e-x-t---b-l-u-e---7-0-0-"->--
-- - - - - - - - - - - - -H-o-m-e-p-a-g-e- -T-e-a-m- -O-r-d-e-r--
-- - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---2-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - -D-r-a-g- -t-e-a-m- -m-e-m-b-e-r-s- -t-o- -r-e-o-r-d-e-r--
-- - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - -A-d-m-i-n-s- -a-n-d- -m-a-n-a-g-e-r-s- -c-a-n- -c-o-n-t-r-o-l- -t-h-e- -o-r-d-e-r- -s-h-o-w-n- -o-n- -t-h-e- -h-o-m-e-p-a-g-e- -a-n-d--
-- - - - - - - - - - - - -t-e-a-m- -p-a-g-e-.--
-- - - - - - - - - - -<-/-p->--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-r-e-o-r-d-e-r-T-e-a-m-M-e-m-b-e-r-s-}->--
-- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-r-e-t-u-r-n-_-t-o-"- -v-a-l-u-e-=-{-r-e-t-u-r-n-T-o-}- -/->--
-- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-o-r-d-e-r-"- -v-a-l-u-e-=-{-o-r-d-e-r-J-s-o-n-}- -/->--
---
-- - - - - - - - - - -<-b-u-t-t-o-n--
-- - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"--
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-g---b-l-u-e---7-0-0- -p-x---5- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---b-l-u-e---8-0-0-"--
-- - - - - - - - - - ->--
-- - - - - - - - - - - - -S-a-v-e- -O-r-d-e-r--
-- - - - - - - - - - -<-/-b-u-t-t-o-n->--
-- - - - - - - - -<-/-f-o-r-m->--
-- - - - - - -<-/-d-i-v->--
---
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -s-p-a-c-e---y---3-"->--
-- - - - - - - - -{-i-t-e-m-s-.-m-a-p-(-(-m-e-m-b-e-r-,- -i-n-d-e-x-)- -=->- -(--
-- - - - - - - - - - -<-d-i-v--
-- - - - - - - - - - - - -k-e-y-=-{-m-e-m-b-e-r-.-i-d-}--
-- - - - - - - - - - - - -d-r-a-g-g-a-b-l-e--
-- - - - - - - - - - - - -o-n-D-r-a-g-S-t-a-r-t-=-{-(-)- -=->- -s-e-t-D-r-a-g-g-e-d-I-d-(-m-e-m-b-e-r-.-i-d-)-}--
-- - - - - - - - - - - - -o-n-D-r-a-g-O-v-e-r-=-{-(-e-v-e-n-t-)- -=->- -e-v-e-n-t-.-p-r-e-v-e-n-t-D-e-f-a-u-l-t-(-)-}--
-- - - - - - - - - - - - -o-n-D-r-o-p-=-{-(-)- -=->- -{--
-- - - - - - - - - - - - - - -c-o-n-s-t- -f-r-o-m-I-n-d-e-x- -=- -i-t-e-m-s-.-f-i-n-d-I-n-d-e-x-(--
-- - - - - - - - - - - - - - - - -(-i-t-e-m-)- -=->- -i-t-e-m-.-i-d- -=-=-=- -d-r-a-g-g-e-d-I-d--
-- - - - - - - - - - - - - - -)-;--
-- - - - - - - - - - - - - - -m-o-v-e-I-t-e-m-(-f-r-o-m-I-n-d-e-x-,- -i-n-d-e-x-)-;--
-- - - - - - - - - - - - - - -s-e-t-D-r-a-g-g-e-d-I-d-(-n-u-l-l-)-;--
-- - - - - - - - - - - - -}-}--
-- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -c-u-r-s-o-r---m-o-v-e- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---b-e-t-w-e-e-n- -g-a-p---4- -r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---s-l-a-t-e---5-0- -p---4- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:-b-g---b-l-u-e---5-0-"--
-- - - - - - - - - - ->--
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -g-a-p---4-"->--
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -h---1-0- -w---1-0- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e-"->--
-- - - - - - - - - - - - - - - - -{-i-n-d-e-x- -+- -1-}--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-p-h-o-t-o- -?- -(--
-- - - - - - - - - - - - - - - - -<-i-m-g--
-- - - - - - - - - - - - - - - - - - -s-r-c-=-{-m-e-m-b-e-r-.-p-h-o-t-o-}--
-- - - - - - - - - - - - - - - - - - -a-l-t-=-{-m-e-m-b-e-r-.-n-a-m-e-}--
-- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---1-4- -w---1-4- -r-o-u-n-d-e-d---2-x-l- -o-b-j-e-c-t---c-o-v-e-r-"--
-- - - - - - - - - - - - - - - - -/->--
-- - - - - - - - - - - - - - -)- -:- -(--
-- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -h---1-4- -w---1-4- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---2-0-0- -t-e-x-t---l-g- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---5-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-n-a-m-e-.-s-l-i-c-e-(-0-,- -1-)-}--
-- - - - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - - - -)-}--
---
-- - - - - - - - - - - - - - -<-d-i-v->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-{-m-e-m-b-e-r-.-n-a-m-e-}-<-/-p->--
---
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-r-o-l-e- -|-|- -"-T-e-a-m- -M-e-m-b-e-r-"-}--
-- - - - - - - - - - - - - - - - -<-/-p->--
---
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---4-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-s-e-c-t-i-o-n- -|-|- -"-T-e-a-m-"-}- -·-{-"- -"-}--
-- - - - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-i-s-_-a-c-t-i-v-e- -?- -"-A-c-t-i-v-e-"- -:- -"-H-i-d-d-e-n-"-}- -·-{-"- -"-}--
-- - - - - - - - - - - - - - - - - - -{-m-e-m-b-e-r-.-i-s-_-f-e-a-t-u-r-e-d- -?- -"-H-o-m-e-p-a-g-e-"- -:- -"-N-o-t- -f-e-a-t-u-r-e-d-"-}--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -g-a-p---2-"->--
-- - - - - - - - - - - - - - -<-b-u-t-t-o-n--
-- - - - - - - - - - - - - - - - -t-y-p-e-=-"-b-u-t-t-o-n-"--
-- - - - - - - - - - - - - - - - -o-n-C-l-i-c-k-=-{-(-)- -=->- -m-o-v-e-U-p-(-i-n-d-e-x-)-}--
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -p-x---3- -p-y---2- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---7-0-0- -h-o-v-e-r-:-b-g---w-h-i-t-e-"--
-- - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - -↑--
-- - - - - - - - - - - - - - -<-/-b-u-t-t-o-n->--
---
-- - - - - - - - - - - - - - -<-b-u-t-t-o-n--
-- - - - - - - - - - - - - - - - -t-y-p-e-=-"-b-u-t-t-o-n-"--
-- - - - - - - - - - - - - - - - -o-n-C-l-i-c-k-=-{-(-)- -=->- -m-o-v-e-D-o-w-n-(-i-n-d-e-x-)-}--
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -p-x---3- -p-y---2- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---7-0-0- -h-o-v-e-r-:-b-g---w-h-i-t-e-"--
-- - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - -↓--
-- - - - - - - - - - - - - - -<-/-b-u-t-t-o-n->--
---
-- - - - - - - - - - - - - - -<-L-i-n-k--
-- - - - - - - - - - - - - - - - -h-r-e-f-=-{-`-/-m-a-n-a-g-e-r-/-t-e-a-m-/-$-{-m-e-m-b-e-r-.-i-d-}-/-e-d-i-t-`-}--
-- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---4- -p-y---2- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"--
-- - - - - - - - - - - - - - ->--
-- - - - - - - - - - - - - - - - -E-d-i-t--
-- - - - - - - - - - - - - - -<-/-L-i-n-k->--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -)-)-}--
-- - - - - - -<-/-d-i-v->--
-- - - - -<-/-s-e-c-t-i-o-n->--
-- - -)-;--
--}-
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { reorderTeamMembers } from "@/app/admin/team/actions";
+
+type TeamOrderItem = {
+  id: string;
+  name: string;
+  role?: string | null;
+  section?: string | null;
+  photo?: string | null;
+  is_active?: boolean | null;
+  is_featured?: boolean | null;
+  sort_order?: number | null;
+};
+
+type Props = {
+  members: TeamOrderItem[];
+  returnTo?: string;
+};
+
+export default function TeamOrderManager({
+  members,
+  returnTo = "/manager/team",
+}: Props) {
+  const [items, setItems] = useState(members);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+
+  const orderJson = useMemo(() => {
+    return JSON.stringify(
+      items.map((item, index) => ({
+        id: item.id,
+        sort_order: index + 1,
+      }))
+    );
+  }, [items]);
+
+  function moveItem(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return;
+
+    const next = [...items];
+    const [removed] = next.splice(fromIndex, 1);
+    next.splice(toIndex, 0, removed);
+    setItems(next);
+  }
+
+  function moveUp(index: number) {
+    if (index <= 0) return;
+    moveItem(index, index - 1);
+  }
+
+  function moveDown(index: number) {
+    if (index >= items.length - 1) return;
+    moveItem(index, index + 1);
+  }
+
+  return (
+    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div>
+          <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-700">
+            Homepage Team Order
+          </p>
+
+          <h2 className="mt-2 text-2xl font-black text-slate-950">
+            Drag team members to reorder
+          </h2>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Admins and managers can control the order shown on the homepage and
+            team page.
+          </p>
+        </div>
+
+        <form action={reorderTeamMembers}>
+          <input type="hidden" name="return_to" value={returnTo} />
+          <input type="hidden" name="order" value={orderJson} />
+
+          <button
+            type="submit"
+            className="rounded-2xl bg-blue-700 px-5 py-3 text-sm font-black text-white hover:bg-blue-800"
+          >
+            Save Order
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-6 space-y-3">
+        {items.map((member, index) => (
+          <div
+            key={member.id}
+            draggable
+            onDragStart={() => setDraggedId(member.id)}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={() => {
+              const fromIndex = items.findIndex(
+                (item) => item.id === draggedId
+              );
+              moveItem(fromIndex, index);
+              setDraggedId(null);
+            }}
+            className="flex cursor-move items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-blue-50"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-950 text-sm font-black text-white">
+                {index + 1}
+              </div>
+
+              {member.photo ? (
+                <img
+                  src={member.photo}
+                  alt={member.name}
+                  className="h-14 w-14 rounded-2xl object-cover"
+                />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-200 text-lg font-black text-slate-500">
+                  {member.name.slice(0, 1)}
+                </div>
+              )}
+
+              <div>
+                <p className="font-black text-slate-950">{member.name}</p>
+
+                <p className="text-sm font-semibold text-slate-600">
+                  {member.role || "Team Member"}
+                </p>
+
+                <p className="text-xs font-bold text-slate-400">
+                  {member.section || "Team"} ·{" "}
+                  {member.is_active ? "Active" : "Hidden"} ·{" "}
+                  {member.is_featured ? "Homepage" : "Not featured"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => moveUp(index)}
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-black text-slate-700 hover:bg-white"
+              >
+                ↑
+              </button>
+
+              <button
+                type="button"
+                onClick={() => moveDown(index)}
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-black text-slate-700 hover:bg-white"
+              >
+                ↓
+              </button>
+
+              <Link
+                href={`/manager/team/${member.id}/edit`}
+                className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
+              >
+                Edit
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

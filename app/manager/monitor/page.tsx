@@ -1,143 +1,143 @@
--i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
---
--e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
--e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
---
--f-u-n-c-t-i-o-n- -p-c-t-(-v-a-l-u-e-:- -n-u-m-b-e-r-,- -t-o-t-a-l-:- -n-u-m-b-e-r-)- -{--
-- - -i-f- -(-!-t-o-t-a-l-)- -r-e-t-u-r-n- -0-;--
-- - -r-e-t-u-r-n- -M-a-t-h-.-r-o-u-n-d-(-(-v-a-l-u-e- -/- -t-o-t-a-l-)- -*- -1-0-0-)-;--
--}--
---
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -M-a-n-a-g-e-r-M-o-n-i-t-o-r-P-a-g-e-(-)- -{--
-- - -n-o-S-t-o-r-e-(-)-;--
---
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
---
-- - -c-o-n-s-t- -[--
-- - - - -w-o-r-k-s-h-o-p-s-R-e-s-u-l-t-,--
-- - - - -r-e-g-i-s-t-r-a-t-i-o-n-s-R-e-s-u-l-t-,--
-- - - - -u-s-e-r-s-R-e-s-u-l-t-,--
-- - - - -m-e-s-s-a-g-e-s-R-e-s-u-l-t-,--
-- - - - -v-i-s-i-t-s-R-e-s-u-l-t-,--
-- - -]- -=- -a-w-a-i-t- -P-r-o-m-i-s-e-.-a-l-l-(-[--
-- - - - -a-d-m-i-n-.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-.-s-e-l-e-c-t-(-"-i-d-,- -t-i-t-l-e-,- -c-u-r-r-e-n-c-y-"-)-,--
-- - - - -a-d-m-i-n-.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-.-s-e-l-e-c-t-(-"-i-d-,- -w-o-r-k-s-h-o-p-_-i-d-,- -r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s-,- -p-a-y-m-e-n-t-_-s-t-a-t-u-s-,- -a-m-o-u-n-t-_-r-e-c-e-i-v-e-d-,- -p-a-y-m-e-n-t-_-c-u-r-r-e-n-c-y-,- -r-e-c-e-i-p-t-_-u-r-l-"-)-,--
-- - - - -a-d-m-i-n-.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-.-s-e-l-e-c-t-(-"-i-d-,- -r-o-l-e-,- -c-r-e-a-t-e-d-_-a-t-"-)-,--
-- - - - -a-d-m-i-n-.-f-r-o-m-(-"-i-n-t-e-r-n-a-l-_-m-e-s-s-a-g-e-s-"-)-.-s-e-l-e-c-t-(-"-i-d-"-)-,--
-- - - - -a-d-m-i-n-.-f-r-o-m-(-"-w-e-b-s-i-t-e-_-v-i-s-i-t-s-"-)-.-s-e-l-e-c-t-(-"-i-d-,- -p-a-t-h-,- -c-r-e-a-t-e-d-_-a-t-"-)-,--
-- - -]-)-;--
---
-- - -c-o-n-s-t- -w-o-r-k-s-h-o-p-s- -=- -w-o-r-k-s-h-o-p-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-;--
-- - -c-o-n-s-t- -r-e-g-i-s-t-r-a-t-i-o-n-s- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-;--
-- - -c-o-n-s-t- -u-s-e-r-s- -=- -u-s-e-r-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-;--
-- - -c-o-n-s-t- -m-e-s-s-a-g-e-s- -=- -m-e-s-s-a-g-e-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-;--
-- - -c-o-n-s-t- -v-i-s-i-t-s- -=- -v-i-s-i-t-s-R-e-s-u-l-t-.-d-a-t-a- -?-?- -[-]-;--
---
-- - -c-o-n-s-t- -c-o-n-f-i-r-m-e-d-P-a-i-d- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-f-i-l-t-e-r-(--
-- - - - -(-r-:- -a-n-y-)- -=->- -r-.-r-e-g-i-s-t-r-a-t-i-o-n-_-s-t-a-t-u-s- -=-=-=- -"-c-o-n-f-i-r-m-e-d-"- -&-&- -r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=-=-=- -"-c-o-n-f-i-r-m-e-d-"--
-- - -)-;--
-- - -c-o-n-s-t- -p-e-n-d-i-n-g- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-f-i-l-t-e-r-(-(-r-:- -a-n-y-)- -=->- -!-r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -|-|- -r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=-=-=- -"-p-e-n-d-i-n-g-"-)-;--
-- - -c-o-n-s-t- -i-n-s-t-r-u-c-t-i-o-n-s- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-f-i-l-t-e-r-(-(-r-:- -a-n-y-)- -=->- -r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=-=-=- -"-i-n-s-t-r-u-c-t-i-o-n-s-_-s-e-n-t-"-)-;--
-- - -c-o-n-s-t- -r-e-v-i-e-w- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-f-i-l-t-e-r-(-(-r-:- -a-n-y-)- -=->- -r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=-=-=- -"-u-n-d-e-r-_-r-e-v-i-e-w-"-)-;--
-- - -c-o-n-s-t- -w-a-i-v-e-d- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-f-i-l-t-e-r-(-(-r-:- -a-n-y-)- -=->- -r-.-p-a-y-m-e-n-t-_-s-t-a-t-u-s- -=-=-=- -"-w-a-i-v-e-d-"-)-;--
---
-- - -c-o-n-s-t- -p-a-i-d-A-m-o-u-n-t- -=- -c-o-n-f-i-r-m-e-d-P-a-i-d-.-r-e-d-u-c-e-(--
-- - - - -(-s-u-m-:- -n-u-m-b-e-r-,- -r-:- -a-n-y-)- -=->- -s-u-m- -+- -N-u-m-b-e-r-(-r-.-a-m-o-u-n-t-_-r-e-c-e-i-v-e-d- -|-|- -0-)-,--
-- - - - -0--
-- - -)-;--
---
-- - -c-o-n-s-t- -t-o-t-a-l- -=- -r-e-g-i-s-t-r-a-t-i-o-n-s-.-l-e-n-g-t-h-;--
---
-- - -c-o-n-s-t- -b-a-r-s- -=- -[--
-- - - - -{- -l-a-b-e-l-:- -"-U-n-p-a-i-d- -/- -P-e-n-d-i-n-g-"-,- -v-a-l-u-e-:- -p-e-n-d-i-n-g-.-l-e-n-g-t-h-,- -c-o-l-o-r-:- -"-b-g---a-m-b-e-r---5-0-0-"- -}-,--
-- - - - -{- -l-a-b-e-l-:- -"-I-n-s-t-r-u-c-t-i-o-n-s- -S-e-n-t-"-,- -v-a-l-u-e-:- -i-n-s-t-r-u-c-t-i-o-n-s-.-l-e-n-g-t-h-,- -c-o-l-o-r-:- -"-b-g---b-l-u-e---6-0-0-"- -}-,--
-- - - - -{- -l-a-b-e-l-:- -"-U-n-d-e-r- -R-e-v-i-e-w-"-,- -v-a-l-u-e-:- -r-e-v-i-e-w-.-l-e-n-g-t-h-,- -c-o-l-o-r-:- -"-b-g---o-r-a-n-g-e---5-0-0-"- -}-,--
-- - - - -{- -l-a-b-e-l-:- -"-C-o-n-f-i-r-m-e-d- -P-a-i-d-"-,- -v-a-l-u-e-:- -c-o-n-f-i-r-m-e-d-P-a-i-d-.-l-e-n-g-t-h-,- -c-o-l-o-r-:- -"-b-g---e-m-e-r-a-l-d---6-0-0-"- -}-,--
-- - - - -{- -l-a-b-e-l-:- -"-W-a-i-v-e-d-"-,- -v-a-l-u-e-:- -w-a-i-v-e-d-.-l-e-n-g-t-h-,- -c-o-l-o-r-:- -"-b-g---s-l-a-t-e---6-0-0-"- -}-,--
-- - -]-;--
---
-- - -r-e-t-u-r-n- -(--
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-i-n---h---s-c-r-e-e-n- -b-g---s-l-a-t-e---5-0- -p-x---4- -p-y---8-"->--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l- -s-p-a-c-e---y---8-"->--
-- - - - - - - - -<-d-i-v->--
-- - - - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---3-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - -O-v-e-r-a-l-l- -M-o-n-i-t-o-r-i-n-g- -D-a-s-h-b-o-a-r-d--
-- - - - - - - - - - -<-/-h-1->--
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---6-0-0-"->--
-- - - - - - - - - - - - -P-a-i-d- -m-o-n-e-y- -i-s- -c-a-l-c-u-l-a-t-e-d- -o-n-l-y- -f-r-o-m- -m-a-n-u-a-l-l-y- -c-o-n-f-i-r-m-e-d- -r-e-g-i-s-t-r-a-t-i-o-n- -p-a-y-m-e-n-t-s-.--
-- - - - - - - - - - -<-/-p->--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---5- -m-d-:-g-r-i-d---c-o-l-s---4-"->--
-- - - - - - - - - - -{-[--
-- - - - - - - - - - - - -[-"-C-o-n-f-i-r-m-e-d- -P-a-i-d- -A-m-o-u-n-t-"-,- -`-U-S-D- -$-{-p-a-i-d-A-m-o-u-n-t-.-t-o-F-i-x-e-d-(-2-)-}-`-]-,--
-- - - - - - - - - - - - -[-"-T-o-t-a-l- -R-e-g-i-s-t-r-a-t-i-o-n-s-"-,- -t-o-t-a-l-]-,--
-- - - - - - - - - - - - -[-"-C-o-n-f-i-r-m-e-d- -P-a-i-d-"-,- -c-o-n-f-i-r-m-e-d-P-a-i-d-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-P-e-n-d-i-n-g- -/- -U-n-p-a-i-d-"-,- -p-e-n-d-i-n-g-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-R-e-c-e-i-p-t-s- -U-n-d-e-r- -R-e-v-i-e-w-"-,- -r-e-v-i-e-w-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-I-n-s-t-r-u-c-t-i-o-n-s- -S-e-n-t-"-,- -i-n-s-t-r-u-c-t-i-o-n-s-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-U-s-e-r-s-"-,- -u-s-e-r-s-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-W-e-b-s-i-t-e- -V-i-s-i-t-s-"-,- -v-i-s-i-t-s-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-W-o-r-k-s-h-o-p-s-"-,- -w-o-r-k-s-h-o-p-s-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - - - -[-"-I-n-t-e-r-n-a-l- -M-e-s-s-a-g-e-s-"-,- -m-e-s-s-a-g-e-s-.-l-e-n-g-t-h-]-,--
-- - - - - - - - - - -]-.-m-a-p-(-(-[-l-a-b-e-l-,- -v-a-l-u-e-]-)- -=->- -(--
-- - - - - - - - - - - - -<-d-i-v- -k-e-y-=-{-S-t-r-i-n-g-(-l-a-b-e-l-)-}- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -r-i-n-g---1- -r-i-n-g---s-l-a-t-e---2-0-0-"->--
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-e-m-]- -t-e-x-t---s-l-a-t-e---4-0-0-"->--
-- - - - - - - - - - - - - - - - -{-l-a-b-e-l-}--
-- - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---3-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - - - - - -{-v-a-l-u-e-}--
-- - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - -)-)-}--
-- - - - - - - - -<-/-d-i-v->--
---
-- - - - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -r-i-n-g---1- -r-i-n-g---s-l-a-t-e---2-0-0-"->--
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - -P-a-y-m-e-n-t- -S-t-a-t-u-s- -G-r-a-p-h-i-c--
-- - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -s-p-a-c-e---y---5-"->--
-- - - - - - - - - - - - -{-b-a-r-s-.-m-a-p-(-(-b-a-r-)- -=->- -(--
-- - - - - - - - - - - - - - -<-d-i-v- -k-e-y-=-{-b-a-r-.-l-a-b-e-l-}->--
-- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -j-u-s-t-i-f-y---b-e-t-w-e-e-n- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---7-0-0-"->--
-- - - - - - - - - - - - - - - - - - -<-s-p-a-n->-{-b-a-r-.-l-a-b-e-l-}-<-/-s-p-a-n->--
-- - - - - - - - - - - - - - - - - - -<-s-p-a-n->-{-b-a-r-.-v-a-l-u-e-}- -r-e-c-o-r-d-s-<-/-s-p-a-n->--
-- - - - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -h---5- -r-o-u-n-d-e-d---f-u-l-l- -b-g---s-l-a-t-e---1-0-0-"->--
-- - - - - - - - - - - - - - - - - - -<-d-i-v--
-- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-{-`-h---5- -r-o-u-n-d-e-d---f-u-l-l- -$-{-b-a-r-.-c-o-l-o-r-}-`-}--
-- - - - - - - - - - - - - - - - - - - - -s-t-y-l-e-=-{-{- -w-i-d-t-h-:- -`-$-{-p-c-t-(-b-a-r-.-v-a-l-u-e-,- -t-o-t-a-l-)-}-%-`- -}-}--
-- - - - - - - - - - - - - - - - - - -/->--
-- - - - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -)-)-}--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-s-e-c-t-i-o-n->--
---
-- - - - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -r-i-n-g---1- -r-i-n-g---s-l-a-t-e---2-0-0-"->--
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
-- - - - - - - - - - - - -R-e-g-i-s-t-r-a-t-i-o-n- -F-u-n-n-e-l--
-- - - - - - - - - - -<-/-h-2->--
---
-- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -g-r-i-d- -g-a-p---4- -m-d-:-g-r-i-d---c-o-l-s---5-"->--
-- - - - - - - - - - - - -{-b-a-r-s-.-m-a-p-(-(-b-a-r-)- -=->- -(--
-- - - - - - - - - - - - - - -<-d-i-v- -k-e-y-=-{-b-a-r-.-l-a-b-e-l-}- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---5-0- -p---4- -t-e-x-t---c-e-n-t-e-r-"->--
-- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-{-`-m-x---a-u-t-o- -h---2-0- -w---2-0- -r-o-u-n-d-e-d---f-u-l-l- -$-{-b-a-r-.-c-o-l-o-r-}- -f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e-`-}->--
-- - - - - - - - - - - - - - - - - - -{-p-c-t-(-b-a-r-.-v-a-l-u-e-,- -t-o-t-a-l-)-}-%--
-- - - - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-b-a-r-.-l-a-b-e-l-}--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-s- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---5-0-0-"->--
-- - - - - - - - - - - - - - - - - - -{-b-a-r-.-v-a-l-u-e-}- -/- -{-t-o-t-a-l-}--
-- - - - - - - - - - - - - - - - -<-/-p->--
-- - - - - - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - - - - - -)-)-}--
-- - - - - - - - - - -<-/-d-i-v->--
-- - - - - - - - -<-/-s-e-c-t-i-o-n->--
-- - - - - - -<-/-s-e-c-t-i-o-n->--
-- - - - -<-/-m-a-i-n->--
-- - -)-;--
--}-
+import { unstable_noStore as noStore } from "next/cache";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function pct(value: number, total: number) {
+  if (!total) return 0;
+  return Math.round((value / total) * 100);
+}
+
+export default async function ManagerMonitorPage() {
+  noStore();
+
+  const admin = createAdminClient();
+
+  const [
+    workshopsResult,
+    registrationsResult,
+    usersResult,
+    messagesResult,
+    visitsResult,
+  ] = await Promise.all([
+    admin.from("workshops").select("id, title, currency"),
+    admin.from("workshop_registrations").select("id, workshop_id, registration_status, payment_status, amount_received, payment_currency, receipt_url"),
+    admin.from("profiles").select("id, role, created_at"),
+    admin.from("internal_messages").select("id"),
+    admin.from("website_visits").select("id, path, created_at"),
+  ]);
+
+  const workshops = workshopsResult.data ?? [];
+  const registrations = registrationsResult.data ?? [];
+  const users = usersResult.data ?? [];
+  const messages = messagesResult.data ?? [];
+  const visits = visitsResult.data ?? [];
+
+  const confirmedPaid = registrations.filter(
+    (r: any) => r.registration_status === "confirmed" && r.payment_status === "confirmed"
+  );
+  const pending = registrations.filter((r: any) => !r.payment_status || r.payment_status === "pending");
+  const instructions = registrations.filter((r: any) => r.payment_status === "instructions_sent");
+  const review = registrations.filter((r: any) => r.payment_status === "under_review");
+  const waived = registrations.filter((r: any) => r.payment_status === "waived");
+
+  const paidAmount = confirmedPaid.reduce(
+    (sum: number, r: any) => sum + Number(r.amount_received || 0),
+    0
+  );
+
+  const total = registrations.length;
+
+  const bars = [
+    { label: "Unpaid / Pending", value: pending.length, color: "bg-amber-500" },
+    { label: "Instructions Sent", value: instructions.length, color: "bg-blue-600" },
+    { label: "Under Review", value: review.length, color: "bg-orange-500" },
+    { label: "Confirmed Paid", value: confirmedPaid.length, color: "bg-emerald-600" },
+    { label: "Waived", value: waived.length, color: "bg-slate-600" },
+  ];
+
+  return (
+    <main className="min-h-screen bg-slate-50 px-4 py-8">
+      <section className="mx-auto max-w-7xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-black text-slate-950">
+            Overall Monitoring Dashboard
+          </h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Paid money is calculated only from manually confirmed registration payments.
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-4">
+          {[
+            ["Confirmed Paid Amount", `USD ${paidAmount.toFixed(2)}`],
+            ["Total Registrations", total],
+            ["Confirmed Paid", confirmedPaid.length],
+            ["Pending / Unpaid", pending.length],
+            ["Receipts Under Review", review.length],
+            ["Instructions Sent", instructions.length],
+            ["Users", users.length],
+            ["Website Visits", visits.length],
+            ["Workshops", workshops.length],
+            ["Internal Messages", messages.length],
+          ].map(([label, value]) => (
+            <div key={String(label)} className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                {label}
+              </p>
+              <p className="mt-4 text-3xl font-black text-slate-950">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h2 className="text-xl font-black text-slate-950">
+            Payment Status Graphic
+          </h2>
+
+          <div className="mt-6 space-y-5">
+            {bars.map((bar) => (
+              <div key={bar.label}>
+                <div className="flex justify-between text-sm font-black text-slate-700">
+                  <span>{bar.label}</span>
+                  <span>{bar.value} records</span>
+                </div>
+                <div className="mt-2 h-5 rounded-full bg-slate-100">
+                  <div
+                    className={`h-5 rounded-full ${bar.color}`}
+                    style={{ width: `${pct(bar.value, total)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h2 className="text-xl font-black text-slate-950">
+            Registration Funnel
+          </h2>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-5">
+            {bars.map((bar) => (
+              <div key={bar.label} className="rounded-2xl bg-slate-50 p-4 text-center">
+                <div className={`mx-auto h-20 w-20 rounded-full ${bar.color} flex items-center justify-center text-xl font-black text-white`}>
+                  {pct(bar.value, total)}%
+                </div>
+                <p className="mt-3 text-sm font-black text-slate-900">
+                  {bar.label}
+                </p>
+                <p className="text-xs font-bold text-slate-500">
+                  {bar.value} / {total}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}

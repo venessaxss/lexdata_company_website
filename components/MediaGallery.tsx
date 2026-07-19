@@ -1,64 +1,64 @@
--t-y-p-e- -M-e-d-i-a-I-t-e-m- -=- -{-
-- - -i-d-:- -s-t-r-i-n-g-;-
-- - -t-i-t-l-e-:- -s-t-r-i-n-g-;-
-- - -m-e-d-i-a-_-t-y-p-e-:- -"-i-m-a-g-e-"- -|- -"-v-i-d-e-o-"-;-
-- - -u-r-l-:- -s-t-r-i-n-g-;-
-- - -a-l-t-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -c-a-p-t-i-o-n-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
--}-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -M-e-d-i-a-G-a-l-l-e-r-y-(-{- -i-t-e-m-s- -}-:- -{- -i-t-e-m-s-:- -M-e-d-i-a-I-t-e-m-[-]- -}-)- -{-
-- - -i-f- -(-!-i-t-e-m-s-.-l-e-n-g-t-h-)- -r-e-t-u-r-n- -n-u-l-l-;-
--
-- - -r-e-t-u-r-n- -(-
-- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-b-g---w-h-i-t-e- -p-y---2-0-"->-
-- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---6-"->-
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0-"->-
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---b-l-u-e---7-0-0-"->-L-e-x-D-a-t-a- -i-n- -A-c-t-i-o-n-<-/-p->-
-- - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
-- - - - - - - - - - - - -P-i-c-t-u-r-e-s-,- -w-o-r-k-s-h-o-p-s-,- -v-i-d-e-o-s-,- -a-n-d- -r-e-s-e-a-r-c-h- -a-c-t-i-v-i-t-i-e-s-
-- - - - - - - - - - -<-/-h-2->-
-- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---2-x-l- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - - - -S-h-o-w-c-a-s-e- -t-r-a-i-n-i-n-g- -m-o-m-e-n-t-s-,- -s-t-u-d-e-n-t- -a-c-t-i-v-i-t-i-e-s-,- -c-o-u-r-s-e- -p-r-e-v-i-e-w-s-,-
-- - - - - - - - - - - - -r-e-s-e-a-r-c-h- -s-u-p-p-o-r-t-,- -a-n-d- -p-r-o-m-o-t-i-o-n-a-l- -c-o-n-t-e-n-t-.-
-- - - - - - - - - - -<-/-p->-
-- - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---6- -m-d-:-g-r-i-d---c-o-l-s---3-"->-
-- - - - - - - - - - -{-i-t-e-m-s-.-m-a-p-(-(-i-t-e-m-)- -=->- -(-
-- - - - - - - - - - - - -<-d-i-v-
-- - - - - - - - - - - - - - -k-e-y-=-{-i-t-e-m-.-i-d-}-
-- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-g---w-h-i-t-e- -s-h-a-d-o-w---s-m- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---x-l-"-
-- - - - - - - - - - - - ->-
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-h---5-6- -b-g---s-l-a-t-e---2-0-0-"->-
-- - - - - - - - - - - - - - - - -{-i-t-e-m-.-m-e-d-i-a-_-t-y-p-e- -=-=-=- -"-v-i-d-e-o-"- -?- -(-
-- - - - - - - - - - - - - - - - - - -<-v-i-d-e-o-
-- - - - - - - - - - - - - - - - - - - - -s-r-c-=-{-i-t-e-m-.-u-r-l-}-
-- - - - - - - - - - - - - - - - - - - - -c-o-n-t-r-o-l-s-
-- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"-
-- - - - - - - - - - - - - - - - - - -/->-
-- - - - - - - - - - - - - - - - -)- -:- -(-
-- - - - - - - - - - - - - - - - - - -<-i-m-g-
-- - - - - - - - - - - - - - - - - - - - -s-r-c-=-{-i-t-e-m-.-u-r-l-}-
-- - - - - - - - - - - - - - - - - - - - -a-l-t-=-{-i-t-e-m-.-a-l-t- -|-|- -i-t-e-m-.-t-i-t-l-e-}-
-- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"-
-- - - - - - - - - - - - - - - - - - -/->-
-- - - - - - - - - - - - - - - - -)-}-
-- - - - - - - - - - - - - - -<-/-d-i-v->-
--
-- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p---5-"->-
-- - - - - - - - - - - - - - - - -<-h-3- -c-l-a-s-s-N-a-m-e-=-"-f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---9-5-0-"->-{-i-t-e-m-.-t-i-t-l-e-}-<-/-h-3->-
--
-- - - - - - - - - - - - - - - - -{-i-t-e-m-.-c-a-p-t-i-o-n- -&-&- -(-
-- - - - - - - - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
-- - - - - - - - - - - - - - - - - - - - -{-i-t-e-m-.-c-a-p-t-i-o-n-}-
-- - - - - - - - - - - - - - - - - - -<-/-p->-
-- - - - - - - - - - - - - - - - -)-}-
-- - - - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - - - -<-/-d-i-v->-
-- - - - - - - - - - -)-)-}-
-- - - - - - - - -<-/-d-i-v->-
-- - - - - - -<-/-d-i-v->-
-- - - - -<-/-s-e-c-t-i-o-n->-
-- - -)-;-
--}-
+type MediaItem = {
+  id: string;
+  title: string;
+  media_type: "image" | "video";
+  url: string;
+  alt: string | null;
+  caption: string | null;
+};
+
+export default function MediaGallery({ items }: { items: MediaItem[] }) {
+  if (!items.length) return null;
+
+  return (
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-10">
+          <p className="font-semibold text-blue-700">LexData in Action</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-950">
+            Pictures, workshops, videos, and research activities
+          </h2>
+          <p className="mt-4 max-w-2xl text-slate-600">
+            Showcase training moments, student activities, course previews,
+            research support, and promotional content.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="h-56 bg-slate-200">
+                {item.media_type === "video" ? (
+                  <video
+                    src={item.url}
+                    controls
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={item.url}
+                    alt={item.alt || item.title}
+                    className="h-full w-full object-cover"
+                  />
+                )}
+              </div>
+
+              <div className="p-5">
+                <h3 className="font-bold text-slate-950">{item.title}</h3>
+
+                {item.caption && (
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    {item.caption}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,40 +1,40 @@
--i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
--
--t-y-p-e- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-P-r-o-p-s- -=- -{-
-- - -k-i-c-k-e-r-:- -s-t-r-i-n-g-;-
-- - -t-i-t-l-e-:- -s-t-r-i-n-g-;-
-- - -b-o-d-y-:- -s-t-r-i-n-g-;-
-- - -c-a-r-d-s-:- -{-
-- - - - -t-i-t-l-e-:- -s-t-r-i-n-g-;-
-- - - - -b-o-d-y-:- -s-t-r-i-n-g-;-
-- - - - -h-r-e-f-?-:- -s-t-r-i-n-g-;-
-- - -}-[-]-;-
--}-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-(-{-
-- - -k-i-c-k-e-r-,-
-- - -t-i-t-l-e-,-
-- - -b-o-d-y-,-
-- - -c-a-r-d-s-,-
--}-:- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-P-r-o-p-s-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---s-u-b-p-a-g-e-"->-
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---s-u-b-p-a-g-e---h-e-r-o-"->-
-- - - - - - - - -<-p->-{-k-i-c-k-e-r-}-<-/-p->-
-- - - - - - - - -<-h-1->-{-t-i-t-l-e-}-<-/-h-1->-
-- - - - - - - - -<-s-p-a-n->-{-b-o-d-y-}-<-/-s-p-a-n->-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
--
-- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---s-u-b-p-a-g-e---g-r-i-d-"->-
-- - - - - - - - -{-c-a-r-d-s-.-m-a-p-(-(-c-a-r-d-)- -=->- -(-
-- - - - - - - - - - -<-L-i-n-k- -k-e-y-=-{-c-a-r-d-.-t-i-t-l-e-}- -h-r-e-f-=-{-c-a-r-d-.-h-r-e-f- -|-|- -"-#-"-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---s-u-b-p-a-g-e---c-a-r-d-"->-
-- - - - - - - - - - - - -<-s-m-a-l-l->-L-e-x-D-a-t-a-<-/-s-m-a-l-l->-
-- - - - - - - - - - - - -<-h-2->-{-c-a-r-d-.-t-i-t-l-e-}-<-/-h-2->-
-- - - - - - - - - - - - -<-p->-{-c-a-r-d-.-b-o-d-y-}-<-/-p->-
-- - - - - - - - - - - - -<-b->-O-p-e-n- ---&-g-t-;-<-/-b->-
-- - - - - - - - - - -<-/-L-i-n-k->-
-- - - - - - - - -)-)-}-
-- - - - - - -<-/-s-e-c-t-i-o-n->-
-- - - - -<-/-m-a-i-n->-
-- - -)-;-
--}-
+import Link from "next/link";
+
+type LexPaperSubPageProps = {
+  kicker: string;
+  title: string;
+  body: string;
+  cards: {
+    title: string;
+    body: string;
+    href?: string;
+  }[];
+};
+
+export default function LexPaperSubPage({
+  kicker,
+  title,
+  body,
+  cards,
+}: LexPaperSubPageProps) {
+  return (
+    <main className="lex-subpage">
+      <section className="lex-subpage-hero">
+        <p>{kicker}</p>
+        <h1>{title}</h1>
+        <span>{body}</span>
+      </section>
+
+      <section className="lex-subpage-grid">
+        {cards.map((card) => (
+          <Link key={card.title} href={card.href || "#"} className="lex-subpage-card">
+            <small>LexData</small>
+            <h2>{card.title}</h2>
+            <p>{card.body}</p>
+            <b>Open -&gt;</b>
+          </Link>
+        ))}
+      </section>
+    </main>
+  );
+}

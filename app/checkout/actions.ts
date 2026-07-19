@@ -1,138 +1,137 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -S-t-r-i-p-e- -f-r-o-m- -"-s-t-r-i-p-e-"-;-
--i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-U-s-e-r- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--
--f-u-n-c-t-i-o-n- -g-e-t-S-i-t-e-U-r-l-(-)- -{-
-- - -r-e-t-u-r-n- -p-r-o-c-e-s-s-.-e-n-v-.-N-E-X-T-_-P-U-B-L-I-C-_-S-I-T-E-_-U-R-L- -?-?- -"-h-t-t-p-:-/-/-l-o-c-a-l-h-o-s-t-:-3-0-0-0-"-;-
--}-
--
--f-u-n-c-t-i-o-n- -g-e-t-S-t-r-i-p-e-(-)- -{-
-- - -c-o-n-s-t- -k-e-y- -=- -p-r-o-c-e-s-s-.-e-n-v-.-S-T-R-I-P-E-_-S-E-C-R-E-T-_-K-E-Y-;-
-- - -i-f- -(-!-k-e-y-)- -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-"-M-i-s-s-i-n-g- -S-T-R-I-P-E-_-S-E-C-R-E-T-_-K-E-Y-"-)-;-
-- - -r-e-t-u-r-n- -n-e-w- -S-t-r-i-p-e-(-k-e-y-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-r-e-a-t-e-C-h-e-c-k-o-u-t-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -u-s-e-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-U-s-e-r-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
-- - -c-o-n-s-t- -s-t-r-i-p-e- -=- -g-e-t-S-t-r-i-p-e-(-)-;-
--
-- - -c-o-n-s-t- -p-r-o-d-u-c-t-T-y-p-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-r-o-d-u-c-t-_-t-y-p-e-"-)- -?-?- -"-"-)-;-
-- - -c-o-n-s-t- -p-r-o-d-u-c-t-I-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-r-o-d-u-c-t-_-i-d-"-)- -?-?- -"-"-)-;-
--
-- - -i-f- -(-!-p-r-o-d-u-c-t-I-d- -|-|- -!-[-"-c-o-u-r-s-e-"-,- -"-w-o-r-k-s-h-o-p-"-]-.-i-n-c-l-u-d-e-s-(-p-r-o-d-u-c-t-T-y-p-e-)-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-?-m-e-s-s-a-g-e-=-I-n-v-a-l-i-d- -c-h-e-c-k-o-u-t- -r-e-q-u-e-s-t-"-)-;-
-- - -}-
--
-- - -l-e-t- -t-i-t-l-e- -=- -"-T-r-a-i-n-i-n-g- -p-r-o-d-u-c-t-"-;-
-- - -l-e-t- -a-m-o-u-n-t-C-e-n-t-s- -=- -0-;-
-- - -l-e-t- -c-u-r-r-e-n-c-y- -=- -"-u-s-d-"-;-
-- - -l-e-t- -s-t-r-i-p-e-P-r-i-c-e-I-d-:- -s-t-r-i-n-g- -|- -n-u-l-l- -=- -n-u-l-l-;-
-- - -l-e-t- -c-a-n-c-e-l-U-r-l- -=- -`-$-{-g-e-t-S-i-t-e-U-r-l-(-)-}-/-d-a-s-h-b-o-a-r-d-`-;-
--
-- - -i-f- -(-p-r-o-d-u-c-t-T-y-p-e- -=-=-=- -"-c-o-u-r-s-e-"-)- -{-
-- - - - -c-o-n-s-t- -{- -d-a-t-a-:- -c-o-u-r-s-e-,- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-
-- - - - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-s-l-u-g-,-p-r-i-c-e-_-c-e-n-t-s-,-c-u-r-r-e-n-c-y-,-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-"-)-
-- - - - - - -.-e-q-(-"-i-d-"-,- -p-r-o-d-u-c-t-I-d-)-
-- - - - - - -.-s-i-n-g-l-e-(-)-;-
--
-- - - - -i-f- -(-e-r-r-o-r- -|-|- -!-c-o-u-r-s-e-)- -r-e-d-i-r-e-c-t-(-"-/-c-o-u-r-s-e-s-?-m-e-s-s-a-g-e-=-C-o-u-r-s-e- -n-o-t- -f-o-u-n-d-"-)-;-
--
-- - - - -t-i-t-l-e- -=- -c-o-u-r-s-e-.-t-i-t-l-e-;-
-- - - - -a-m-o-u-n-t-C-e-n-t-s- -=- -c-o-u-r-s-e-.-p-r-i-c-e-_-c-e-n-t-s- -?-?- -0-;-
-- - - - -c-u-r-r-e-n-c-y- -=- -c-o-u-r-s-e-.-c-u-r-r-e-n-c-y- -?-?- -"-u-s-d-"-;-
-- - - - -s-t-r-i-p-e-P-r-i-c-e-I-d- -=- -c-o-u-r-s-e-.-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-;-
-- - - - -c-a-n-c-e-l-U-r-l- -=- -`-$-{-g-e-t-S-i-t-e-U-r-l-(-)-}-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-.-s-l-u-g-}-`-;-
--
-- - - - -i-f- -(-a-m-o-u-n-t-C-e-n-t-s- -<-=- -0-)- -{-
-- - - - - - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-e-n-r-o-l-l-m-e-n-t-s-"-)-.-u-p-s-e-r-t-(-{-
-- - - - - - - - -u-s-e-r-_-i-d-:- -u-s-e-r-.-i-d-,-
-- - - - - - - - -c-o-u-r-s-e-_-i-d-:- -p-r-o-d-u-c-t-I-d-,-
-- - - - - - - - -s-t-a-t-u-s-:- -"-a-c-t-i-v-e-"-
-- - - - - - -}-)-;-
-- - - - - - -r-e-d-i-r-e-c-t-(-"-/-m-y-/-c-o-u-r-s-e-s-"-)-;-
-- - - - -}-
-- - -}-
--
-- - -i-f- -(-p-r-o-d-u-c-t-T-y-p-e- -=-=-=- -"-w-o-r-k-s-h-o-p-"-)- -{-
-- - - - -c-o-n-s-t- -{- -d-a-t-a-:- -s-e-s-s-i-o-n-,- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-s-e-s-s-i-o-n-s-"-)-
-- - - - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-p-r-i-c-e-_-c-e-n-t-s-,-c-u-r-r-e-n-c-y-,-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-,-w-o-r-k-s-h-o-p-s-(-s-l-u-g-,-t-i-t-l-e-)-"-)-
-- - - - - - -.-e-q-(-"-i-d-"-,- -p-r-o-d-u-c-t-I-d-)-
-- - - - - - -.-s-i-n-g-l-e-(-)-;-
--
-- - - - -i-f- -(-e-r-r-o-r- -|-|- -!-s-e-s-s-i-o-n-)- -r-e-d-i-r-e-c-t-(-"-/-w-o-r-k-s-h-o-p-s-?-m-e-s-s-a-g-e-=-W-o-r-k-s-h-o-p- -s-e-s-s-i-o-n- -n-o-t- -f-o-u-n-d-"-)-;-
--
-- - - - -t-i-t-l-e- -=- -s-e-s-s-i-o-n-.-t-i-t-l-e-;-
-- - - - -a-m-o-u-n-t-C-e-n-t-s- -=- -s-e-s-s-i-o-n-.-p-r-i-c-e-_-c-e-n-t-s- -?-?- -0-;-
-- - - - -c-u-r-r-e-n-c-y- -=- -s-e-s-s-i-o-n-.-c-u-r-r-e-n-c-y- -?-?- -"-u-s-d-"-;-
-- - - - -s-t-r-i-p-e-P-r-i-c-e-I-d- -=- -s-e-s-s-i-o-n-.-s-t-r-i-p-e-_-p-r-i-c-e-_-i-d-;-
-- - - - -c-o-n-s-t- -w-o-r-k-s-h-o-p-S-l-u-g- -=- -(-s-e-s-s-i-o-n-.-w-o-r-k-s-h-o-p-s- -a-s- -a-n-y-)-?-.-s-l-u-g- -?-?- -"-"-;-
-- - - - -c-a-n-c-e-l-U-r-l- -=- -`-$-{-g-e-t-S-i-t-e-U-r-l-(-)-}-/-w-o-r-k-s-h-o-p-s-/-$-{-w-o-r-k-s-h-o-p-S-l-u-g-}-`-;-
--
-- - - - -i-f- -(-a-m-o-u-n-t-C-e-n-t-s- -<-=- -0-)- -{-
-- - - - - - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-_-r-e-g-i-s-t-r-a-t-i-o-n-s-"-)-.-u-p-s-e-r-t-(-{-
-- - - - - - - - -u-s-e-r-_-i-d-:- -u-s-e-r-.-i-d-,-
-- - - - - - - - -s-e-s-s-i-o-n-_-i-d-:- -p-r-o-d-u-c-t-I-d-,-
-- - - - - - - - -s-t-a-t-u-s-:- -"-r-e-g-i-s-t-e-r-e-d-"-
-- - - - - - -}-)-;-
-- - - - - - -r-e-d-i-r-e-c-t-(-"-/-m-y-/-w-o-r-k-s-h-o-p-s-"-)-;-
-- - - - -}-
-- - -}-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-a-y-m-e-n-t-,- -e-r-r-o-r-:- -p-a-y-m-e-n-t-E-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-p-a-y-m-e-n-t-s-"-)-
-- - - - -.-i-n-s-e-r-t-(-{-
-- - - - - - -u-s-e-r-_-i-d-:- -u-s-e-r-.-i-d-,-
-- - - - - - -p-r-o-d-u-c-t-_-t-y-p-e-:- -p-r-o-d-u-c-t-T-y-p-e-,-
-- - - - - - -p-r-o-d-u-c-t-_-i-d-:- -p-r-o-d-u-c-t-I-d-,-
-- - - - - - -a-m-o-u-n-t-_-c-e-n-t-s-:- -a-m-o-u-n-t-C-e-n-t-s-,-
-- - - - - - -c-u-r-r-e-n-c-y-,-
-- - - - - - -s-t-a-t-u-s-:- -"-p-e-n-d-i-n-g-"-
-- - - - -}-)-
-- - - - -.-s-e-l-e-c-t-(-"-i-d-"-)-
-- - - - -.-s-i-n-g-l-e-(-)-;-
--
-- - -i-f- -(-p-a-y-m-e-n-t-E-r-r-o-r- -|-|- -!-p-a-y-m-e-n-t-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-d-a-s-h-b-o-a-r-d-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-p-a-y-m-e-n-t-E-r-r-o-r-?-.-m-e-s-s-a-g-e- -?-?- -"-C-o-u-l-d- -n-o-t- -c-r-e-a-t-e- -p-a-y-m-e-n-t-"-)-}-`-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -l-i-n-e-I-t-e-m- -=- -s-t-r-i-p-e-P-r-i-c-e-I-d-
-- - - - -?- -{- -p-r-i-c-e-:- -s-t-r-i-p-e-P-r-i-c-e-I-d-,- -q-u-a-n-t-i-t-y-:- -1- -}-
-- - - - -:- -{-
-- - - - - - - - -q-u-a-n-t-i-t-y-:- -1-,-
-- - - - - - - - -p-r-i-c-e-_-d-a-t-a-:- -{-
-- - - - - - - - - - -c-u-r-r-e-n-c-y-,-
-- - - - - - - - - - -u-n-i-t-_-a-m-o-u-n-t-:- -a-m-o-u-n-t-C-e-n-t-s-,-
-- - - - - - - - - - -p-r-o-d-u-c-t-_-d-a-t-a-:- -{- -n-a-m-e-:- -t-i-t-l-e- -}-
-- - - - - - - - -}-
-- - - - - - -}-;-
--
-- - -c-o-n-s-t- -s-e-s-s-i-o-n- -=- -a-w-a-i-t- -s-t-r-i-p-e-.-c-h-e-c-k-o-u-t-.-s-e-s-s-i-o-n-s-.-c-r-e-a-t-e-(-{-
-- - - - -m-o-d-e-:- -"-p-a-y-m-e-n-t-"-,-
-- - - - -c-u-s-t-o-m-e-r-_-e-m-a-i-l-:- -u-s-e-r-.-e-m-a-i-l- -?-?- -u-n-d-e-f-i-n-e-d-,-
-- - - - -c-l-i-e-n-t-_-r-e-f-e-r-e-n-c-e-_-i-d-:- -u-s-e-r-.-i-d-,-
-- - - - -l-i-n-e-_-i-t-e-m-s-:- -[-l-i-n-e-I-t-e-m-]-,-
-- - - - -s-u-c-c-e-s-s-_-u-r-l-:- -`-$-{-g-e-t-S-i-t-e-U-r-l-(-)-}-/-p-a-y-m-e-n-t-/-s-u-c-c-e-s-s-?-s-e-s-s-i-o-n-_-i-d-=-{-C-H-E-C-K-O-U-T-_-S-E-S-S-I-O-N-_-I-D-}-`-,-
-- - - - -c-a-n-c-e-l-_-u-r-l-:- -c-a-n-c-e-l-U-r-l-,-
-- - - - -m-e-t-a-d-a-t-a-:- -{-
-- - - - - - -p-a-y-m-e-n-t-_-i-d-:- -p-a-y-m-e-n-t-.-i-d-,-
-- - - - - - -u-s-e-r-_-i-d-:- -u-s-e-r-.-i-d-,-
-- - - - - - -p-r-o-d-u-c-t-_-t-y-p-e-:- -p-r-o-d-u-c-t-T-y-p-e-,-
-- - - - - - -p-r-o-d-u-c-t-_-i-d-:- -p-r-o-d-u-c-t-I-d-
-- - - - -}-
-- - -}-)-;-
--
-- - -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-p-a-y-m-e-n-t-s-"-)-
-- - - - -.-u-p-d-a-t-e-(-{- -s-t-r-i-p-e-_-c-h-e-c-k-o-u-t-_-s-e-s-s-i-o-n-_-i-d-:- -s-e-s-s-i-o-n-.-i-d- -}-)-
-- - - - -.-e-q-(-"-i-d-"-,- -p-a-y-m-e-n-t-.-i-d-)-;-
--
-- - -i-f- -(-!-s-e-s-s-i-o-n-.-u-r-l-)- -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-?-m-e-s-s-a-g-e-=-S-t-r-i-p-e- -d-i-d- -n-o-t- -r-e-t-u-r-n- -a- -c-h-e-c-k-o-u-t- -U-R-L-"-)-;-
-- - -r-e-d-i-r-e-c-t-(-s-e-s-s-i-o-n-.-u-r-l-)-;-
--}-
--
+"use server";
+
+import { redirect } from "next/navigation";
+import Stripe from "stripe";
+import { requireUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
+
+function getSiteUrl() {
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+}
+
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("Missing STRIPE_SECRET_KEY");
+  return new Stripe(key);
+}
+
+export async function createCheckout(formData: FormData) {
+  const user = await requireUser();
+  const supabase = await createClient();
+  const stripe = getStripe();
+
+  const productType = String(formData.get("product_type") ?? "");
+  const productId = String(formData.get("product_id") ?? "");
+
+  if (!productId || !["course", "workshop"].includes(productType)) {
+    redirect("/dashboard?message=Invalid checkout request");
+  }
+
+  let title = "Training product";
+  let amountCents = 0;
+  let currency = "usd";
+  let stripePriceId: string | null = null;
+  let cancelUrl = `${getSiteUrl()}/dashboard`;
+
+  if (productType === "course") {
+    const { data: course, error } = await supabase
+      .from("courses")
+      .select("id,title,slug,price_cents,currency,stripe_price_id")
+      .eq("id", productId)
+      .single();
+
+    if (error || !course) redirect("/courses?message=Course not found");
+
+    title = course.title;
+    amountCents = course.price_cents ?? 0;
+    currency = course.currency ?? "usd";
+    stripePriceId = course.stripe_price_id;
+    cancelUrl = `${getSiteUrl()}/courses/${course.slug}`;
+
+    if (amountCents <= 0) {
+      await supabase.from("enrollments").upsert({
+        user_id: user.id,
+        course_id: productId,
+        status: "active"
+      });
+      redirect("/my/courses");
+    }
+  }
+
+  if (productType === "workshop") {
+    const { data: session, error } = await supabase
+      .from("workshop_sessions")
+      .select("id,title,price_cents,currency,stripe_price_id,workshops(slug,title)")
+      .eq("id", productId)
+      .single();
+
+    if (error || !session) redirect("/workshops?message=Workshop session not found");
+
+    title = session.title;
+    amountCents = session.price_cents ?? 0;
+    currency = session.currency ?? "usd";
+    stripePriceId = session.stripe_price_id;
+    const workshopSlug = (session.workshops as any)?.slug ?? "";
+    cancelUrl = `${getSiteUrl()}/workshops/${workshopSlug}`;
+
+    if (amountCents <= 0) {
+      await supabase.from("workshop_registrations").upsert({
+        user_id: user.id,
+        session_id: productId,
+        status: "registered"
+      });
+      redirect("/my/workshops");
+    }
+  }
+
+  const { data: payment, error: paymentError } = await supabase
+    .from("payments")
+    .insert({
+      user_id: user.id,
+      product_type: productType,
+      product_id: productId,
+      amount_cents: amountCents,
+      currency,
+      status: "pending"
+    })
+    .select("id")
+    .single();
+
+  if (paymentError || !payment) {
+    redirect(`/dashboard?message=${encodeURIComponent(paymentError?.message ?? "Could not create payment")}`);
+  }
+
+  const lineItem = stripePriceId
+    ? { price: stripePriceId, quantity: 1 }
+    : {
+        quantity: 1,
+        price_data: {
+          currency,
+          unit_amount: amountCents,
+          product_data: { name: title }
+        }
+      };
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer_email: user.email ?? undefined,
+    client_reference_id: user.id,
+    line_items: [lineItem],
+    success_url: `${getSiteUrl()}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: cancelUrl,
+    metadata: {
+      payment_id: payment.id,
+      user_id: user.id,
+      product_type: productType,
+      product_id: productId
+    }
+  });
+
+  await supabase
+    .from("payments")
+    .update({ stripe_checkout_session_id: session.id })
+    .eq("id", payment.id);
+
+  if (!session.url) redirect("/dashboard?message=Stripe did not return a checkout URL");
+  redirect(session.url);
+}

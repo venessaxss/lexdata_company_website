@@ -1,197 +1,197 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
--
--t-y-p-e- -N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-P-r-o-f-i-l-e- -=- -{-
-- - -i-d-:- -s-t-r-i-n-g-;-
-- - -r-o-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
-- - -c-a-n-_-p-u-b-l-i-s-h-_-n-o-t-i-c-e-s-?-:- -b-o-o-l-e-a-n- -|- -n-u-l-l-;-
--}-;-
--
--a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-(-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-i-d-,- -r-o-l-e-,- -c-a-n-_-p-u-b-l-i-s-h-_-n-o-t-i-c-e-s-"-)-
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
-- - - - -.-s-i-n-g-l-e-(-)-;-
--
-- - -i-f- -(-!-p-r-o-f-i-l-e-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -n-o-r-m-a-l-i-z-e-d-R-o-l-e- -=- -n-o-r-m-a-l-i-z-e-R-o-l-e-(-p-r-o-f-i-l-e-.-r-o-l-e-)-;-
--
-- - -c-o-n-s-t- -c-a-n-P-u-b-l-i-s-h- -=-
-- - - - -n-o-r-m-a-l-i-z-e-d-R-o-l-e- -=-=-=- -"-a-d-m-i-n-"- -|-|-
-- - - - -n-o-r-m-a-l-i-z-e-d-R-o-l-e- -=-=-=- -"-m-a-n-a-g-e-r-"- -|-|-
-- - - - -(-n-o-r-m-a-l-i-z-e-d-R-o-l-e- -=-=-=- -"-s-t-a-f-f-"- -&-&- -p-r-o-f-i-l-e-.-c-a-n-_-p-u-b-l-i-s-h-_-n-o-t-i-c-e-s- -=-=-=- -t-r-u-e-)-;-
--
-- - -i-f- -(-!-c-a-n-P-u-b-l-i-s-h-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-u-n-a-u-t-h-o-r-i-z-e-d-"-)-;-
-- - -}-
--
-- - -r-e-t-u-r-n- -p-r-o-f-i-l-e- -a-s- -N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-P-r-o-f-i-l-e-;-
--}-
--
--f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
--}-
--
--f-u-n-c-t-i-o-n- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -c-o-n-s-t- -v-a-l-u-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -k-e-y-)-;-
-- - -r-e-t-u-r-n- -v-a-l-u-e-.-l-e-n-g-t-h- ->- -0- -?- -v-a-l-u-e- -:- -n-u-l-l-;-
--}-
--
--f-u-n-c-t-i-o-n- -n-u-m-b-e-r-F-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-,- -f-a-l-l-b-a-c-k- -=- -0-)- -{-
-- - -c-o-n-s-t- -v-a-l-u-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -k-e-y-)-;-
--
-- - -i-f- -(-!-v-a-l-u-e-)- -r-e-t-u-r-n- -f-a-l-l-b-a-c-k-;-
--
-- - -c-o-n-s-t- -p-a-r-s-e-d- -=- -N-u-m-b-e-r-(-v-a-l-u-e-)-;-
-- - -r-e-t-u-r-n- -N-u-m-b-e-r-.-i-s-F-i-n-i-t-e-(-p-a-r-s-e-d-)- -?- -p-a-r-s-e-d- -:- -f-a-l-l-b-a-c-k-;-
--}-
--
--f-u-n-c-t-i-o-n- -c-h-e-c-k-b-o-x-F-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -=-=-=- -"-o-n-"-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-r-e-a-t-e-N-o-t-i-c-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -a-c-t-o-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-t-i-t-l-e-"-)-;-
--
-- - -i-f- -(-!-t-i-t-l-e-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-T-i-t-l-e- -i-s- -r-e-q-u-i-r-e-d-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-n-o-t-i-c-e-s-"-)-.-i-n-s-e-r-t-(-{-
-- - - - -t-i-t-l-e-,-
-- - - - -s-u-m-m-a-r-y-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-u-m-m-a-r-y-"-)-,-
-- - - - -b-o-d-y-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-o-d-y-"-)-,-
--
-- - - - -n-o-t-i-c-e-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-n-o-t-i-c-e-_-t-y-p-e-"-)- -|-|- -"-a-n-n-o-u-n-c-e-m-e-n-t-"-,-
-- - - - -m-e-d-i-a-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-t-y-p-e-"-)- -|-|- -"-n-o-n-e-"-,-
-- - - - -m-e-d-i-a-_-u-r-l-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-u-r-l-"-)-,-
--
-- - - - -b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-u-t-t-o-n-_-t-e-x-t-"-)- -|-|- -"-R-e-a-d- -m-o-r-e-"-,-
-- - - - -b-u-t-t-o-n-_-h-r-e-f-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
--
-- - - - -a-u-d-i-e-n-c-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-a-u-d-i-e-n-c-e-"-)- -|-|- -"-p-u-b-l-i-c-"-,-
--
-- - - - -p-r-i-o-r-i-t-y-:- -n-u-m-b-e-r-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-o-r-i-t-y-"-,- -0-)-,-
-- - - - -i-s-_-p-u-b-l-i-s-h-e-d-:- -c-h-e-c-k-b-o-x-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-s-_-p-u-b-l-i-s-h-e-d-"-)-,-
-- - - - -i-s-_-f-e-a-t-u-r-e-d-:- -c-h-e-c-k-b-o-x-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-s-_-f-e-a-t-u-r-e-d-"-)-,-
--
-- - - - -p-u-b-l-i-s-h-_-a-t-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-u-b-l-i-s-h-_-a-t-"-)- -|-|- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -e-x-p-i-r-e-_-a-t-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-e-x-p-i-r-e-_-a-t-"-)-,-
--
-- - - - -c-r-e-a-t-e-d-_-b-y-:- -a-c-t-o-r-.-i-d-,-
-- - - - -u-p-d-a-t-e-d-_-b-y-:- -a-c-t-o-r-.-i-d-,-
-- - - - -c-r-e-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - -}-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-n-o-t-i-c-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-N-o-t-i-c-e- -p-u-b-l-i-s-h-e-d-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-N-o-t-i-c-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -c-o-n-s-t- -a-c-t-o-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-(-)-;-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -i-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
--
-- - -i-f- -(-!-i-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -n-o-t-i-c-e- -I-D-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-t-i-t-l-e-"-)-;-
--
-- - -i-f- -(-!-t-i-t-l-e-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-T-i-t-l-e- -i-s- -r-e-q-u-i-r-e-d-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
-- - - - -.-f-r-o-m-(-"-n-o-t-i-c-e-s-"-)-
-- - - - -.-u-p-d-a-t-e-(-{-
-- - - - - - -t-i-t-l-e-,-
-- - - - - - -s-u-m-m-a-r-y-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-u-m-m-a-r-y-"-)-,-
-- - - - - - -b-o-d-y-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-o-d-y-"-)-,-
--
-- - - - - - -n-o-t-i-c-e-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-n-o-t-i-c-e-_-t-y-p-e-"-)- -|-|- -"-a-n-n-o-u-n-c-e-m-e-n-t-"-,-
-- - - - - - -m-e-d-i-a-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-t-y-p-e-"-)- -|-|- -"-n-o-n-e-"-,-
-- - - - - - -m-e-d-i-a-_-u-r-l-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-u-r-l-"-)-,-
--
-- - - - - - -b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-u-t-t-o-n-_-t-e-x-t-"-)- -|-|- -"-R-e-a-d- -m-o-r-e-"-,-
-- - - - - - -b-u-t-t-o-n-_-h-r-e-f-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
--
-- - - - - - -a-u-d-i-e-n-c-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-a-u-d-i-e-n-c-e-"-)- -|-|- -"-p-u-b-l-i-c-"-,-
--
-- - - - - - -p-r-i-o-r-i-t-y-:- -n-u-m-b-e-r-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-o-r-i-t-y-"-,- -0-)-,-
-- - - - - - -i-s-_-p-u-b-l-i-s-h-e-d-:- -c-h-e-c-k-b-o-x-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-s-_-p-u-b-l-i-s-h-e-d-"-)-,-
-- - - - - - -i-s-_-f-e-a-t-u-r-e-d-:- -c-h-e-c-k-b-o-x-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-s-_-f-e-a-t-u-r-e-d-"-)-,-
--
-- - - - - - -p-u-b-l-i-s-h-_-a-t-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-u-b-l-i-s-h-_-a-t-"-)-,-
-- - - - - - -e-x-p-i-r-e-_-a-t-:- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-e-x-p-i-r-e-_-a-t-"-)-,-
--
-- - - - - - -u-p-d-a-t-e-d-_-b-y-:- -a-c-t-o-r-.-i-d-,-
-- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -}-)-
-- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-n-o-t-i-c-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-N-o-t-i-c-e- -u-p-d-a-t-e-d-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -d-e-l-e-t-e-N-o-t-i-c-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-N-o-t-i-c-e-P-u-b-l-i-s-h-e-r-(-)-;-
--
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -i-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
--
-- - -i-f- -(-!-i-d-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -n-o-t-i-c-e- -I-D-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-n-o-t-i-c-e-s-"-)-.-d-e-l-e-t-e-(-)-.-e-q-(-"-i-d-"-,- -i-d-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-`-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-n-o-t-i-c-e-s-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-?-m-e-s-s-a-g-e-=-N-o-t-i-c-e- -d-e-l-e-t-e-d-"-)-;-
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeRole } from "@/lib/roles";
+
+type NoticePublisherProfile = {
+  id: string;
+  role?: string | null;
+  can_publish_notices?: boolean | null;
+};
+
+async function requireNoticePublisher() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login?redirect=/manager/notices");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, role, can_publish_notices")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile) {
+    redirect("/dashboard");
+  }
+
+  const normalizedRole = normalizeRole(profile.role);
+
+  const canPublish =
+    normalizedRole === "admin" ||
+    normalizedRole === "manager" ||
+    (normalizedRole === "staff" && profile.can_publish_notices === true);
+
+  if (!canPublish) {
+    redirect("/unauthorized");
+  }
+
+  return profile as NoticePublisherProfile;
+}
+
+function field(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+function nullableField(formData: FormData, key: string) {
+  const value = field(formData, key);
+  return value.length > 0 ? value : null;
+}
+
+function numberField(formData: FormData, key: string, fallback = 0) {
+  const value = field(formData, key);
+
+  if (!value) return fallback;
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function checkboxField(formData: FormData, key: string) {
+  return formData.get(key) === "on";
+}
+
+export async function createNotice(formData: FormData) {
+  const actor = await requireNoticePublisher();
+  const supabase = createAdminClient();
+
+  const title = field(formData, "title");
+
+  if (!title) {
+    redirect("/manager/notices?message=Title is required");
+  }
+
+  const { error } = await supabase.from("notices").insert({
+    title,
+    summary: nullableField(formData, "summary"),
+    body: nullableField(formData, "body"),
+
+    notice_type: field(formData, "notice_type") || "announcement",
+    media_type: field(formData, "media_type") || "none",
+    media_url: nullableField(formData, "media_url"),
+
+    button_text: field(formData, "button_text") || "Read more",
+    button_href: nullableField(formData, "button_href"),
+
+    audience: field(formData, "audience") || "public",
+
+    priority: numberField(formData, "priority", 0),
+    is_published: checkboxField(formData, "is_published"),
+    is_featured: checkboxField(formData, "is_featured"),
+
+    publish_at: nullableField(formData, "publish_at") || new Date().toISOString(),
+    expire_at: nullableField(formData, "expire_at"),
+
+    created_by: actor.id,
+    updated_by: actor.id,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    redirect(`/manager/notices?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/notices");
+  revalidatePath("/manager/notices");
+
+  redirect("/manager/notices?message=Notice published");
+}
+
+export async function updateNotice(formData: FormData) {
+  const actor = await requireNoticePublisher();
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/manager/notices?message=Missing notice ID");
+  }
+
+  const title = field(formData, "title");
+
+  if (!title) {
+    redirect("/manager/notices?message=Title is required");
+  }
+
+  const { error } = await supabase
+    .from("notices")
+    .update({
+      title,
+      summary: nullableField(formData, "summary"),
+      body: nullableField(formData, "body"),
+
+      notice_type: field(formData, "notice_type") || "announcement",
+      media_type: field(formData, "media_type") || "none",
+      media_url: nullableField(formData, "media_url"),
+
+      button_text: field(formData, "button_text") || "Read more",
+      button_href: nullableField(formData, "button_href"),
+
+      audience: field(formData, "audience") || "public",
+
+      priority: numberField(formData, "priority", 0),
+      is_published: checkboxField(formData, "is_published"),
+      is_featured: checkboxField(formData, "is_featured"),
+
+      publish_at: nullableField(formData, "publish_at"),
+      expire_at: nullableField(formData, "expire_at"),
+
+      updated_by: actor.id,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    redirect(`/manager/notices?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/notices");
+  revalidatePath("/manager/notices");
+
+  redirect("/manager/notices?message=Notice updated");
+}
+
+export async function deleteNotice(formData: FormData) {
+  await requireNoticePublisher();
+
+  const supabase = createAdminClient();
+
+  const id = field(formData, "id");
+
+  if (!id) {
+    redirect("/manager/notices?message=Missing notice ID");
+  }
+
+  const { error } = await supabase.from("notices").delete().eq("id", id);
+
+  if (error) {
+    redirect(`/manager/notices?message=${encodeURIComponent(error.message)}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/notices");
+  revalidatePath("/manager/notices");
+
+  redirect("/manager/notices?message=Notice deleted");
+}

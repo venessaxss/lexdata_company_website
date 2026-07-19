@@ -1,28 +1,28 @@
--i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
--
--e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -L-i-b-r-a-r-y-P-a-g-e-(-)- -{-
-- - -r-e-t-u-r-n- -(-
-- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
-- - - - - - -k-i-c-k-e-r-=-"-L-i-b-r-a-r-y-"-
-- - - - - - -t-i-t-l-e-=-"-N-o-t-e-s-,- -g-u-i-d-e-s-,- -t-e-m-p-l-a-t-e-s-,- -a-n-d- -l-e-a-r-n-i-n-g- -m-a-t-e-r-i-a-l-s-.-"-
-- - - - - - -b-o-d-y-=-"-A- -l-i-b-r-a-r-y- -f-o-r- -L-e-x-D-a-t-a- -t-u-t-o-r-i-a-l-s-,- -r-e-s-e-a-r-c-h- -n-o-t-e-s-,- -c-o-r-p-u-s- -m-e-t-h-o-d-s-,- -N-L-P- -g-u-i-d-e-s-,- -a-n-d- -p-l-a-t-f-o-r-m- -h-e-l-p-.-"-
-- - - - - - -c-a-r-d-s-=-{-[-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-B-l-o-g-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-R-e-a-d- -r-e-s-e-a-r-c-h- -n-o-t-e-s-,- -w-o-r-k-f-l-o-w- -i-d-e-a-s-,- -a-n-d- -r-e-f-l-e-c-t-i-o-n-s- -o-n- -l-a-n-g-u-a-g-e- -d-a-t-a- -a-n-d- -A-I-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-b-l-o-g-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-H-e-l-p- -c-e-n-t-e-r-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-L-e-a-r-n- -h-o-w- -t-o- -u-s-e- -c-o-u-r-s-e-s-,- -w-o-r-k-s-h-o-p-s-,- -d-a-s-h-b-o-a-r-d-s-,- -a-n-d- -h-o-m-e-p-a-g-e- -c-o-n-t-r-o-l-s-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-h-e-l-p-"-,-
-- - - - - - - - -}-,-
-- - - - - - - - -{-
-- - - - - - - - - - -t-i-t-l-e-:- -"-R-e-s-o-u-r-c-e-s-"-,-
-- - - - - - - - - - -b-o-d-y-:- -"-T-e-m-p-l-a-t-e-s- -a-n-d- -m-a-t-e-r-i-a-l-s- -f-o-r- -c-o-r-p-u-s-,- -t-r-a-n-s-l-a-t-i-o-n-,- -N-L-P-,- -a-n-d- -a-c-a-d-e-m-i-c- -w-r-i-t-i-n-g- -t-a-s-k-s-.-"-,-
-- - - - - - - - - - -h-r-e-f-:- -"-/-r-e-s-o-u-r-c-e-s-"-,-
-- - - - - - - - -}-,-
-- - - - - - -]-}-
-- - - - -/->-
-- - -)-;-
--}-
+import LexPaperSubPage from "@/components/LexPaperSubPage";
+
+export default function LibraryPage() {
+  return (
+    <LexPaperSubPage
+      kicker="Library"
+      title="Notes, guides, templates, and learning materials."
+      body="A library for LexData tutorials, research notes, corpus methods, NLP guides, and platform help."
+      cards={[
+        {
+          title: "Blog",
+          body: "Read research notes, workflow ideas, and reflections on language data and AI.",
+          href: "/blog",
+        },
+        {
+          title: "Help center",
+          body: "Learn how to use courses, workshops, dashboards, and homepage controls.",
+          href: "/help",
+        },
+        {
+          title: "Resources",
+          body: "Templates and materials for corpus, translation, NLP, and academic writing tasks.",
+          href: "/resources",
+        },
+      ]}
+    />
+  );
+}

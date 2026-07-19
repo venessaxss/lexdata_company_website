@@ -1,113 +1,113 @@
--"-u-s-e- -s-e-r-v-e-r-"-;-
--
--i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
--i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
--i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
--i-m-p-o-r-t- -{- -s-l-u-g-i-f-y-E-v-e-n-t-T-i-t-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-e-x-d-a-t-a---e-v-e-n-t-s-"-;-
--
--a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)- -{-
-- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{-
-- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
-- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
--
-- - -i-f- -(-!-u-s-e-r-)- -{-
-- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
-- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-"-)-
-- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
-- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
--
-- - -i-f- -(-p-r-o-f-i-l-e-?-.-r-o-l-e- -!-=-=- -"-a-d-m-i-n-"- -&-&- -p-r-o-f-i-l-e-?-.-r-o-l-e- -!-=-=- -"-m-a-n-a-g-e-r-"-)- -{-
-- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-"-Y-o-u- -d-o- -n-o-t- -h-a-v-e- -p-e-r-m-i-s-s-i-o-n- -t-o- -e-d-i-t- -L-e-x-D-a-t-a- -e-v-e-n-t-s-.-"-)-;-
-- - -}-
--}-
--
--f-u-n-c-t-i-o-n- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
-- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -s-a-v-e-L-e-x-D-a-t-a-E-v-e-n-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -i-d- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
-- - -c-o-n-s-t- -t-i-t-l-e- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-t-i-t-l-e-"-)-;-
-- - -c-o-n-s-t- -r-a-w-S-l-u-g- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-s-l-u-g-"-)-;-
-- - -c-o-n-s-t- -s-l-u-g- -=- -s-l-u-g-i-f-y-E-v-e-n-t-T-i-t-l-e-(-r-a-w-S-l-u-g- -|-|- -t-i-t-l-e-)-;-
--
-- - -i-f- -(-!-t-i-t-l-e- -|-|- -!-s-l-u-g-)- -{-
-- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-"-T-i-t-l-e- -i-s- -r-e-q-u-i-r-e-d-.-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -p-a-y-l-o-a-d- -=- -{-
-- - - - -s-l-u-g-,-
-- - - - -t-i-t-l-e-,-
-- - - - -e-x-c-e-r-p-t-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-e-x-c-e-r-p-t-"-)-,-
-- - - - -c-o-n-t-e-n-t-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-c-o-n-t-e-n-t-"-)-,-
-- - - - -c-a-t-e-g-o-r-y-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-c-a-t-e-g-o-r-y-"-)- -|-|- -"-W-h-a-t-'-s- -n-e-w-"-,-
-- - - - -a-u-t-h-o-r-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-a-u-t-h-o-r-"-)- -|-|- -"-L-e-x-D-a-t-a- -T-e-a-m-"-,-
-- - - - -e-v-e-n-t-_-d-a-t-e-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-e-v-e-n-t-_-d-a-t-e-"-)- -|-|- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-.-s-l-i-c-e-(-0-,- -1-0-)-,-
-- - - - -p-o-s-t-e-r-_-u-r-l-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-p-o-s-t-e-r-_-u-r-l-"-)-,-
-- - - - -i-m-a-g-e-_-u-r-l-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-i-m-a-g-e-_-u-r-l-"-)-,-
-- - - - -v-i-d-e-o-_-u-r-l-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-v-i-d-e-o-_-u-r-l-"-)-,-
-- - - - -c-t-a-_-l-a-b-e-l-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-c-t-a-_-l-a-b-e-l-"-)- -|-|- -"-R-e-a-d- -m-o-r-e-"-,-
-- - - - -c-t-a-_-h-r-e-f-:- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-c-t-a-_-h-r-e-f-"-)-,-
-- - - - -i-s-_-a-c-t-i-v-e-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-a-c-t-i-v-e-"-)- -=-=-=- -"-o-n-"-,-
-- - - - -i-s-_-f-e-a-t-u-r-e-d-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-f-e-a-t-u-r-e-d-"-)- -=-=-=- -"-o-n-"-,-
-- - - - -s-o-r-t-_-o-r-d-e-r-:- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-o-r-t-_-o-r-d-e-r-"-)- -?-?- -0-)-,-
-- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - -}-;-
--
-- - -c-o-n-s-t- -r-e-s-u-l-t- -=- -i-d-
-- - - - -?- -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-l-e-x-d-a-t-a-_-e-v-e-n-t-s-"-)-.-u-p-d-a-t-e-(-p-a-y-l-o-a-d-)-.-e-q-(-"-i-d-"-,- -i-d-)-
-- - - - -:- -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-l-e-x-d-a-t-a-_-e-v-e-n-t-s-"-)-.-i-n-s-e-r-t-(-p-a-y-l-o-a-d-)-;-
--
-- - -i-f- -(-r-e-s-u-l-t-.-e-r-r-o-r-)- -{-
-- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-r-e-s-u-l-t-.-e-r-r-o-r-.-m-e-s-s-a-g-e-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-b-l-o-g-/-w-h-a-t-s---n-e-w-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-e-v-e-n-t-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-e-v-e-n-t-s-?-m-e-s-s-a-g-e-=-s-a-v-e-d-"-)-;-
--}-
--
--e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-n-p-u-b-l-i-s-h-L-e-x-D-a-t-a-E-v-e-n-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
-- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
--
-- - -c-o-n-s-t- -i-d- -=- -r-e-a-d-T-e-x-t-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
--
-- - -i-f- -(-!-i-d-)- -{-
-- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-"-M-i-s-s-i-n-g- -e-v-e-n-t- -i-d-.-"-)-;-
-- - -}-
--
-- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
--
-- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
-- - - - -.-f-r-o-m-(-"-l-e-x-d-a-t-a-_-e-v-e-n-t-s-"-)-
-- - - - -.-u-p-d-a-t-e-(-{-
-- - - - - - -i-s-_-a-c-t-i-v-e-:- -f-a-l-s-e-,-
-- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
-- - - - -}-)-
-- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
--
-- - -i-f- -(-e-r-r-o-r-)- -{-
-- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-;-
-- - -}-
--
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-b-l-o-g-/-w-h-a-t-s---n-e-w-"-)-;-
-- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-e-v-e-n-t-s-"-)-;-
--
-- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-e-v-e-n-t-s-?-m-e-s-s-a-g-e-=-u-n-p-u-b-l-i-s-h-e-d-"-)-;-
--}-
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { slugifyEventTitle } from "@/lib/lexdata-events";
+
+async function requireAdminOrManager() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const admin = createAdminClient();
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profile?.role !== "admin" && profile?.role !== "manager") {
+    throw new Error("You do not have permission to edit LexData events.");
+  }
+}
+
+function readText(formData: FormData, key: string) {
+  return String(formData.get(key) ?? "").trim();
+}
+
+export async function saveLexDataEventAction(formData: FormData) {
+  await requireAdminOrManager();
+
+  const admin = createAdminClient();
+
+  const id = readText(formData, "id");
+  const title = readText(formData, "title");
+  const rawSlug = readText(formData, "slug");
+  const slug = slugifyEventTitle(rawSlug || title);
+
+  if (!title || !slug) {
+    throw new Error("Title is required.");
+  }
+
+  const payload = {
+    slug,
+    title,
+    excerpt: readText(formData, "excerpt"),
+    content: readText(formData, "content"),
+    category: readText(formData, "category") || "What's new",
+    author: readText(formData, "author") || "LexData Team",
+    event_date: readText(formData, "event_date") || new Date().toISOString().slice(0, 10),
+    poster_url: readText(formData, "poster_url"),
+    image_url: readText(formData, "image_url"),
+    video_url: readText(formData, "video_url"),
+    cta_label: readText(formData, "cta_label") || "Read more",
+    cta_href: readText(formData, "cta_href"),
+    is_active: formData.get("is_active") === "on",
+    is_featured: formData.get("is_featured") === "on",
+    sort_order: Number(formData.get("sort_order") ?? 0),
+    updated_at: new Date().toISOString(),
+  };
+
+  const result = id
+    ? await admin.from("lexdata_events").update(payload).eq("id", id)
+    : await admin.from("lexdata_events").insert(payload);
+
+  if (result.error) {
+    throw new Error(result.error.message);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/blog/whats-new");
+  revalidatePath("/admin/events");
+
+  redirect("/admin/events?message=saved");
+}
+
+export async function unpublishLexDataEventAction(formData: FormData) {
+  await requireAdminOrManager();
+
+  const id = readText(formData, "id");
+
+  if (!id) {
+    throw new Error("Missing event id.");
+  }
+
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from("lexdata_events")
+    .update({
+      is_active: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/blog/whats-new");
+  revalidatePath("/admin/events");
+
+  redirect("/admin/events?message=unpublished");
+}

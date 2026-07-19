@@ -1,0 +1,199 @@
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+import { normalizeRole } from "@/lib/roles";
+
+const publicRoutes = [
+  "/",
+  "/login",
+  "/signup",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/auth/callback",
+  "/member-manual",
+  "/workshops",
+  "/notices",
+  "/team",
+  "/about",
+  "/contact",
+];
+
+const publicApiPrefixes = [
+  "/api/auto-translate",
+  "/api/language",
+  "/api/visit",
+];
+
+const protectedPrefixes = [
+  "/dashboard",
+  "/admin",
+  "/manager",
+];
+
+function isStaticAsset(pathname: string) {
+  return (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/manuals") ||
+    pathname.startsWith("/assets") ||
+    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|pdf|txt|xml)$/)
+  );
+}
+
+function isPublicApiRoute(pathname: string) {
+  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isPublicRoute(pathname: string) {
+  if (publicRoutes.includes(pathname)) {
+    return true;
+  }
+
+  if (pathname.startsWith("/workshops/")) {
+    return true;
+  }
+
+  if (pathname.startsWith("/notices/")) {
+    return true;
+  }
+
+  return false;
+}
+
+function isProtectedRoute(pathname: string) {
+  return protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isAdminRoute(pathname: string) {
+  return pathname.startsWith("/admin");
+}
+
+function isManagerRoute(pathname: string) {
+  return pathname.startsWith("/manager");
+}
+
+
+function redirectPreservingCookies(
+  base: NextResponse,
+  redirectUrl: ReturnType<NextRequest["nextUrl"]["clone"]>
+) {
+  const redirectResponse = NextResponse.redirect(redirectUrl);
+  // CRITICAL: carry refreshed Supabase auth cookies onto the redirect.
+  // Without this, rotated refresh tokens are dropped and the session dies,
+  // forcing users to log in again.
+  base.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie);
+  });
+  return redirectResponse;
+}
+
+export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (isStaticAsset(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (isPublicApiRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user && (pathname === "/login" || pathname === "/signup")) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/dashboard";
+    redirectUrl.search = "";
+
+    return redirectPreservingCookies(response, redirectUrl);
+  }
+
+  if (!user && isProtectedRoute(pathname)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/login";
+    redirectUrl.searchParams.set(
+      "redirect",
+      `${request.nextUrl.pathname}${request.nextUrl.search}`
+    );
+
+    return redirectPreservingCookies(response, redirectUrl);
+  }
+
+  if (user && (isAdminRoute(pathname) || isManagerRoute(pathname))) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const role = normalizeRole(profile?.role);
+
+    if (isAdminRoute(pathname) && role !== "admin") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      redirectUrl.search = "";
+
+      return redirectPreservingCookies(response, redirectUrl);
+    }
+
+    if (
+      isManagerRoute(pathname) &&
+      role !== "admin" &&
+      role !== "manager"
+    ) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/dashboard";
+      redirectUrl.search = "";
+
+      return redirectPreservingCookies(response, redirectUrl);
+    }
+  }
+
+  if (isPublicRoute(pathname)) {
+    return response;
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|pdf|txt|xml)$).*)",
+  ],
+};
