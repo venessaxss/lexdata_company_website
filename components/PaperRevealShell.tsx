@@ -4,10 +4,37 @@ import { useEffect, type ReactNode } from "react";
 
 export default function PaperRevealShell({ children }: { children: ReactNode }) {
   useEffect(() => {
+    const root = document.documentElement;
     const nav = document.querySelector<HTMLElement>("header");
+
+    root.classList.add("paper-motion-ready");
 
     function clamp(value: number, min: number, max: number) {
       return Math.min(Math.max(value, min), max);
+    }
+
+    function revealElement(element: Element) {
+      element.classList.add("in");
+
+      element
+        .querySelectorAll(".paper-draw, .paper-rev, .paper-page, .paper-turn")
+        .forEach((item) => item.classList.add("in"));
+    }
+
+    function revealVisibleElements() {
+      const elements = document.querySelectorAll(
+        ".paper-rev, .paper-draw, .paper-page, .paper-turn"
+      );
+
+      elements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isNearViewport =
+          rect.top < window.innerHeight * 1.15 && rect.bottom > -window.innerHeight * 0.25;
+
+        if (isNearViewport) {
+          revealElement(element);
+        }
+      });
     }
 
     function handleScroll() {
@@ -25,38 +52,46 @@ export default function PaperRevealShell({ children }: { children: ReactNode }) 
         const progress = clamp((start - rect.top) / (start - end), 0, 1);
         section.style.setProperty("--paper-cover", progress.toFixed(3));
       });
-    }
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+      revealVisibleElements();
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-
-            entry.target
-              .querySelectorAll(".paper-draw")
-              .forEach((item) => item.classList.add("in"));
-
-            if (entry.target.classList.contains("paper-draw")) {
-              entry.target.classList.add("in");
-            }
-
-            observer.unobserve(entry.target);
+            revealElement(entry.target);
           }
         });
       },
       {
-        threshold: 0.16,
-        rootMargin: "0px 0px -8% 0px",
+        threshold: 0.05,
+        rootMargin: "0px 0px 18% 0px",
       }
     );
 
-    document
-      .querySelectorAll(".paper-rev, .paper-draw, .paper-page, .paper-turn")
-      .forEach((element) => observer.observe(element));
+    function observeAll() {
+      document
+        .querySelectorAll(".paper-rev, .paper-draw, .paper-page, .paper-turn")
+        .forEach((element) => {
+          observer.observe(element);
+        });
+
+      revealVisibleElements();
+    }
+
+    observeAll();
+    handleScroll();
+
+    const mutationObserver = new MutationObserver(() => {
+      observeAll();
+      window.requestAnimationFrame(revealVisibleElements);
+    });
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
 
     function handlePointerMove(event: PointerEvent) {
       const x = event.clientX / window.innerWidth - 0.5;
@@ -70,12 +105,24 @@ export default function PaperRevealShell({ children }: { children: ReactNode }) 
       });
     }
 
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    window.addEventListener("pageshow", handleScroll);
     window.addEventListener("pointermove", handlePointerMove);
 
+    const failSafeTimer = window.setTimeout(() => {
+      root.classList.add("paper-effects-failsafe");
+      revealVisibleElements();
+    }, 2200);
+
     return () => {
+      window.clearTimeout(failSafeTimer);
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      window.removeEventListener("pageshow", handleScroll);
       window.removeEventListener("pointermove", handlePointerMove);
       observer.disconnect();
+      mutationObserver.disconnect();
     };
   }, []);
 
