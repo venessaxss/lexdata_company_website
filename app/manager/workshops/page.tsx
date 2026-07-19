@@ -27,9 +27,7 @@ async function requireManagerOrAdmin() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?next=%2Fmanager%2Fworkshops");
-  }
+  
 
   const { data: profile } = await supabase
     .from("profiles")

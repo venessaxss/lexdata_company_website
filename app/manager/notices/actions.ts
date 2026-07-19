@@ -19,9 +19,7 @@ async function requireNoticePublisher() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?next=%2Fmanager%2Fnotices%2Factions.ts");
-  }
+  
 
   const { data: profile } = await supabase
     .from("profiles")

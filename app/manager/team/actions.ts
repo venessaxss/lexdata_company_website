@@ -27,9 +27,7 @@ async function requireManagerOrAdmin() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login?next=%2Fmanager%2Fteam%2Factions.ts");
-  }
+  
 
   const admin = createAdminClient();
 
