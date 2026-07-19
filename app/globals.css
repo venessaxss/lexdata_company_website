@@ -3938,3 +3938,490 @@ body.lex-pro-dark-body {
     animation: none;
   }
 }
+
+/* ============================================================
+   Ellipsus-like paper page-turn motion refinement
+   ============================================================ */
+
+.paper-home {
+  perspective: 1400px;
+}
+
+.paper-page {
+  transform-origin: 50% 8%;
+  transform-style: preserve-3d;
+  opacity: 0;
+  transform:
+    translateY(54px)
+    rotateX(9deg)
+    rotateZ(var(--page-tilt, 0deg))
+    scale(0.985);
+  filter: blur(5px);
+  transition:
+    opacity 0.9s ease,
+    transform 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.9s ease;
+}
+
+.paper-page.in {
+  opacity: 1;
+  transform:
+    translateY(0)
+    rotateX(0deg)
+    rotateZ(var(--page-tilt, 0deg))
+    scale(1);
+  filter: blur(0);
+}
+
+.paper-turn {
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 0;
+  transform:
+    perspective(1200px)
+    rotateY(-13deg)
+    rotateX(4deg)
+    translateY(28px)
+    rotate(var(--tilt, 0deg));
+  transition:
+    opacity 0.75s ease,
+    transform 0.95s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.paper-turn.in,
+.paper-turn.paper-rev.in {
+  opacity: 1;
+  transform:
+    perspective(1200px)
+    rotateY(0deg)
+    rotateX(0deg)
+    translateY(0)
+    rotate(var(--tilt, 0deg));
+}
+
+.paper-dynamic-panel.paper-turn {
+  transform-origin: 8% 50%;
+}
+
+.paper-dynamic-panel.paper-turn.in {
+  box-shadow: 9px 9px 0 var(--ink);
+}
+
+.paper-sticker.paper-turn:hover,
+.paper-slot-card.paper-turn:hover,
+.paper-stat-card.paper-turn:hover,
+.paper-card.paper-turn:hover {
+  transform:
+    perspective(1200px)
+    rotateY(0deg)
+    rotateX(0deg)
+    translate(-3px, -5px)
+    rotate(0deg);
+  box-shadow: 10px 10px 0 var(--ink);
+}
+
+.paper-hero {
+  overflow: hidden;
+}
+
+.paper-hero::before {
+  content: "";
+  position: absolute;
+  inset: 38px auto auto 50%;
+  width: min(880px, 88vw);
+  height: 420px;
+  transform: translateX(-50%) rotate(-1deg);
+  border: 2px solid rgba(33, 32, 58, 0.16);
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.75), rgba(255, 253, 248, 0.2)),
+    repeating-linear-gradient(
+      0deg,
+      rgba(33, 32, 58, 0.04) 0,
+      rgba(33, 32, 58, 0.04) 1px,
+      transparent 1px,
+      transparent 34px
+    );
+  box-shadow: 10px 10px 0 rgba(33, 32, 58, 0.12);
+  pointer-events: none;
+}
+
+.paper-hero .paper-wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.paper-hero h1.paper-rev {
+  transform-origin: 50% 100%;
+  transform:
+    translateY(28px)
+    rotateX(8deg)
+    scale(0.985);
+  filter: blur(4px);
+}
+
+.paper-hero h1.paper-rev.in {
+  transform:
+    translateY(0)
+    rotateX(0deg)
+    scale(1);
+  filter: blur(0);
+}
+
+.paper-card,
+.paper-sticker,
+.paper-slot-card,
+.paper-stat-card,
+.paper-dynamic-panel {
+  position: relative;
+}
+
+.paper-card::after,
+.paper-sticker::after,
+.paper-slot-card::after,
+.paper-stat-card::after,
+.paper-dynamic-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      110deg,
+      rgba(255, 255, 255, 0.45),
+      transparent 28%,
+      transparent 70%,
+      rgba(33, 32, 58, 0.05)
+    );
+  opacity: 0.72;
+  mix-blend-mode: multiply;
+}
+
+.paper-section-head {
+  position: relative;
+}
+
+.paper-section-head::before {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: -16px;
+  width: 72px;
+  height: 72px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--butter);
+  opacity: 0.28;
+  transform: rotate(-8deg);
+  z-index: -1;
+}
+
+.paper-strip {
+  transform-origin: center;
+  animation: paper-strip-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes paper-strip-pop {
+  from {
+    opacity: 0;
+    transform: rotateX(18deg) translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) translateY(0);
+  }
+}
+
+/* Improve global navbar so it feels like the reference paper nav */
+
+.lex-paper-site header {
+  border-bottom: 2px solid transparent !important;
+  background: rgba(251, 246, 237, 0.94) !important;
+  backdrop-filter: blur(10px);
+}
+
+.lex-paper-site header.paper-scrolled {
+  border-bottom-color: var(--ink) !important;
+  box-shadow: 0 4px 0 rgba(33, 32, 58, 0.08) !important;
+}
+
+.lex-paper-site header a,
+.lex-paper-site header button {
+  transition:
+    transform 0.18s var(--paper-ease),
+    color 0.18s ease,
+    background 0.18s ease;
+}
+
+.lex-paper-site header a:hover,
+.lex-paper-site header button:hover {
+  transform: translateY(-1px);
+}
+
+/* Add paper feel to original dynamic child sections */
+
+.paper-dynamic-panel > section,
+.paper-dynamic-panel > div {
+  border-radius: 18px;
+}
+
+.paper-home .paper-dynamic-panel .rounded-3xl,
+.paper-home .paper-dynamic-panel .rounded-2xl,
+.paper-home .paper-dynamic-panel .rounded-xl {
+  border: 2px solid rgba(33, 32, 58, 0.14);
+  box-shadow: 4px 4px 0 rgba(33, 32, 58, 0.12);
+}
+
+/* Better mobile page-turn behavior */
+
+@media (max-width: 900px) {
+  .paper-page,
+  .paper-turn {
+    transform:
+      translateY(28px)
+      rotateX(0deg)
+      rotateY(0deg)
+      scale(0.99);
+    filter: blur(2px);
+  }
+
+  .paper-page.in,
+  .paper-turn.in,
+  .paper-turn.paper-rev.in {
+    transform: none;
+    filter: blur(0);
+  }
+
+  .paper-hero::before {
+    height: 300px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-page,
+  .paper-turn,
+  .paper-hero h1.paper-rev {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+   Final homepage fixes:
+   - Ellipsus-like dark hero
+   - no notes under big section titles
+   - no bubble overlap
+   - admin edit access button
+   ============================================================ */
+
+.paper-section-head::before {
+  display: none !important;
+}
+
+.paper-section-head .paper-lead,
+.paper-block > .paper-wrap > .paper-section-head > p {
+  display: none !important;
+}
+
+.paper-ellipsus-hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #292a30;
+  color: #f8f5ee;
+  text-align: center;
+  padding: 120px 24px 90px;
+}
+
+.paper-hero-center {
+  position: relative;
+  z-index: 4;
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.paper-ellipsus-hero h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(54px, 8vw, 118px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: #fffaf2;
+}
+
+.paper-hero-sub {
+  max-width: 520px;
+  margin: 34px auto 0;
+  color: rgba(255, 250, 242, 0.86);
+  font-size: clamp(18px, 2.1vw, 26px);
+  line-height: 1.35;
+}
+
+.paper-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 42px;
+}
+
+.paper-hero-btn {
+  display: inline-flex;
+  min-width: 140px;
+  justify-content: center;
+  border: 2px solid #f8f5ee;
+  border-radius: 16px;
+  background: #f8f5ee;
+  color: #292a30;
+  padding: 14px 26px;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.24);
+  transition: transform 0.18s var(--paper-ease), box-shadow 0.18s var(--paper-ease);
+}
+
+.paper-hero-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 11px 0 rgba(0, 0, 0, 0.24);
+}
+
+.paper-hero-btn-ghost {
+  background: transparent;
+  color: #f8f5ee;
+}
+
+.paper-edit-homepage {
+  display: inline-flex;
+  margin-top: 24px;
+  border: 2px dashed rgba(255, 250, 242, 0.5);
+  border-radius: 999px;
+  color: #f8f5ee;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.paper-edit-homepage:hover {
+  background: rgba(255, 250, 242, 0.1);
+}
+
+.paper-hero-letters {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.paper-hero-letters span {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.13);
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 22px;
+  animation: paper-letter-float 10s ease-in-out infinite;
+}
+
+.paper-hero-letters span:nth-child(1) { left: 7%; top: 16%; animation-delay: -1s; }
+.paper-hero-letters span:nth-child(2) { left: 20%; top: 82%; animation-delay: -3s; }
+.paper-hero-letters span:nth-child(3) { left: 34%; top: 12%; animation-delay: -5s; }
+.paper-hero-letters span:nth-child(4) { left: 45%; top: 72%; animation-delay: -7s; }
+.paper-hero-letters span:nth-child(5) { left: 58%; top: 18%; animation-delay: -2s; }
+.paper-hero-letters span:nth-child(6) { left: 66%; top: 84%; animation-delay: -4s; }
+.paper-hero-letters span:nth-child(7) { left: 78%; top: 20%; animation-delay: -6s; }
+.paper-hero-letters span:nth-child(8) { left: 88%; top: 62%; animation-delay: -8s; }
+.paper-hero-letters span:nth-child(9) { left: 13%; top: 64%; animation-delay: -2s; }
+.paper-hero-letters span:nth-child(10) { left: 28%; top: 52%; animation-delay: -4s; }
+.paper-hero-letters span:nth-child(11) { left: 73%; top: 70%; animation-delay: -6s; }
+.paper-hero-letters span:nth-child(12) { left: 91%; top: 30%; animation-delay: -9s; }
+
+@keyframes paper-letter-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.08;
+  }
+
+  50% {
+    transform: translateY(-20px);
+    opacity: 0.18;
+  }
+}
+
+.paper-plane-doodle {
+  position: absolute;
+  left: 9%;
+  top: 46%;
+  z-index: 2;
+  width: min(160px, 20vw);
+  transform: rotate(-12deg);
+}
+
+.paper-plane-doodle path {
+  fill: none;
+  stroke: #f8f5ee;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.paper-purple-cursor {
+  position: absolute;
+  right: 12%;
+  top: 42%;
+  z-index: 2;
+  width: min(72px, 11vw);
+  transform: rotate(-12deg);
+}
+
+.paper-purple-cursor path {
+  fill: #df77ff;
+  stroke: #df77ff;
+  stroke-linejoin: round;
+}
+
+.paper-home .paper-block {
+  padding-top: 92px;
+  padding-bottom: 92px;
+}
+
+.paper-home .paper-section-head {
+  margin-bottom: 38px;
+}
+
+.paper-home .paper-section-head h2 {
+  max-width: 18ch;
+  font-size: clamp(40px, 6vw, 78px);
+  line-height: 1.02;
+}
+
+/* Remove accidental text selection highlight look caused by browser selection */
+.paper-home ::selection {
+  background: rgba(139, 147, 248, 0.28);
+  color: var(--ink);
+}
+
+.paper-ellipsus-hero ::selection {
+  background: rgba(223, 119, 255, 0.35);
+  color: #fffaf2;
+}
+
+@media (max-width: 900px) {
+  .paper-plane-doodle,
+  .paper-purple-cursor {
+    opacity: 0.45;
+  }
+
+  .paper-ellipsus-hero h1 {
+    font-size: clamp(48px, 15vw, 82px);
+  }
+}

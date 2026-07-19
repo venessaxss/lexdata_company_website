@@ -33,15 +33,33 @@ export default function PaperRevealShell({ children }: { children: ReactNode }) 
           }
         });
       },
-      { threshold: 0.18 }
+      {
+        threshold: 0.16,
+        rootMargin: "0px 0px -8% 0px",
+      }
     );
 
     document
-      .querySelectorAll(".paper-rev, .paper-draw")
+      .querySelectorAll(".paper-rev, .paper-draw, .paper-page, .paper-turn")
       .forEach((element) => observer.observe(element));
+
+    function handlePointerMove(event: PointerEvent) {
+      const x = event.clientX / window.innerWidth - 0.5;
+      const y = event.clientY / window.innerHeight - 0.5;
+
+      document.querySelectorAll<HTMLElement>("[data-paper-float]").forEach((el) => {
+        const strength = Number(el.dataset.paperFloat || "12");
+        el.style.transform = `translate3d(${x * strength}px, ${
+          y * strength
+        }px, 0) rotate(var(--r, 0deg))`;
+      });
+    }
+
+    window.addEventListener("pointermove", handlePointerMove);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("pointermove", handlePointerMove);
       observer.disconnect();
     };
   }, []);
