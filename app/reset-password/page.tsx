@@ -1,8 +1,8 @@
-import ResetPasswordForm from "./ResetPasswordForm";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default function ResetPasswordPage() {
-  return <ResetPasswordForm />;
-}
+-i-m-p-o-r-t- -R-e-s-e-t-P-a-s-s-w-o-r-d-F-o-r-m- -f-r-o-m- -"-.-/-R-e-s-e-t-P-a-s-s-w-o-r-d-F-o-r-m-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -R-e-s-e-t-P-a-s-s-w-o-r-d-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -<-R-e-s-e-t-P-a-s-s-w-o-r-d-F-o-r-m- -/->-;-
+-}-

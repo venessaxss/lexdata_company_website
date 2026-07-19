@@ -1,55 +1,55 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { normalizeLanguage } from "@/lib/languages";
-
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
-export async function POST(request: Request) {
-  try {
-    const payload = await request.json();
-    const language = normalizeLanguage(payload?.language);
-
-    const response = NextResponse.json({
-      ok: true,
-      language,
-    });
-
-    response.cookies.set("lexdata_language", language, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-    });
-
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const admin = createAdminClient();
-
-      await admin
-        .from("profiles")
-        .update({
-          preferred_language: language,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-    }
-
-    return response;
-  } catch {
-    return NextResponse.json(
-      {
-        ok: false,
-        message: "Could not update language",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-}
+-i-m-p-o-r-t- -{- -N-e-x-t-R-e-s-p-o-n-s-e- -}- -f-r-o-m- -"-n-e-x-t-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-u-n-t-i-m-e- -=- -"-n-o-d-e-j-s-"-;-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -P-O-S-T-(-r-e-q-u-e-s-t-:- -R-e-q-u-e-s-t-)- -{-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -p-a-y-l-o-a-d- -=- -a-w-a-i-t- -r-e-q-u-e-s-t-.-j-s-o-n-(-)-;-
+- - - - -c-o-n-s-t- -l-a-n-g-u-a-g-e- -=- -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e-(-p-a-y-l-o-a-d-?-.-l-a-n-g-u-a-g-e-)-;-
+-
+- - - - -c-o-n-s-t- -r-e-s-p-o-n-s-e- -=- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
+- - - - - - -o-k-:- -t-r-u-e-,-
+- - - - - - -l-a-n-g-u-a-g-e-,-
+- - - - -}-)-;-
+-
+- - - - -r-e-s-p-o-n-s-e-.-c-o-o-k-i-e-s-.-s-e-t-(-"-l-e-x-d-a-t-a-_-l-a-n-g-u-a-g-e-"-,- -l-a-n-g-u-a-g-e-,- -{-
+- - - - - - -p-a-t-h-:- -"-/-"-,-
+- - - - - - -m-a-x-A-g-e-:- -6-0- -*- -6-0- -*- -2-4- -*- -3-6-5-,-
+- - - - - - -s-a-m-e-S-i-t-e-:- -"-l-a-x-"-,-
+- - - - -}-)-;-
+-
+- - - - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - - - -c-o-n-s-t- -{-
+- - - - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
+- - - - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+-
+- - - - -i-f- -(-u-s-e-r-)- -{-
+- - - - - - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - - - - - -a-w-a-i-t- -a-d-m-i-n-
+- - - - - - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
+- - - - - - - - -.-u-p-d-a-t-e-(-{-
+- - - - - - - - - - -p-r-e-f-e-r-r-e-d-_-l-a-n-g-u-a-g-e-:- -l-a-n-g-u-a-g-e-,-
+- - - - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - - - - - -}-)-
+- - - - - - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-;-
+- - - - -}-
+-
+- - - - -r-e-t-u-r-n- -r-e-s-p-o-n-s-e-;-
+- - -}- -c-a-t-c-h- -{-
+- - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-
+- - - - - - -{-
+- - - - - - - - -o-k-:- -f-a-l-s-e-,-
+- - - - - - - - -m-e-s-s-a-g-e-:- -"-C-o-u-l-d- -n-o-t- -u-p-d-a-t-e- -l-a-n-g-u-a-g-e-"-,-
+- - - - - - -}-,-
+- - - - - - -{-
+- - - - - - - - -s-t-a-t-u-s-:- -4-0-0-,-
+- - - - - - -}-
+- - - - -)-;-
+- - -}-
+-}-

@@ -1,19 +1,19 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-
-export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
-
-  if (code) {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
-    }
-  }
-
-  return NextResponse.redirect(`${origin}/login?error=could_not_authenticate`);
-}
+-i-m-p-o-r-t- -{- -N-e-x-t-R-e-s-p-o-n-s-e- -}- -f-r-o-m- -"-n-e-x-t-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -G-E-T-(-r-e-q-u-e-s-t-:- -R-e-q-u-e-s-t-)- -{-
+- - -c-o-n-s-t- -{- -s-e-a-r-c-h-P-a-r-a-m-s-,- -o-r-i-g-i-n- -}- -=- -n-e-w- -U-R-L-(-r-e-q-u-e-s-t-.-u-r-l-)-;-
+- - -c-o-n-s-t- -c-o-d-e- -=- -s-e-a-r-c-h-P-a-r-a-m-s-.-g-e-t-(-"-c-o-d-e-"-)-;-
+- - -c-o-n-s-t- -n-e-x-t- -=- -s-e-a-r-c-h-P-a-r-a-m-s-.-g-e-t-(-"-n-e-x-t-"-)- -?-?- -"-/-d-a-s-h-b-o-a-r-d-"-;-
+-
+- - -i-f- -(-c-o-d-e-)- -{-
+- - - - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+- - - - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-e-x-c-h-a-n-g-e-C-o-d-e-F-o-r-S-e-s-s-i-o-n-(-c-o-d-e-)-;-
+-
+- - - - -i-f- -(-!-e-r-r-o-r-)- -{-
+- - - - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-r-e-d-i-r-e-c-t-(-`-$-{-o-r-i-g-i-n-}-$-{-n-e-x-t-}-`-)-;-
+- - - - -}-
+- - -}-
+-
+- - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-r-e-d-i-r-e-c-t-(-`-$-{-o-r-i-g-i-n-}-/-l-o-g-i-n-?-e-r-r-o-r-=-c-o-u-l-d-_-n-o-t-_-a-u-t-h-e-n-t-i-c-a-t-e-`-)-;-
+-}-

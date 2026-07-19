@@ -1,72 +1,74 @@
-import Link from "next/link";
-import { loginAction, signupAction } from "./actions";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const params = await searchParams;
-
-  return (
-    <main className="lex-auth-page">
-      <section className="lex-auth-card">
-        <p>Member access</p>
-        <h1>Access your LexData account</h1>
-        <span>
-          Log in once to access your dashboard, workshops, admin tools, manager
-          pages, and learning materials.
-        </span>
-
-        {params.error ? (
-          <div className="lex-auth-error">{params.error}</div>
-        ) : null}
-
-        <form action={loginAction} className="lex-auth-form">
-          <label>
-            Email
-            <input name="email" type="email" required autoComplete="email" />
-          </label>
-
-          <label>
-            Password
-            <input
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-            />
-          </label>
-
-          <button type="submit">Log in</button>
-        </form>
-
-        <form action={signupAction} className="lex-auth-form lex-auth-signup">
-          <h2>Create account</h2>
-
-          <label>
-            Email
-            <input name="email" type="email" required autoComplete="email" />
-          </label>
-
-          <label>
-            Password
-            <input
-              name="password"
-              type="password"
-              required
-              autoComplete="new-password"
-            />
-          </label>
-
-          <button type="submit">Create account</button>
-        </form>
-
-        <Link href="/">Back to homepage</Link>
-      </section>
-    </main>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-i-m-p-o-r-t- -{- -l-o-g-i-n-A-c-t-i-o-n-,- -s-i-g-n-u-p-A-c-t-i-o-n- -}- -f-r-o-m- -"-.-/-a-c-t-i-o-n-s-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -L-o-g-i-n-P-a-g-e-(-{-
+- - -s-e-a-r-c-h-P-a-r-a-m-s-,-
+-}-:- -{-
+- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -e-r-r-o-r-?-:- -s-t-r-i-n-g-;- -n-e-x-t-?-:- -s-t-r-i-n-g- -}->-;-
+-}-)- -{-
+- - -c-o-n-s-t- -p-a-r-a-m-s- -=- -a-w-a-i-t- -s-e-a-r-c-h-P-a-r-a-m-s-;-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---p-a-g-e-"->-
+- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---c-a-r-d-"->-
+- - - - - - - - -<-p->-M-e-m-b-e-r- -a-c-c-e-s-s-<-/-p->-
+- - - - - - - - -<-h-1->-A-c-c-e-s-s- -y-o-u-r- -L-e-x-D-a-t-a- -a-c-c-o-u-n-t-<-/-h-1->-
+- - - - - - - - -<-s-p-a-n->-
+- - - - - - - - - - -L-o-g- -i-n- -o-n-c-e- -t-o- -a-c-c-e-s-s- -y-o-u-r- -d-a-s-h-b-o-a-r-d-,- -w-o-r-k-s-h-o-p-s-,- -a-d-m-i-n- -t-o-o-l-s-,- -m-a-n-a-g-e-r-
+- - - - - - - - - - -p-a-g-e-s-,- -a-n-d- -l-e-a-r-n-i-n-g- -m-a-t-e-r-i-a-l-s-.-
+- - - - - - - - -<-/-s-p-a-n->-
+-
+- - - - - - - - -{-p-a-r-a-m-s-.-e-r-r-o-r- -?- -(-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---e-r-r-o-r-"->-{-p-a-r-a-m-s-.-e-r-r-o-r-}-<-/-d-i-v->-
+- - - - - - - - -)- -:- -n-u-l-l-}-
+-
+- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-l-o-g-i-n-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---f-o-r-m-"->--
+- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-n-e-x-t-"- -v-a-l-u-e-=-{-p-a-r-a-m-s-.-n-e-x-t- -|-|- -"-/-d-a-s-h-b-o-a-r-d-"-}- -/->-
+- - - - - - - - - - -<-l-a-b-e-l->-
+- - - - - - - - - - - - -E-m-a-i-l-
+- - - - - - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-e-m-a-i-l-"- -t-y-p-e-=-"-e-m-a-i-l-"- -r-e-q-u-i-r-e-d- -a-u-t-o-C-o-m-p-l-e-t-e-=-"-e-m-a-i-l-"- -/->-
+- - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - -<-l-a-b-e-l->-
+- - - - - - - - - - - - -P-a-s-s-w-o-r-d-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
+- - - - - - - - - - - - - - -a-u-t-o-C-o-m-p-l-e-t-e-=-"-c-u-r-r-e-n-t---p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - -/->-
+- - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-s-u-b-m-i-t-"->-L-o-g- -i-n-<-/-b-u-t-t-o-n->-
+- - - - - - - - -<-/-f-o-r-m->-
+-
+- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-s-i-g-n-u-p-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---a-u-t-h---f-o-r-m- -l-e-x---a-u-t-h---s-i-g-n-u-p-"->--
+- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-n-e-x-t-"- -v-a-l-u-e-=-{-p-a-r-a-m-s-.-n-e-x-t- -|-|- -"-/-d-a-s-h-b-o-a-r-d-"-}- -/->-
+- - - - - - - - - - -<-h-2->-C-r-e-a-t-e- -a-c-c-o-u-n-t-<-/-h-2->-
+-
+- - - - - - - - - - -<-l-a-b-e-l->-
+- - - - - - - - - - - - -E-m-a-i-l-
+- - - - - - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-e-m-a-i-l-"- -t-y-p-e-=-"-e-m-a-i-l-"- -r-e-q-u-i-r-e-d- -a-u-t-o-C-o-m-p-l-e-t-e-=-"-e-m-a-i-l-"- -/->-
+- - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - -<-l-a-b-e-l->-
+- - - - - - - - - - - - -P-a-s-s-w-o-r-d-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - - - -t-y-p-e-=-"-p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
+- - - - - - - - - - - - - - -a-u-t-o-C-o-m-p-l-e-t-e-=-"-n-e-w---p-a-s-s-w-o-r-d-"-
+- - - - - - - - - - - - -/->-
+- - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-s-u-b-m-i-t-"->-C-r-e-a-t-e- -a-c-c-o-u-n-t-<-/-b-u-t-t-o-n->-
+- - - - - - - - -<-/-f-o-r-m->-
+-
+- - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-"->-B-a-c-k- -t-o- -h-o-m-e-p-a-g-e-<-/-L-i-n-k->-
+- - - - - - -<-/-s-e-c-t-i-o-n->-
+- - - - -<-/-m-a-i-n->-
+- - -)-;-
+-}-

@@ -1,371 +1,371 @@
-import { createHash } from "crypto";
-import { NextResponse } from "next/server";
-import { Credentials, Translator } from "@translated/lara";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { normalizeLanguage } from "@/lib/languages";
-
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
-
-type TranslateRequest = {
-  language?: string;
-  texts?: string[];
-};
-
-type CacheRow = {
-  source_hash: string;
-  source_text: string;
-  target_language: string;
-  translated_text: string;
-};
-
-const LARA_TARGET_LANGUAGE_MAP: Record<string, string> = {
-  en: "en-US",
-  zh: "zh-CN",
-  mn: "mn-MN",
-  ar: "ar-SA",
-  ur: "ur-PK",
-  az: "az-AZ",
-  tr: "tr-TR",
-  ja: "ja-JP",
-  ko: "ko-KR",
-};
-
-const LIBRE_TARGET_LANGUAGE_MAP: Record<string, string | null> = {
-  en: "en",
-  zh: "zh",
-  mn: null,
-  ar: "ar",
-  ur: "ur",
-  az: "az",
-  tr: "tr",
-  ja: "ja",
-  ko: "ko",
-};
-
-function hashText(value: string) {
-  return createHash("sha256").update(value).digest("hex");
-}
-
-function cleanText(value: string) {
-  return value.replace(/\s+/g, " ").trim();
-}
-
-function shouldTranslate(value: string) {
-  const text = cleanText(value);
-
-  if (!text) return false;
-  if (text.length < 2) return false;
-  if (text.length > 2000) return false;
-
-  if (/^https?:\/\//i.test(text)) return false;
-  if (/^[\d\s.,:/\-–—()%+]+$/.test(text)) return false;
-  if (/^[^\p{L}\p{N}]+$/u.test(text)) return false;
-  if (/^[\w.-]+@[\w.-]+\.\w+$/.test(text)) return false;
-
-  return true;
-}
-
-function uniqueTexts(texts: string[]) {
-  const seen = new Set<string>();
-  const result: string[] = [];
-
-  for (const item of texts) {
-    const cleaned = cleanText(item);
-
-    if (!shouldTranslate(cleaned)) continue;
-    if (seen.has(cleaned)) continue;
-
-    seen.add(cleaned);
-    result.push(cleaned);
-  }
-
-  return result.slice(0, 60);
-}
-
-async function translateWithLibreTranslate(text: string, language: string) {
-  const baseUrl = process.env.TRANSLATE_API_URL;
-  const apiKey = process.env.TRANSLATE_API_KEY;
-  const target = LIBRE_TARGET_LANGUAGE_MAP[language];
-
-  if (!baseUrl) {
-    return {
-      translatedText: text,
-      usedProvider: false,
-      provider: "libretranslate",
-      error: "Missing TRANSLATE_API_URL",
-    };
-  }
-
-  if (!target) {
-    return {
-      translatedText: text,
-      usedProvider: false,
-      provider: "libretranslate",
-      error: `LibreTranslate does not support target language: ${language}`,
-    };
-  }
-
-  try {
-    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/translate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        q: text,
-        source: "en",
-        target,
-        format: "text",
-        api_key: apiKey || undefined,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-
-      return {
-        translatedText: text,
-        usedProvider: true,
-        provider: "libretranslate",
-        error: errorText || `LibreTranslate HTTP ${response.status}`,
-      };
-    }
-
-    const data = await response.json();
-
-    if (typeof data?.translatedText === "string" && data.translatedText.trim()) {
-      return {
-        translatedText: data.translatedText.trim(),
-        usedProvider: true,
-        provider: "libretranslate",
-        error: null,
-      };
-    }
-
-    return {
-      translatedText: text,
-      usedProvider: true,
-      provider: "libretranslate",
-      error: "LibreTranslate returned empty translation",
-    };
-  } catch (error) {
-    return {
-      translatedText: text,
-      usedProvider: true,
-      provider: "libretranslate",
-      error:
-        error instanceof Error
-          ? error.message
-          : "Unknown LibreTranslate error",
-    };
-  }
-}
-
-function getLaraTranslator() {
-  const accessKeyId = process.env.LARA_ACCESS_KEY_ID;
-  const accessKeySecret = process.env.LARA_ACCESS_KEY_SECRET;
-
-  if (!accessKeyId || !accessKeySecret) {
-    return null;
-  }
-
-  const credentials = new Credentials(accessKeyId, accessKeySecret);
-  return new Translator(credentials);
-}
-
-async function translateWithLara(text: string, language: string) {
-  const lara = getLaraTranslator();
-
-  if (!lara) {
-    return {
-      translatedText: text,
-      usedProvider: false,
-      provider: "lara",
-      error: "Missing LARA_ACCESS_KEY_ID or LARA_ACCESS_KEY_SECRET",
-    };
-  }
-
-  const target = LARA_TARGET_LANGUAGE_MAP[language] || language;
-
-  try {
-    const result = await lara.translate(text, "en-US", target);
-
-    const translated = result?.translation;
-
-    if (typeof translated === "string" && translated.trim()) {
-      return {
-        translatedText: translated.trim(),
-        usedProvider: true,
-        provider: "lara",
-        error: null,
-      };
-    }
-
-    return {
-      translatedText: text,
-      usedProvider: true,
-      provider: "lara",
-      error: "Lara returned empty translation",
-    };
-  } catch (error) {
-    return {
-      translatedText: text,
-      usedProvider: true,
-      provider: "lara",
-      error:
-        error instanceof Error
-          ? error.message
-          : "Unknown Lara translation error",
-    };
-  }
-}
-
-async function translateText(text: string, language: string) {
-  const provider = process.env.TRANSLATE_PROVIDER || "libretranslate";
-
-  if (provider === "lara") {
-    return translateWithLara(text, language);
-  }
-
-  const libreResult = await translateWithLibreTranslate(text, language);
-
-  if (
-    libreResult.translatedText &&
-    libreResult.translatedText !== text &&
-    !libreResult.error
-  ) {
-    return libreResult;
-  }
-
-  const laraResult = await translateWithLara(text, language);
-
-  if (
-    laraResult.translatedText &&
-    laraResult.translatedText !== text &&
-    !laraResult.error
-  ) {
-    return laraResult;
-  }
-
-  return libreResult;
-}
-
-export async function POST(request: Request) {
-  try {
-    const payload = (await request.json()) as TranslateRequest;
-
-    const language = normalizeLanguage(payload.language);
-    const texts = uniqueTexts(payload.texts ?? []);
-
-    const debug = {
-      language,
-      provider: process.env.TRANSLATE_PROVIDER || "libretranslate",
-      textCount: texts.length,
-      hasTranslateApiUrl: Boolean(process.env.TRANSLATE_API_URL),
-      hasLaraAccessKeyId: Boolean(process.env.LARA_ACCESS_KEY_ID),
-      hasLaraAccessKeySecret: Boolean(process.env.LARA_ACCESS_KEY_SECRET),
-      providerCalls: 0,
-      cacheHits: 0,
-      errors: [] as string[],
-    };
-
-    if (language === "en") {
-      return NextResponse.json({
-        ok: true,
-        language,
-        debug,
-        translations: {},
-      });
-    }
-
-    if (texts.length === 0) {
-      return NextResponse.json({
-        ok: true,
-        language,
-        debug,
-        translations: {},
-      });
-    }
-
-    const supabase = createAdminClient();
-
-    const hashes = texts.map((text) => hashText(text));
-
-    const { data: cachedData } = await supabase
-      .from("auto_translation_cache")
-      .select("source_hash, source_text, target_language, translated_text")
-      .eq("target_language", language)
-      .in("source_hash", hashes);
-
-    const cachedRows = (cachedData ?? []) as CacheRow[];
-
-    const cachedMap = new Map<string, string>();
-
-    for (const row of cachedRows) {
-      if (row.translated_text && row.translated_text !== row.source_text) {
-        cachedMap.set(row.source_hash, row.translated_text);
-      }
-    }
-
-    const translations: Record<string, string> = {};
-
-    for (const text of texts) {
-      const hash = hashText(text);
-      const cached = cachedMap.get(hash);
-
-      if (cached) {
-        debug.cacheHits += 1;
-        translations[text] = cached;
-        continue;
-      }
-
-      const result = await translateText(text, language);
-
-      debug.providerCalls += result.usedProvider ? 1 : 0;
-
-      if (result.error) {
-        debug.errors.push(`${text}: ${result.provider}: ${result.error}`);
-      }
-
-      translations[text] = result.translatedText;
-
-      if (result.translatedText && result.translatedText !== text) {
-        await supabase.from("auto_translation_cache").upsert(
-          {
-            source_hash: hash,
-            source_text: text,
-            target_language: language,
-            translated_text: result.translatedText,
-            provider: result.provider,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "source_hash,target_language",
-          }
-        );
-      }
-    }
-
-    return NextResponse.json({
-      ok: true,
-      language,
-      debug,
-      translations,
-    });
-  } catch (error) {
-    console.error("Auto translation route failed:", error);
-
-    return NextResponse.json({
-      ok: false,
-      language: null,
-      debug: {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown auto translation error",
-      },
-      translations: {},
-    });
-  }
-}
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-H-a-s-h- -}- -f-r-o-m- -"-c-r-y-p-t-o-"-;-
+-i-m-p-o-r-t- -{- -N-e-x-t-R-e-s-p-o-n-s-e- -}- -f-r-o-m- -"-n-e-x-t-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -C-r-e-d-e-n-t-i-a-l-s-,- -T-r-a-n-s-l-a-t-o-r- -}- -f-r-o-m- -"-@-t-r-a-n-s-l-a-t-e-d-/-l-a-r-a-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-l-a-n-g-u-a-g-e-s-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-u-n-t-i-m-e- -=- -"-n-o-d-e-j-s-"-;-
+-
+-t-y-p-e- -T-r-a-n-s-l-a-t-e-R-e-q-u-e-s-t- -=- -{-
+- - -l-a-n-g-u-a-g-e-?-:- -s-t-r-i-n-g-;-
+- - -t-e-x-t-s-?-:- -s-t-r-i-n-g-[-]-;-
+-}-;-
+-
+-t-y-p-e- -C-a-c-h-e-R-o-w- -=- -{-
+- - -s-o-u-r-c-e-_-h-a-s-h-:- -s-t-r-i-n-g-;-
+- - -s-o-u-r-c-e-_-t-e-x-t-:- -s-t-r-i-n-g-;-
+- - -t-a-r-g-e-t-_-l-a-n-g-u-a-g-e-:- -s-t-r-i-n-g-;-
+- - -t-r-a-n-s-l-a-t-e-d-_-t-e-x-t-:- -s-t-r-i-n-g-;-
+-}-;-
+-
+-c-o-n-s-t- -L-A-R-A-_-T-A-R-G-E-T-_-L-A-N-G-U-A-G-E-_-M-A-P-:- -R-e-c-o-r-d-<-s-t-r-i-n-g-,- -s-t-r-i-n-g->- -=- -{-
+- - -e-n-:- -"-e-n---U-S-"-,-
+- - -z-h-:- -"-z-h---C-N-"-,-
+- - -m-n-:- -"-m-n---M-N-"-,-
+- - -a-r-:- -"-a-r---S-A-"-,-
+- - -u-r-:- -"-u-r---P-K-"-,-
+- - -a-z-:- -"-a-z---A-Z-"-,-
+- - -t-r-:- -"-t-r---T-R-"-,-
+- - -j-a-:- -"-j-a---J-P-"-,-
+- - -k-o-:- -"-k-o---K-R-"-,-
+-}-;-
+-
+-c-o-n-s-t- -L-I-B-R-E-_-T-A-R-G-E-T-_-L-A-N-G-U-A-G-E-_-M-A-P-:- -R-e-c-o-r-d-<-s-t-r-i-n-g-,- -s-t-r-i-n-g- -|- -n-u-l-l->- -=- -{-
+- - -e-n-:- -"-e-n-"-,-
+- - -z-h-:- -"-z-h-"-,-
+- - -m-n-:- -n-u-l-l-,-
+- - -a-r-:- -"-a-r-"-,-
+- - -u-r-:- -"-u-r-"-,-
+- - -a-z-:- -"-a-z-"-,-
+- - -t-r-:- -"-t-r-"-,-
+- - -j-a-:- -"-j-a-"-,-
+- - -k-o-:- -"-k-o-"-,-
+-}-;-
+-
+-f-u-n-c-t-i-o-n- -h-a-s-h-T-e-x-t-(-v-a-l-u-e-:- -s-t-r-i-n-g-)- -{-
+- - -r-e-t-u-r-n- -c-r-e-a-t-e-H-a-s-h-(-"-s-h-a-2-5-6-"-)-.-u-p-d-a-t-e-(-v-a-l-u-e-)-.-d-i-g-e-s-t-(-"-h-e-x-"-)-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -c-l-e-a-n-T-e-x-t-(-v-a-l-u-e-:- -s-t-r-i-n-g-)- -{-
+- - -r-e-t-u-r-n- -v-a-l-u-e-.-r-e-p-l-a-c-e-(-/-\-s-+-/-g-,- -"- -"-)-.-t-r-i-m-(-)-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -s-h-o-u-l-d-T-r-a-n-s-l-a-t-e-(-v-a-l-u-e-:- -s-t-r-i-n-g-)- -{-
+- - -c-o-n-s-t- -t-e-x-t- -=- -c-l-e-a-n-T-e-x-t-(-v-a-l-u-e-)-;-
+-
+- - -i-f- -(-!-t-e-x-t-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+- - -i-f- -(-t-e-x-t-.-l-e-n-g-t-h- -<- -2-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+- - -i-f- -(-t-e-x-t-.-l-e-n-g-t-h- ->- -2-0-0-0-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+-
+- - -i-f- -(-/-^-h-t-t-p-s-?-:-\-/-\-/-/-i-.-t-e-s-t-(-t-e-x-t-)-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+- - -i-f- -(-/-^-[-\-d-\-s-.-,-:-/-\---–-—-(-)-%-+-]-+-$-/-.-t-e-s-t-(-t-e-x-t-)-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+- - -i-f- -(-/-^-[-^-\-p-{-L-}-\-p-{-N-}-]-+-$-/-u-.-t-e-s-t-(-t-e-x-t-)-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+- - -i-f- -(-/-^-[-\-w-.---]-+-@-[-\-w-.---]-+-\-.-\-w-+-$-/-.-t-e-s-t-(-t-e-x-t-)-)- -r-e-t-u-r-n- -f-a-l-s-e-;-
+-
+- - -r-e-t-u-r-n- -t-r-u-e-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -u-n-i-q-u-e-T-e-x-t-s-(-t-e-x-t-s-:- -s-t-r-i-n-g-[-]-)- -{-
+- - -c-o-n-s-t- -s-e-e-n- -=- -n-e-w- -S-e-t-<-s-t-r-i-n-g->-(-)-;-
+- - -c-o-n-s-t- -r-e-s-u-l-t-:- -s-t-r-i-n-g-[-]- -=- -[-]-;-
+-
+- - -f-o-r- -(-c-o-n-s-t- -i-t-e-m- -o-f- -t-e-x-t-s-)- -{-
+- - - - -c-o-n-s-t- -c-l-e-a-n-e-d- -=- -c-l-e-a-n-T-e-x-t-(-i-t-e-m-)-;-
+-
+- - - - -i-f- -(-!-s-h-o-u-l-d-T-r-a-n-s-l-a-t-e-(-c-l-e-a-n-e-d-)-)- -c-o-n-t-i-n-u-e-;-
+- - - - -i-f- -(-s-e-e-n-.-h-a-s-(-c-l-e-a-n-e-d-)-)- -c-o-n-t-i-n-u-e-;-
+-
+- - - - -s-e-e-n-.-a-d-d-(-c-l-e-a-n-e-d-)-;-
+- - - - -r-e-s-u-l-t-.-p-u-s-h-(-c-l-e-a-n-e-d-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -r-e-s-u-l-t-.-s-l-i-c-e-(-0-,- -6-0-)-;-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -t-r-a-n-s-l-a-t-e-W-i-t-h-L-i-b-r-e-T-r-a-n-s-l-a-t-e-(-t-e-x-t-:- -s-t-r-i-n-g-,- -l-a-n-g-u-a-g-e-:- -s-t-r-i-n-g-)- -{-
+- - -c-o-n-s-t- -b-a-s-e-U-r-l- -=- -p-r-o-c-e-s-s-.-e-n-v-.-T-R-A-N-S-L-A-T-E-_-A-P-I-_-U-R-L-;-
+- - -c-o-n-s-t- -a-p-i-K-e-y- -=- -p-r-o-c-e-s-s-.-e-n-v-.-T-R-A-N-S-L-A-T-E-_-A-P-I-_-K-E-Y-;-
+- - -c-o-n-s-t- -t-a-r-g-e-t- -=- -L-I-B-R-E-_-T-A-R-G-E-T-_-L-A-N-G-U-A-G-E-_-M-A-P-[-l-a-n-g-u-a-g-e-]-;-
+-
+- - -i-f- -(-!-b-a-s-e-U-r-l-)- -{-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -f-a-l-s-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - -e-r-r-o-r-:- -"-M-i-s-s-i-n-g- -T-R-A-N-S-L-A-T-E-_-A-P-I-_-U-R-L-"-,-
+- - - - -}-;-
+- - -}-
+-
+- - -i-f- -(-!-t-a-r-g-e-t-)- -{-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -f-a-l-s-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - -e-r-r-o-r-:- -`-L-i-b-r-e-T-r-a-n-s-l-a-t-e- -d-o-e-s- -n-o-t- -s-u-p-p-o-r-t- -t-a-r-g-e-t- -l-a-n-g-u-a-g-e-:- -$-{-l-a-n-g-u-a-g-e-}-`-,-
+- - - - -}-;-
+- - -}-
+-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -r-e-s-p-o-n-s-e- -=- -a-w-a-i-t- -f-e-t-c-h-(-`-$-{-b-a-s-e-U-r-l-.-r-e-p-l-a-c-e-(-/-\-/-$-/-,- -"-"-)-}-/-t-r-a-n-s-l-a-t-e-`-,- -{-
+- - - - - - -m-e-t-h-o-d-:- -"-P-O-S-T-"-,-
+- - - - - - -h-e-a-d-e-r-s-:- -{-
+- - - - - - - - -"-C-o-n-t-e-n-t---T-y-p-e-"-:- -"-a-p-p-l-i-c-a-t-i-o-n-/-j-s-o-n-"-,-
+- - - - - - -}-,-
+- - - - - - -b-o-d-y-:- -J-S-O-N-.-s-t-r-i-n-g-i-f-y-(-{-
+- - - - - - - - -q-:- -t-e-x-t-,-
+- - - - - - - - -s-o-u-r-c-e-:- -"-e-n-"-,-
+- - - - - - - - -t-a-r-g-e-t-,-
+- - - - - - - - -f-o-r-m-a-t-:- -"-t-e-x-t-"-,-
+- - - - - - - - -a-p-i-_-k-e-y-:- -a-p-i-K-e-y- -|-|- -u-n-d-e-f-i-n-e-d-,-
+- - - - - - -}-)-,-
+- - - - -}-)-;-
+-
+- - - - -i-f- -(-!-r-e-s-p-o-n-s-e-.-o-k-)- -{-
+- - - - - - -c-o-n-s-t- -e-r-r-o-r-T-e-x-t- -=- -a-w-a-i-t- -r-e-s-p-o-n-s-e-.-t-e-x-t-(-)-;-
+-
+- - - - - - -r-e-t-u-r-n- -{-
+- - - - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - - - -e-r-r-o-r-:- -e-r-r-o-r-T-e-x-t- -|-|- -`-L-i-b-r-e-T-r-a-n-s-l-a-t-e- -H-T-T-P- -$-{-r-e-s-p-o-n-s-e-.-s-t-a-t-u-s-}-`-,-
+- - - - - - -}-;-
+- - - - -}-
+-
+- - - - -c-o-n-s-t- -d-a-t-a- -=- -a-w-a-i-t- -r-e-s-p-o-n-s-e-.-j-s-o-n-(-)-;-
+-
+- - - - -i-f- -(-t-y-p-e-o-f- -d-a-t-a-?-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -=-=-=- -"-s-t-r-i-n-g-"- -&-&- -d-a-t-a-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t-.-t-r-i-m-(-)-)- -{-
+- - - - - - -r-e-t-u-r-n- -{-
+- - - - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -d-a-t-a-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t-.-t-r-i-m-(-)-,-
+- - - - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - - - -e-r-r-o-r-:- -n-u-l-l-,-
+- - - - - - -}-;-
+- - - - -}-
+-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - -e-r-r-o-r-:- -"-L-i-b-r-e-T-r-a-n-s-l-a-t-e- -r-e-t-u-r-n-e-d- -e-m-p-t-y- -t-r-a-n-s-l-a-t-i-o-n-"-,-
+- - - - -}-;-
+- - -}- -c-a-t-c-h- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - -e-r-r-o-r-:-
+- - - - - - - - -e-r-r-o-r- -i-n-s-t-a-n-c-e-o-f- -E-r-r-o-r-
+- - - - - - - - - - -?- -e-r-r-o-r-.-m-e-s-s-a-g-e-
+- - - - - - - - - - -:- -"-U-n-k-n-o-w-n- -L-i-b-r-e-T-r-a-n-s-l-a-t-e- -e-r-r-o-r-"-,-
+- - - - -}-;-
+- - -}-
+-}-
+-
+-f-u-n-c-t-i-o-n- -g-e-t-L-a-r-a-T-r-a-n-s-l-a-t-o-r-(-)- -{-
+- - -c-o-n-s-t- -a-c-c-e-s-s-K-e-y-I-d- -=- -p-r-o-c-e-s-s-.-e-n-v-.-L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-I-D-;-
+- - -c-o-n-s-t- -a-c-c-e-s-s-K-e-y-S-e-c-r-e-t- -=- -p-r-o-c-e-s-s-.-e-n-v-.-L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-S-E-C-R-E-T-;-
+-
+- - -i-f- -(-!-a-c-c-e-s-s-K-e-y-I-d- -|-|- -!-a-c-c-e-s-s-K-e-y-S-e-c-r-e-t-)- -{-
+- - - - -r-e-t-u-r-n- -n-u-l-l-;-
+- - -}-
+-
+- - -c-o-n-s-t- -c-r-e-d-e-n-t-i-a-l-s- -=- -n-e-w- -C-r-e-d-e-n-t-i-a-l-s-(-a-c-c-e-s-s-K-e-y-I-d-,- -a-c-c-e-s-s-K-e-y-S-e-c-r-e-t-)-;-
+- - -r-e-t-u-r-n- -n-e-w- -T-r-a-n-s-l-a-t-o-r-(-c-r-e-d-e-n-t-i-a-l-s-)-;-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -t-r-a-n-s-l-a-t-e-W-i-t-h-L-a-r-a-(-t-e-x-t-:- -s-t-r-i-n-g-,- -l-a-n-g-u-a-g-e-:- -s-t-r-i-n-g-)- -{-
+- - -c-o-n-s-t- -l-a-r-a- -=- -g-e-t-L-a-r-a-T-r-a-n-s-l-a-t-o-r-(-)-;-
+-
+- - -i-f- -(-!-l-a-r-a-)- -{-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -f-a-l-s-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-a-r-a-"-,-
+- - - - - - -e-r-r-o-r-:- -"-M-i-s-s-i-n-g- -L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-I-D- -o-r- -L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-S-E-C-R-E-T-"-,-
+- - - - -}-;-
+- - -}-
+-
+- - -c-o-n-s-t- -t-a-r-g-e-t- -=- -L-A-R-A-_-T-A-R-G-E-T-_-L-A-N-G-U-A-G-E-_-M-A-P-[-l-a-n-g-u-a-g-e-]- -|-|- -l-a-n-g-u-a-g-e-;-
+-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -r-e-s-u-l-t- -=- -a-w-a-i-t- -l-a-r-a-.-t-r-a-n-s-l-a-t-e-(-t-e-x-t-,- -"-e-n---U-S-"-,- -t-a-r-g-e-t-)-;-
+-
+- - - - -c-o-n-s-t- -t-r-a-n-s-l-a-t-e-d- -=- -r-e-s-u-l-t-?-.-t-r-a-n-s-l-a-t-i-o-n-;-
+-
+- - - - -i-f- -(-t-y-p-e-o-f- -t-r-a-n-s-l-a-t-e-d- -=-=-=- -"-s-t-r-i-n-g-"- -&-&- -t-r-a-n-s-l-a-t-e-d-.-t-r-i-m-(-)-)- -{-
+- - - - - - -r-e-t-u-r-n- -{-
+- - - - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-r-a-n-s-l-a-t-e-d-.-t-r-i-m-(-)-,-
+- - - - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - - - -p-r-o-v-i-d-e-r-:- -"-l-a-r-a-"-,-
+- - - - - - - - -e-r-r-o-r-:- -n-u-l-l-,-
+- - - - - - -}-;-
+- - - - -}-
+-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-a-r-a-"-,-
+- - - - - - -e-r-r-o-r-:- -"-L-a-r-a- -r-e-t-u-r-n-e-d- -e-m-p-t-y- -t-r-a-n-s-l-a-t-i-o-n-"-,-
+- - - - -}-;-
+- - -}- -c-a-t-c-h- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-t-u-r-n- -{-
+- - - - - - -t-r-a-n-s-l-a-t-e-d-T-e-x-t-:- -t-e-x-t-,-
+- - - - - - -u-s-e-d-P-r-o-v-i-d-e-r-:- -t-r-u-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -"-l-a-r-a-"-,-
+- - - - - - -e-r-r-o-r-:-
+- - - - - - - - -e-r-r-o-r- -i-n-s-t-a-n-c-e-o-f- -E-r-r-o-r-
+- - - - - - - - - - -?- -e-r-r-o-r-.-m-e-s-s-a-g-e-
+- - - - - - - - - - -:- -"-U-n-k-n-o-w-n- -L-a-r-a- -t-r-a-n-s-l-a-t-i-o-n- -e-r-r-o-r-"-,-
+- - - - -}-;-
+- - -}-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -t-r-a-n-s-l-a-t-e-T-e-x-t-(-t-e-x-t-:- -s-t-r-i-n-g-,- -l-a-n-g-u-a-g-e-:- -s-t-r-i-n-g-)- -{-
+- - -c-o-n-s-t- -p-r-o-v-i-d-e-r- -=- -p-r-o-c-e-s-s-.-e-n-v-.-T-R-A-N-S-L-A-T-E-_-P-R-O-V-I-D-E-R- -|-|- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-;-
+-
+- - -i-f- -(-p-r-o-v-i-d-e-r- -=-=-=- -"-l-a-r-a-"-)- -{-
+- - - - -r-e-t-u-r-n- -t-r-a-n-s-l-a-t-e-W-i-t-h-L-a-r-a-(-t-e-x-t-,- -l-a-n-g-u-a-g-e-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -l-i-b-r-e-R-e-s-u-l-t- -=- -a-w-a-i-t- -t-r-a-n-s-l-a-t-e-W-i-t-h-L-i-b-r-e-T-r-a-n-s-l-a-t-e-(-t-e-x-t-,- -l-a-n-g-u-a-g-e-)-;-
+-
+- - -i-f- -(-
+- - - - -l-i-b-r-e-R-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -&-&-
+- - - - -l-i-b-r-e-R-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -!-=-=- -t-e-x-t- -&-&-
+- - - - -!-l-i-b-r-e-R-e-s-u-l-t-.-e-r-r-o-r-
+- - -)- -{-
+- - - - -r-e-t-u-r-n- -l-i-b-r-e-R-e-s-u-l-t-;-
+- - -}-
+-
+- - -c-o-n-s-t- -l-a-r-a-R-e-s-u-l-t- -=- -a-w-a-i-t- -t-r-a-n-s-l-a-t-e-W-i-t-h-L-a-r-a-(-t-e-x-t-,- -l-a-n-g-u-a-g-e-)-;-
+-
+- - -i-f- -(-
+- - - - -l-a-r-a-R-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -&-&-
+- - - - -l-a-r-a-R-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -!-=-=- -t-e-x-t- -&-&-
+- - - - -!-l-a-r-a-R-e-s-u-l-t-.-e-r-r-o-r-
+- - -)- -{-
+- - - - -r-e-t-u-r-n- -l-a-r-a-R-e-s-u-l-t-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -l-i-b-r-e-R-e-s-u-l-t-;-
+-}-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -P-O-S-T-(-r-e-q-u-e-s-t-:- -R-e-q-u-e-s-t-)- -{-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -p-a-y-l-o-a-d- -=- -(-a-w-a-i-t- -r-e-q-u-e-s-t-.-j-s-o-n-(-)-)- -a-s- -T-r-a-n-s-l-a-t-e-R-e-q-u-e-s-t-;-
+-
+- - - - -c-o-n-s-t- -l-a-n-g-u-a-g-e- -=- -n-o-r-m-a-l-i-z-e-L-a-n-g-u-a-g-e-(-p-a-y-l-o-a-d-.-l-a-n-g-u-a-g-e-)-;-
+- - - - -c-o-n-s-t- -t-e-x-t-s- -=- -u-n-i-q-u-e-T-e-x-t-s-(-p-a-y-l-o-a-d-.-t-e-x-t-s- -?-?- -[-]-)-;-
+-
+- - - - -c-o-n-s-t- -d-e-b-u-g- -=- -{-
+- - - - - - -l-a-n-g-u-a-g-e-,-
+- - - - - - -p-r-o-v-i-d-e-r-:- -p-r-o-c-e-s-s-.-e-n-v-.-T-R-A-N-S-L-A-T-E-_-P-R-O-V-I-D-E-R- -|-|- -"-l-i-b-r-e-t-r-a-n-s-l-a-t-e-"-,-
+- - - - - - -t-e-x-t-C-o-u-n-t-:- -t-e-x-t-s-.-l-e-n-g-t-h-,-
+- - - - - - -h-a-s-T-r-a-n-s-l-a-t-e-A-p-i-U-r-l-:- -B-o-o-l-e-a-n-(-p-r-o-c-e-s-s-.-e-n-v-.-T-R-A-N-S-L-A-T-E-_-A-P-I-_-U-R-L-)-,-
+- - - - - - -h-a-s-L-a-r-a-A-c-c-e-s-s-K-e-y-I-d-:- -B-o-o-l-e-a-n-(-p-r-o-c-e-s-s-.-e-n-v-.-L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-I-D-)-,-
+- - - - - - -h-a-s-L-a-r-a-A-c-c-e-s-s-K-e-y-S-e-c-r-e-t-:- -B-o-o-l-e-a-n-(-p-r-o-c-e-s-s-.-e-n-v-.-L-A-R-A-_-A-C-C-E-S-S-_-K-E-Y-_-S-E-C-R-E-T-)-,-
+- - - - - - -p-r-o-v-i-d-e-r-C-a-l-l-s-:- -0-,-
+- - - - - - -c-a-c-h-e-H-i-t-s-:- -0-,-
+- - - - - - -e-r-r-o-r-s-:- -[-]- -a-s- -s-t-r-i-n-g-[-]-,-
+- - - - -}-;-
+-
+- - - - -i-f- -(-l-a-n-g-u-a-g-e- -=-=-=- -"-e-n-"-)- -{-
+- - - - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
+- - - - - - - - -o-k-:- -t-r-u-e-,-
+- - - - - - - - -l-a-n-g-u-a-g-e-,-
+- - - - - - - - -d-e-b-u-g-,-
+- - - - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-:- -{-}-,-
+- - - - - - -}-)-;-
+- - - - -}-
+-
+- - - - -i-f- -(-t-e-x-t-s-.-l-e-n-g-t-h- -=-=-=- -0-)- -{-
+- - - - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
+- - - - - - - - -o-k-:- -t-r-u-e-,-
+- - - - - - - - -l-a-n-g-u-a-g-e-,-
+- - - - - - - - -d-e-b-u-g-,-
+- - - - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-:- -{-}-,-
+- - - - - - -}-)-;-
+- - - - -}-
+-
+- - - - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - - - -c-o-n-s-t- -h-a-s-h-e-s- -=- -t-e-x-t-s-.-m-a-p-(-(-t-e-x-t-)- -=->- -h-a-s-h-T-e-x-t-(-t-e-x-t-)-)-;-
+-
+- - - - -c-o-n-s-t- -{- -d-a-t-a-:- -c-a-c-h-e-d-D-a-t-a- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - - - -.-f-r-o-m-(-"-a-u-t-o-_-t-r-a-n-s-l-a-t-i-o-n-_-c-a-c-h-e-"-)-
+- - - - - - -.-s-e-l-e-c-t-(-"-s-o-u-r-c-e-_-h-a-s-h-,- -s-o-u-r-c-e-_-t-e-x-t-,- -t-a-r-g-e-t-_-l-a-n-g-u-a-g-e-,- -t-r-a-n-s-l-a-t-e-d-_-t-e-x-t-"-)-
+- - - - - - -.-e-q-(-"-t-a-r-g-e-t-_-l-a-n-g-u-a-g-e-"-,- -l-a-n-g-u-a-g-e-)-
+- - - - - - -.-i-n-(-"-s-o-u-r-c-e-_-h-a-s-h-"-,- -h-a-s-h-e-s-)-;-
+-
+- - - - -c-o-n-s-t- -c-a-c-h-e-d-R-o-w-s- -=- -(-c-a-c-h-e-d-D-a-t-a- -?-?- -[-]-)- -a-s- -C-a-c-h-e-R-o-w-[-]-;-
+-
+- - - - -c-o-n-s-t- -c-a-c-h-e-d-M-a-p- -=- -n-e-w- -M-a-p-<-s-t-r-i-n-g-,- -s-t-r-i-n-g->-(-)-;-
+-
+- - - - -f-o-r- -(-c-o-n-s-t- -r-o-w- -o-f- -c-a-c-h-e-d-R-o-w-s-)- -{-
+- - - - - - -i-f- -(-r-o-w-.-t-r-a-n-s-l-a-t-e-d-_-t-e-x-t- -&-&- -r-o-w-.-t-r-a-n-s-l-a-t-e-d-_-t-e-x-t- -!-=-=- -r-o-w-.-s-o-u-r-c-e-_-t-e-x-t-)- -{-
+- - - - - - - - -c-a-c-h-e-d-M-a-p-.-s-e-t-(-r-o-w-.-s-o-u-r-c-e-_-h-a-s-h-,- -r-o-w-.-t-r-a-n-s-l-a-t-e-d-_-t-e-x-t-)-;-
+- - - - - - -}-
+- - - - -}-
+-
+- - - - -c-o-n-s-t- -t-r-a-n-s-l-a-t-i-o-n-s-:- -R-e-c-o-r-d-<-s-t-r-i-n-g-,- -s-t-r-i-n-g->- -=- -{-}-;-
+-
+- - - - -f-o-r- -(-c-o-n-s-t- -t-e-x-t- -o-f- -t-e-x-t-s-)- -{-
+- - - - - - -c-o-n-s-t- -h-a-s-h- -=- -h-a-s-h-T-e-x-t-(-t-e-x-t-)-;-
+- - - - - - -c-o-n-s-t- -c-a-c-h-e-d- -=- -c-a-c-h-e-d-M-a-p-.-g-e-t-(-h-a-s-h-)-;-
+-
+- - - - - - -i-f- -(-c-a-c-h-e-d-)- -{-
+- - - - - - - - -d-e-b-u-g-.-c-a-c-h-e-H-i-t-s- -+-=- -1-;-
+- - - - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-[-t-e-x-t-]- -=- -c-a-c-h-e-d-;-
+- - - - - - - - -c-o-n-t-i-n-u-e-;-
+- - - - - - -}-
+-
+- - - - - - -c-o-n-s-t- -r-e-s-u-l-t- -=- -a-w-a-i-t- -t-r-a-n-s-l-a-t-e-T-e-x-t-(-t-e-x-t-,- -l-a-n-g-u-a-g-e-)-;-
+-
+- - - - - - -d-e-b-u-g-.-p-r-o-v-i-d-e-r-C-a-l-l-s- -+-=- -r-e-s-u-l-t-.-u-s-e-d-P-r-o-v-i-d-e-r- -?- -1- -:- -0-;-
+-
+- - - - - - -i-f- -(-r-e-s-u-l-t-.-e-r-r-o-r-)- -{-
+- - - - - - - - -d-e-b-u-g-.-e-r-r-o-r-s-.-p-u-s-h-(-`-$-{-t-e-x-t-}-:- -$-{-r-e-s-u-l-t-.-p-r-o-v-i-d-e-r-}-:- -$-{-r-e-s-u-l-t-.-e-r-r-o-r-}-`-)-;-
+- - - - - - -}-
+-
+- - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-[-t-e-x-t-]- -=- -r-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t-;-
+-
+- - - - - - -i-f- -(-r-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -&-&- -r-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t- -!-=-=- -t-e-x-t-)- -{-
+- - - - - - - - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-a-u-t-o-_-t-r-a-n-s-l-a-t-i-o-n-_-c-a-c-h-e-"-)-.-u-p-s-e-r-t-(-
+- - - - - - - - - - -{-
+- - - - - - - - - - - - -s-o-u-r-c-e-_-h-a-s-h-:- -h-a-s-h-,-
+- - - - - - - - - - - - -s-o-u-r-c-e-_-t-e-x-t-:- -t-e-x-t-,-
+- - - - - - - - - - - - -t-a-r-g-e-t-_-l-a-n-g-u-a-g-e-:- -l-a-n-g-u-a-g-e-,-
+- - - - - - - - - - - - -t-r-a-n-s-l-a-t-e-d-_-t-e-x-t-:- -r-e-s-u-l-t-.-t-r-a-n-s-l-a-t-e-d-T-e-x-t-,-
+- - - - - - - - - - - - -p-r-o-v-i-d-e-r-:- -r-e-s-u-l-t-.-p-r-o-v-i-d-e-r-,-
+- - - - - - - - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - - - - - - - -}-,-
+- - - - - - - - - - -{-
+- - - - - - - - - - - - -o-n-C-o-n-f-l-i-c-t-:- -"-s-o-u-r-c-e-_-h-a-s-h-,-t-a-r-g-e-t-_-l-a-n-g-u-a-g-e-"-,-
+- - - - - - - - - - -}-
+- - - - - - - - -)-;-
+- - - - - - -}-
+- - - - -}-
+-
+- - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
+- - - - - - -o-k-:- -t-r-u-e-,-
+- - - - - - -l-a-n-g-u-a-g-e-,-
+- - - - - - -d-e-b-u-g-,-
+- - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-,-
+- - - - -}-)-;-
+- - -}- -c-a-t-c-h- -(-e-r-r-o-r-)- -{-
+- - - - -c-o-n-s-o-l-e-.-e-r-r-o-r-(-"-A-u-t-o- -t-r-a-n-s-l-a-t-i-o-n- -r-o-u-t-e- -f-a-i-l-e-d-:-"-,- -e-r-r-o-r-)-;-
+-
+- - - - -r-e-t-u-r-n- -N-e-x-t-R-e-s-p-o-n-s-e-.-j-s-o-n-(-{-
+- - - - - - -o-k-:- -f-a-l-s-e-,-
+- - - - - - -l-a-n-g-u-a-g-e-:- -n-u-l-l-,-
+- - - - - - -d-e-b-u-g-:- -{-
+- - - - - - - - -e-r-r-o-r-:-
+- - - - - - - - - - -e-r-r-o-r- -i-n-s-t-a-n-c-e-o-f- -E-r-r-o-r-
+- - - - - - - - - - - - -?- -e-r-r-o-r-.-m-e-s-s-a-g-e-
+- - - - - - - - - - - - -:- -"-U-n-k-n-o-w-n- -a-u-t-o- -t-r-a-n-s-l-a-t-i-o-n- -e-r-r-o-r-"-,-
+- - - - - - -}-,-
+- - - - - - -t-r-a-n-s-l-a-t-i-o-n-s-:- -{-}-,-
+- - - - -}-)-;-
+- - -}-
+-}-

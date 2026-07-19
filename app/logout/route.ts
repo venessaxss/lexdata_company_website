@@ -1,10 +1,10 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-
-export async function GET() {
-  const supabase = await createClient();
-
-  await supabase.auth.signOut();
-
-  redirect("/login");
-}
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -G-E-T-(-)- -{-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-s-i-g-n-O-u-t-(-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
+-}-

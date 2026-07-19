@@ -1,12 +1,12 @@
-import ManagerMemberProfilesPage from "@/app/manager/member-profiles/page";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default async function AdminMemberProfilesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; completed?: string }>;
-}) {
-  return <ManagerMemberProfilesPage searchParams={searchParams} />;
-}
+-i-m-p-o-r-t- -M-a-n-a-g-e-r-M-e-m-b-e-r-P-r-o-f-i-l-e-s-P-a-g-e- -f-r-o-m- -"-@-/-a-p-p-/-m-a-n-a-g-e-r-/-m-e-m-b-e-r---p-r-o-f-i-l-e-s-/-p-a-g-e-"-;--
+--
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;--
+-e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;--
+--
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -A-d-m-i-n-M-e-m-b-e-r-P-r-o-f-i-l-e-s-P-a-g-e-(-{--
+- - -s-e-a-r-c-h-P-a-r-a-m-s-,--
+-}-:- -{--
+- - -s-e-a-r-c-h-P-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -q-?-:- -s-t-r-i-n-g-;- -c-o-m-p-l-e-t-e-d-?-:- -s-t-r-i-n-g- -}->-;--
+-}-)- -{--
+- - -r-e-t-u-r-n- -<-M-a-n-a-g-e-r-M-e-m-b-e-r-P-r-o-f-i-l-e-s-P-a-g-e- -s-e-a-r-c-h-P-a-r-a-m-s-=-{-s-e-a-r-c-h-P-a-r-a-m-s-}- -/->-;--
+-}-

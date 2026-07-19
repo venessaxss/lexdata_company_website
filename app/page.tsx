@@ -1,6 +1,6 @@
-import IntegratedHomePage from "@/components/IntegratedHomePage";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default IntegratedHomePage;
+-i-m-p-o-r-t- -I-n-t-e-g-r-a-t-e-d-H-o-m-e-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-I-n-t-e-g-r-a-t-e-d-H-o-m-e-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -I-n-t-e-g-r-a-t-e-d-H-o-m-e-P-a-g-e-;-

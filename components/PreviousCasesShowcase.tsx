@@ -1,102 +1,102 @@
-"use client";
-
-import { useRef } from "react";
-import Link from "next/link";
-
-const cases = [
-  {
-    tag: "Case 01",
-    title: "AI-assisted literature review workshop",
-    body: "A practical workflow for finding, organizing, and synthesizing research with responsible GenAI support.",
-    meta: "Academic training",
-  },
-  {
-    tag: "Case 02",
-    title: "Corpus annotation for discourse analysis",
-    body: "From raw multilingual text to structured annotation layers for linguistic and social research.",
-    meta: "Corpus linguistics",
-  },
-  {
-    tag: "Case 03",
-    title: "Machine translation evaluation pipeline",
-    body: "A human-in-the-loop evaluation process for comparing MT output, error patterns, and revision quality.",
-    meta: "Translation technology",
-  },
-  {
-    tag: "Case 04",
-    title: "NLP dashboard for language education",
-    body: "Text cleaning, segmentation, keywords, topic models, and learning analytics in one research dashboard.",
-    meta: "NLP + education",
-  },
-  {
-    tag: "Case 05",
-    title: "Legal and institutional language data",
-    body: "Structured workflows for legal translation, terminology control, and document-based linguistic analysis.",
-    meta: "Legal language",
-  },
-];
-
-export default function PreviousCasesShowcase() {
-  const trackRef = useRef<HTMLDivElement | null>(null);
-
-  function move(direction: "left" | "right") {
-    const element = trackRef.current;
-
-    if (!element) return;
-
-    element.scrollBy({
-      left: direction === "right" ? 560 : -560,
-      behavior: "smooth",
-    });
-  }
-
-  return (
-    <section className="lex-cases-stage paper-page" id="cases">
-      <div className="lex-cases-head paper-rev">
-        <p>Previous cases</p>
-        <h2>Real projects, shown like living research drafts.</h2>
-        <Link href="/cases">View all cases -&gt;</Link>
-      </div>
-
-      <div className="lex-cases-doodle-left" aria-hidden="true">
-        <svg viewBox="0 0 220 170">
-          <path d="M34 126h118M47 102h88M61 78h62M51 48h84l24 58-24 38H51L29 103Z" />
-          <path d="M142 102h48M165 82l28 20-28 20" />
-        </svg>
-      </div>
-
-      <div className="lex-cases-carousel">
-        <button type="button" className="lex-case-arrow lex-case-arrow-left" onClick={() => move("left")}>
-          ←
-        </button>
-
-        <div className="lex-cases-track" ref={trackRef}>
-          {cases.map((item, index) => (
-            <article key={item.title} className="lex-case-card">
-              <div className="lex-case-paper">
-                <span>{item.tag}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <b>{item.meta}</b>
-              </div>
-
-              <div className="lex-case-notes">
-                <span>Draft {index + 1}</span>
-                <span>annotation</span>
-                <span>review</span>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <button type="button" className="lex-case-arrow lex-case-arrow-right" onClick={() => move("right")}>
-          →
-        </button>
-      </div>
-
-      <p className="lex-cases-caption paper-rev">
-        Stay in control with connected cases, courses, and research workflows.
-      </p>
-    </section>
-  );
-}
+-"-u-s-e- -c-l-i-e-n-t-"-;-
+-
+-i-m-p-o-r-t- -{- -u-s-e-R-e-f- -}- -f-r-o-m- -"-r-e-a-c-t-"-;-
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-
+-c-o-n-s-t- -c-a-s-e-s- -=- -[-
+- - -{-
+- - - - -t-a-g-:- -"-C-a-s-e- -0-1-"-,-
+- - - - -t-i-t-l-e-:- -"-A-I---a-s-s-i-s-t-e-d- -l-i-t-e-r-a-t-u-r-e- -r-e-v-i-e-w- -w-o-r-k-s-h-o-p-"-,-
+- - - - -b-o-d-y-:- -"-A- -p-r-a-c-t-i-c-a-l- -w-o-r-k-f-l-o-w- -f-o-r- -f-i-n-d-i-n-g-,- -o-r-g-a-n-i-z-i-n-g-,- -a-n-d- -s-y-n-t-h-e-s-i-z-i-n-g- -r-e-s-e-a-r-c-h- -w-i-t-h- -r-e-s-p-o-n-s-i-b-l-e- -G-e-n-A-I- -s-u-p-p-o-r-t-.-"-,-
+- - - - -m-e-t-a-:- -"-A-c-a-d-e-m-i-c- -t-r-a-i-n-i-n-g-"-,-
+- - -}-,-
+- - -{-
+- - - - -t-a-g-:- -"-C-a-s-e- -0-2-"-,-
+- - - - -t-i-t-l-e-:- -"-C-o-r-p-u-s- -a-n-n-o-t-a-t-i-o-n- -f-o-r- -d-i-s-c-o-u-r-s-e- -a-n-a-l-y-s-i-s-"-,-
+- - - - -b-o-d-y-:- -"-F-r-o-m- -r-a-w- -m-u-l-t-i-l-i-n-g-u-a-l- -t-e-x-t- -t-o- -s-t-r-u-c-t-u-r-e-d- -a-n-n-o-t-a-t-i-o-n- -l-a-y-e-r-s- -f-o-r- -l-i-n-g-u-i-s-t-i-c- -a-n-d- -s-o-c-i-a-l- -r-e-s-e-a-r-c-h-.-"-,-
+- - - - -m-e-t-a-:- -"-C-o-r-p-u-s- -l-i-n-g-u-i-s-t-i-c-s-"-,-
+- - -}-,-
+- - -{-
+- - - - -t-a-g-:- -"-C-a-s-e- -0-3-"-,-
+- - - - -t-i-t-l-e-:- -"-M-a-c-h-i-n-e- -t-r-a-n-s-l-a-t-i-o-n- -e-v-a-l-u-a-t-i-o-n- -p-i-p-e-l-i-n-e-"-,-
+- - - - -b-o-d-y-:- -"-A- -h-u-m-a-n---i-n---t-h-e---l-o-o-p- -e-v-a-l-u-a-t-i-o-n- -p-r-o-c-e-s-s- -f-o-r- -c-o-m-p-a-r-i-n-g- -M-T- -o-u-t-p-u-t-,- -e-r-r-o-r- -p-a-t-t-e-r-n-s-,- -a-n-d- -r-e-v-i-s-i-o-n- -q-u-a-l-i-t-y-.-"-,-
+- - - - -m-e-t-a-:- -"-T-r-a-n-s-l-a-t-i-o-n- -t-e-c-h-n-o-l-o-g-y-"-,-
+- - -}-,-
+- - -{-
+- - - - -t-a-g-:- -"-C-a-s-e- -0-4-"-,-
+- - - - -t-i-t-l-e-:- -"-N-L-P- -d-a-s-h-b-o-a-r-d- -f-o-r- -l-a-n-g-u-a-g-e- -e-d-u-c-a-t-i-o-n-"-,-
+- - - - -b-o-d-y-:- -"-T-e-x-t- -c-l-e-a-n-i-n-g-,- -s-e-g-m-e-n-t-a-t-i-o-n-,- -k-e-y-w-o-r-d-s-,- -t-o-p-i-c- -m-o-d-e-l-s-,- -a-n-d- -l-e-a-r-n-i-n-g- -a-n-a-l-y-t-i-c-s- -i-n- -o-n-e- -r-e-s-e-a-r-c-h- -d-a-s-h-b-o-a-r-d-.-"-,-
+- - - - -m-e-t-a-:- -"-N-L-P- -+- -e-d-u-c-a-t-i-o-n-"-,-
+- - -}-,-
+- - -{-
+- - - - -t-a-g-:- -"-C-a-s-e- -0-5-"-,-
+- - - - -t-i-t-l-e-:- -"-L-e-g-a-l- -a-n-d- -i-n-s-t-i-t-u-t-i-o-n-a-l- -l-a-n-g-u-a-g-e- -d-a-t-a-"-,-
+- - - - -b-o-d-y-:- -"-S-t-r-u-c-t-u-r-e-d- -w-o-r-k-f-l-o-w-s- -f-o-r- -l-e-g-a-l- -t-r-a-n-s-l-a-t-i-o-n-,- -t-e-r-m-i-n-o-l-o-g-y- -c-o-n-t-r-o-l-,- -a-n-d- -d-o-c-u-m-e-n-t---b-a-s-e-d- -l-i-n-g-u-i-s-t-i-c- -a-n-a-l-y-s-i-s-.-"-,-
+- - - - -m-e-t-a-:- -"-L-e-g-a-l- -l-a-n-g-u-a-g-e-"-,-
+- - -}-,-
+-]-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-r-e-v-i-o-u-s-C-a-s-e-s-S-h-o-w-c-a-s-e-(-)- -{-
+- - -c-o-n-s-t- -t-r-a-c-k-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t- -|- -n-u-l-l->-(-n-u-l-l-)-;-
+-
+- - -f-u-n-c-t-i-o-n- -m-o-v-e-(-d-i-r-e-c-t-i-o-n-:- -"-l-e-f-t-"- -|- -"-r-i-g-h-t-"-)- -{-
+- - - - -c-o-n-s-t- -e-l-e-m-e-n-t- -=- -t-r-a-c-k-R-e-f-.-c-u-r-r-e-n-t-;-
+-
+- - - - -i-f- -(-!-e-l-e-m-e-n-t-)- -r-e-t-u-r-n-;-
+-
+- - - - -e-l-e-m-e-n-t-.-s-c-r-o-l-l-B-y-(-{-
+- - - - - - -l-e-f-t-:- -d-i-r-e-c-t-i-o-n- -=-=-=- -"-r-i-g-h-t-"- -?- -5-6-0- -:- ---5-6-0-,-
+- - - - - - -b-e-h-a-v-i-o-r-:- -"-s-m-o-o-t-h-"-,-
+- - - - -}-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---s-t-a-g-e- -p-a-p-e-r---p-a-g-e-"- -i-d-=-"-c-a-s-e-s-"->-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---h-e-a-d- -p-a-p-e-r---r-e-v-"->-
+- - - - - - - - -<-p->-P-r-e-v-i-o-u-s- -c-a-s-e-s-<-/-p->-
+- - - - - - - - -<-h-2->-R-e-a-l- -p-r-o-j-e-c-t-s-,- -s-h-o-w-n- -l-i-k-e- -l-i-v-i-n-g- -r-e-s-e-a-r-c-h- -d-r-a-f-t-s-.-<-/-h-2->-
+- - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-a-s-e-s-"->-V-i-e-w- -a-l-l- -c-a-s-e-s- ---&-g-t-;-<-/-L-i-n-k->-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---d-o-o-d-l-e---l-e-f-t-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"->-
+- - - - - - - - -<-s-v-g- -v-i-e-w-B-o-x-=-"-0- -0- -2-2-0- -1-7-0-"->-
+- - - - - - - - - - -<-p-a-t-h- -d-=-"-M-3-4- -1-2-6-h-1-1-8-M-4-7- -1-0-2-h-8-8-M-6-1- -7-8-h-6-2-M-5-1- -4-8-h-8-4-l-2-4- -5-8---2-4- -3-8-H-5-1-L-2-9- -1-0-3-Z-"- -/->-
+- - - - - - - - - - -<-p-a-t-h- -d-=-"-M-1-4-2- -1-0-2-h-4-8-M-1-6-5- -8-2-l-2-8- -2-0---2-8- -2-0-"- -/->-
+- - - - - - - - -<-/-s-v-g->-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---c-a-r-o-u-s-e-l-"->-
+- - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-b-u-t-t-o-n-"- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e---a-r-r-o-w- -l-e-x---c-a-s-e---a-r-r-o-w---l-e-f-t-"- -o-n-C-l-i-c-k-=-{-(-)- -=->- -m-o-v-e-(-"-l-e-f-t-"-)-}->-
+- - - - - - - - - - -←-
+- - - - - - - - -<-/-b-u-t-t-o-n->-
+-
+- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---t-r-a-c-k-"- -r-e-f-=-{-t-r-a-c-k-R-e-f-}->-
+- - - - - - - - - - -{-c-a-s-e-s-.-m-a-p-(-(-i-t-e-m-,- -i-n-d-e-x-)- -=->- -(-
+- - - - - - - - - - - - -<-a-r-t-i-c-l-e- -k-e-y-=-{-i-t-e-m-.-t-i-t-l-e-}- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e---c-a-r-d-"->-
+- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e---p-a-p-e-r-"->-
+- - - - - - - - - - - - - - - - -<-s-p-a-n->-{-i-t-e-m-.-t-a-g-}-<-/-s-p-a-n->-
+- - - - - - - - - - - - - - - - -<-h-3->-{-i-t-e-m-.-t-i-t-l-e-}-<-/-h-3->-
+- - - - - - - - - - - - - - - - -<-p->-{-i-t-e-m-.-b-o-d-y-}-<-/-p->-
+- - - - - - - - - - - - - - - - -<-b->-{-i-t-e-m-.-m-e-t-a-}-<-/-b->-
+- - - - - - - - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e---n-o-t-e-s-"->-
+- - - - - - - - - - - - - - - - -<-s-p-a-n->-D-r-a-f-t- -{-i-n-d-e-x- -+- -1-}-<-/-s-p-a-n->-
+- - - - - - - - - - - - - - - - -<-s-p-a-n->-a-n-n-o-t-a-t-i-o-n-<-/-s-p-a-n->-
+- - - - - - - - - - - - - - - - -<-s-p-a-n->-r-e-v-i-e-w-<-/-s-p-a-n->-
+- - - - - - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - - - - - -<-/-a-r-t-i-c-l-e->-
+- - - - - - - - - - -)-)-}-
+- - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - -<-b-u-t-t-o-n- -t-y-p-e-=-"-b-u-t-t-o-n-"- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e---a-r-r-o-w- -l-e-x---c-a-s-e---a-r-r-o-w---r-i-g-h-t-"- -o-n-C-l-i-c-k-=-{-(-)- -=->- -m-o-v-e-(-"-r-i-g-h-t-"-)-}->-
+- - - - - - - - - - -→-
+- - - - - - - - -<-/-b-u-t-t-o-n->-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-l-e-x---c-a-s-e-s---c-a-p-t-i-o-n- -p-a-p-e-r---r-e-v-"->-
+- - - - - - - - -S-t-a-y- -i-n- -c-o-n-t-r-o-l- -w-i-t-h- -c-o-n-n-e-c-t-e-d- -c-a-s-e-s-,- -c-o-u-r-s-e-s-,- -a-n-d- -r-e-s-e-a-r-c-h- -w-o-r-k-f-l-o-w-s-.-
+- - - - - - -<-/-p->-
+- - - - -<-/-s-e-c-t-i-o-n->-
+- - -)-;-
+-}-

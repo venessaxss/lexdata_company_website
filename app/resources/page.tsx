@@ -1,21 +1,21 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function ResourcesPage() {
-  return (
-    <LexPaperSubPage
-      kicker="Resources"
-      title="Templates for language-data work."
-      body="Reusable learning resources for corpus design, annotation, translation evaluation, and NLP projects."
-      cards={[
-        {
-          title: "Corpus project template",
-          body: "Plan metadata, sampling, cleaning, segmentation, annotation, and evaluation.",
-        },
-        {
-          title: "NLP workflow checklist",
-          body: "A practical checklist for moving from raw text to interpretable results.",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -R-e-s-o-u-r-c-e-s-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-R-e-s-o-u-r-c-e-s-"-
+- - - - - - -t-i-t-l-e-=-"-T-e-m-p-l-a-t-e-s- -f-o-r- -l-a-n-g-u-a-g-e---d-a-t-a- -w-o-r-k-.-"-
+- - - - - - -b-o-d-y-=-"-R-e-u-s-a-b-l-e- -l-e-a-r-n-i-n-g- -r-e-s-o-u-r-c-e-s- -f-o-r- -c-o-r-p-u-s- -d-e-s-i-g-n-,- -a-n-n-o-t-a-t-i-o-n-,- -t-r-a-n-s-l-a-t-i-o-n- -e-v-a-l-u-a-t-i-o-n-,- -a-n-d- -N-L-P- -p-r-o-j-e-c-t-s-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-C-o-r-p-u-s- -p-r-o-j-e-c-t- -t-e-m-p-l-a-t-e-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-P-l-a-n- -m-e-t-a-d-a-t-a-,- -s-a-m-p-l-i-n-g-,- -c-l-e-a-n-i-n-g-,- -s-e-g-m-e-n-t-a-t-i-o-n-,- -a-n-n-o-t-a-t-i-o-n-,- -a-n-d- -e-v-a-l-u-a-t-i-o-n-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-N-L-P- -w-o-r-k-f-l-o-w- -c-h-e-c-k-l-i-s-t-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A- -p-r-a-c-t-i-c-a-l- -c-h-e-c-k-l-i-s-t- -f-o-r- -m-o-v-i-n-g- -f-r-o-m- -r-a-w- -t-e-x-t- -t-o- -i-n-t-e-r-p-r-e-t-a-b-l-e- -r-e-s-u-l-t-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-

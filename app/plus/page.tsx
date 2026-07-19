@@ -1,23 +1,23 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function PlusPage() {
-  return (
-    <LexPaperSubPage
-      kicker="Plus+"
-      title="Advanced support for serious language-data projects."
-      body="Premium workshops, tailored research support, private learning spaces, and project-based consultation."
-      cards={[
-        {
-          title: "Private workshop",
-          body: "Request a tailored training session for your institution, team, or research group.",
-          href: "/contact",
-        },
-        {
-          title: "Project consultation",
-          body: "Get support for corpus design, NLP pipeline planning, and translation technology evaluation.",
-          href: "/contact",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-l-u-s-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-P-l-u-s-+-"-
+- - - - - - -t-i-t-l-e-=-"-A-d-v-a-n-c-e-d- -s-u-p-p-o-r-t- -f-o-r- -s-e-r-i-o-u-s- -l-a-n-g-u-a-g-e---d-a-t-a- -p-r-o-j-e-c-t-s-.-"-
+- - - - - - -b-o-d-y-=-"-P-r-e-m-i-u-m- -w-o-r-k-s-h-o-p-s-,- -t-a-i-l-o-r-e-d- -r-e-s-e-a-r-c-h- -s-u-p-p-o-r-t-,- -p-r-i-v-a-t-e- -l-e-a-r-n-i-n-g- -s-p-a-c-e-s-,- -a-n-d- -p-r-o-j-e-c-t---b-a-s-e-d- -c-o-n-s-u-l-t-a-t-i-o-n-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-P-r-i-v-a-t-e- -w-o-r-k-s-h-o-p-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-R-e-q-u-e-s-t- -a- -t-a-i-l-o-r-e-d- -t-r-a-i-n-i-n-g- -s-e-s-s-i-o-n- -f-o-r- -y-o-u-r- -i-n-s-t-i-t-u-t-i-o-n-,- -t-e-a-m-,- -o-r- -r-e-s-e-a-r-c-h- -g-r-o-u-p-.-"-,-
+- - - - - - - - - - -h-r-e-f-:- -"-/-c-o-n-t-a-c-t-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-P-r-o-j-e-c-t- -c-o-n-s-u-l-t-a-t-i-o-n-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-G-e-t- -s-u-p-p-o-r-t- -f-o-r- -c-o-r-p-u-s- -d-e-s-i-g-n-,- -N-L-P- -p-i-p-e-l-i-n-e- -p-l-a-n-n-i-n-g-,- -a-n-d- -t-r-a-n-s-l-a-t-i-o-n- -t-e-c-h-n-o-l-o-g-y- -e-v-a-l-u-a-t-i-o-n-.-"-,-
+- - - - - - - - - - -h-r-e-f-:- -"-/-c-o-n-t-a-c-t-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-

@@ -1,156 +1,156 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import { unstable_noStore as noStore } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { normalizeRole } from "@/lib/roles";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-type ManagerCard = {
-  title: string;
-  description: string;
-  href: string;
-};
-
-export default async function ManagerDashboardPage() {
-  noStore();
-
-  const supabase = await createClient();
-  const admin = createAdminClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?redirect=/manager");
-  }
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role, full_name")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const role = normalizeRole(profile?.role);
-
-  if (role !== "admin" && role !== "manager") {
-    redirect("/dashboard");
-  }
-
-  const displayName =
-    profile?.full_name || user.user_metadata?.full_name || user.email;
-
-  const cards: ManagerCard[] = [
-    {
-      title: "Overall Monitoring Board",
-      description:
-        "View website visits, registration statistics, payment statistics, workshop status, course status, and recent user activity.",
-      href: "/manager/monitor",
-    },
-    {
-      title: "Registration & Payment Management",
-      description:
-        "Review workshop registrations, send payment instructions, check uploaded receipts, confirm payments, waive payments, and unlock access.",
-      href: "/manager/registrations",
-    },
-    {
-      title: "Workshop Status Management",
-      description:
-        "Control workshop recruitment status, course process status, public notes, internal notes, and termination or completion status.",
-      href: "/manager/workshops",
-    },
-    {
-      title: "Notice Management",
-      description:
-        "Publish homepage notices, public announcements, workshop updates, media notices, and platform messages.",
-      href: "/manager/notices",
-    },
-    {
-      title: "Team Management",
-      description:
-        "Add team members, upload photos, edit bios, set titles, manage links, and publish the public team page.",
-      href: "/manager/team",
-    },
-    {
-      title: "Public Notices",
-      description:
-        "Open the public notice center and check how published notices appear to website visitors.",
-      href: "/notices",
-    },
-    {
-      title: "Public Team Page",
-      description:
-        "Open the public team page and review how published team members appear to visitors.",
-      href: "/team",
-    },
-    {
-  title: "Member Profiles",
-  description:
-    "View members’ institutions, professions, countries, academic status, and research interests.",
-  href: "/manager/member-profiles",
-},
-    {
-      title: "Workshops",
-      description:
-        "Open the public workshop list and check workshop visibility, registration status, and member-facing content.",
-      href: "/workshops",
-    },
-    {
-  title: "Course Enrollments",
-  description:
-    "Review course enrollment requests, check payment status, approve course access, reject requests, and manage member course participation.",
-  href: "/manager/course-enrollments",
-},
-  ];
-
-  return (
-    <main className="mx-auto max-w-7xl px-4 py-10">
-      <section className="mb-10 rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-        <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-300">
-          Manager Dashboard
-        </p>
-
-        <h1 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">
-          Welcome, {displayName}
-        </h1>
-
-        <p className="mt-4 max-w-3xl text-slate-300">
-          Manage registrations, payments, notices, workshops, monitoring data,
-          and team information from one place.
-        </p>
-
-        <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
-          <span className="rounded-full bg-white/10 px-4 py-2">
-            Role: {role}
-          </span>
-
-          <span className="rounded-full bg-white/10 px-4 py-2">
-            {user.email}
-          </span>
-        </div>
-      </section>
-
-      <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map((card) => (
-          <Link
-            key={card.href}
-            href={card.href}
-            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-          >
-            <h2 className="text-xl font-black text-slate-950">
-              {card.title}
-            </h2>
-
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              {card.description}
-            </p>
-
-            <p className="mt-5 text-sm font-bold text-blue-700">Open →</p>
-          </Link>
-        ))}
-      </section>
-    </main>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-i-m-p-o-r-t- -{- -n-o-r-m-a-l-i-z-e-R-o-l-e- -}- -f-r-o-m- -"-@-/-l-i-b-/-r-o-l-e-s-"-;-
+-
+-e-x-p-o-r-t- -c-o-n-s-t- -d-y-n-a-m-i-c- -=- -"-f-o-r-c-e---d-y-n-a-m-i-c-"-;-
+-e-x-p-o-r-t- -c-o-n-s-t- -r-e-v-a-l-i-d-a-t-e- -=- -0-;-
+-
+-t-y-p-e- -M-a-n-a-g-e-r-C-a-r-d- -=- -{-
+- - -t-i-t-l-e-:- -s-t-r-i-n-g-;-
+- - -d-e-s-c-r-i-p-t-i-o-n-:- -s-t-r-i-n-g-;-
+- - -h-r-e-f-:- -s-t-r-i-n-g-;-
+-}-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -M-a-n-a-g-e-r-D-a-s-h-b-o-a-r-d-P-a-g-e-(-)- -{-
+- - -n-o-S-t-o-r-e-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -{-
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+-
+- - -i-f- -(-!-u-s-e-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-m-a-n-a-g-e-r-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
+- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-,- -f-u-l-l-_-n-a-m-e-"-)-
+- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
+- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
+-
+- - -c-o-n-s-t- -r-o-l-e- -=- -n-o-r-m-a-l-i-z-e-R-o-l-e-(-p-r-o-f-i-l-e-?-.-r-o-l-e-)-;-
+-
+- - -i-f- -(-r-o-l-e- -!-=-=- -"-a-d-m-i-n-"- -&-&- -r-o-l-e- -!-=-=- -"-m-a-n-a-g-e-r-"-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -d-i-s-p-l-a-y-N-a-m-e- -=-
+- - - - -p-r-o-f-i-l-e-?-.-f-u-l-l-_-n-a-m-e- -|-|- -u-s-e-r-.-u-s-e-r-_-m-e-t-a-d-a-t-a-?-.-f-u-l-l-_-n-a-m-e- -|-|- -u-s-e-r-.-e-m-a-i-l-;-
+-
+- - -c-o-n-s-t- -c-a-r-d-s-:- -M-a-n-a-g-e-r-C-a-r-d-[-]- -=- -[-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-O-v-e-r-a-l-l- -M-o-n-i-t-o-r-i-n-g- -B-o-a-r-d-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-V-i-e-w- -w-e-b-s-i-t-e- -v-i-s-i-t-s-,- -r-e-g-i-s-t-r-a-t-i-o-n- -s-t-a-t-i-s-t-i-c-s-,- -p-a-y-m-e-n-t- -s-t-a-t-i-s-t-i-c-s-,- -w-o-r-k-s-h-o-p- -s-t-a-t-u-s-,- -c-o-u-r-s-e- -s-t-a-t-u-s-,- -a-n-d- -r-e-c-e-n-t- -u-s-e-r- -a-c-t-i-v-i-t-y-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-m-o-n-i-t-o-r-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-R-e-g-i-s-t-r-a-t-i-o-n- -&- -P-a-y-m-e-n-t- -M-a-n-a-g-e-m-e-n-t-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-R-e-v-i-e-w- -w-o-r-k-s-h-o-p- -r-e-g-i-s-t-r-a-t-i-o-n-s-,- -s-e-n-d- -p-a-y-m-e-n-t- -i-n-s-t-r-u-c-t-i-o-n-s-,- -c-h-e-c-k- -u-p-l-o-a-d-e-d- -r-e-c-e-i-p-t-s-,- -c-o-n-f-i-r-m- -p-a-y-m-e-n-t-s-,- -w-a-i-v-e- -p-a-y-m-e-n-t-s-,- -a-n-d- -u-n-l-o-c-k- -a-c-c-e-s-s-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-r-e-g-i-s-t-r-a-t-i-o-n-s-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-W-o-r-k-s-h-o-p- -S-t-a-t-u-s- -M-a-n-a-g-e-m-e-n-t-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-C-o-n-t-r-o-l- -w-o-r-k-s-h-o-p- -r-e-c-r-u-i-t-m-e-n-t- -s-t-a-t-u-s-,- -c-o-u-r-s-e- -p-r-o-c-e-s-s- -s-t-a-t-u-s-,- -p-u-b-l-i-c- -n-o-t-e-s-,- -i-n-t-e-r-n-a-l- -n-o-t-e-s-,- -a-n-d- -t-e-r-m-i-n-a-t-i-o-n- -o-r- -c-o-m-p-l-e-t-i-o-n- -s-t-a-t-u-s-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-N-o-t-i-c-e- -M-a-n-a-g-e-m-e-n-t-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-P-u-b-l-i-s-h- -h-o-m-e-p-a-g-e- -n-o-t-i-c-e-s-,- -p-u-b-l-i-c- -a-n-n-o-u-n-c-e-m-e-n-t-s-,- -w-o-r-k-s-h-o-p- -u-p-d-a-t-e-s-,- -m-e-d-i-a- -n-o-t-i-c-e-s-,- -a-n-d- -p-l-a-t-f-o-r-m- -m-e-s-s-a-g-e-s-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-n-o-t-i-c-e-s-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-T-e-a-m- -M-a-n-a-g-e-m-e-n-t-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-A-d-d- -t-e-a-m- -m-e-m-b-e-r-s-,- -u-p-l-o-a-d- -p-h-o-t-o-s-,- -e-d-i-t- -b-i-o-s-,- -s-e-t- -t-i-t-l-e-s-,- -m-a-n-a-g-e- -l-i-n-k-s-,- -a-n-d- -p-u-b-l-i-s-h- -t-h-e- -p-u-b-l-i-c- -t-e-a-m- -p-a-g-e-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-t-e-a-m-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-P-u-b-l-i-c- -N-o-t-i-c-e-s-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-O-p-e-n- -t-h-e- -p-u-b-l-i-c- -n-o-t-i-c-e- -c-e-n-t-e-r- -a-n-d- -c-h-e-c-k- -h-o-w- -p-u-b-l-i-s-h-e-d- -n-o-t-i-c-e-s- -a-p-p-e-a-r- -t-o- -w-e-b-s-i-t-e- -v-i-s-i-t-o-r-s-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-n-o-t-i-c-e-s-"-,-
+- - - - -}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-P-u-b-l-i-c- -T-e-a-m- -P-a-g-e-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-O-p-e-n- -t-h-e- -p-u-b-l-i-c- -t-e-a-m- -p-a-g-e- -a-n-d- -r-e-v-i-e-w- -h-o-w- -p-u-b-l-i-s-h-e-d- -t-e-a-m- -m-e-m-b-e-r-s- -a-p-p-e-a-r- -t-o- -v-i-s-i-t-o-r-s-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-t-e-a-m-"-,-
+- - - - -}-,-
+- - - - -{-
+- - -t-i-t-l-e-:- -"-M-e-m-b-e-r- -P-r-o-f-i-l-e-s-"-,-
+- - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - -"-V-i-e-w- -m-e-m-b-e-r-s--?-i-n-s-t-i-t-u-t-i-o-n-s-,- -p-r-o-f-e-s-s-i-o-n-s-,- -c-o-u-n-t-r-i-e-s-,- -a-c-a-d-e-m-i-c- -s-t-a-t-u-s-,- -a-n-d- -r-e-s-e-a-r-c-h- -i-n-t-e-r-e-s-t-s-.-"-,-
+- - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-m-e-m-b-e-r---p-r-o-f-i-l-e-s-"-,-
+-}-,-
+- - - - -{-
+- - - - - - -t-i-t-l-e-:- -"-W-o-r-k-s-h-o-p-s-"-,-
+- - - - - - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - - - - - -"-O-p-e-n- -t-h-e- -p-u-b-l-i-c- -w-o-r-k-s-h-o-p- -l-i-s-t- -a-n-d- -c-h-e-c-k- -w-o-r-k-s-h-o-p- -v-i-s-i-b-i-l-i-t-y-,- -r-e-g-i-s-t-r-a-t-i-o-n- -s-t-a-t-u-s-,- -a-n-d- -m-e-m-b-e-r---f-a-c-i-n-g- -c-o-n-t-e-n-t-.-"-,-
+- - - - - - -h-r-e-f-:- -"-/-w-o-r-k-s-h-o-p-s-"-,-
+- - - - -}-,-
+- - - - -{-
+- - -t-i-t-l-e-:- -"-C-o-u-r-s-e- -E-n-r-o-l-l-m-e-n-t-s-"-,-
+- - -d-e-s-c-r-i-p-t-i-o-n-:-
+- - - - -"-R-e-v-i-e-w- -c-o-u-r-s-e- -e-n-r-o-l-l-m-e-n-t- -r-e-q-u-e-s-t-s-,- -c-h-e-c-k- -p-a-y-m-e-n-t- -s-t-a-t-u-s-,- -a-p-p-r-o-v-e- -c-o-u-r-s-e- -a-c-c-e-s-s-,- -r-e-j-e-c-t- -r-e-q-u-e-s-t-s-,- -a-n-d- -m-a-n-a-g-e- -m-e-m-b-e-r- -c-o-u-r-s-e- -p-a-r-t-i-c-i-p-a-t-i-o-n-.-"-,-
+- - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-c-o-u-r-s-e---e-n-r-o-l-l-m-e-n-t-s-"-,-
+-}-,-
+- - -]-;-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---7-x-l- -p-x---4- -p-y---1-0-"->-
+- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0- -r-o-u-n-d-e-d---[-2-r-e-m-]- -b-g---s-l-a-t-e---9-5-0- -p---8- -t-e-x-t---w-h-i-t-e- -s-h-a-d-o-w---x-l-"->-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -u-p-p-e-r-c-a-s-e- -t-r-a-c-k-i-n-g---[-0-.-2-5-e-m-]- -t-e-x-t---b-l-u-e---3-0-0-"->-
+- - - - - - - - - - -M-a-n-a-g-e-r- -D-a-s-h-b-o-a-r-d-
+- - - - - - - - -<-/-p->-
+-
+- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->-
+- - - - - - - - - - -W-e-l-c-o-m-e-,- -{-d-i-s-p-l-a-y-N-a-m-e-}-
+- - - - - - - - -<-/-h-1->-
+-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -m-a-x---w---3-x-l- -t-e-x-t---s-l-a-t-e---3-0-0-"->-
+- - - - - - - - - - -M-a-n-a-g-e- -r-e-g-i-s-t-r-a-t-i-o-n-s-,- -p-a-y-m-e-n-t-s-,- -n-o-t-i-c-e-s-,- -w-o-r-k-s-h-o-p-s-,- -m-o-n-i-t-o-r-i-n-g- -d-a-t-a-,-
+- - - - - - - - - - -a-n-d- -t-e-a-m- -i-n-f-o-r-m-a-t-i-o-n- -f-r-o-m- -o-n-e- -p-l-a-c-e-.-
+- - - - - - - - -<-/-p->-
+-
+- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -f-l-e-x- -f-l-e-x---w-r-a-p- -g-a-p---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d-"->-
+- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---w-h-i-t-e-/-1-0- -p-x---4- -p-y---2-"->-
+- - - - - - - - - - - - -R-o-l-e-:- -{-r-o-l-e-}-
+- - - - - - - - - - -<-/-s-p-a-n->-
+-
+- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---w-h-i-t-e-/-1-0- -p-x---4- -p-y---2-"->-
+- - - - - - - - - - - - -{-u-s-e-r-.-e-m-a-i-l-}-
+- - - - - - - - - - -<-/-s-p-a-n->-
+- - - - - - - - -<-/-d-i-v->-
+- - - - - - -<-/-s-e-c-t-i-o-n->-
+-
+- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---5- -m-d-:-g-r-i-d---c-o-l-s---2- -l-g-:-g-r-i-d---c-o-l-s---3-"->-
+- - - - - - - - -{-c-a-r-d-s-.-m-a-p-(-(-c-a-r-d-)- -=->- -(-
+- - - - - - - - - - -<-L-i-n-k-
+- - - - - - - - - - - - -k-e-y-=-{-c-a-r-d-.-h-r-e-f-}-
+- - - - - - - - - - - - -h-r-e-f-=-{-c-a-r-d-.-h-r-e-f-}-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---m-d-"-
+- - - - - - - - - - ->-
+- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-
+- - - - - - - - - - - - - - -{-c-a-r-d-.-t-i-t-l-e-}-
+- - - - - - - - - - - - -<-/-h-2->-
+-
+- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
+- - - - - - - - - - - - - - -{-c-a-r-d-.-d-e-s-c-r-i-p-t-i-o-n-}-
+- - - - - - - - - - - - -<-/-p->-
+-
+- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---b-l-u-e---7-0-0-"->-O-p-e-n- ---&-g-t-;-/-p->-
+- - - - - - - - - - -<-/-L-i-n-k->-
+- - - - - - - - -)-)-}-
+- - - - - - -<-/-s-e-c-t-i-o-n->-
+- - - - -<-/-m-a-i-n->-
+- - -)-;-
+-}-

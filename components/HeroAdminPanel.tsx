@@ -1,605 +1,605 @@
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
-
-type HeroSlide = {
-  id: string;
-  badge?: string | null;
-  title?: string | null;
-  subtitle?: string | null;
-  primary_button_text?: string | null;
-  primary_button_href?: string | null;
-  secondary_button_text?: string | null;
-  secondary_button_href?: string | null;
-  media_type?: string | null;
-  media_url?: string | null;
-  overlay_opacity?: number | null;
-  display_order?: number | null;
-  is_active?: boolean | null;
-};
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (
-    profileError ||
-    !profile ||
-    !["admin", "manager"].includes(profile.role)
-  ) {
-    redirect("/dashboard");
-  }
-
-  return { user, profile };
-}
-
-function field(formData: FormData, key: string) {
-  return String(formData.get(key) ?? "").trim();
-}
-
-function getYouTubePreviewEmbedUrl(url?: string | null) {
-  if (!url) return null;
-
-  try {
-    const parsedUrl = new URL(url);
-    const host = parsedUrl.hostname.replace("www.", "");
-
-    let videoId: string | null = null;
-
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      if (parsedUrl.pathname === "/watch") {
-        videoId = parsedUrl.searchParams.get("v");
-      }
-
-      if (parsedUrl.pathname.startsWith("/shorts/")) {
-        videoId =
-          parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0] || null;
-      }
-
-      if (parsedUrl.pathname.startsWith("/embed/")) {
-        videoId =
-          parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || null;
-      }
-    }
-
-    if (host === "youtu.be") {
-      videoId = parsedUrl.pathname.replace("/", "").split("?")[0] || null;
-    }
-
-    return videoId
-      ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-async function uploadHeroMedia(file: File | null) {
-  if (!file || file.size === 0) return null;
-
-  const supabase = createAdminClient();
-
-  const ext = file.name.split(".").pop() || "bin";
-  const filePath = `${crypto.randomUUID()}.${ext}`;
-
-  const { error } = await supabase.storage
-    .from("home-hero-media")
-    .upload(filePath, file, {
-      contentType: file.type || "application/octet-stream",
-      upsert: false,
-    });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  const { data } = supabase.storage
-    .from("home-hero-media")
-    .getPublicUrl(filePath);
-
-  return data.publicUrl;
-}
-
-async function createHeroSlide(formData: FormData) {
-  "use server";
-
-  await requireAdminOrManager();
-
-  const supabase = createAdminClient();
-  const returnTo = field(formData, "return_to") || "/admin/hero";
-
-  const title = field(formData, "title");
-
-  if (!title) {
-    redirect(`${returnTo}?message=Title is required`);
-  }
-
-  const uploadedUrl = await uploadHeroMedia(
-    formData.get("media_file") as File | null
-  );
-
-  const manualUrl = field(formData, "media_url");
-  const mediaUrl = uploadedUrl || manualUrl || null;
-
-  const { error } = await supabase.from("home_hero_slides").insert({
-    badge: field(formData, "badge"),
-    title,
-    subtitle: field(formData, "subtitle"),
-    primary_button_text: field(formData, "primary_button_text"),
-    primary_button_href: field(formData, "primary_button_href"),
-    secondary_button_text: field(formData, "secondary_button_text"),
-    secondary_button_href: field(formData, "secondary_button_href"),
-    media_type: field(formData, "media_type") || "image",
-    media_url: mediaUrl,
-    overlay_opacity: Number(field(formData, "overlay_opacity") || 0.68),
-    display_order: Number(field(formData, "display_order") || 0),
-    is_active: formData.get("is_active") === "on",
-  });
-
-  if (error) {
-    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/admin/hero");
-  revalidatePath("/manager/hero");
-
-  redirect(`${returnTo}?message=Hero slide created`);
-}
-
-async function updateHeroSlide(formData: FormData) {
-  "use server";
-
-  await requireAdminOrManager();
-
-  const supabase = createAdminClient();
-  const returnTo = field(formData, "return_to") || "/admin/hero";
-
-  const id = field(formData, "id");
-  const title = field(formData, "title");
-
-  if (!id || !title) {
-    redirect(`${returnTo}?message=Missing slide ID or title`);
-  }
-
-  const currentMediaUrl = field(formData, "current_media_url");
-
-  const uploadedUrl = await uploadHeroMedia(
-    formData.get("media_file") as File | null
-  );
-
-  const manualUrl = field(formData, "media_url");
-  const finalMediaUrl = uploadedUrl || manualUrl || currentMediaUrl || null;
-
-  const { error } = await supabase
-    .from("home_hero_slides")
-    .update({
-      badge: field(formData, "badge"),
-      title,
-      subtitle: field(formData, "subtitle"),
-      primary_button_text: field(formData, "primary_button_text"),
-      primary_button_href: field(formData, "primary_button_href"),
-      secondary_button_text: field(formData, "secondary_button_text"),
-      secondary_button_href: field(formData, "secondary_button_href"),
-      media_type: field(formData, "media_type") || "image",
-      media_url: finalMediaUrl,
-      overlay_opacity: Number(field(formData, "overlay_opacity") || 0.68),
-      display_order: Number(field(formData, "display_order") || 0),
-      is_active: formData.get("is_active") === "on",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
-
-  if (error) {
-    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/admin/hero");
-  revalidatePath("/manager/hero");
-
-  redirect(`${returnTo}?message=Hero slide updated`);
-}
-
-async function deleteHeroSlide(formData: FormData) {
-  "use server";
-
-  await requireAdminOrManager();
-
-  const supabase = createAdminClient();
-  const returnTo = field(formData, "return_to") || "/admin/hero";
-  const id = field(formData, "id");
-
-  if (!id) {
-    redirect(`${returnTo}?message=Missing slide ID`);
-  }
-
-  const { error } = await supabase
-    .from("home_hero_slides")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    redirect(`${returnTo}?message=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/admin/hero");
-  revalidatePath("/manager/hero");
-
-  redirect(`${returnTo}?message=Hero slide deleted`);
-}
-
-export default async function HeroAdminPanel({
-  title = "Homepage Hero Slides",
-  returnTo = "/admin/hero",
-}: {
-  title?: string;
-  returnTo?: string;
-}) {
-  await requireAdminOrManager();
-
-  const supabase = createAdminClient();
-
-  const { data, error } = await supabase
-    .from("home_hero_slides")
-    .select("*")
-    .order("display_order", { ascending: true })
-    .order("created_at", { ascending: true });
-
-  const slides = (data ?? []) as HeroSlide[];
-
-  return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <div className="mb-8">
-        <p className="text-sm font-semibold text-slate-500">
-          Homepage Management
-        </p>
-
-        <h1 className="mt-2 text-3xl font-black text-slate-950">{title}</h1>
-
-        <p className="mt-2 text-slate-600">
-          Upload homepage background photos, videos, or paste YouTube links.
-          YouTube links will be embedded automatically.
-        </p>
-      </div>
-
-      {error ? (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error.message}
-        </div>
-      ) : null}
-
-      <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-black text-slate-900">
-          Add New Hero Slide
-        </h2>
-
-        <form
-          action={createHeroSlide}
-          encType="multipart/form-data"
-          className="mt-6 grid gap-4"
-        >
-          <input type="hidden" name="return_to" value={returnTo} />
-
-          <input
-            name="badge"
-            placeholder="Badge, e.g. New Workshop"
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <input
-            name="title"
-            required
-            placeholder="Hero title"
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <textarea
-            name="subtitle"
-            placeholder="Subtitle"
-            rows={3}
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <input
-              name="primary_button_text"
-              defaultValue="Join the Course"
-              placeholder="Primary button text"
-              className="rounded-xl border px-4 py-3"
-            />
-
-            <input
-              name="primary_button_href"
-              defaultValue="/courses"
-              placeholder="Primary button link"
-              className="rounded-xl border px-4 py-3"
-            />
-
-            <input
-              name="secondary_button_text"
-              defaultValue="Contact LexData"
-              placeholder="Secondary button text"
-              className="rounded-xl border px-4 py-3"
-            />
-
-            <input
-              name="secondary_button_href"
-              defaultValue="/contact"
-              placeholder="Secondary button link"
-              className="rounded-xl border px-4 py-3"
-            />
-          </div>
-
-          <select
-            name="media_type"
-            defaultValue="image"
-            className="rounded-xl border px-4 py-3"
-          >
-            <option value="image">Image background</option>
-            <option value="video">Video background / YouTube link</option>
-            <option value="recommended">System recommended background</option>
-          </select>
-
-          <input
-            name="media_file"
-            type="file"
-            accept="image/*,video/mp4,video/webm,video/quicktime"
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <input
-            name="media_url"
-            placeholder="Or paste image/video/YouTube URL"
-            className="rounded-xl border px-4 py-3"
-          />
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <input
-              name="overlay_opacity"
-              type="number"
-              step="0.05"
-              min="0"
-              max="1"
-              defaultValue="0.68"
-              placeholder="Overlay opacity"
-              className="rounded-xl border px-4 py-3"
-            />
-
-            <input
-              name="display_order"
-              type="number"
-              defaultValue="0"
-              placeholder="Display order"
-              className="rounded-xl border px-4 py-3"
-            />
-          </div>
-
-          <label className="flex items-center gap-2">
-            <input name="is_active" type="checkbox" defaultChecked />
-            <span>Show this slide</span>
-          </label>
-
-          <button
-            type="submit"
-            className="rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-          >
-            Add Slide
-          </button>
-        </form>
-      </section>
-
-      <section className="space-y-6">
-        {slides.length === 0 ? (
-          <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-            <h2 className="text-xl font-black text-slate-900">
-              No hero slides yet
-            </h2>
-
-            <p className="mt-2 text-slate-600">
-              Add one slide above. Active slides will appear on the homepage.
-            </p>
-          </div>
-        ) : null}
-
-        {slides.map((slide) => {
-          const youtubePreviewUrl = getYouTubePreviewEmbedUrl(slide.media_url);
-
-          return (
-            <div
-              key={slide.id}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              {slide.media_url ? (
-                <div className="mb-5 overflow-hidden rounded-2xl bg-slate-100">
-                  {slide.media_type === "video" && youtubePreviewUrl ? (
-                    <iframe
-                      src={youtubePreviewUrl}
-                      title={slide.title ?? "Hero video"}
-                      className="h-64 w-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    />
-                  ) : slide.media_type === "video" ? (
-                    <video
-                      src={slide.media_url}
-                      className="h-64 w-full object-cover"
-                      controls
-                    />
-                  ) : (
-                    <img
-                      src={slide.media_url}
-                      alt={slide.title ?? "Hero slide"}
-                      className="h-64 w-full object-cover"
-                    />
-                  )}
-                </div>
-              ) : (
-                <div className="mb-5 flex h-64 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 text-white">
-                  System recommended background
-                </div>
-              )}
-
-              <form
-                action={updateHeroSlide}
-                encType="multipart/form-data"
-                className="grid gap-4"
-              >
-                <input type="hidden" name="return_to" value={returnTo} />
-                <input type="hidden" name="id" value={slide.id} />
-
-                <input
-                  type="hidden"
-                  name="current_media_url"
-                  value={slide.media_url ?? ""}
-                />
-
-                <input
-                  name="badge"
-                  defaultValue={slide.badge ?? ""}
-                  placeholder="Badge"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="title"
-                  required
-                  defaultValue={slide.title ?? ""}
-                  placeholder="Hero title"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <textarea
-                  name="subtitle"
-                  defaultValue={slide.subtitle ?? ""}
-                  placeholder="Subtitle"
-                  rows={3}
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <input
-                    name="primary_button_text"
-                    defaultValue={slide.primary_button_text ?? ""}
-                    placeholder="Primary button text"
-                    className="rounded-xl border px-4 py-3"
-                  />
-
-                  <input
-                    name="primary_button_href"
-                    defaultValue={slide.primary_button_href ?? ""}
-                    placeholder="Primary button link"
-                    className="rounded-xl border px-4 py-3"
-                  />
-
-                  <input
-                    name="secondary_button_text"
-                    defaultValue={slide.secondary_button_text ?? ""}
-                    placeholder="Secondary button text"
-                    className="rounded-xl border px-4 py-3"
-                  />
-
-                  <input
-                    name="secondary_button_href"
-                    defaultValue={slide.secondary_button_href ?? ""}
-                    placeholder="Secondary button link"
-                    className="rounded-xl border px-4 py-3"
-                  />
-                </div>
-
-                <select
-                  name="media_type"
-                  defaultValue={slide.media_type ?? "image"}
-                  className="rounded-xl border px-4 py-3"
-                >
-                  <option value="image">Image background</option>
-                  <option value="video">Video background / YouTube link</option>
-                  <option value="recommended">System recommended background</option>
-                </select>
-
-                <input
-                  name="media_file"
-                  type="file"
-                  accept="image/*,video/mp4,video/webm,video/quicktime"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <input
-                  name="media_url"
-                  defaultValue={slide.media_url ?? ""}
-                  placeholder="Or paste image/video/YouTube URL"
-                  className="rounded-xl border px-4 py-3"
-                />
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <input
-                    name="overlay_opacity"
-                    type="number"
-                    step="0.05"
-                    min="0"
-                    max="1"
-                    defaultValue={slide.overlay_opacity ?? 0.68}
-                    placeholder="Overlay opacity"
-                    className="rounded-xl border px-4 py-3"
-                  />
-
-                  <input
-                    name="display_order"
-                    type="number"
-                    defaultValue={slide.display_order ?? 0}
-                    placeholder="Display order"
-                    className="rounded-xl border px-4 py-3"
-                  />
-                </div>
-
-                <label className="flex items-center gap-2">
-                  <input
-                    name="is_active"
-                    type="checkbox"
-                    defaultChecked={Boolean(slide.is_active)}
-                  />
-                  <span>Show this slide</span>
-                </label>
-
-                <button
-                  type="submit"
-                  className="rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
-                >
-                  Update Slide
-                </button>
-              </form>
-
-              <form action={deleteHeroSlide} className="mt-3">
-                <input type="hidden" name="return_to" value={returnTo} />
-                <input type="hidden" name="id" value={slide.id} />
-
-                <button
-                  type="submit"
-                  className="rounded-xl border border-red-200 px-5 py-3 font-bold text-red-600 hover:bg-red-50"
-                >
-                  Delete Slide
-                </button>
-              </form>
-            </div>
-          );
-        })}
-      </section>
-    </main>
-  );
-}
+-i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-
+-t-y-p-e- -H-e-r-o-S-l-i-d-e- -=- -{-
+- - -i-d-:- -s-t-r-i-n-g-;-
+- - -b-a-d-g-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -t-i-t-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -s-u-b-t-i-t-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -m-e-d-i-a-_-t-y-p-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -m-e-d-i-a-_-u-r-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-?-:- -n-u-m-b-e-r- -|- -n-u-l-l-;-
+- - -d-i-s-p-l-a-y-_-o-r-d-e-r-?-:- -n-u-m-b-e-r- -|- -n-u-l-l-;-
+- - -i-s-_-a-c-t-i-v-e-?-:- -b-o-o-l-e-a-n- -|- -n-u-l-l-;-
+-}-;-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)- -{-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{-
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
+- - - - -e-r-r-o-r-:- -u-s-e-r-E-r-r-o-r-,-
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+-
+- - -i-f- -(-u-s-e-r-E-r-r-o-r- -|-|- -!-u-s-e-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e-,- -e-r-r-o-r-:- -p-r-o-f-i-l-e-E-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-"-)-
+- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
+- - - - -.-s-i-n-g-l-e-(-)-;-
+-
+- - -i-f- -(-
+- - - - -p-r-o-f-i-l-e-E-r-r-o-r- -|-|-
+- - - - -!-p-r-o-f-i-l-e- -|-|-
+- - - - -!-[-"-a-d-m-i-n-"-,- -"-m-a-n-a-g-e-r-"-]-.-i-n-c-l-u-d-e-s-(-p-r-o-f-i-l-e-.-r-o-l-e-)-
+- - -)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -{- -u-s-e-r-,- -p-r-o-f-i-l-e- -}-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
+- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -g-e-t-Y-o-u-T-u-b-e-P-r-e-v-i-e-w-E-m-b-e-d-U-r-l-(-u-r-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-)- -{-
+- - -i-f- -(-!-u-r-l-)- -r-e-t-u-r-n- -n-u-l-l-;-
+-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -p-a-r-s-e-d-U-r-l- -=- -n-e-w- -U-R-L-(-u-r-l-)-;-
+- - - - -c-o-n-s-t- -h-o-s-t- -=- -p-a-r-s-e-d-U-r-l-.-h-o-s-t-n-a-m-e-.-r-e-p-l-a-c-e-(-"-w-w-w-.-"-,- -"-"-)-;-
+-
+- - - - -l-e-t- -v-i-d-e-o-I-d-:- -s-t-r-i-n-g- -|- -n-u-l-l- -=- -n-u-l-l-;-
+-
+- - - - -i-f- -(-h-o-s-t- -=-=-=- -"-y-o-u-t-u-b-e-.-c-o-m-"- -|-|- -h-o-s-t- -=-=-=- -"-m-.-y-o-u-t-u-b-e-.-c-o-m-"-)- -{-
+- - - - - - -i-f- -(-p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e- -=-=-=- -"-/-w-a-t-c-h-"-)- -{-
+- - - - - - - - -v-i-d-e-o-I-d- -=- -p-a-r-s-e-d-U-r-l-.-s-e-a-r-c-h-P-a-r-a-m-s-.-g-e-t-(-"-v-"-)-;-
+- - - - - - -}-
+-
+- - - - - - -i-f- -(-p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e-.-s-t-a-r-t-s-W-i-t-h-(-"-/-s-h-o-r-t-s-/-"-)-)- -{-
+- - - - - - - - -v-i-d-e-o-I-d- -=-
+- - - - - - - - - - -p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e-.-s-p-l-i-t-(-"-/-s-h-o-r-t-s-/-"-)-[-1-]-?-.-s-p-l-i-t-(-"-/-"-)-[-0-]- -|-|- -n-u-l-l-;-
+- - - - - - -}-
+-
+- - - - - - -i-f- -(-p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e-.-s-t-a-r-t-s-W-i-t-h-(-"-/-e-m-b-e-d-/-"-)-)- -{-
+- - - - - - - - -v-i-d-e-o-I-d- -=-
+- - - - - - - - - - -p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e-.-s-p-l-i-t-(-"-/-e-m-b-e-d-/-"-)-[-1-]-?-.-s-p-l-i-t-(-"-/-"-)-[-0-]- -|-|- -n-u-l-l-;-
+- - - - - - -}-
+- - - - -}-
+-
+- - - - -i-f- -(-h-o-s-t- -=-=-=- -"-y-o-u-t-u-.-b-e-"-)- -{-
+- - - - - - -v-i-d-e-o-I-d- -=- -p-a-r-s-e-d-U-r-l-.-p-a-t-h-n-a-m-e-.-r-e-p-l-a-c-e-(-"-/-"-,- -"-"-)-.-s-p-l-i-t-(-"-?-"-)-[-0-]- -|-|- -n-u-l-l-;-
+- - - - -}-
+-
+- - - - -r-e-t-u-r-n- -v-i-d-e-o-I-d-
+- - - - - - -?- -`-h-t-t-p-s-:-/-/-w-w-w-.-y-o-u-t-u-b-e-.-c-o-m-/-e-m-b-e-d-/-$-{-v-i-d-e-o-I-d-}-?-r-e-l-=-0-&-m-o-d-e-s-t-b-r-a-n-d-i-n-g-=-1-`-
+- - - - - - -:- -n-u-l-l-;-
+- - -}- -c-a-t-c-h- -{-
+- - - - -r-e-t-u-r-n- -n-u-l-l-;-
+- - -}-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-l-o-a-d-H-e-r-o-M-e-d-i-a-(-f-i-l-e-:- -F-i-l-e- -|- -n-u-l-l-)- -{-
+- - -i-f- -(-!-f-i-l-e- -|-|- -f-i-l-e-.-s-i-z-e- -=-=-=- -0-)- -r-e-t-u-r-n- -n-u-l-l-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -e-x-t- -=- -f-i-l-e-.-n-a-m-e-.-s-p-l-i-t-(-"-.-"-)-.-p-o-p-(-)- -|-|- -"-b-i-n-"-;-
+- - -c-o-n-s-t- -f-i-l-e-P-a-t-h- -=- -`-$-{-c-r-y-p-t-o-.-r-a-n-d-o-m-U-U-I-D-(-)-}-.-$-{-e-x-t-}-`-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-s-t-o-r-a-g-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e---h-e-r-o---m-e-d-i-a-"-)-
+- - - - -.-u-p-l-o-a-d-(-f-i-l-e-P-a-t-h-,- -f-i-l-e-,- -{-
+- - - - - - -c-o-n-t-e-n-t-T-y-p-e-:- -f-i-l-e-.-t-y-p-e- -|-|- -"-a-p-p-l-i-c-a-t-i-o-n-/-o-c-t-e-t---s-t-r-e-a-m-"-,-
+- - - - - - -u-p-s-e-r-t-:- -f-a-l-s-e-,-
+- - - - -}-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a- -}- -=- -s-u-p-a-b-a-s-e-.-s-t-o-r-a-g-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e---h-e-r-o---m-e-d-i-a-"-)-
+- - - - -.-g-e-t-P-u-b-l-i-c-U-r-l-(-f-i-l-e-P-a-t-h-)-;-
+-
+- - -r-e-t-u-r-n- -d-a-t-a-.-p-u-b-l-i-c-U-r-l-;-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -c-r-e-a-t-e-H-e-r-o-S-l-i-d-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -r-e-t-u-r-n-T-o- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-r-e-t-u-r-n-_-t-o-"-)- -|-|- -"-/-a-d-m-i-n-/-h-e-r-o-"-;-
+-
+- - -c-o-n-s-t- -t-i-t-l-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-t-i-t-l-e-"-)-;-
+-
+- - -i-f- -(-!-t-i-t-l-e-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-T-i-t-l-e- -i-s- -r-e-q-u-i-r-e-d-`-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -u-p-l-o-a-d-e-d-U-r-l- -=- -a-w-a-i-t- -u-p-l-o-a-d-H-e-r-o-M-e-d-i-a-(-
+- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-m-e-d-i-a-_-f-i-l-e-"-)- -a-s- -F-i-l-e- -|- -n-u-l-l-
+- - -)-;-
+-
+- - -c-o-n-s-t- -m-a-n-u-a-l-U-r-l- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-u-r-l-"-)-;-
+- - -c-o-n-s-t- -m-e-d-i-a-U-r-l- -=- -u-p-l-o-a-d-e-d-U-r-l- -|-|- -m-a-n-u-a-l-U-r-l- -|-|- -n-u-l-l-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-f-r-o-m-(-"-h-o-m-e-_-h-e-r-o-_-s-l-i-d-e-s-"-)-.-i-n-s-e-r-t-(-{-
+- - - - -b-a-d-g-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-a-d-g-e-"-)-,-
+- - - - -t-i-t-l-e-,-
+- - - - -s-u-b-t-i-t-l-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-u-b-t-i-t-l-e-"-)-,-
+- - - - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-)-,-
+- - - - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
+- - - - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-)-,-
+- - - - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
+- - - - -m-e-d-i-a-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-t-y-p-e-"-)- -|-|- -"-i-m-a-g-e-"-,-
+- - - - -m-e-d-i-a-_-u-r-l-:- -m-e-d-i-a-U-r-l-,-
+- - - - -o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-:- -N-u-m-b-e-r-(-f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-"-)- -|-|- -0-.-6-8-)-,-
+- - - - -d-i-s-p-l-a-y-_-o-r-d-e-r-:- -N-u-m-b-e-r-(-f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-)- -|-|- -0-)-,-
+- - - - -i-s-_-a-c-t-i-v-e-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-a-c-t-i-v-e-"-)- -=-=-=- -"-o-n-"-,-
+- - -}-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-h-e-r-o-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-h-e-r-o-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-H-e-r-o- -s-l-i-d-e- -c-r-e-a-t-e-d-`-)-;-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-H-e-r-o-S-l-i-d-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -r-e-t-u-r-n-T-o- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-r-e-t-u-r-n-_-t-o-"-)- -|-|- -"-/-a-d-m-i-n-/-h-e-r-o-"-;-
+-
+- - -c-o-n-s-t- -i-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
+- - -c-o-n-s-t- -t-i-t-l-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-t-i-t-l-e-"-)-;-
+-
+- - -i-f- -(-!-i-d- -|-|- -!-t-i-t-l-e-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -s-l-i-d-e- -I-D- -o-r- -t-i-t-l-e-`-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -c-u-r-r-e-n-t-M-e-d-i-a-U-r-l- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-c-u-r-r-e-n-t-_-m-e-d-i-a-_-u-r-l-"-)-;-
+-
+- - -c-o-n-s-t- -u-p-l-o-a-d-e-d-U-r-l- -=- -a-w-a-i-t- -u-p-l-o-a-d-H-e-r-o-M-e-d-i-a-(-
+- - - - -f-o-r-m-D-a-t-a-.-g-e-t-(-"-m-e-d-i-a-_-f-i-l-e-"-)- -a-s- -F-i-l-e- -|- -n-u-l-l-
+- - -)-;-
+-
+- - -c-o-n-s-t- -m-a-n-u-a-l-U-r-l- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-u-r-l-"-)-;-
+- - -c-o-n-s-t- -f-i-n-a-l-M-e-d-i-a-U-r-l- -=- -u-p-l-o-a-d-e-d-U-r-l- -|-|- -m-a-n-u-a-l-U-r-l- -|-|- -c-u-r-r-e-n-t-M-e-d-i-a-U-r-l- -|-|- -n-u-l-l-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e-_-h-e-r-o-_-s-l-i-d-e-s-"-)-
+- - - - -.-u-p-d-a-t-e-(-{-
+- - - - - - -b-a-d-g-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-b-a-d-g-e-"-)-,-
+- - - - - - -t-i-t-l-e-,-
+- - - - - - -s-u-b-t-i-t-l-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-u-b-t-i-t-l-e-"-)-,-
+- - - - - - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-)-,-
+- - - - - - -p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
+- - - - - - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-)-,-
+- - - - - - -s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-)-,-
+- - - - - - -m-e-d-i-a-_-t-y-p-e-:- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-m-e-d-i-a-_-t-y-p-e-"-)- -|-|- -"-i-m-a-g-e-"-,-
+- - - - - - -m-e-d-i-a-_-u-r-l-:- -f-i-n-a-l-M-e-d-i-a-U-r-l-,-
+- - - - - - -o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-:- -N-u-m-b-e-r-(-f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-"-)- -|-|- -0-.-6-8-)-,-
+- - - - - - -d-i-s-p-l-a-y-_-o-r-d-e-r-:- -N-u-m-b-e-r-(-f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-)- -|-|- -0-)-,-
+- - - - - - -i-s-_-a-c-t-i-v-e-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-a-c-t-i-v-e-"-)- -=-=-=- -"-o-n-"-,-
+- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - -}-)-
+- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-h-e-r-o-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-h-e-r-o-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-H-e-r-o- -s-l-i-d-e- -u-p-d-a-t-e-d-`-)-;-
+-}-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -d-e-l-e-t-e-H-e-r-o-S-l-i-d-e-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -r-e-t-u-r-n-T-o- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-r-e-t-u-r-n-_-t-o-"-)- -|-|- -"-/-a-d-m-i-n-/-h-e-r-o-"-;-
+- - -c-o-n-s-t- -i-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
+-
+- - -i-f- -(-!-i-d-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -s-l-i-d-e- -I-D-`-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e-_-h-e-r-o-_-s-l-i-d-e-s-"-)-
+- - - - -.-d-e-l-e-t-e-(-)-
+- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-h-e-r-o-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-h-e-r-o-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-`-$-{-r-e-t-u-r-n-T-o-}-?-m-e-s-s-a-g-e-=-H-e-r-o- -s-l-i-d-e- -d-e-l-e-t-e-d-`-)-;-
+-}-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -H-e-r-o-A-d-m-i-n-P-a-n-e-l-(-{-
+- - -t-i-t-l-e- -=- -"-H-o-m-e-p-a-g-e- -H-e-r-o- -S-l-i-d-e-s-"-,-
+- - -r-e-t-u-r-n-T-o- -=- -"-/-a-d-m-i-n-/-h-e-r-o-"-,-
+-}-:- -{-
+- - -t-i-t-l-e-?-:- -s-t-r-i-n-g-;-
+- - -r-e-t-u-r-n-T-o-?-:- -s-t-r-i-n-g-;-
+-}-)- -{-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-,- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e-_-h-e-r-o-_-s-l-i-d-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-*-"-)-
+- - - - -.-o-r-d-e-r-(-"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -t-r-u-e- -}-)-
+- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -t-r-u-e- -}-)-;-
+-
+- - -c-o-n-s-t- -s-l-i-d-e-s- -=- -(-d-a-t-a- -?-?- -[-]-)- -a-s- -H-e-r-o-S-l-i-d-e-[-]-;-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-m-a-i-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-0-"->-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---8-"->-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---5-0-0-"->-
+- - - - - - - - - - -H-o-m-e-p-a-g-e- -M-a-n-a-g-e-m-e-n-t-
+- - - - - - - - -<-/-p->-
+-
+- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---3-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->-{-t-i-t-l-e-}-<-/-h-1->-
+-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
+- - - - - - - - - - -U-p-l-o-a-d- -h-o-m-e-p-a-g-e- -b-a-c-k-g-r-o-u-n-d- -p-h-o-t-o-s-,- -v-i-d-e-o-s-,- -o-r- -p-a-s-t-e- -Y-o-u-T-u-b-e- -l-i-n-k-s-.-
+- - - - - - - - - - -Y-o-u-T-u-b-e- -l-i-n-k-s- -w-i-l-l- -b-e- -e-m-b-e-d-d-e-d- -a-u-t-o-m-a-t-i-c-a-l-l-y-.-
+- - - - - - - - -<-/-p->-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -{-e-r-r-o-r- -?- -(-
+- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---6- -r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---r-e-d---2-0-0- -b-g---r-e-d---5-0- -p-x---4- -p-y---3- -t-e-x-t---s-m- -t-e-x-t---r-e-d---7-0-0-"->-
+- - - - - - - - - - -{-e-r-r-o-r-.-m-e-s-s-a-g-e-}-
+- - - - - - - - -<-/-d-i-v->-
+- - - - - - -)- -:- -n-u-l-l-}-
+-
+- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-b---1-0- -r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m-"->-
+- - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-0-0-"->-
+- - - - - - - - - - -A-d-d- -N-e-w- -H-e-r-o- -S-l-i-d-e-
+- - - - - - - - -<-/-h-2->-
+-
+- - - - - - - - -<-f-o-r-m-
+- - - - - - - - - - -a-c-t-i-o-n-=-{-c-r-e-a-t-e-H-e-r-o-S-l-i-d-e-}-
+- - - - - - - - - - -e-n-c-T-y-p-e-=-"-m-u-l-t-i-p-a-r-t-/-f-o-r-m---d-a-t-a-"-
+- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -g-r-i-d- -g-a-p---4-"-
+- - - - - - - - ->-
+- - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-r-e-t-u-r-n-_-t-o-"- -v-a-l-u-e-=-{-r-e-t-u-r-n-T-o-}- -/->-
+-
+- - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - -n-a-m-e-=-"-b-a-d-g-e-"-
+- - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-B-a-d-g-e-,- -e-.-g-.- -N-e-w- -W-o-r-k-s-h-o-p-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - -/->-
+-
+- - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - -n-a-m-e-=-"-t-i-t-l-e-"-
+- - - - - - - - - - - - -r-e-q-u-i-r-e-d-
+- - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-H-e-r-o- -t-i-t-l-e-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - -/->-
+-
+- - - - - - - - - - -<-t-e-x-t-a-r-e-a-
+- - - - - - - - - - - - -n-a-m-e-=-"-s-u-b-t-i-t-l-e-"-
+- - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-u-b-t-i-t-l-e-"-
+- - - - - - - - - - - - -r-o-w-s-=-{-3-}-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - -/->-
+-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4- -m-d-:-g-r-i-d---c-o-l-s---2-"->-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-J-o-i-n- -t-h-e- -C-o-u-r-s-e-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-P-r-i-m-a-r-y- -b-u-t-t-o-n- -t-e-x-t-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-/-c-o-u-r-s-e-s-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-P-r-i-m-a-r-y- -b-u-t-t-o-n- -l-i-n-k-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-C-o-n-t-a-c-t- -L-e-x-D-a-t-a-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-e-c-o-n-d-a-r-y- -b-u-t-t-o-n- -t-e-x-t-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-/-c-o-n-t-a-c-t-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-e-c-o-n-d-a-r-y- -b-u-t-t-o-n- -l-i-n-k-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+- - - - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - - - -<-s-e-l-e-c-t-
+- - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-t-y-p-e-"-
+- - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-i-m-a-g-e-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - ->-
+- - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-i-m-a-g-e-"->-I-m-a-g-e- -b-a-c-k-g-r-o-u-n-d-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-v-i-d-e-o-"->-V-i-d-e-o- -b-a-c-k-g-r-o-u-n-d- -/- -Y-o-u-T-u-b-e- -l-i-n-k-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-r-e-c-o-m-m-e-n-d-e-d-"->-S-y-s-t-e-m- -r-e-c-o-m-m-e-n-d-e-d- -b-a-c-k-g-r-o-u-n-d-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - -<-/-s-e-l-e-c-t->-
+-
+- - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-f-i-l-e-"-
+- - - - - - - - - - - - -t-y-p-e-=-"-f-i-l-e-"-
+- - - - - - - - - - - - -a-c-c-e-p-t-=-"-i-m-a-g-e-/-*-,-v-i-d-e-o-/-m-p-4-,-v-i-d-e-o-/-w-e-b-m-,-v-i-d-e-o-/-q-u-i-c-k-t-i-m-e-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - -/->-
+-
+- - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-u-r-l-"-
+- - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-O-r- -p-a-s-t-e- -i-m-a-g-e-/-v-i-d-e-o-/-Y-o-u-T-u-b-e- -U-R-L-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - -/->-
+-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4- -m-d-:-g-r-i-d---c-o-l-s---2-"->-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-"-
+- - - - - - - - - - - - - - -t-y-p-e-=-"-n-u-m-b-e-r-"-
+- - - - - - - - - - - - - - -s-t-e-p-=-"-0-.-0-5-"-
+- - - - - - - - - - - - - - -m-i-n-=-"-0-"-
+- - - - - - - - - - - - - - -m-a-x-=-"-1-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-0-.-6-8-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-O-v-e-r-l-a-y- -o-p-a-c-i-t-y-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - -n-a-m-e-=-"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-
+- - - - - - - - - - - - - - -t-y-p-e-=-"-n-u-m-b-e-r-"-
+- - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-"-0-"-
+- - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-D-i-s-p-l-a-y- -o-r-d-e-r-"-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - -/->-
+- - - - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -g-a-p---2-"->-
+- - - - - - - - - - - - -<-i-n-p-u-t- -n-a-m-e-=-"-i-s-_-a-c-t-i-v-e-"- -t-y-p-e-=-"-c-h-e-c-k-b-o-x-"- -d-e-f-a-u-l-t-C-h-e-c-k-e-d- -/->-
+- - - - - - - - - - - - -<-s-p-a-n->-S-h-o-w- -t-h-i-s- -s-l-i-d-e-<-/-s-p-a-n->-
+- - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - -<-b-u-t-t-o-n-
+- - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---5- -p-y---3- -f-o-n-t---b-o-l-d- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"-
+- - - - - - - - - - ->-
+- - - - - - - - - - - - -A-d-d- -S-l-i-d-e-
+- - - - - - - - - - -<-/-b-u-t-t-o-n->-
+- - - - - - - - -<-/-f-o-r-m->-
+- - - - - - -<-/-s-e-c-t-i-o-n->-
+-
+- - - - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-s-p-a-c-e---y---6-"->-
+- - - - - - - - -{-s-l-i-d-e-s-.-l-e-n-g-t-h- -=-=-=- -0- -?- -(-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---1-0- -t-e-x-t---c-e-n-t-e-r- -s-h-a-d-o-w---s-m-"->-
+- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-0-0-"->-
+- - - - - - - - - - - - - - -N-o- -h-e-r-o- -s-l-i-d-e-s- -y-e-t-
+- - - - - - - - - - - - -<-/-h-2->-
+-
+- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
+- - - - - - - - - - - - - - -A-d-d- -o-n-e- -s-l-i-d-e- -a-b-o-v-e-.- -A-c-t-i-v-e- -s-l-i-d-e-s- -w-i-l-l- -a-p-p-e-a-r- -o-n- -t-h-e- -h-o-m-e-p-a-g-e-.-
+- - - - - - - - - - - - -<-/-p->-
+- - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - -)- -:- -n-u-l-l-}-
+-
+- - - - - - - - -{-s-l-i-d-e-s-.-m-a-p-(-(-s-l-i-d-e-)- -=->- -{-
+- - - - - - - - - - -c-o-n-s-t- -y-o-u-t-u-b-e-P-r-e-v-i-e-w-U-r-l- -=- -g-e-t-Y-o-u-T-u-b-e-P-r-e-v-i-e-w-E-m-b-e-d-U-r-l-(-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l-)-;-
+-
+- - - - - - - - - - -r-e-t-u-r-n- -(-
+- - - - - - - - - - - - -<-d-i-v-
+- - - - - - - - - - - - - - -k-e-y-=-{-s-l-i-d-e-.-i-d-}-
+- - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---2-0-0- -b-g---w-h-i-t-e- -p---6- -s-h-a-d-o-w---s-m-"-
+- - - - - - - - - - - - ->-
+- - - - - - - - - - - - - - -{-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l- -?- -(-
+- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---5- -o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---1-0-0-"->-
+- - - - - - - - - - - - - - - - - - -{-s-l-i-d-e-.-m-e-d-i-a-_-t-y-p-e- -=-=-=- -"-v-i-d-e-o-"- -&-&- -y-o-u-t-u-b-e-P-r-e-v-i-e-w-U-r-l- -?- -(-
+- - - - - - - - - - - - - - - - - - - - -<-i-f-r-a-m-e-
+- - - - - - - - - - - - - - - - - - - - - - -s-r-c-=-{-y-o-u-t-u-b-e-P-r-e-v-i-e-w-U-r-l-}-
+- - - - - - - - - - - - - - - - - - - - - - -t-i-t-l-e-=-{-s-l-i-d-e-.-t-i-t-l-e- -?-?- -"-H-e-r-o- -v-i-d-e-o-"-}-
+- - - - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---6-4- -w---f-u-l-l-"-
+- - - - - - - - - - - - - - - - - - - - - - -a-l-l-o-w-=-"-a-c-c-e-l-e-r-o-m-e-t-e-r-;- -a-u-t-o-p-l-a-y-;- -c-l-i-p-b-o-a-r-d---w-r-i-t-e-;- -e-n-c-r-y-p-t-e-d---m-e-d-i-a-;- -g-y-r-o-s-c-o-p-e-;- -p-i-c-t-u-r-e---i-n---p-i-c-t-u-r-e-;- -w-e-b---s-h-a-r-e-"-
+- - - - - - - - - - - - - - - - - - - - - - -a-l-l-o-w-F-u-l-l-S-c-r-e-e-n-
+- - - - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - - - -)- -:- -s-l-i-d-e-.-m-e-d-i-a-_-t-y-p-e- -=-=-=- -"-v-i-d-e-o-"- -?- -(-
+- - - - - - - - - - - - - - - - - - - - -<-v-i-d-e-o-
+- - - - - - - - - - - - - - - - - - - - - - -s-r-c-=-{-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l-}-
+- - - - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---6-4- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"-
+- - - - - - - - - - - - - - - - - - - - - - -c-o-n-t-r-o-l-s-
+- - - - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - - - -)- -:- -(-
+- - - - - - - - - - - - - - - - - - - - -<-i-m-g-
+- - - - - - - - - - - - - - - - - - - - - - -s-r-c-=-{-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l-}-
+- - - - - - - - - - - - - - - - - - - - - - -a-l-t-=-{-s-l-i-d-e-.-t-i-t-l-e- -?-?- -"-H-e-r-o- -s-l-i-d-e-"-}-
+- - - - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---6-4- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r-"-
+- - - - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - - - -)-}-
+- - - - - - - - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - - - - - - - -)- -:- -(-
+- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---5- -f-l-e-x- -h---6-4- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -r-o-u-n-d-e-d---2-x-l- -b-g---g-r-a-d-i-e-n-t---t-o---b-r- -f-r-o-m---s-l-a-t-e---9-5-0- -v-i-a---b-l-u-e---9-5-0- -t-o---b-l-u-e---8-0-0- -t-e-x-t---w-h-i-t-e-"->-
+- - - - - - - - - - - - - - - - - - -S-y-s-t-e-m- -r-e-c-o-m-m-e-n-d-e-d- -b-a-c-k-g-r-o-u-n-d-
+- - - - - - - - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - - - - - - - -)-}-
+-
+- - - - - - - - - - - - - - -<-f-o-r-m-
+- - - - - - - - - - - - - - - - -a-c-t-i-o-n-=-{-u-p-d-a-t-e-H-e-r-o-S-l-i-d-e-}-
+- - - - - - - - - - - - - - - - -e-n-c-T-y-p-e-=-"-m-u-l-t-i-p-a-r-t-/-f-o-r-m---d-a-t-a-"-
+- - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4-"-
+- - - - - - - - - - - - - - ->-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-r-e-t-u-r-n-_-t-o-"- -v-a-l-u-e-=-{-r-e-t-u-r-n-T-o-}- -/->-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-i-d-"- -v-a-l-u-e-=-{-s-l-i-d-e-.-i-d-}- -/->-
+-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-h-i-d-d-e-n-"-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-c-u-r-r-e-n-t-_-m-e-d-i-a-_-u-r-l-"-
+- - - - - - - - - - - - - - - - - - -v-a-l-u-e-=-{-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-b-a-d-g-e-"-
+- - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-b-a-d-g-e- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-B-a-d-g-e-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-t-i-t-l-e-"-
+- - - - - - - - - - - - - - - - - - -r-e-q-u-i-r-e-d-
+- - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-t-i-t-l-e- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-H-e-r-o- -t-i-t-l-e-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-t-e-x-t-a-r-e-a-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-s-u-b-t-i-t-l-e-"-
+- - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-s-u-b-t-i-t-l-e- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-u-b-t-i-t-l-e-"-
+- - - - - - - - - - - - - - - - - - -r-o-w-s-=-{-3-}-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4- -m-d-:-g-r-i-d---c-o-l-s---2-"->-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-P-r-i-m-a-r-y- -b-u-t-t-o-n- -t-e-x-t-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-p-r-i-m-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-P-r-i-m-a-r-y- -b-u-t-t-o-n- -l-i-n-k-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-t-e-x-t- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-e-c-o-n-d-a-r-y- -b-u-t-t-o-n- -t-e-x-t-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-s-e-c-o-n-d-a-r-y-_-b-u-t-t-o-n-_-h-r-e-f- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-S-e-c-o-n-d-a-r-y- -b-u-t-t-o-n- -l-i-n-k-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - - - - - - - - - -<-s-e-l-e-c-t-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-t-y-p-e-"-
+- - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-m-e-d-i-a-_-t-y-p-e- -?-?- -"-i-m-a-g-e-"-}-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - ->-
+- - - - - - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-i-m-a-g-e-"->-I-m-a-g-e- -b-a-c-k-g-r-o-u-n-d-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-v-i-d-e-o-"->-V-i-d-e-o- -b-a-c-k-g-r-o-u-n-d- -/- -Y-o-u-T-u-b-e- -l-i-n-k-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - - - - - - - - - -<-o-p-t-i-o-n- -v-a-l-u-e-=-"-r-e-c-o-m-m-e-n-d-e-d-"->-S-y-s-t-e-m- -r-e-c-o-m-m-e-n-d-e-d- -b-a-c-k-g-r-o-u-n-d-<-/-o-p-t-i-o-n->-
+- - - - - - - - - - - - - - - - -<-/-s-e-l-e-c-t->-
+-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-f-i-l-e-"-
+- - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-f-i-l-e-"-
+- - - - - - - - - - - - - - - - - - -a-c-c-e-p-t-=-"-i-m-a-g-e-/-*-,-v-i-d-e-o-/-m-p-4-,-v-i-d-e-o-/-w-e-b-m-,-v-i-d-e-o-/-q-u-i-c-k-t-i-m-e-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-m-e-d-i-a-_-u-r-l-"-
+- - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-m-e-d-i-a-_-u-r-l- -?-?- -"-"-}-
+- - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-O-r- -p-a-s-t-e- -i-m-a-g-e-/-v-i-d-e-o-/-Y-o-u-T-u-b-e- -U-R-L-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-g-r-i-d- -g-a-p---4- -m-d-:-g-r-i-d---c-o-l-s---2-"->-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-o-v-e-r-l-a-y-_-o-p-a-c-i-t-y-"-
+- - - - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-n-u-m-b-e-r-"-
+- - - - - - - - - - - - - - - - - - - - -s-t-e-p-=-"-0-.-0-5-"-
+- - - - - - - - - - - - - - - - - - - - -m-i-n-=-"-0-"-
+- - - - - - - - - - - - - - - - - - - - -m-a-x-=-"-1-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-o-v-e-r-l-a-y-_-o-p-a-c-i-t-y- -?-?- -0-.-6-8-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-O-v-e-r-l-a-y- -o-p-a-c-i-t-y-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-
+- - - - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-n-u-m-b-e-r-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-V-a-l-u-e-=-{-s-l-i-d-e-.-d-i-s-p-l-a-y-_-o-r-d-e-r- -?-?- -0-}-
+- - - - - - - - - - - - - - - - - - - - -p-l-a-c-e-h-o-l-d-e-r-=-"-D-i-s-p-l-a-y- -o-r-d-e-r-"-
+- - - - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -p-x---4- -p-y---3-"-
+- - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - - - - - - - - - -<-l-a-b-e-l- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -i-t-e-m-s---c-e-n-t-e-r- -g-a-p---2-"->-
+- - - - - - - - - - - - - - - - - - -<-i-n-p-u-t-
+- - - - - - - - - - - - - - - - - - - - -n-a-m-e-=-"-i-s-_-a-c-t-i-v-e-"-
+- - - - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-c-h-e-c-k-b-o-x-"-
+- - - - - - - - - - - - - - - - - - - - -d-e-f-a-u-l-t-C-h-e-c-k-e-d-=-{-B-o-o-l-e-a-n-(-s-l-i-d-e-.-i-s-_-a-c-t-i-v-e-)-}-
+- - - - - - - - - - - - - - - - - - -/->-
+- - - - - - - - - - - - - - - - - - -<-s-p-a-n->-S-h-o-w- -t-h-i-s- -s-l-i-d-e-<-/-s-p-a-n->-
+- - - - - - - - - - - - - - - - -<-/-l-a-b-e-l->-
+-
+- - - - - - - - - - - - - - - - -<-b-u-t-t-o-n-
+- - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---5- -p-y---3- -f-o-n-t---b-o-l-d- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"-
+- - - - - - - - - - - - - - - - ->-
+- - - - - - - - - - - - - - - - - - -U-p-d-a-t-e- -S-l-i-d-e-
+- - - - - - - - - - - - - - - - -<-/-b-u-t-t-o-n->-
+- - - - - - - - - - - - - - -<-/-f-o-r-m->-
+-
+- - - - - - - - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-d-e-l-e-t-e-H-e-r-o-S-l-i-d-e-}- -c-l-a-s-s-N-a-m-e-=-"-m-t---3-"->-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-r-e-t-u-r-n-_-t-o-"- -v-a-l-u-e-=-{-r-e-t-u-r-n-T-o-}- -/->-
+- - - - - - - - - - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-i-d-"- -v-a-l-u-e-=-{-s-l-i-d-e-.-i-d-}- -/->-
+-
+- - - - - - - - - - - - - - - - -<-b-u-t-t-o-n-
+- - - - - - - - - - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"-
+- - - - - - - - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---r-e-d---2-0-0- -p-x---5- -p-y---3- -f-o-n-t---b-o-l-d- -t-e-x-t---r-e-d---6-0-0- -h-o-v-e-r-:-b-g---r-e-d---5-0-"-
+- - - - - - - - - - - - - - - - ->-
+- - - - - - - - - - - - - - - - - - -D-e-l-e-t-e- -S-l-i-d-e-
+- - - - - - - - - - - - - - - - -<-/-b-u-t-t-o-n->-
+- - - - - - - - - - - - - - -<-/-f-o-r-m->-
+- - - - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - - - -)-;-
+- - - - - - - - -}-)-}-
+- - - - - - -<-/-s-e-c-t-i-o-n->-
+- - - - -<-/-m-a-i-n->-
+- - -)-;-
+-}-

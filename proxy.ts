@@ -1,8 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function safeNextPath(value: string | null) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/")) return "/dashboard";
+  if (value.startsWith("//")) return "/dashboard";
+  return value;
+}
+
 export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
+  let response = NextResponse.next({
     request,
   });
 
@@ -20,12 +27,12 @@ export async function proxy(request: NextRequest) {
             request.cookies.set(name, value);
           });
 
-          supabaseResponse = NextResponse.next({
+          response = NextResponse.next({
             request,
           });
 
           cookiesToSet.forEach(({ name, value, options }) => {
-            supabaseResponse.cookies.set(name, value, options);
+            response.cookies.set(name, value, options);
           });
         },
       },
@@ -37,27 +44,34 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+  const fullPath = `${path}${request.nextUrl.search}`;
 
   const isProtected =
     path.startsWith("/dashboard") ||
     path.startsWith("/admin") ||
     path.startsWith("/manager");
 
+  const isAuthPage =
+    path === "/login" ||
+    path === "/signup" ||
+    path === "/register";
+
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.searchParams.set("next", path);
+    url.searchParams.set("next", fullPath);
     return NextResponse.redirect(url);
   }
 
-  if ((path === "/login" || path === "/signup" || path === "/register") && user) {
+  if (isAuthPage && user) {
+    const next = safeNextPath(request.nextUrl.searchParams.get("next"));
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = next;
     url.search = "";
     return NextResponse.redirect(url);
   }
 
-  return supabaseResponse;
+  return response;
 }
 
 export const config = {

@@ -1,21 +1,21 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function BlogPage() {
-  return (
-    <LexPaperSubPage
-      kicker="Blog"
-      title="Research notes from the LexData studio."
-      body="Short essays, updates, and tutorials on corpus linguistics, NLP, AI research, and translation technology."
-      cards={[
-        {
-          title: "How to start a corpus project",
-          body: "A practical outline for collecting, cleaning, documenting, and analyzing text data.",
-        },
-        {
-          title: "NLP for humanists",
-          body: "What language researchers need to know before using text mining and embeddings.",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -B-l-o-g-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-B-l-o-g-"-
+- - - - - - -t-i-t-l-e-=-"-R-e-s-e-a-r-c-h- -n-o-t-e-s- -f-r-o-m- -t-h-e- -L-e-x-D-a-t-a- -s-t-u-d-i-o-.-"-
+- - - - - - -b-o-d-y-=-"-S-h-o-r-t- -e-s-s-a-y-s-,- -u-p-d-a-t-e-s-,- -a-n-d- -t-u-t-o-r-i-a-l-s- -o-n- -c-o-r-p-u-s- -l-i-n-g-u-i-s-t-i-c-s-,- -N-L-P-,- -A-I- -r-e-s-e-a-r-c-h-,- -a-n-d- -t-r-a-n-s-l-a-t-i-o-n- -t-e-c-h-n-o-l-o-g-y-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-H-o-w- -t-o- -s-t-a-r-t- -a- -c-o-r-p-u-s- -p-r-o-j-e-c-t-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A- -p-r-a-c-t-i-c-a-l- -o-u-t-l-i-n-e- -f-o-r- -c-o-l-l-e-c-t-i-n-g-,- -c-l-e-a-n-i-n-g-,- -d-o-c-u-m-e-n-t-i-n-g-,- -a-n-d- -a-n-a-l-y-z-i-n-g- -t-e-x-t- -d-a-t-a-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-N-L-P- -f-o-r- -h-u-m-a-n-i-s-t-s-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-W-h-a-t- -l-a-n-g-u-a-g-e- -r-e-s-e-a-r-c-h-e-r-s- -n-e-e-d- -t-o- -k-n-o-w- -b-e-f-o-r-e- -u-s-i-n-g- -t-e-x-t- -m-i-n-i-n-g- -a-n-d- -e-m-b-e-d-d-i-n-g-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-

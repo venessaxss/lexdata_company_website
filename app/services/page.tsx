@@ -1,32 +1,33 @@
-import Link from "next/link";
-import { services } from "@/lib/site";
-
-export default function ServicesPage() {
-  return (
-    <section className="mx-auto max-w-6xl px-4 py-12">
-      <p className="badge inline-block">Services</p>
-      <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">Research support from corpus to publication.</h1>
-      <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-        LexData helps researchers and institutions design, collect, process, analyze, visualize, and report data for language, education, translation, ELT, and social science projects.
-      </p>
-
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {services.map((service) => (
-          <div key={service.title} className="card p-6">
-            <h2 className="text-2xl font-bold">{service.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">{service.description}</p>
-            <ul className="mt-5 space-y-3 text-sm text-slate-700">
-              {service.items.map((item) => <li key={item}>• {item}</li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="card mt-10 bg-indigo-950 p-8 text-white">
-        <h2 className="text-2xl font-bold">Need a customized institutional training or data project?</h2>
-        <p className="mt-3 max-w-2xl text-indigo-100">Use the contact page to describe your research field, dataset type, expected output, and timeline.</p>
-        <Link href="/contact" className="mt-6 inline-block rounded-xl bg-white px-4 py-2 text-sm font-semibold text-indigo-950">Contact LexData</Link>
-      </div>
-    </section>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-i-m-p-o-r-t- -{- -s-e-r-v-i-c-e-s- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-i-t-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -S-e-r-v-i-c-e-s-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---6-x-l- -p-x---4- -p-y---1-2-"->-
+- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-b-a-d-g-e- -i-n-l-i-n-e---b-l-o-c-k-"->-S-e-r-v-i-c-e-s-<-/-p->-
+- - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---4- -t-e-x-t---4-x-l- -f-o-n-t---b-l-a-c-k- -t-r-a-c-k-i-n-g---t-i-g-h-t- -m-d-:-t-e-x-t---5-x-l-"->-R-e-s-e-a-r-c-h- -s-u-p-p-o-r-t- -f-r-o-m- -c-o-r-p-u-s- -t-o- -p-u-b-l-i-c-a-t-i-o-n-.-<-/-h-1->-
+- - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -m-a-x---w---3-x-l- -t-e-x-t---l-g- -l-e-a-d-i-n-g---8- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
+- - - - - - - - -L-e-x-D-a-t-a- -h-e-l-p-s- -r-e-s-e-a-r-c-h-e-r-s- -a-n-d- -i-n-s-t-i-t-u-t-i-o-n-s- -d-e-s-i-g-n-,- -c-o-l-l-e-c-t-,- -p-r-o-c-e-s-s-,- -a-n-a-l-y-z-e-,- -v-i-s-u-a-l-i-z-e-,- -a-n-d- -r-e-p-o-r-t- -d-a-t-a- -f-o-r- -l-a-n-g-u-a-g-e-,- -e-d-u-c-a-t-i-o-n-,- -t-r-a-n-s-l-a-t-i-o-n-,- -E-L-T-,- -a-n-d- -s-o-c-i-a-l- -s-c-i-e-n-c-e- -p-r-o-j-e-c-t-s-.-
+- - - - - - -<-/-p->-
+-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---1-0- -g-r-i-d- -g-a-p---6- -m-d-:-g-r-i-d---c-o-l-s---3-"->-
+- - - - - - - - -{-s-e-r-v-i-c-e-s-.-m-a-p-(-(-s-e-r-v-i-c-e-)- -=->- -(-
+- - - - - - - - - - -<-d-i-v- -k-e-y-=-{-s-e-r-v-i-c-e-.-t-i-t-l-e-}- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -p---6-"->-
+- - - - - - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-o-l-d-"->-{-s-e-r-v-i-c-e-.-t-i-t-l-e-}-<-/-h-2->-
+- - - - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-{-s-e-r-v-i-c-e-.-d-e-s-c-r-i-p-t-i-o-n-}-<-/-p->-
+- - - - - - - - - - - - -<-u-l- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -s-p-a-c-e---y---3- -t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
+- - - - - - - - - - - - - - -{-s-e-r-v-i-c-e-.-i-t-e-m-s-.-m-a-p-(-(-i-t-e-m-)- -=->- -<-l-i- -k-e-y-=-{-i-t-e-m-}->-•- -{-i-t-e-m-}-<-/-l-i->-)-}-
+- - - - - - - - - - - - -<-/-u-l->-
+- - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - -)-)-}-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -m-t---1-0- -b-g---i-n-d-i-g-o---9-5-0- -p---8- -t-e-x-t---w-h-i-t-e-"->-
+- - - - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-o-l-d-"->-N-e-e-d- -a- -c-u-s-t-o-m-i-z-e-d- -i-n-s-t-i-t-u-t-i-o-n-a-l- -t-r-a-i-n-i-n-g- -o-r- -d-a-t-a- -p-r-o-j-e-c-t-?-<-/-h-2->-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -m-a-x---w---2-x-l- -t-e-x-t---i-n-d-i-g-o---1-0-0-"->-U-s-e- -t-h-e- -c-o-n-t-a-c-t- -p-a-g-e- -t-o- -d-e-s-c-r-i-b-e- -y-o-u-r- -r-e-s-e-a-r-c-h- -f-i-e-l-d-,- -d-a-t-a-s-e-t- -t-y-p-e-,- -e-x-p-e-c-t-e-d- -o-u-t-p-u-t-,- -a-n-d- -t-i-m-e-l-i-n-e-.-<-/-p->-
+- - - - - - - - -<-L-i-n-k- -h-r-e-f-=-"-/-c-o-n-t-a-c-t-"- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -i-n-l-i-n-e---b-l-o-c-k- -r-o-u-n-d-e-d---x-l- -b-g---w-h-i-t-e- -p-x---4- -p-y---2- -t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---i-n-d-i-g-o---9-5-0-"->-C-o-n-t-a-c-t- -L-e-x-D-a-t-a-<-/-L-i-n-k->-
+- - - - - - -<-/-d-i-v->-
+- - - - -<-/-s-e-c-t-i-o-n->-
+- - -)-;-
+-}-
+-

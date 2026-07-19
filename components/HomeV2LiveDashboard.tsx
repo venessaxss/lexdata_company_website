@@ -1,60 +1,60 @@
-import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
-
-export default async function HomeV2LiveDashboard() {
-  const admin = createAdminClient();
-
-  let stats = [
-    { label: "Published courses", value: 0, href: "/courses" },
-    { label: "Active workshops", value: 0, href: "/workshops" },
-    { label: "Video highlights", value: 0, href: "/" },
-    { label: "Team members", value: 0, href: "/team" },
-  ];
-
-  try {
-    const [courses, workshops, videos, team] = await Promise.all([
-      admin
-        .from("courses")
-        .select("id", { count: "exact", head: true })
-        .eq("is_published", true),
-
-      admin
-        .from("workshops")
-        .select("id", { count: "exact", head: true })
-        .eq("is_published", true),
-
-      admin
-        .from("homepage_videos")
-        .select("id", { count: "exact", head: true })
-        .eq("is_active", true),
-
-      admin
-        .from("team_members")
-        .select("id", { count: "exact", head: true })
-        .eq("is_active", true),
-    ]);
-
-    stats = [
-      { label: "Published courses", value: courses.count ?? 0, href: "/courses" },
-      { label: "Active workshops", value: workshops.count ?? 0, href: "/workshops" },
-      { label: "Video highlights", value: videos.count ?? 0, href: "/" },
-      { label: "Team members", value: team.count ?? 0, href: "/team" },
-    ];
-  } catch (error) {
-    console.error("HomeV2LiveDashboard error:", error);
-  }
-
-  return (
-    <section className="lx2-integrated-dashboard">
-      <div className="lx2-integrated-dashboard-grid">
-        {stats.map((item) => (
-          <Link key={item.label} href={item.href} className="lx2-integrated-stat">
-            <span>{item.label}</span>
-            <b>{item.value}</b>
-            <p>Open -&gt;</p>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -H-o-m-e-V-2-L-i-v-e-D-a-s-h-b-o-a-r-d-(-)- -{-
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - -l-e-t- -s-t-a-t-s- -=- -[-
+- - - - -{- -l-a-b-e-l-:- -"-P-u-b-l-i-s-h-e-d- -c-o-u-r-s-e-s-"-,- -v-a-l-u-e-:- -0-,- -h-r-e-f-:- -"-/-c-o-u-r-s-e-s-"- -}-,-
+- - - - -{- -l-a-b-e-l-:- -"-A-c-t-i-v-e- -w-o-r-k-s-h-o-p-s-"-,- -v-a-l-u-e-:- -0-,- -h-r-e-f-:- -"-/-w-o-r-k-s-h-o-p-s-"- -}-,-
+- - - - -{- -l-a-b-e-l-:- -"-V-i-d-e-o- -h-i-g-h-l-i-g-h-t-s-"-,- -v-a-l-u-e-:- -0-,- -h-r-e-f-:- -"-/-"- -}-,-
+- - - - -{- -l-a-b-e-l-:- -"-T-e-a-m- -m-e-m-b-e-r-s-"-,- -v-a-l-u-e-:- -0-,- -h-r-e-f-:- -"-/-t-e-a-m-"- -}-,-
+- - -]-;-
+-
+- - -t-r-y- -{-
+- - - - -c-o-n-s-t- -[-c-o-u-r-s-e-s-,- -w-o-r-k-s-h-o-p-s-,- -v-i-d-e-o-s-,- -t-e-a-m-]- -=- -a-w-a-i-t- -P-r-o-m-i-s-e-.-a-l-l-(-[-
+- - - - - - -a-d-m-i-n-
+- - - - - - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-
+- - - - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-
+- - - - - - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-,-
+-
+- - - - - - -a-d-m-i-n-
+- - - - - - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-
+- - - - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-
+- - - - - - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-,-
+-
+- - - - - - -a-d-m-i-n-
+- - - - - - - - -.-f-r-o-m-(-"-h-o-m-e-p-a-g-e-_-v-i-d-e-o-s-"-)-
+- - - - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-
+- - - - - - - - -.-e-q-(-"-i-s-_-a-c-t-i-v-e-"-,- -t-r-u-e-)-,-
+-
+- - - - - - -a-d-m-i-n-
+- - - - - - - - -.-f-r-o-m-(-"-t-e-a-m-_-m-e-m-b-e-r-s-"-)-
+- - - - - - - - -.-s-e-l-e-c-t-(-"-i-d-"-,- -{- -c-o-u-n-t-:- -"-e-x-a-c-t-"-,- -h-e-a-d-:- -t-r-u-e- -}-)-
+- - - - - - - - -.-e-q-(-"-i-s-_-a-c-t-i-v-e-"-,- -t-r-u-e-)-,-
+- - - - -]-)-;-
+-
+- - - - -s-t-a-t-s- -=- -[-
+- - - - - - -{- -l-a-b-e-l-:- -"-P-u-b-l-i-s-h-e-d- -c-o-u-r-s-e-s-"-,- -v-a-l-u-e-:- -c-o-u-r-s-e-s-.-c-o-u-n-t- -?-?- -0-,- -h-r-e-f-:- -"-/-c-o-u-r-s-e-s-"- -}-,-
+- - - - - - -{- -l-a-b-e-l-:- -"-A-c-t-i-v-e- -w-o-r-k-s-h-o-p-s-"-,- -v-a-l-u-e-:- -w-o-r-k-s-h-o-p-s-.-c-o-u-n-t- -?-?- -0-,- -h-r-e-f-:- -"-/-w-o-r-k-s-h-o-p-s-"- -}-,-
+- - - - - - -{- -l-a-b-e-l-:- -"-V-i-d-e-o- -h-i-g-h-l-i-g-h-t-s-"-,- -v-a-l-u-e-:- -v-i-d-e-o-s-.-c-o-u-n-t- -?-?- -0-,- -h-r-e-f-:- -"-/-"- -}-,-
+- - - - - - -{- -l-a-b-e-l-:- -"-T-e-a-m- -m-e-m-b-e-r-s-"-,- -v-a-l-u-e-:- -t-e-a-m-.-c-o-u-n-t- -?-?- -0-,- -h-r-e-f-:- -"-/-t-e-a-m-"- -}-,-
+- - - - -]-;-
+- - -}- -c-a-t-c-h- -(-e-r-r-o-r-)- -{-
+- - - - -c-o-n-s-o-l-e-.-e-r-r-o-r-(-"-H-o-m-e-V-2-L-i-v-e-D-a-s-h-b-o-a-r-d- -e-r-r-o-r-:-"-,- -e-r-r-o-r-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-l-x-2---i-n-t-e-g-r-a-t-e-d---d-a-s-h-b-o-a-r-d-"->-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-l-x-2---i-n-t-e-g-r-a-t-e-d---d-a-s-h-b-o-a-r-d---g-r-i-d-"->-
+- - - - - - - - -{-s-t-a-t-s-.-m-a-p-(-(-i-t-e-m-)- -=->- -(-
+- - - - - - - - - - -<-L-i-n-k- -k-e-y-=-{-i-t-e-m-.-l-a-b-e-l-}- -h-r-e-f-=-{-i-t-e-m-.-h-r-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-l-x-2---i-n-t-e-g-r-a-t-e-d---s-t-a-t-"->-
+- - - - - - - - - - - - -<-s-p-a-n->-{-i-t-e-m-.-l-a-b-e-l-}-<-/-s-p-a-n->-
+- - - - - - - - - - - - -<-b->-{-i-t-e-m-.-v-a-l-u-e-}-<-/-b->-
+- - - - - - - - - - - - -<-p->-O-p-e-n- ---&-g-t-;-<-/-p->-
+- - - - - - - - - - -<-/-L-i-n-k->-
+- - - - - - - - -)-)-}-
+- - - - - - -<-/-d-i-v->-
+- - - - -<-/-s-e-c-t-i-o-n->-
+- - -)-;-
+-}-

@@ -1,336 +1,337 @@
-"use client";
-
-/**
- * LexData Motion Layer PRO — heavy dynamics, still attribute-driven.
- * Zero dependencies.
- *
- * Mount ONCE in app/layout.tsx, wrapping your pages:
- *
- *   import MotionLayerPro from "@/components/dynamic/MotionLayerPro";
- *   <body className={...unchanged...}>
- *     <YourNavbar />                        // fixed chrome stays OUTSIDE
- *     <MotionLayerPro intro cursor smooth
- *       introWords={["Language","语言","Lengua","اللغة","Data."]}>
- *       {children}                          // your original pages
- *     </MotionLayerPro>
- *   </body>
- *
- * Attributes (add to your existing JSX — pages stay server components):
- *   data-scrub-y="-60"      translateY scrub tied to scroll progress (px)
- *   data-scrub-x="-14"      translateX scrub (vw)
- *   data-scrub-rotate="12"  rotation scrub (deg)
- *   data-scrub-scale="0.15" scale scrub (1 → 1+value)
- *   data-split              split into words, rise on page load
- *   data-split-view         split into words, rise when scrolled into view
- *   data-view               gets .in-view when visible (pair with CSS below)
- *   data-tilt               pointer-tracking 3D tilt
- *   data-theme="dark|light" body theme morphs as this section passes center
- *   data-pin="300"          pin section for 300vh of scrolling
- *   data-pin-track          (child of pinned section) scrolls horizontally
- *   data-pin-fill           (child) progress bar filled by pin progress
- *   data-marquee-velocity   marquee whose speed & skew react to scroll speed
- *
- * Props: smooth (inertia scroll), cursor (custom cursor), intro (preloader),
- * introWords, lerp (0..1 smoothing, default .085).
- *
- * prefers-reduced-motion disables smooth scroll, cursor, intro, and scrubs.
- */
-
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-
-export default function MotionLayerPro({
-  children,
-  smooth = true,
-  cursor = true,
-  intro = true,
-  introWords = ["Language", "语言", "Lengua", "اللغة", "Langue", "언어", "Data."],
-  lerp = 0.085,
-}: {
-  children: ReactNode;
-  smooth?: boolean;
-  cursor?: boolean;
-  intro?: boolean;
-  introWords?: string[];
-  lerp?: number;
-}) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const loaderRef = useRef<HTMLDivElement>(null);
-  const loaderWordRef = useRef<HTMLDivElement>(null);
-  const loaderBarRef = useRef<HTMLDivElement>(null);
-  const [loaderGone, setLoaderGone] = useState(false);
-
-  useEffect(() => {
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const doc = document.documentElement;
-    doc.setAttribute("data-motion-pro", "on");
-    const content = contentRef.current!;
-    const useSmooth = smooth && !reduced;
-
-    /* ---------- preloader ---------- */
-    let booted = false;
-    const boot = () => {
-      if (booted) return;
-      booted = true;
-      document.querySelectorAll<HTMLElement>("[data-split]").forEach((el) =>
-        el.classList.add("mlp-split-on")
-      );
-    };
-    let introTimer: ReturnType<typeof setInterval> | undefined;
-    if (intro && !reduced && loaderRef.current) {
-      let i = 0;
-      introTimer = setInterval(() => {
-        i++;
-        if (i >= introWords.length) {
-          clearInterval(introTimer);
-          loaderRef.current?.classList.add("mlp-done");
-          setTimeout(() => setLoaderGone(true), 1000);
-          boot();
-          return;
-        }
-        if (loaderWordRef.current) loaderWordRef.current.textContent = introWords[i];
-        if (loaderBarRef.current)
-          loaderBarRef.current.style.width = `${(i / (introWords.length - 1)) * 100}%`;
-      }, 220);
-    } else {
-      setLoaderGone(true);
-      boot();
-    }
-
-    /* ---------- split text ---------- */
-    const splitEl = (el: HTMLElement) => {
-      if (el.dataset.mlpSplitDone) return;
-      el.dataset.mlpSplitDone = "1";
-      const words = (el.textContent ?? "").trim().split(/\s+/);
-      el.textContent = "";
-      const line = document.createElement("span");
-      line.className = "mlp-split-line";
-      words.forEach((word, i) => {
-        const s = document.createElement("span");
-        s.className = "mlp-split-word";
-        s.style.setProperty("--w", String(i));
-        s.innerHTML = word + (i < words.length - 1 ? "&nbsp;" : "");
-        line.appendChild(s);
-      });
-      el.appendChild(line);
-    };
-    document
-      .querySelectorAll<HTMLElement>("[data-split],[data-split-view]")
-      .forEach(splitEl);
-
-    /* ---------- in-view observer ---------- */
-    const viewIO = new IntersectionObserver(
-      (es) =>
-        es.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in-view");
-            viewIO.unobserve(e.target);
-          }
-        }),
-      { threshold: 0.2 }
-    );
-    document
-      .querySelectorAll("[data-view],[data-split-view]")
-      .forEach((el) => viewIO.observe(el));
-
-    /* ---------- tilt ---------- */
-    const tiltCleanups: (() => void)[] = [];
-    if (!reduced)
-      document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
-        const onMove = (e: PointerEvent) => {
-          const r = el.getBoundingClientRect();
-          const px = (e.clientX - r.left) / r.width;
-          const py = (e.clientY - r.top) / r.height;
-          el.style.transform = `rotateY(${(px - 0.5) * 14}deg) rotateX(${(0.5 - py) * 14}deg)`;
-        };
-        const onLeave = () => (el.style.transform = "");
-        el.addEventListener("pointermove", onMove);
-        el.addEventListener("pointerleave", onLeave);
-        tiltCleanups.push(() => {
-          el.removeEventListener("pointermove", onMove);
-          el.removeEventListener("pointerleave", onLeave);
-        });
-      });
-
-    /* ---------- cursor ---------- */
-    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
-    const onPointer = (e: PointerEvent) => { mx = e.clientX; my = e.clientY; };
-    const hoverCleanups: (() => void)[] = [];
-    if (cursor && !reduced) {
-      doc.setAttribute("data-cursor-pro", "on");
-      addEventListener("pointermove", onPointer);
-      document.querySelectorAll<HTMLElement>("a,button,[data-cursor]").forEach((el) => {
-        const enter = () => ringRef.current?.classList.add("mlp-hovering");
-        const leave = () => ringRef.current?.classList.remove("mlp-hovering");
-        el.addEventListener("pointerenter", enter);
-        el.addEventListener("pointerleave", leave);
-        hoverCleanups.push(() => {
-          el.removeEventListener("pointerenter", enter);
-          el.removeEventListener("pointerleave", leave);
-        });
-      });
-    }
-
-    /* ---------- smooth scroll bookkeeping ---------- */
-    let ro: ResizeObserver | undefined;
-    if (useSmooth) {
-      content.classList.add("mlp-smooth");
-      const setH = () => (document.body.style.height = content.scrollHeight + "px");
-      ro = new ResizeObserver(setH);
-      ro.observe(content);
-      setH();
-    }
-
-    /* ---------- collect scroll-driven elements ---------- */
-    const scrubs = [...document.querySelectorAll<HTMLElement>(
-      "[data-scrub-y],[data-scrub-x],[data-scrub-rotate],[data-scrub-scale]"
-    )];
-    const pins = [...document.querySelectorAll<HTMLElement>("[data-pin]")].map((pin) => {
-      pin.style.height = `${100 + Number(pin.dataset.pin ?? 200)}vh`;
-      const stage = pin.firstElementChild as HTMLElement | null;
-      if (stage) stage.classList.add("mlp-pin-stage");
-      return {
-        pin,
-        stage,
-        track: pin.querySelector<HTMLElement>("[data-pin-track]"),
-        fill: pin.querySelector<HTMLElement>("[data-pin-fill]"),
-        len: (Number(pin.dataset.pin ?? 200) / 100),
-      };
-    });
-    const themeSections = [...document.querySelectorAll<HTMLElement>("[data-theme]")];
-    const vmarquees = [...document.querySelectorAll<HTMLElement>("[data-marquee-velocity]")].map((el) => {
-      let track = el.querySelector<HTMLElement>(".mlp-vtrack");
-      if (!track) {
-        track = document.createElement("div");
-        track.className = "mlp-vtrack";
-        const inner = document.createElement("div");
-        inner.style.display = "inherit";
-        inner.style.gap = "inherit";
-        while (el.firstChild) inner.appendChild(el.firstChild);
-        track.appendChild(inner);
-        track.appendChild(inner.cloneNode(true));
-        el.appendChild(track);
-      }
-      return { track, x: 0 };
-    });
-
-    /* ---------- master rAF loop ---------- */
-    let current = scrollY, last = current, raf = 0, running = true;
-    const frame = () => {
-      if (!running) return;
-      const targetY = scrollY;
-      current = useSmooth ? current + (targetY - current) * lerp : targetY;
-      if (Math.abs(targetY - current) < 0.05) current = targetY;
-      if (useSmooth) content.style.transform = `translate3d(0, ${-current}px, 0)`;
-      const velocity = current - last;
-      last = current;
-
-      const max = (useSmooth ? content.scrollHeight : doc.scrollHeight) - innerHeight;
-      if (progressRef.current)
-        progressRef.current.style.transform = `scaleX(${max > 0 ? current / max : 0})`;
-      doc.classList.toggle("mlp-scrolled", current > 24);
-
-      if (!reduced)
-        for (const el of scrubs) {
-          const r = el.getBoundingClientRect();
-          const p = Math.min(Math.max(1 - ((r.top + r.height / 2) / innerHeight) * 1.2 + 0.1, 0), 1);
-          const t: string[] = [];
-          if (el.dataset.scrubY) t.push(`translateY(${p * Number(el.dataset.scrubY)}px)`);
-          if (el.dataset.scrubX) t.push(`translateX(${p * Number(el.dataset.scrubX)}vw)`);
-          if (el.dataset.scrubRotate) t.push(`rotate(${p * Number(el.dataset.scrubRotate)}deg)`);
-          if (el.dataset.scrubScale) t.push(`scale(${1 + p * Number(el.dataset.scrubScale)})`);
-          el.style.transform = t.join(" ");
-        }
-
-      for (const { pin, stage, track, fill, len } of pins) {
-        const topY = useSmooth
-          ? (pin as HTMLElement).offsetTop
-          : (pin.getBoundingClientRect().top + current);
-        const lenPx = len * innerHeight;
-        const p = Math.min(Math.max((current - topY) / lenPx, 0), 1);
-        if (stage && useSmooth)
-          stage.style.transform = `translateY(${Math.min(Math.max(current - topY, 0), lenPx)}px)`;
-        if (track) {
-          const shift = track.scrollWidth - innerWidth + 48;
-          track.style.transform = `translateX(${-p * Math.max(shift, 0)}px)`;
-        }
-        if (fill) fill.style.transform = `scaleX(${p})`;
-      }
-      /* non-smooth mode: sticky handles pinning */
-      if (!useSmooth) pins.forEach(({ stage }) => stage?.classList.add("mlp-pin-native"));
-
-      for (const m of vmarquees) {
-        m.x -= 0.6 + Math.abs(velocity) * 0.6;
-        const half = m.track.scrollWidth / 2;
-        if (-m.x > half) m.x += half;
-        const skew = Math.max(Math.min(-velocity * 0.4, 12), -12);
-        m.track.style.transform = `translateX(${m.x}px) skewX(${reduced ? 0 : skew}deg)`;
-      }
-
-      let theme = "light";
-      for (const s of themeSections) {
-        const r = s.getBoundingClientRect();
-        if (r.top <= innerHeight * 0.5 && r.bottom >= innerHeight * 0.5)
-          theme = s.dataset.theme ?? "light";
-      }
-      doc.classList.toggle("mlp-dark", theme === "dark");
-
-      if (cursor && !reduced && dotRef.current && ringRef.current) {
-        rx += (mx - rx) * 0.16;
-        ry += (my - ry) * 0.16;
-        dotRef.current.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
-        ringRef.current.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
-      }
-
-      raf = requestAnimationFrame(frame);
-    };
-    raf = requestAnimationFrame(frame);
-
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      if (introTimer) clearInterval(introTimer);
-      viewIO.disconnect();
-      ro?.disconnect();
-      tiltCleanups.forEach((fn) => fn());
-      hoverCleanups.forEach((fn) => fn());
-      removeEventListener("pointermove", onPointer);
-      document.body.style.height = "";
-      content.classList.remove("mlp-smooth");
-      content.style.transform = "";
-      doc.removeAttribute("data-motion-pro");
-      doc.removeAttribute("data-cursor-pro");
-      doc.classList.remove("mlp-dark", "mlp-scrolled");
-    };
-  }, [smooth, cursor, intro, lerp, introWords]);
-
-  return (
-    <>
-      {intro && !loaderGone && (
-        <div ref={loaderRef} className="mlp-loader">
-          <div ref={loaderWordRef} className="mlp-loader-word">
-            {introWords[0]}
-          </div>
-          <div ref={loaderBarRef} className="mlp-loader-bar" />
-        </div>
-      )}
-      <div ref={progressRef} className="mlp-progress" aria-hidden="true" />
-      {cursor && (
-        <>
-          <div ref={ringRef} className="mlp-cursor-ring" aria-hidden="true" />
-          <div ref={dotRef} className="mlp-cursor-dot" aria-hidden="true" />
-        </>
-      )}
-      <div ref={contentRef} className="mlp-content">
-        {children}
-      </div>
-    </>
-  );
-}
+-"-u-s-e- -c-l-i-e-n-t-"-;-
+-
+-/-*-*-
+- -*- -L-e-x-D-a-t-a- -M-o-t-i-o-n- -L-a-y-e-r- -P-R-O- -—- -h-e-a-v-y- -d-y-n-a-m-i-c-s-,- -s-t-i-l-l- -a-t-t-r-i-b-u-t-e---d-r-i-v-e-n-.-
+- -*- -Z-e-r-o- -d-e-p-e-n-d-e-n-c-i-e-s-.-
+- -*-
+- -*- -M-o-u-n-t- -O-N-C-E- -i-n- -a-p-p-/-l-a-y-o-u-t-.-t-s-x-,- -w-r-a-p-p-i-n-g- -y-o-u-r- -p-a-g-e-s-:-
+- -*-
+- -*- - - -i-m-p-o-r-t- -M-o-t-i-o-n-L-a-y-e-r-P-r-o- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-d-y-n-a-m-i-c-/-M-o-t-i-o-n-L-a-y-e-r-P-r-o-"-;-
+- -*- - - -<-b-o-d-y- -c-l-a-s-s-N-a-m-e-=-{-.-.-.-u-n-c-h-a-n-g-e-d-.-.-.-}->-
+- -*- - - - - -<-Y-o-u-r-N-a-v-b-a-r- -/->- - - - - - - - - - - - - - - - - - - - - - - - -/-/- -f-i-x-e-d- -c-h-r-o-m-e- -s-t-a-y-s- -O-U-T-S-I-D-E-
+- -*- - - - - -<-M-o-t-i-o-n-L-a-y-e-r-P-r-o- -i-n-t-r-o- -c-u-r-s-o-r- -s-m-o-o-t-h-
+- -*- - - - - - - -i-n-t-r-o-W-o-r-d-s-=-{-[-"-L-a-n-g-u-a-g-e-"-,-"-语-言-"-,-"-L-e-n-g-u-a-"-,-"-ا-ل-ل-غ-ة-"-,-"-D-a-t-a-.-"-]-}->-
+- -*- - - - - - - -{-c-h-i-l-d-r-e-n-}- - - - - - - - - - - - - - - - - - - - - - - - - - -/-/- -y-o-u-r- -o-r-i-g-i-n-a-l- -p-a-g-e-s-
+- -*- - - - - -<-/-M-o-t-i-o-n-L-a-y-e-r-P-r-o->-
+- -*- - - -<-/-b-o-d-y->-
+- -*-
+- -*- -A-t-t-r-i-b-u-t-e-s- -(-a-d-d- -t-o- -y-o-u-r- -e-x-i-s-t-i-n-g- -J-S-X- -—- -p-a-g-e-s- -s-t-a-y- -s-e-r-v-e-r- -c-o-m-p-o-n-e-n-t-s-)-:-
+- -*- - - -d-a-t-a---s-c-r-u-b---y-=-"---6-0-"- - - - - - -t-r-a-n-s-l-a-t-e-Y- -s-c-r-u-b- -t-i-e-d- -t-o- -s-c-r-o-l-l- -p-r-o-g-r-e-s-s- -(-p-x-)-
+- -*- - - -d-a-t-a---s-c-r-u-b---x-=-"---1-4-"- - - - - - -t-r-a-n-s-l-a-t-e-X- -s-c-r-u-b- -(-v-w-)-
+- -*- - - -d-a-t-a---s-c-r-u-b---r-o-t-a-t-e-=-"-1-2-"- - -r-o-t-a-t-i-o-n- -s-c-r-u-b- -(-d-e-g-)-
+- -*- - - -d-a-t-a---s-c-r-u-b---s-c-a-l-e-=-"-0-.-1-5-"- -s-c-a-l-e- -s-c-r-u-b- -(-1- -→- -1-+-v-a-l-u-e-)-
+- -*- - - -d-a-t-a---s-p-l-i-t- - - - - - - - - - - - - - -s-p-l-i-t- -i-n-t-o- -w-o-r-d-s-,- -r-i-s-e- -o-n- -p-a-g-e- -l-o-a-d-
+- -*- - - -d-a-t-a---s-p-l-i-t---v-i-e-w- - - - - - - - - -s-p-l-i-t- -i-n-t-o- -w-o-r-d-s-,- -r-i-s-e- -w-h-e-n- -s-c-r-o-l-l-e-d- -i-n-t-o- -v-i-e-w-
+- -*- - - -d-a-t-a---v-i-e-w- - - - - - - - - - - - - - - -g-e-t-s- -.-i-n---v-i-e-w- -w-h-e-n- -v-i-s-i-b-l-e- -(-p-a-i-r- -w-i-t-h- -C-S-S- -b-e-l-o-w-)-
+- -*- - - -d-a-t-a---t-i-l-t- - - - - - - - - - - - - - - -p-o-i-n-t-e-r---t-r-a-c-k-i-n-g- -3-D- -t-i-l-t-
+- -*- - - -d-a-t-a---t-h-e-m-e-=-"-d-a-r-k-|-l-i-g-h-t-"- -b-o-d-y- -t-h-e-m-e- -m-o-r-p-h-s- -a-s- -t-h-i-s- -s-e-c-t-i-o-n- -p-a-s-s-e-s- -c-e-n-t-e-r-
+- -*- - - -d-a-t-a---p-i-n-=-"-3-0-0-"- - - - - - - - - - -p-i-n- -s-e-c-t-i-o-n- -f-o-r- -3-0-0-v-h- -o-f- -s-c-r-o-l-l-i-n-g-
+- -*- - - -d-a-t-a---p-i-n---t-r-a-c-k- - - - - - - - - - -(-c-h-i-l-d- -o-f- -p-i-n-n-e-d- -s-e-c-t-i-o-n-)- -s-c-r-o-l-l-s- -h-o-r-i-z-o-n-t-a-l-l-y-
+- -*- - - -d-a-t-a---p-i-n---f-i-l-l- - - - - - - - - - - -(-c-h-i-l-d-)- -p-r-o-g-r-e-s-s- -b-a-r- -f-i-l-l-e-d- -b-y- -p-i-n- -p-r-o-g-r-e-s-s-
+- -*- - - -d-a-t-a---m-a-r-q-u-e-e---v-e-l-o-c-i-t-y- - - -m-a-r-q-u-e-e- -w-h-o-s-e- -s-p-e-e-d- -&- -s-k-e-w- -r-e-a-c-t- -t-o- -s-c-r-o-l-l- -s-p-e-e-d-
+- -*-
+- -*- -P-r-o-p-s-:- -s-m-o-o-t-h- -(-i-n-e-r-t-i-a- -s-c-r-o-l-l-)-,- -c-u-r-s-o-r- -(-c-u-s-t-o-m- -c-u-r-s-o-r-)-,- -i-n-t-r-o- -(-p-r-e-l-o-a-d-e-r-)-,-
+- -*- -i-n-t-r-o-W-o-r-d-s-,- -l-e-r-p- -(-0-.-.-1- -s-m-o-o-t-h-i-n-g-,- -d-e-f-a-u-l-t- -.-0-8-5-)-.-
+- -*-
+- -*- -p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n- -d-i-s-a-b-l-e-s- -s-m-o-o-t-h- -s-c-r-o-l-l-,- -c-u-r-s-o-r-,- -i-n-t-r-o-,- -a-n-d- -s-c-r-u-b-s-.-
+- -*-/-
+-
+-i-m-p-o-r-t- -{-
+- - -u-s-e-E-f-f-e-c-t-,-
+- - -u-s-e-R-e-f-,-
+- - -u-s-e-S-t-a-t-e-,-
+- - -t-y-p-e- -R-e-a-c-t-N-o-d-e-,-
+-}- -f-r-o-m- -"-r-e-a-c-t-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -M-o-t-i-o-n-L-a-y-e-r-P-r-o-(-{-
+- - -c-h-i-l-d-r-e-n-,-
+- - -s-m-o-o-t-h- -=- -t-r-u-e-,-
+- - -c-u-r-s-o-r- -=- -t-r-u-e-,-
+- - -i-n-t-r-o- -=- -t-r-u-e-,-
+- - -i-n-t-r-o-W-o-r-d-s- -=- -[-"-L-a-n-g-u-a-g-e-"-,- -"-语-言-"-,- -"-L-e-n-g-u-a-"-,- -"-ا-ل-ل-غ-ة-"-,- -"-L-a-n-g-u-e-"-,- -"-언-어-"-,- -"-D-a-t-a-.-"-]-,-
+- - -l-e-r-p- -=- -0-.-0-8-5-,-
+-}-:- -{-
+- - -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-N-o-d-e-;-
+- - -s-m-o-o-t-h-?-:- -b-o-o-l-e-a-n-;-
+- - -c-u-r-s-o-r-?-:- -b-o-o-l-e-a-n-;-
+- - -i-n-t-r-o-?-:- -b-o-o-l-e-a-n-;-
+- - -i-n-t-r-o-W-o-r-d-s-?-:- -s-t-r-i-n-g-[-]-;-
+- - -l-e-r-p-?-:- -n-u-m-b-e-r-;-
+-}-)- -{-
+- - -c-o-n-s-t- -c-o-n-t-e-n-t-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -p-r-o-g-r-e-s-s-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -d-o-t-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -r-i-n-g-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -l-o-a-d-e-r-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -l-o-a-d-e-r-W-o-r-d-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -l-o-a-d-e-r-B-a-r-R-e-f- -=- -u-s-e-R-e-f-<-H-T-M-L-D-i-v-E-l-e-m-e-n-t->-(-n-u-l-l-)-;-
+- - -c-o-n-s-t- -[-l-o-a-d-e-r-G-o-n-e-,- -s-e-t-L-o-a-d-e-r-G-o-n-e-]- -=- -u-s-e-S-t-a-t-e-(-f-a-l-s-e-)-;-
+-
+- - -u-s-e-E-f-f-e-c-t-(-(-)- -=->- -{-
+- - - - -c-o-n-s-t- -r-e-d-u-c-e-d- -=- -m-a-t-c-h-M-e-d-i-a-(-"-(-p-r-e-f-e-r-s---r-e-d-u-c-e-d---m-o-t-i-o-n-:- -r-e-d-u-c-e-)-"-)-.-m-a-t-c-h-e-s-;-
+- - - - -c-o-n-s-t- -d-o-c- -=- -d-o-c-u-m-e-n-t-.-d-o-c-u-m-e-n-t-E-l-e-m-e-n-t-;-
+- - - - -d-o-c-.-s-e-t-A-t-t-r-i-b-u-t-e-(-"-d-a-t-a---m-o-t-i-o-n---p-r-o-"-,- -"-o-n-"-)-;-
+- - - - -c-o-n-s-t- -c-o-n-t-e-n-t- -=- -c-o-n-t-e-n-t-R-e-f-.-c-u-r-r-e-n-t-!-;-
+- - - - -c-o-n-s-t- -u-s-e-S-m-o-o-t-h- -=- -s-m-o-o-t-h- -&-&- -!-r-e-d-u-c-e-d-;-
+-
+- - - - -/-*- --------------------- -p-r-e-l-o-a-d-e-r- --------------------- -*-/-
+- - - - -l-e-t- -b-o-o-t-e-d- -=- -f-a-l-s-e-;-
+- - - - -c-o-n-s-t- -b-o-o-t- -=- -(-)- -=->- -{-
+- - - - - - -i-f- -(-b-o-o-t-e-d-)- -r-e-t-u-r-n-;-
+- - - - - - -b-o-o-t-e-d- -=- -t-r-u-e-;-
+- - - - - - -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---s-p-l-i-t-]-"-)-.-f-o-r-E-a-c-h-(-(-e-l-)- -=->-
+- - - - - - - - -e-l-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---s-p-l-i-t---o-n-"-)-
+- - - - - - -)-;-
+- - - - -}-;-
+- - - - -l-e-t- -i-n-t-r-o-T-i-m-e-r-:- -R-e-t-u-r-n-T-y-p-e-<-t-y-p-e-o-f- -s-e-t-I-n-t-e-r-v-a-l->- -|- -u-n-d-e-f-i-n-e-d-;-
+- - - - -i-f- -(-i-n-t-r-o- -&-&- -!-r-e-d-u-c-e-d- -&-&- -l-o-a-d-e-r-R-e-f-.-c-u-r-r-e-n-t-)- -{-
+- - - - - - -l-e-t- -i- -=- -0-;-
+- - - - - - -i-n-t-r-o-T-i-m-e-r- -=- -s-e-t-I-n-t-e-r-v-a-l-(-(-)- -=->- -{-
+- - - - - - - - -i-+-+-;-
+- - - - - - - - -i-f- -(-i- ->-=- -i-n-t-r-o-W-o-r-d-s-.-l-e-n-g-t-h-)- -{-
+- - - - - - - - - - -c-l-e-a-r-I-n-t-e-r-v-a-l-(-i-n-t-r-o-T-i-m-e-r-)-;-
+- - - - - - - - - - -l-o-a-d-e-r-R-e-f-.-c-u-r-r-e-n-t-?-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---d-o-n-e-"-)-;-
+- - - - - - - - - - -s-e-t-T-i-m-e-o-u-t-(-(-)- -=->- -s-e-t-L-o-a-d-e-r-G-o-n-e-(-t-r-u-e-)-,- -1-0-0-0-)-;-
+- - - - - - - - - - -b-o-o-t-(-)-;-
+- - - - - - - - - - -r-e-t-u-r-n-;-
+- - - - - - - - -}-
+- - - - - - - - -i-f- -(-l-o-a-d-e-r-W-o-r-d-R-e-f-.-c-u-r-r-e-n-t-)- -l-o-a-d-e-r-W-o-r-d-R-e-f-.-c-u-r-r-e-n-t-.-t-e-x-t-C-o-n-t-e-n-t- -=- -i-n-t-r-o-W-o-r-d-s-[-i-]-;-
+- - - - - - - - -i-f- -(-l-o-a-d-e-r-B-a-r-R-e-f-.-c-u-r-r-e-n-t-)-
+- - - - - - - - - - -l-o-a-d-e-r-B-a-r-R-e-f-.-c-u-r-r-e-n-t-.-s-t-y-l-e-.-w-i-d-t-h- -=- -`-$-{-(-i- -/- -(-i-n-t-r-o-W-o-r-d-s-.-l-e-n-g-t-h- --- -1-)-)- -*- -1-0-0-}-%-`-;-
+- - - - - - -}-,- -2-2-0-)-;-
+- - - - -}- -e-l-s-e- -{-
+- - - - - - -s-e-t-L-o-a-d-e-r-G-o-n-e-(-t-r-u-e-)-;-
+- - - - - - -b-o-o-t-(-)-;-
+- - - - -}-
+-
+- - - - -/-*- --------------------- -s-p-l-i-t- -t-e-x-t- --------------------- -*-/-
+- - - - -c-o-n-s-t- -s-p-l-i-t-E-l- -=- -(-e-l-:- -H-T-M-L-E-l-e-m-e-n-t-)- -=->- -{-
+- - - - - - -i-f- -(-e-l-.-d-a-t-a-s-e-t-.-m-l-p-S-p-l-i-t-D-o-n-e-)- -r-e-t-u-r-n-;-
+- - - - - - -e-l-.-d-a-t-a-s-e-t-.-m-l-p-S-p-l-i-t-D-o-n-e- -=- -"-1-"-;-
+- - - - - - -c-o-n-s-t- -w-o-r-d-s- -=- -(-e-l-.-t-e-x-t-C-o-n-t-e-n-t- -?-?- -"-"-)-.-t-r-i-m-(-)-.-s-p-l-i-t-(-/-\-s-+-/-)-;-
+- - - - - - -e-l-.-t-e-x-t-C-o-n-t-e-n-t- -=- -"-"-;-
+- - - - - - -c-o-n-s-t- -l-i-n-e- -=- -d-o-c-u-m-e-n-t-.-c-r-e-a-t-e-E-l-e-m-e-n-t-(-"-s-p-a-n-"-)-;-
+- - - - - - -l-i-n-e-.-c-l-a-s-s-N-a-m-e- -=- -"-m-l-p---s-p-l-i-t---l-i-n-e-"-;-
+- - - - - - -w-o-r-d-s-.-f-o-r-E-a-c-h-(-(-w-o-r-d-,- -i-)- -=->- -{-
+- - - - - - - - -c-o-n-s-t- -s- -=- -d-o-c-u-m-e-n-t-.-c-r-e-a-t-e-E-l-e-m-e-n-t-(-"-s-p-a-n-"-)-;-
+- - - - - - - - -s-.-c-l-a-s-s-N-a-m-e- -=- -"-m-l-p---s-p-l-i-t---w-o-r-d-"-;-
+- - - - - - - - -s-.-s-t-y-l-e-.-s-e-t-P-r-o-p-e-r-t-y-(-"-----w-"-,- -S-t-r-i-n-g-(-i-)-)-;-
+- - - - - - - - -s-.-i-n-n-e-r-H-T-M-L- -=- -w-o-r-d- -+- -(-i- -<- -w-o-r-d-s-.-l-e-n-g-t-h- --- -1- -?- -"-&-n-b-s-p-;-"- -:- -"-"-)-;-
+- - - - - - - - -l-i-n-e-.-a-p-p-e-n-d-C-h-i-l-d-(-s-)-;-
+- - - - - - -}-)-;-
+- - - - - - -e-l-.-a-p-p-e-n-d-C-h-i-l-d-(-l-i-n-e-)-;-
+- - - - -}-;-
+- - - - -d-o-c-u-m-e-n-t-
+- - - - - - -.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---s-p-l-i-t-]-,-[-d-a-t-a---s-p-l-i-t---v-i-e-w-]-"-)-
+- - - - - - -.-f-o-r-E-a-c-h-(-s-p-l-i-t-E-l-)-;-
+-
+- - - - -/-*- --------------------- -i-n---v-i-e-w- -o-b-s-e-r-v-e-r- --------------------- -*-/-
+- - - - -c-o-n-s-t- -v-i-e-w-I-O- -=- -n-e-w- -I-n-t-e-r-s-e-c-t-i-o-n-O-b-s-e-r-v-e-r-(-
+- - - - - - -(-e-s-)- -=->-
+- - - - - - - - -e-s-.-f-o-r-E-a-c-h-(-(-e-)- -=->- -{-
+- - - - - - - - - - -i-f- -(-e-.-i-s-I-n-t-e-r-s-e-c-t-i-n-g-)- -{-
+- - - - - - - - - - - - -e-.-t-a-r-g-e-t-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-i-n---v-i-e-w-"-)-;-
+- - - - - - - - - - - - -v-i-e-w-I-O-.-u-n-o-b-s-e-r-v-e-(-e-.-t-a-r-g-e-t-)-;-
+- - - - - - - - - - -}-
+- - - - - - - - -}-)-,-
+- - - - - - -{- -t-h-r-e-s-h-o-l-d-:- -0-.-2- -}-
+- - - - -)-;-
+- - - - -d-o-c-u-m-e-n-t-
+- - - - - - -.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-(-"-[-d-a-t-a---v-i-e-w-]-,-[-d-a-t-a---s-p-l-i-t---v-i-e-w-]-"-)-
+- - - - - - -.-f-o-r-E-a-c-h-(-(-e-l-)- -=->- -v-i-e-w-I-O-.-o-b-s-e-r-v-e-(-e-l-)-)-;-
+-
+- - - - -/-*- --------------------- -t-i-l-t- --------------------- -*-/-
+- - - - -c-o-n-s-t- -t-i-l-t-C-l-e-a-n-u-p-s-:- -(-(-)- -=->- -v-o-i-d-)-[-]- -=- -[-]-;-
+- - - - -i-f- -(-!-r-e-d-u-c-e-d-)-
+- - - - - - -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---t-i-l-t-]-"-)-.-f-o-r-E-a-c-h-(-(-e-l-)- -=->- -{-
+- - - - - - - - -c-o-n-s-t- -o-n-M-o-v-e- -=- -(-e-:- -P-o-i-n-t-e-r-E-v-e-n-t-)- -=->- -{-
+- - - - - - - - - - -c-o-n-s-t- -r- -=- -e-l-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
+- - - - - - - - - - -c-o-n-s-t- -p-x- -=- -(-e-.-c-l-i-e-n-t-X- --- -r-.-l-e-f-t-)- -/- -r-.-w-i-d-t-h-;-
+- - - - - - - - - - -c-o-n-s-t- -p-y- -=- -(-e-.-c-l-i-e-n-t-Y- --- -r-.-t-o-p-)- -/- -r-.-h-e-i-g-h-t-;-
+- - - - - - - - - - -e-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-r-o-t-a-t-e-Y-(-$-{-(-p-x- --- -0-.-5-)- -*- -1-4-}-d-e-g-)- -r-o-t-a-t-e-X-(-$-{-(-0-.-5- --- -p-y-)- -*- -1-4-}-d-e-g-)-`-;-
+- - - - - - - - -}-;-
+- - - - - - - - -c-o-n-s-t- -o-n-L-e-a-v-e- -=- -(-)- -=->- -(-e-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -"-"-)-;-
+- - - - - - - - -e-l-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -o-n-M-o-v-e-)-;-
+- - - - - - - - -e-l-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-l-e-a-v-e-"-,- -o-n-L-e-a-v-e-)-;-
+- - - - - - - - -t-i-l-t-C-l-e-a-n-u-p-s-.-p-u-s-h-(-(-)- -=->- -{-
+- - - - - - - - - - -e-l-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -o-n-M-o-v-e-)-;-
+- - - - - - - - - - -e-l-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-l-e-a-v-e-"-,- -o-n-L-e-a-v-e-)-;-
+- - - - - - - - -}-)-;-
+- - - - - - -}-)-;-
+-
+- - - - -/-*- --------------------- -c-u-r-s-o-r- --------------------- -*-/-
+- - - - -l-e-t- -m-x- -=- -i-n-n-e-r-W-i-d-t-h- -/- -2-,- -m-y- -=- -i-n-n-e-r-H-e-i-g-h-t- -/- -2-,- -r-x- -=- -m-x-,- -r-y- -=- -m-y-;-
+- - - - -c-o-n-s-t- -o-n-P-o-i-n-t-e-r- -=- -(-e-:- -P-o-i-n-t-e-r-E-v-e-n-t-)- -=->- -{- -m-x- -=- -e-.-c-l-i-e-n-t-X-;- -m-y- -=- -e-.-c-l-i-e-n-t-Y-;- -}-;-
+- - - - -c-o-n-s-t- -h-o-v-e-r-C-l-e-a-n-u-p-s-:- -(-(-)- -=->- -v-o-i-d-)-[-]- -=- -[-]-;-
+- - - - -i-f- -(-c-u-r-s-o-r- -&-&- -!-r-e-d-u-c-e-d-)- -{-
+- - - - - - -d-o-c-.-s-e-t-A-t-t-r-i-b-u-t-e-(-"-d-a-t-a---c-u-r-s-o-r---p-r-o-"-,- -"-o-n-"-)-;-
+- - - - - - -a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -o-n-P-o-i-n-t-e-r-)-;-
+- - - - - - -d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-a-,-b-u-t-t-o-n-,-[-d-a-t-a---c-u-r-s-o-r-]-"-)-.-f-o-r-E-a-c-h-(-(-e-l-)- -=->- -{-
+- - - - - - - - -c-o-n-s-t- -e-n-t-e-r- -=- -(-)- -=->- -r-i-n-g-R-e-f-.-c-u-r-r-e-n-t-?-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---h-o-v-e-r-i-n-g-"-)-;-
+- - - - - - - - -c-o-n-s-t- -l-e-a-v-e- -=- -(-)- -=->- -r-i-n-g-R-e-f-.-c-u-r-r-e-n-t-?-.-c-l-a-s-s-L-i-s-t-.-r-e-m-o-v-e-(-"-m-l-p---h-o-v-e-r-i-n-g-"-)-;-
+- - - - - - - - -e-l-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-e-n-t-e-r-"-,- -e-n-t-e-r-)-;-
+- - - - - - - - -e-l-.-a-d-d-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-l-e-a-v-e-"-,- -l-e-a-v-e-)-;-
+- - - - - - - - -h-o-v-e-r-C-l-e-a-n-u-p-s-.-p-u-s-h-(-(-)- -=->- -{-
+- - - - - - - - - - -e-l-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-e-n-t-e-r-"-,- -e-n-t-e-r-)-;-
+- - - - - - - - - - -e-l-.-r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-l-e-a-v-e-"-,- -l-e-a-v-e-)-;-
+- - - - - - - - -}-)-;-
+- - - - - - -}-)-;-
+- - - - -}-
+-
+- - - - -/-*- --------------------- -s-m-o-o-t-h- -s-c-r-o-l-l- -b-o-o-k-k-e-e-p-i-n-g- --------------------- -*-/-
+- - - - -l-e-t- -r-o-:- -R-e-s-i-z-e-O-b-s-e-r-v-e-r- -|- -u-n-d-e-f-i-n-e-d-;-
+- - - - -i-f- -(-u-s-e-S-m-o-o-t-h-)- -{-
+- - - - - - -c-o-n-t-e-n-t-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---s-m-o-o-t-h-"-)-;-
+- - - - - - -c-o-n-s-t- -s-e-t-H- -=- -(-)- -=->- -(-d-o-c-u-m-e-n-t-.-b-o-d-y-.-s-t-y-l-e-.-h-e-i-g-h-t- -=- -c-o-n-t-e-n-t-.-s-c-r-o-l-l-H-e-i-g-h-t- -+- -"-p-x-"-)-;-
+- - - - - - -r-o- -=- -n-e-w- -R-e-s-i-z-e-O-b-s-e-r-v-e-r-(-s-e-t-H-)-;-
+- - - - - - -r-o-.-o-b-s-e-r-v-e-(-c-o-n-t-e-n-t-)-;-
+- - - - - - -s-e-t-H-(-)-;-
+- - - - -}-
+-
+- - - - -/-*- --------------------- -c-o-l-l-e-c-t- -s-c-r-o-l-l---d-r-i-v-e-n- -e-l-e-m-e-n-t-s- --------------------- -*-/-
+- - - - -c-o-n-s-t- -s-c-r-u-b-s- -=- -[-.-.-.-d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-
+- - - - - - -"-[-d-a-t-a---s-c-r-u-b---y-]-,-[-d-a-t-a---s-c-r-u-b---x-]-,-[-d-a-t-a---s-c-r-u-b---r-o-t-a-t-e-]-,-[-d-a-t-a---s-c-r-u-b---s-c-a-l-e-]-"-
+- - - - -)-]-;-
+- - - - -c-o-n-s-t- -p-i-n-s- -=- -[-.-.-.-d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---p-i-n-]-"-)-]-.-m-a-p-(-(-p-i-n-)- -=->- -{-
+- - - - - - -p-i-n-.-s-t-y-l-e-.-h-e-i-g-h-t- -=- -`-$-{-1-0-0- -+- -N-u-m-b-e-r-(-p-i-n-.-d-a-t-a-s-e-t-.-p-i-n- -?-?- -2-0-0-)-}-v-h-`-;-
+- - - - - - -c-o-n-s-t- -s-t-a-g-e- -=- -p-i-n-.-f-i-r-s-t-E-l-e-m-e-n-t-C-h-i-l-d- -a-s- -H-T-M-L-E-l-e-m-e-n-t- -|- -n-u-l-l-;-
+- - - - - - -i-f- -(-s-t-a-g-e-)- -s-t-a-g-e-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---p-i-n---s-t-a-g-e-"-)-;-
+- - - - - - -r-e-t-u-r-n- -{-
+- - - - - - - - -p-i-n-,-
+- - - - - - - - -s-t-a-g-e-,-
+- - - - - - - - -t-r-a-c-k-:- -p-i-n-.-q-u-e-r-y-S-e-l-e-c-t-o-r-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---p-i-n---t-r-a-c-k-]-"-)-,-
+- - - - - - - - -f-i-l-l-:- -p-i-n-.-q-u-e-r-y-S-e-l-e-c-t-o-r-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---p-i-n---f-i-l-l-]-"-)-,-
+- - - - - - - - -l-e-n-:- -(-N-u-m-b-e-r-(-p-i-n-.-d-a-t-a-s-e-t-.-p-i-n- -?-?- -2-0-0-)- -/- -1-0-0-)-,-
+- - - - - - -}-;-
+- - - - -}-)-;-
+- - - - -c-o-n-s-t- -t-h-e-m-e-S-e-c-t-i-o-n-s- -=- -[-.-.-.-d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---t-h-e-m-e-]-"-)-]-;-
+- - - - -c-o-n-s-t- -v-m-a-r-q-u-e-e-s- -=- -[-.-.-.-d-o-c-u-m-e-n-t-.-q-u-e-r-y-S-e-l-e-c-t-o-r-A-l-l-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-[-d-a-t-a---m-a-r-q-u-e-e---v-e-l-o-c-i-t-y-]-"-)-]-.-m-a-p-(-(-e-l-)- -=->- -{-
+- - - - - - -l-e-t- -t-r-a-c-k- -=- -e-l-.-q-u-e-r-y-S-e-l-e-c-t-o-r-<-H-T-M-L-E-l-e-m-e-n-t->-(-"-.-m-l-p---v-t-r-a-c-k-"-)-;-
+- - - - - - -i-f- -(-!-t-r-a-c-k-)- -{-
+- - - - - - - - -t-r-a-c-k- -=- -d-o-c-u-m-e-n-t-.-c-r-e-a-t-e-E-l-e-m-e-n-t-(-"-d-i-v-"-)-;-
+- - - - - - - - -t-r-a-c-k-.-c-l-a-s-s-N-a-m-e- -=- -"-m-l-p---v-t-r-a-c-k-"-;-
+- - - - - - - - -c-o-n-s-t- -i-n-n-e-r- -=- -d-o-c-u-m-e-n-t-.-c-r-e-a-t-e-E-l-e-m-e-n-t-(-"-d-i-v-"-)-;-
+- - - - - - - - -i-n-n-e-r-.-s-t-y-l-e-.-d-i-s-p-l-a-y- -=- -"-i-n-h-e-r-i-t-"-;-
+- - - - - - - - -i-n-n-e-r-.-s-t-y-l-e-.-g-a-p- -=- -"-i-n-h-e-r-i-t-"-;-
+- - - - - - - - -w-h-i-l-e- -(-e-l-.-f-i-r-s-t-C-h-i-l-d-)- -i-n-n-e-r-.-a-p-p-e-n-d-C-h-i-l-d-(-e-l-.-f-i-r-s-t-C-h-i-l-d-)-;-
+- - - - - - - - -t-r-a-c-k-.-a-p-p-e-n-d-C-h-i-l-d-(-i-n-n-e-r-)-;-
+- - - - - - - - -t-r-a-c-k-.-a-p-p-e-n-d-C-h-i-l-d-(-i-n-n-e-r-.-c-l-o-n-e-N-o-d-e-(-t-r-u-e-)-)-;-
+- - - - - - - - -e-l-.-a-p-p-e-n-d-C-h-i-l-d-(-t-r-a-c-k-)-;-
+- - - - - - -}-
+- - - - - - -r-e-t-u-r-n- -{- -t-r-a-c-k-,- -x-:- -0- -}-;-
+- - - - -}-)-;-
+-
+- - - - -/-*- --------------------- -m-a-s-t-e-r- -r-A-F- -l-o-o-p- --------------------- -*-/-
+- - - - -l-e-t- -c-u-r-r-e-n-t- -=- -s-c-r-o-l-l-Y-,- -l-a-s-t- -=- -c-u-r-r-e-n-t-,- -r-a-f- -=- -0-,- -r-u-n-n-i-n-g- -=- -t-r-u-e-;-
+- - - - -c-o-n-s-t- -f-r-a-m-e- -=- -(-)- -=->- -{-
+- - - - - - -i-f- -(-!-r-u-n-n-i-n-g-)- -r-e-t-u-r-n-;-
+- - - - - - -c-o-n-s-t- -t-a-r-g-e-t-Y- -=- -s-c-r-o-l-l-Y-;-
+- - - - - - -c-u-r-r-e-n-t- -=- -u-s-e-S-m-o-o-t-h- -?- -c-u-r-r-e-n-t- -+- -(-t-a-r-g-e-t-Y- --- -c-u-r-r-e-n-t-)- -*- -l-e-r-p- -:- -t-a-r-g-e-t-Y-;-
+- - - - - - -i-f- -(-M-a-t-h-.-a-b-s-(-t-a-r-g-e-t-Y- --- -c-u-r-r-e-n-t-)- -<- -0-.-0-5-)- -c-u-r-r-e-n-t- -=- -t-a-r-g-e-t-Y-;-
+- - - - - - -i-f- -(-u-s-e-S-m-o-o-t-h-)- -c-o-n-t-e-n-t-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-3-d-(-0-,- -$-{---c-u-r-r-e-n-t-}-p-x-,- -0-)-`-;-
+- - - - - - -c-o-n-s-t- -v-e-l-o-c-i-t-y- -=- -c-u-r-r-e-n-t- --- -l-a-s-t-;-
+- - - - - - -l-a-s-t- -=- -c-u-r-r-e-n-t-;-
+-
+- - - - - - -c-o-n-s-t- -m-a-x- -=- -(-u-s-e-S-m-o-o-t-h- -?- -c-o-n-t-e-n-t-.-s-c-r-o-l-l-H-e-i-g-h-t- -:- -d-o-c-.-s-c-r-o-l-l-H-e-i-g-h-t-)- --- -i-n-n-e-r-H-e-i-g-h-t-;-
+- - - - - - -i-f- -(-p-r-o-g-r-e-s-s-R-e-f-.-c-u-r-r-e-n-t-)-
+- - - - - - - - -p-r-o-g-r-e-s-s-R-e-f-.-c-u-r-r-e-n-t-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-s-c-a-l-e-X-(-$-{-m-a-x- ->- -0- -?- -c-u-r-r-e-n-t- -/- -m-a-x- -:- -0-}-)-`-;-
+- - - - - - -d-o-c-.-c-l-a-s-s-L-i-s-t-.-t-o-g-g-l-e-(-"-m-l-p---s-c-r-o-l-l-e-d-"-,- -c-u-r-r-e-n-t- ->- -2-4-)-;-
+-
+- - - - - - -i-f- -(-!-r-e-d-u-c-e-d-)-
+- - - - - - - - -f-o-r- -(-c-o-n-s-t- -e-l- -o-f- -s-c-r-u-b-s-)- -{-
+- - - - - - - - - - -c-o-n-s-t- -r- -=- -e-l-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
+- - - - - - - - - - -c-o-n-s-t- -p- -=- -M-a-t-h-.-m-i-n-(-M-a-t-h-.-m-a-x-(-1- --- -(-(-r-.-t-o-p- -+- -r-.-h-e-i-g-h-t- -/- -2-)- -/- -i-n-n-e-r-H-e-i-g-h-t-)- -*- -1-.-2- -+- -0-.-1-,- -0-)-,- -1-)-;-
+- - - - - - - - - - -c-o-n-s-t- -t-:- -s-t-r-i-n-g-[-]- -=- -[-]-;-
+- - - - - - - - - - -i-f- -(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-Y-)- -t-.-p-u-s-h-(-`-t-r-a-n-s-l-a-t-e-Y-(-$-{-p- -*- -N-u-m-b-e-r-(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-Y-)-}-p-x-)-`-)-;-
+- - - - - - - - - - -i-f- -(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-X-)- -t-.-p-u-s-h-(-`-t-r-a-n-s-l-a-t-e-X-(-$-{-p- -*- -N-u-m-b-e-r-(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-X-)-}-v-w-)-`-)-;-
+- - - - - - - - - - -i-f- -(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-R-o-t-a-t-e-)- -t-.-p-u-s-h-(-`-r-o-t-a-t-e-(-$-{-p- -*- -N-u-m-b-e-r-(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-R-o-t-a-t-e-)-}-d-e-g-)-`-)-;-
+- - - - - - - - - - -i-f- -(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-S-c-a-l-e-)- -t-.-p-u-s-h-(-`-s-c-a-l-e-(-$-{-1- -+- -p- -*- -N-u-m-b-e-r-(-e-l-.-d-a-t-a-s-e-t-.-s-c-r-u-b-S-c-a-l-e-)-}-)-`-)-;-
+- - - - - - - - - - -e-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -t-.-j-o-i-n-(-"- -"-)-;-
+- - - - - - - - -}-
+-
+- - - - - - -f-o-r- -(-c-o-n-s-t- -{- -p-i-n-,- -s-t-a-g-e-,- -t-r-a-c-k-,- -f-i-l-l-,- -l-e-n- -}- -o-f- -p-i-n-s-)- -{-
+- - - - - - - - -c-o-n-s-t- -t-o-p-Y- -=- -u-s-e-S-m-o-o-t-h-
+- - - - - - - - - - -?- -(-p-i-n- -a-s- -H-T-M-L-E-l-e-m-e-n-t-)-.-o-f-f-s-e-t-T-o-p-
+- - - - - - - - - - -:- -(-p-i-n-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-.-t-o-p- -+- -c-u-r-r-e-n-t-)-;-
+- - - - - - - - -c-o-n-s-t- -l-e-n-P-x- -=- -l-e-n- -*- -i-n-n-e-r-H-e-i-g-h-t-;-
+- - - - - - - - -c-o-n-s-t- -p- -=- -M-a-t-h-.-m-i-n-(-M-a-t-h-.-m-a-x-(-(-c-u-r-r-e-n-t- --- -t-o-p-Y-)- -/- -l-e-n-P-x-,- -0-)-,- -1-)-;-
+- - - - - - - - -i-f- -(-s-t-a-g-e- -&-&- -u-s-e-S-m-o-o-t-h-)-
+- - - - - - - - - - -s-t-a-g-e-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-Y-(-$-{-M-a-t-h-.-m-i-n-(-M-a-t-h-.-m-a-x-(-c-u-r-r-e-n-t- --- -t-o-p-Y-,- -0-)-,- -l-e-n-P-x-)-}-p-x-)-`-;-
+- - - - - - - - -i-f- -(-t-r-a-c-k-)- -{-
+- - - - - - - - - - -c-o-n-s-t- -s-h-i-f-t- -=- -t-r-a-c-k-.-s-c-r-o-l-l-W-i-d-t-h- --- -i-n-n-e-r-W-i-d-t-h- -+- -4-8-;-
+- - - - - - - - - - -t-r-a-c-k-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-X-(-$-{---p- -*- -M-a-t-h-.-m-a-x-(-s-h-i-f-t-,- -0-)-}-p-x-)-`-;-
+- - - - - - - - -}-
+- - - - - - - - -i-f- -(-f-i-l-l-)- -f-i-l-l-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-s-c-a-l-e-X-(-$-{-p-}-)-`-;-
+- - - - - - -}-
+- - - - - - -/-*- -n-o-n---s-m-o-o-t-h- -m-o-d-e-:- -s-t-i-c-k-y- -h-a-n-d-l-e-s- -p-i-n-n-i-n-g- -*-/-
+- - - - - - -i-f- -(-!-u-s-e-S-m-o-o-t-h-)- -p-i-n-s-.-f-o-r-E-a-c-h-(-(-{- -s-t-a-g-e- -}-)- -=->- -s-t-a-g-e-?-.-c-l-a-s-s-L-i-s-t-.-a-d-d-(-"-m-l-p---p-i-n---n-a-t-i-v-e-"-)-)-;-
+-
+- - - - - - -f-o-r- -(-c-o-n-s-t- -m- -o-f- -v-m-a-r-q-u-e-e-s-)- -{-
+- - - - - - - - -m-.-x- ---=- -0-.-6- -+- -M-a-t-h-.-a-b-s-(-v-e-l-o-c-i-t-y-)- -*- -0-.-6-;-
+- - - - - - - - -c-o-n-s-t- -h-a-l-f- -=- -m-.-t-r-a-c-k-.-s-c-r-o-l-l-W-i-d-t-h- -/- -2-;-
+- - - - - - - - -i-f- -(---m-.-x- ->- -h-a-l-f-)- -m-.-x- -+-=- -h-a-l-f-;-
+- - - - - - - - -c-o-n-s-t- -s-k-e-w- -=- -M-a-t-h-.-m-a-x-(-M-a-t-h-.-m-i-n-(---v-e-l-o-c-i-t-y- -*- -0-.-4-,- -1-2-)-,- ---1-2-)-;-
+- - - - - - - - -m-.-t-r-a-c-k-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-X-(-$-{-m-.-x-}-p-x-)- -s-k-e-w-X-(-$-{-r-e-d-u-c-e-d- -?- -0- -:- -s-k-e-w-}-d-e-g-)-`-;-
+- - - - - - -}-
+-
+- - - - - - -l-e-t- -t-h-e-m-e- -=- -"-l-i-g-h-t-"-;-
+- - - - - - -f-o-r- -(-c-o-n-s-t- -s- -o-f- -t-h-e-m-e-S-e-c-t-i-o-n-s-)- -{-
+- - - - - - - - -c-o-n-s-t- -r- -=- -s-.-g-e-t-B-o-u-n-d-i-n-g-C-l-i-e-n-t-R-e-c-t-(-)-;-
+- - - - - - - - -i-f- -(-r-.-t-o-p- -<-=- -i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-5- -&-&- -r-.-b-o-t-t-o-m- ->-=- -i-n-n-e-r-H-e-i-g-h-t- -*- -0-.-5-)-
+- - - - - - - - - - -t-h-e-m-e- -=- -s-.-d-a-t-a-s-e-t-.-t-h-e-m-e- -?-?- -"-l-i-g-h-t-"-;-
+- - - - - - -}-
+- - - - - - -d-o-c-.-c-l-a-s-s-L-i-s-t-.-t-o-g-g-l-e-(-"-m-l-p---d-a-r-k-"-,- -t-h-e-m-e- -=-=-=- -"-d-a-r-k-"-)-;-
+-
+- - - - - - -i-f- -(-c-u-r-s-o-r- -&-&- -!-r-e-d-u-c-e-d- -&-&- -d-o-t-R-e-f-.-c-u-r-r-e-n-t- -&-&- -r-i-n-g-R-e-f-.-c-u-r-r-e-n-t-)- -{-
+- - - - - - - - -r-x- -+-=- -(-m-x- --- -r-x-)- -*- -0-.-1-6-;-
+- - - - - - - - -r-y- -+-=- -(-m-y- --- -r-y-)- -*- -0-.-1-6-;-
+- - - - - - - - -d-o-t-R-e-f-.-c-u-r-r-e-n-t-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-(-$-{-m-x-}-p-x-,- -$-{-m-y-}-p-x-)- -t-r-a-n-s-l-a-t-e-(---5-0-%-,---5-0-%-)-`-;-
+- - - - - - - - -r-i-n-g-R-e-f-.-c-u-r-r-e-n-t-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -`-t-r-a-n-s-l-a-t-e-(-$-{-r-x-}-p-x-,- -$-{-r-y-}-p-x-)- -t-r-a-n-s-l-a-t-e-(---5-0-%-,---5-0-%-)-`-;-
+- - - - - - -}-
+-
+- - - - - - -r-a-f- -=- -r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-f-r-a-m-e-)-;-
+- - - - -}-;-
+- - - - -r-a-f- -=- -r-e-q-u-e-s-t-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-f-r-a-m-e-)-;-
+-
+- - - - -r-e-t-u-r-n- -(-)- -=->- -{-
+- - - - - - -r-u-n-n-i-n-g- -=- -f-a-l-s-e-;-
+- - - - - - -c-a-n-c-e-l-A-n-i-m-a-t-i-o-n-F-r-a-m-e-(-r-a-f-)-;-
+- - - - - - -i-f- -(-i-n-t-r-o-T-i-m-e-r-)- -c-l-e-a-r-I-n-t-e-r-v-a-l-(-i-n-t-r-o-T-i-m-e-r-)-;-
+- - - - - - -v-i-e-w-I-O-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
+- - - - - - -r-o-?-.-d-i-s-c-o-n-n-e-c-t-(-)-;-
+- - - - - - -t-i-l-t-C-l-e-a-n-u-p-s-.-f-o-r-E-a-c-h-(-(-f-n-)- -=->- -f-n-(-)-)-;-
+- - - - - - -h-o-v-e-r-C-l-e-a-n-u-p-s-.-f-o-r-E-a-c-h-(-(-f-n-)- -=->- -f-n-(-)-)-;-
+- - - - - - -r-e-m-o-v-e-E-v-e-n-t-L-i-s-t-e-n-e-r-(-"-p-o-i-n-t-e-r-m-o-v-e-"-,- -o-n-P-o-i-n-t-e-r-)-;-
+- - - - - - -d-o-c-u-m-e-n-t-.-b-o-d-y-.-s-t-y-l-e-.-h-e-i-g-h-t- -=- -"-"-;-
+- - - - - - -c-o-n-t-e-n-t-.-c-l-a-s-s-L-i-s-t-.-r-e-m-o-v-e-(-"-m-l-p---s-m-o-o-t-h-"-)-;-
+- - - - - - -c-o-n-t-e-n-t-.-s-t-y-l-e-.-t-r-a-n-s-f-o-r-m- -=- -"-"-;-
+- - - - - - -d-o-c-.-r-e-m-o-v-e-A-t-t-r-i-b-u-t-e-(-"-d-a-t-a---m-o-t-i-o-n---p-r-o-"-)-;-
+- - - - - - -d-o-c-.-r-e-m-o-v-e-A-t-t-r-i-b-u-t-e-(-"-d-a-t-a---c-u-r-s-o-r---p-r-o-"-)-;-
+- - - - - - -d-o-c-.-c-l-a-s-s-L-i-s-t-.-r-e-m-o-v-e-(-"-m-l-p---d-a-r-k-"-,- -"-m-l-p---s-c-r-o-l-l-e-d-"-)-;-
+- - - - -}-;-
+- - -}-,- -[-s-m-o-o-t-h-,- -c-u-r-s-o-r-,- -i-n-t-r-o-,- -l-e-r-p-,- -i-n-t-r-o-W-o-r-d-s-]-)-;-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<->-
+- - - - - - -{-i-n-t-r-o- -&-&- -!-l-o-a-d-e-r-G-o-n-e- -&-&- -(-
+- - - - - - - - -<-d-i-v- -r-e-f-=-{-l-o-a-d-e-r-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---l-o-a-d-e-r-"->-
+- - - - - - - - - - -<-d-i-v- -r-e-f-=-{-l-o-a-d-e-r-W-o-r-d-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---l-o-a-d-e-r---w-o-r-d-"->-
+- - - - - - - - - - - - -{-i-n-t-r-o-W-o-r-d-s-[-0-]-}-
+- - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - - - -<-d-i-v- -r-e-f-=-{-l-o-a-d-e-r-B-a-r-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---l-o-a-d-e-r---b-a-r-"- -/->-
+- - - - - - - - -<-/-d-i-v->-
+- - - - - - -)-}-
+- - - - - - -<-d-i-v- -r-e-f-=-{-p-r-o-g-r-e-s-s-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---p-r-o-g-r-e-s-s-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"- -/->-
+- - - - - - -{-c-u-r-s-o-r- -&-&- -(-
+- - - - - - - - -<->-
+- - - - - - - - - - -<-d-i-v- -r-e-f-=-{-r-i-n-g-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---c-u-r-s-o-r---r-i-n-g-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"- -/->-
+- - - - - - - - - - -<-d-i-v- -r-e-f-=-{-d-o-t-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---c-u-r-s-o-r---d-o-t-"- -a-r-i-a---h-i-d-d-e-n-=-"-t-r-u-e-"- -/->-
+- - - - - - - - -<-/->-
+- - - - - - -)-}-
+- - - - - - -<-d-i-v- -r-e-f-=-{-c-o-n-t-e-n-t-R-e-f-}- -c-l-a-s-s-N-a-m-e-=-"-m-l-p---c-o-n-t-e-n-t-"->-
+- - - - - - - - -{-c-h-i-l-d-r-e-n-}-
+- - - - - - -<-/-d-i-v->-
+- - - - -<-/->-
+- - -)-;-
+-}-
+-

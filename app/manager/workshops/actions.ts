@@ -1,85 +1,85 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-
-type ManagerProfile = {
-  id: string;
-  role?: string | null;
-};
-
-async function requireManagerOrAdmin() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?redirect=/manager/workshops");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || !["manager", "admin"].includes(profile.role)) {
-    redirect("/dashboard");
-  }
-
-  return profile as ManagerProfile;
-}
-
-function field(formData: FormData, key: string) {
-  return String(formData.get(key) ?? "").trim();
-}
-
-function nullableField(formData: FormData, key: string) {
-  const value = field(formData, key);
-  return value.length > 0 ? value : null;
-}
-
-export async function updateWorkshopStatusByManager(formData: FormData) {
-  const actor = await requireManagerOrAdmin();
-
-  const supabase = createAdminClient();
-
-  const id = field(formData, "id");
-
-  if (!id) {
-    redirect("/manager/workshops?message=Missing workshop ID");
-  }
-
-  const recruitmentStatus = field(formData, "recruitment_status") || "open";
-  const processStatus = field(formData, "process_status") || "not_started";
-  const statusNote = nullableField(formData, "status_note");
-  const internalStatusNote = nullableField(formData, "internal_status_note");
-
-  const { error } = await supabase
-    .from("workshops")
-    .update({
-      recruitment_status: recruitmentStatus,
-      process_status: processStatus,
-      status_note: statusNote,
-      internal_status_note: internalStatusNote,
-      status_updated_at: new Date().toISOString(),
-      status_updated_by: actor.id,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
-
-  if (error) {
-    redirect(`/manager/workshops?message=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/workshops");
-  revalidatePath("/admin/workshops");
-  revalidatePath("/manager/workshops");
-
-  redirect("/manager/workshops?message=Workshop status updated");
-}
+-"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+-i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-
+-t-y-p-e- -M-a-n-a-g-e-r-P-r-o-f-i-l-e- -=- -{-
+- - -i-d-:- -s-t-r-i-n-g-;-
+- - -r-o-l-e-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+-}-;-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-M-a-n-a-g-e-r-O-r-A-d-m-i-n-(-)- -{-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{-
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+-
+- - -i-f- -(-!-u-s-e-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-r-e-d-i-r-e-c-t-=-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-i-d-,- -r-o-l-e-"-)-
+- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
+- - - - -.-s-i-n-g-l-e-(-)-;-
+-
+- - -i-f- -(-!-p-r-o-f-i-l-e- -|-|- -!-[-"-m-a-n-a-g-e-r-"-,- -"-a-d-m-i-n-"-]-.-i-n-c-l-u-d-e-s-(-p-r-o-f-i-l-e-.-r-o-l-e-)-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-d-a-s-h-b-o-a-r-d-"-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -p-r-o-f-i-l-e- -a-s- -M-a-n-a-g-e-r-P-r-o-f-i-l-e-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
+- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
+- - -c-o-n-s-t- -v-a-l-u-e- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -k-e-y-)-;-
+- - -r-e-t-u-r-n- -v-a-l-u-e-.-l-e-n-g-t-h- ->- -0- -?- -v-a-l-u-e- -:- -n-u-l-l-;-
+-}-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-W-o-r-k-s-h-o-p-S-t-a-t-u-s-B-y-M-a-n-a-g-e-r-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -c-o-n-s-t- -a-c-t-o-r- -=- -a-w-a-i-t- -r-e-q-u-i-r-e-M-a-n-a-g-e-r-O-r-A-d-m-i-n-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -i-d- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-d-"-)-;-
+-
+- - -i-f- -(-!-i-d-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-?-m-e-s-s-a-g-e-=-M-i-s-s-i-n-g- -w-o-r-k-s-h-o-p- -I-D-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -r-e-c-r-u-i-t-m-e-n-t-S-t-a-t-u-s- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-r-e-c-r-u-i-t-m-e-n-t-_-s-t-a-t-u-s-"-)- -|-|- -"-o-p-e-n-"-;-
+- - -c-o-n-s-t- -p-r-o-c-e-s-s-S-t-a-t-u-s- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-p-r-o-c-e-s-s-_-s-t-a-t-u-s-"-)- -|-|- -"-n-o-t-_-s-t-a-r-t-e-d-"-;-
+- - -c-o-n-s-t- -s-t-a-t-u-s-N-o-t-e- -=- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-s-t-a-t-u-s-_-n-o-t-e-"-)-;-
+- - -c-o-n-s-t- -i-n-t-e-r-n-a-l-S-t-a-t-u-s-N-o-t-e- -=- -n-u-l-l-a-b-l-e-F-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-i-n-t-e-r-n-a-l-_-s-t-a-t-u-s-_-n-o-t-e-"-)-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-w-o-r-k-s-h-o-p-s-"-)-
+- - - - -.-u-p-d-a-t-e-(-{-
+- - - - - - -r-e-c-r-u-i-t-m-e-n-t-_-s-t-a-t-u-s-:- -r-e-c-r-u-i-t-m-e-n-t-S-t-a-t-u-s-,-
+- - - - - - -p-r-o-c-e-s-s-_-s-t-a-t-u-s-:- -p-r-o-c-e-s-s-S-t-a-t-u-s-,-
+- - - - - - -s-t-a-t-u-s-_-n-o-t-e-:- -s-t-a-t-u-s-N-o-t-e-,-
+- - - - - - -i-n-t-e-r-n-a-l-_-s-t-a-t-u-s-_-n-o-t-e-:- -i-n-t-e-r-n-a-l-S-t-a-t-u-s-N-o-t-e-,-
+- - - - - - -s-t-a-t-u-s-_-u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - - - -s-t-a-t-u-s-_-u-p-d-a-t-e-d-_-b-y-:- -a-c-t-o-r-.-i-d-,-
+- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - -}-)-
+- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-w-o-r-k-s-h-o-p-s-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-w-o-r-k-s-h-o-p-s-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-"-/-m-a-n-a-g-e-r-/-w-o-r-k-s-h-o-p-s-?-m-e-s-s-a-g-e-=-W-o-r-k-s-h-o-p- -s-t-a-t-u-s- -u-p-d-a-t-e-d-"-)-;-
+-}-

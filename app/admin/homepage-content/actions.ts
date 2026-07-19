@@ -1,64 +1,64 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-
-async function requireAdminOrManager() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const admin = createAdminClient();
-
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profile?.role !== "admin" && profile?.role !== "manager") {
-    throw new Error("You do not have permission to edit homepage content.");
-  }
-
-  return user;
-}
-
-export async function updateHomepageContentAction(formData: FormData) {
-  await requireAdminOrManager();
-
-  const admin = createAdminClient();
-  const keys = formData.getAll("key").map(String);
-
-  const rows = keys.map((key, index) => ({
-    key,
-    label: String(formData.get(`label_${key}`) ?? ""),
-    title: String(formData.get(`title_${key}`) ?? ""),
-    body: String(formData.get(`body_${key}`) ?? ""),
-    href: String(formData.get(`href_${key}`) ?? ""),
-    is_active: formData.get(`is_active_${key}`) === "on",
-    sort_order: Number(formData.get(`sort_order_${key}`) ?? index),
-    updated_at: new Date().toISOString(),
-  }));
-
-  const { error } = await admin.from("homepage_content_slots").upsert(rows, {
-    onConflict: "key",
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/home-v2");
-  revalidatePath("/admin/homepage-content");
-
-  redirect("/admin/homepage-content?message=updated");
-}
+-"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+-i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;-
+-
+-a-s-y-n-c- -f-u-n-c-t-i-o-n- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)- -{-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{-
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,-
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+-
+- - -i-f- -(-!-u-s-e-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -p-r-o-f-i-l-e- -}- -=- -a-w-a-i-t- -a-d-m-i-n-
+- - - - -.-f-r-o-m-(-"-p-r-o-f-i-l-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-r-o-l-e-"-)-
+- - - - -.-e-q-(-"-i-d-"-,- -u-s-e-r-.-i-d-)-
+- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
+-
+- - -i-f- -(-p-r-o-f-i-l-e-?-.-r-o-l-e- -!-=-=- -"-a-d-m-i-n-"- -&-&- -p-r-o-f-i-l-e-?-.-r-o-l-e- -!-=-=- -"-m-a-n-a-g-e-r-"-)- -{-
+- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-"-Y-o-u- -d-o- -n-o-t- -h-a-v-e- -p-e-r-m-i-s-s-i-o-n- -t-o- -e-d-i-t- -h-o-m-e-p-a-g-e- -c-o-n-t-e-n-t-.-"-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -u-s-e-r-;-
+-}-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-H-o-m-e-p-a-g-e-C-o-n-t-e-n-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-O-r-M-a-n-a-g-e-r-(-)-;-
+-
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -k-e-y-s- -=- -f-o-r-m-D-a-t-a-.-g-e-t-A-l-l-(-"-k-e-y-"-)-.-m-a-p-(-S-t-r-i-n-g-)-;-
+-
+- - -c-o-n-s-t- -r-o-w-s- -=- -k-e-y-s-.-m-a-p-(-(-k-e-y-,- -i-n-d-e-x-)- -=->- -(-{-
+- - - - -k-e-y-,-
+- - - - -l-a-b-e-l-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-`-l-a-b-e-l-_-$-{-k-e-y-}-`-)- -?-?- -"-"-)-,-
+- - - - -t-i-t-l-e-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-`-t-i-t-l-e-_-$-{-k-e-y-}-`-)- -?-?- -"-"-)-,-
+- - - - -b-o-d-y-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-`-b-o-d-y-_-$-{-k-e-y-}-`-)- -?-?- -"-"-)-,-
+- - - - -h-r-e-f-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-`-h-r-e-f-_-$-{-k-e-y-}-`-)- -?-?- -"-"-)-,-
+- - - - -i-s-_-a-c-t-i-v-e-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-`-i-s-_-a-c-t-i-v-e-_-$-{-k-e-y-}-`-)- -=-=-=- -"-o-n-"-,-
+- - - - -s-o-r-t-_-o-r-d-e-r-:- -N-u-m-b-e-r-(-f-o-r-m-D-a-t-a-.-g-e-t-(-`-s-o-r-t-_-o-r-d-e-r-_-$-{-k-e-y-}-`-)- -?-?- -i-n-d-e-x-)-,-
+- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - -}-)-)-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-h-o-m-e-p-a-g-e-_-c-o-n-t-e-n-t-_-s-l-o-t-s-"-)-.-u-p-s-e-r-t-(-r-o-w-s-,- -{-
+- - - - -o-n-C-o-n-f-l-i-c-t-:- -"-k-e-y-"-,-
+- - -}-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -t-h-r-o-w- -n-e-w- -E-r-r-o-r-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-h-o-m-e---v-2-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-h-o-m-e-p-a-g-e---c-o-n-t-e-n-t-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-h-o-m-e-p-a-g-e---c-o-n-t-e-n-t-?-m-e-s-s-a-g-e-=-u-p-d-a-t-e-d-"-)-;-
+-}-

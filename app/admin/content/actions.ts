@@ -1,38 +1,38 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
-
-export async function updateSiteContent(formData: FormData) {
-  await requireAdmin();
-
-  const id = String(formData.get("id"));
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from("site_content")
-    .update({
-      title: String(formData.get("title") || "").trim(),
-      body: String(formData.get("body") || "").trim(),
-      image_url: String(formData.get("image_url") || "").trim() || null,
-      cta_label: String(formData.get("cta_label") || "").trim() || null,
-      cta_href: String(formData.get("cta_href") || "").trim() || null,
-      is_active: formData.get("is_active") === "on",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
-
-  if (error) {
-    redirect(`/admin/content?message=${encodeURIComponent(error.message)}`);
-  }
-
-  revalidatePath("/");
-  revalidatePath("/about");
-  revalidatePath("/services");
-  revalidatePath("/workshops");
-  revalidatePath("/admin/content");
-
-  redirect("/admin/content?message=Content updated");
-}
+-"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+-i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-A-d-m-i-n- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -u-p-d-a-t-e-S-i-t-e-C-o-n-t-e-n-t-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-A-d-m-i-n-(-)-;-
+-
+- - -c-o-n-s-t- -i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-d-"-)-)-;-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-s-i-t-e-_-c-o-n-t-e-n-t-"-)-
+- - - - -.-u-p-d-a-t-e-(-{-
+- - - - - - -t-i-t-l-e-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-t-i-t-l-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-,-
+- - - - - - -b-o-d-y-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-b-o-d-y-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-,-
+- - - - - - -i-m-a-g-e-_-u-r-l-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-m-a-g-e-_-u-r-l-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-,-
+- - - - - - -c-t-a-_-l-a-b-e-l-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-t-a-_-l-a-b-e-l-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-,-
+- - - - - - -c-t-a-_-h-r-e-f-:- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-t-a-_-h-r-e-f-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)- -|-|- -n-u-l-l-,-
+- - - - - - -i-s-_-a-c-t-i-v-e-:- -f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-s-_-a-c-t-i-v-e-"-)- -=-=-=- -"-o-n-"-,-
+- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,-
+- - - - -}-)-
+- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-/-a-d-m-i-n-/-c-o-n-t-e-n-t-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-b-o-u-t-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-s-e-r-v-i-c-e-s-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-w-o-r-k-s-h-o-p-s-"-)-;-
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-c-o-n-t-e-n-t-"-)-;-
+-
+- - -r-e-d-i-r-e-c-t-(-"-/-a-d-m-i-n-/-c-o-n-t-e-n-t-?-m-e-s-s-a-g-e-=-C-o-n-t-e-n-t- -u-p-d-a-t-e-d-"-)-;-
+-}-

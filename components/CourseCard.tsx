@@ -1,59 +1,59 @@
-import Link from "next/link";
-
-type CourseCardProps = {
-  course: {
-    title: string;
-    slug: string;
-    short_description: string | null;
-    level: string | null;
-    language: string | null;
-    cover_url: string | null;
-  };
-};
-
-export default function CourseCard({ course }: CourseCardProps) {
-  return (
-    <Link
-      href={`/courses/${course.slug}`}
-      className="group overflow-hidden rounded-3xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-    >
-      <div className="h-44 bg-slate-200">
-        {course.cover_url ? (
-          <img
-            src={course.cover_url}
-            alt={course.title}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center bg-slate-900 text-white">
-            LexData
-          </div>
-        )}
-      </div>
-
-      <div className="p-6">
-        <div className="mb-3 flex gap-2">
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-            {course.level || "Beginner"}
-          </span>
-
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            {course.language || "English"}
-          </span>
-        </div>
-
-        <h3 className="text-xl font-bold text-slate-950 group-hover:text-blue-700">
-          {course.title}
-        </h3>
-
-        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
-          {course.short_description}
-        </p>
-
-        <p className="mt-5 font-semibold text-blue-700">
-          View course →
-        </p>
-      </div>
-    </Link>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-
+-t-y-p-e- -C-o-u-r-s-e-C-a-r-d-P-r-o-p-s- -=- -{-
+- - -c-o-u-r-s-e-:- -{-
+- - - - -t-i-t-l-e-:- -s-t-r-i-n-g-;-
+- - - - -s-l-u-g-:- -s-t-r-i-n-g-;-
+- - - - -s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - - - -l-e-v-e-l-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - - - -l-a-n-g-u-a-g-e-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - - - -c-o-v-e-r-_-u-r-l-:- -s-t-r-i-n-g- -|- -n-u-l-l-;-
+- - -}-;-
+-}-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -C-o-u-r-s-e-C-a-r-d-(-{- -c-o-u-r-s-e- -}-:- -C-o-u-r-s-e-C-a-r-d-P-r-o-p-s-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-i-n-k-
+- - - - - - -h-r-e-f-=-{-`-/-c-o-u-r-s-e-s-/-$-{-c-o-u-r-s-e-.-s-l-u-g-}-`-}-
+- - - - - - -c-l-a-s-s-N-a-m-e-=-"-g-r-o-u-p- -o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---3-x-l- -b-o-r-d-e-r- -b-g---w-h-i-t-e- -s-h-a-d-o-w---s-m- -t-r-a-n-s-i-t-i-o-n- -h-o-v-e-r-:---t-r-a-n-s-l-a-t-e---y---1- -h-o-v-e-r-:-s-h-a-d-o-w---x-l-"-
+- - - - ->-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-h---4-4- -b-g---s-l-a-t-e---2-0-0-"->-
+- - - - - - - - -{-c-o-u-r-s-e-.-c-o-v-e-r-_-u-r-l- -?- -(-
+- - - - - - - - - - -<-i-m-g-
+- - - - - - - - - - - - -s-r-c-=-{-c-o-u-r-s-e-.-c-o-v-e-r-_-u-r-l-}-
+- - - - - - - - - - - - -a-l-t-=-{-c-o-u-r-s-e-.-t-i-t-l-e-}-
+- - - - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l- -o-b-j-e-c-t---c-o-v-e-r- -t-r-a-n-s-i-t-i-o-n- -d-u-r-a-t-i-o-n---3-0-0- -g-r-o-u-p---h-o-v-e-r-:-s-c-a-l-e---1-0-5-"-
+- - - - - - - - - - -/->-
+- - - - - - - - -)- -:- -(-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-f-l-e-x- -h---f-u-l-l- -i-t-e-m-s---c-e-n-t-e-r- -j-u-s-t-i-f-y---c-e-n-t-e-r- -b-g---s-l-a-t-e---9-0-0- -t-e-x-t---w-h-i-t-e-"->-
+- - - - - - - - - - - - -L-e-x-D-a-t-a-
+- - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - -)-}-
+- - - - - - -<-/-d-i-v->-
+-
+- - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p---6-"->-
+- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-b---3- -f-l-e-x- -g-a-p---2-"->-
+- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---b-l-u-e---5-0- -p-x---3- -p-y---1- -t-e-x-t---x-s- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---b-l-u-e---7-0-0-"->-
+- - - - - - - - - - - - -{-c-o-u-r-s-e-.-l-e-v-e-l- -|-|- -"-B-e-g-i-n-n-e-r-"-}-
+- - - - - - - - - - -<-/-s-p-a-n->-
+-
+- - - - - - - - - - -<-s-p-a-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---f-u-l-l- -b-g---s-l-a-t-e---1-0-0- -p-x---3- -p-y---1- -t-e-x-t---x-s- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
+- - - - - - - - - - - - -{-c-o-u-r-s-e-.-l-a-n-g-u-a-g-e- -|-|- -"-E-n-g-l-i-s-h-"-}-
+- - - - - - - - - - -<-/-s-p-a-n->-
+- - - - - - - - -<-/-d-i-v->-
+-
+- - - - - - - - -<-h-3- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---x-l- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---9-5-0- -g-r-o-u-p---h-o-v-e-r-:-t-e-x-t---b-l-u-e---7-0-0-"->-
+- - - - - - - - - - -{-c-o-u-r-s-e-.-t-i-t-l-e-}-
+- - - - - - - - -<-/-h-3->-
+-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---3- -l-i-n-e---c-l-a-m-p---3- -t-e-x-t---s-m- -l-e-a-d-i-n-g---6- -t-e-x-t---s-l-a-t-e---6-0-0-"->-
+- - - - - - - - - - -{-c-o-u-r-s-e-.-s-h-o-r-t-_-d-e-s-c-r-i-p-t-i-o-n-}-
+- - - - - - - - -<-/-p->-
+-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -f-o-n-t---s-e-m-i-b-o-l-d- -t-e-x-t---b-l-u-e---7-0-0-"->-
+- - - - - - - - - - -V-i-e-w- -c-o-u-r-s-e- -→-
+- - - - - - - - -<-/-p->-
+- - - - - - -<-/-d-i-v->-
+- - - - -<-/-L-i-n-k->-
+- - -)-;-
+-}-

@@ -1,23 +1,23 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function HelpPage() {
-  return (
-    <LexPaperSubPage
-      kicker="Help center"
-      title="Guides for using LexData."
-      body="Find help for courses, workshops, videos, dashboard access, certificates, and admin editing."
-      cards={[
-        {
-          title: "Edit homepage content",
-          body: "Use the admin homepage editor to update hero text, typing messages, video slots, and cases.",
-          href: "/admin/homepage-content",
-        },
-        {
-          title: "Manage videos",
-          body: "Use the manager video page to add workshop previews and homepage videos.",
-          href: "/manager/homepage-videos",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -H-e-l-p-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-H-e-l-p- -c-e-n-t-e-r-"-
+- - - - - - -t-i-t-l-e-=-"-G-u-i-d-e-s- -f-o-r- -u-s-i-n-g- -L-e-x-D-a-t-a-.-"-
+- - - - - - -b-o-d-y-=-"-F-i-n-d- -h-e-l-p- -f-o-r- -c-o-u-r-s-e-s-,- -w-o-r-k-s-h-o-p-s-,- -v-i-d-e-o-s-,- -d-a-s-h-b-o-a-r-d- -a-c-c-e-s-s-,- -c-e-r-t-i-f-i-c-a-t-e-s-,- -a-n-d- -a-d-m-i-n- -e-d-i-t-i-n-g-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-E-d-i-t- -h-o-m-e-p-a-g-e- -c-o-n-t-e-n-t-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-U-s-e- -t-h-e- -a-d-m-i-n- -h-o-m-e-p-a-g-e- -e-d-i-t-o-r- -t-o- -u-p-d-a-t-e- -h-e-r-o- -t-e-x-t-,- -t-y-p-i-n-g- -m-e-s-s-a-g-e-s-,- -v-i-d-e-o- -s-l-o-t-s-,- -a-n-d- -c-a-s-e-s-.-"-,-
+- - - - - - - - - - -h-r-e-f-:- -"-/-a-d-m-i-n-/-h-o-m-e-p-a-g-e---c-o-n-t-e-n-t-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-M-a-n-a-g-e- -v-i-d-e-o-s-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-U-s-e- -t-h-e- -m-a-n-a-g-e-r- -v-i-d-e-o- -p-a-g-e- -t-o- -a-d-d- -w-o-r-k-s-h-o-p- -p-r-e-v-i-e-w-s- -a-n-d- -h-o-m-e-p-a-g-e- -v-i-d-e-o-s-.-"-,-
+- - - - - - - - - - -h-r-e-f-:- -"-/-m-a-n-a-g-e-r-/-h-o-m-e-p-a-g-e---v-i-d-e-o-s-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-

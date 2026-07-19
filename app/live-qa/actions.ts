@@ -1,66 +1,66 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
-
-export async function submitLiveQaRequestAction(formData: FormData) {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-
-  const name = String(formData.get("name") || "").trim();
-  const email = String(formData.get("email") || "").trim();
-  const category = String(formData.get("category") || "General Help").trim();
-  const question = String(formData.get("question") || "").trim();
-  const pagePath = String(formData.get("page_path") || "/").trim();
-
-  if (!question) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  await admin.from("live_qa_requests").insert({
-    user_id: user?.id || null,
-    name,
-    email,
-    category,
-    question,
-    page_path: pagePath,
-    status: "open",
-    updated_at: new Date().toISOString(),
-  });
-
-  revalidatePath("/");
-  revalidatePath("/manager/live-help");
-  revalidatePath("/admin/live-help");
-}
-
-export async function answerLiveQaRequestAction(formData: FormData) {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-
-  const id = String(formData.get("id") || "").trim();
-  const answer = String(formData.get("answer") || "").trim();
-  const status = String(formData.get("status") || "answered").trim();
-
-  if (!id) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  await admin
-    .from("live_qa_requests")
-    .update({
-      answer,
-      status,
-      answered_by: user?.id || null,
-      answered_at: answer ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
-
-  revalidatePath("/manager/live-help");
-  revalidatePath("/admin/live-help");
-}
+-"-u-s-e- -s-e-r-v-e-r-"-;--
+--
+-i-m-p-o-r-t- -{- -r-e-v-a-l-i-d-a-t-e-P-a-t-h- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;--
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-a-d-m-i-n-"-;--
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;--
+--
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -s-u-b-m-i-t-L-i-v-e-Q-a-R-e-q-u-e-s-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
+--
+- - -c-o-n-s-t- -n-a-m-e- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-n-a-m-e-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -e-m-a-i-l- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-e-m-a-i-l-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -c-a-t-e-g-o-r-y- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-c-a-t-e-g-o-r-y-"-)- -|-|- -"-G-e-n-e-r-a-l- -H-e-l-p-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -q-u-e-s-t-i-o-n- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-q-u-e-s-t-i-o-n-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -p-a-g-e-P-a-t-h- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-p-a-g-e-_-p-a-t-h-"-)- -|-|- -"-/-"-)-.-t-r-i-m-(-)-;--
+--
+- - -i-f- -(-!-q-u-e-s-t-i-o-n-)- -r-e-t-u-r-n-;--
+--
+- - -c-o-n-s-t- -{--
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
+--
+- - -a-w-a-i-t- -a-d-m-i-n-.-f-r-o-m-(-"-l-i-v-e-_-q-a-_-r-e-q-u-e-s-t-s-"-)-.-i-n-s-e-r-t-(-{--
+- - - - -u-s-e-r-_-i-d-:- -u-s-e-r-?-.-i-d- -|-|- -n-u-l-l-,--
+- - - - -n-a-m-e-,--
+- - - - -e-m-a-i-l-,--
+- - - - -c-a-t-e-g-o-r-y-,--
+- - - - -q-u-e-s-t-i-o-n-,--
+- - - - -p-a-g-e-_-p-a-t-h-:- -p-a-g-e-P-a-t-h-,--
+- - - - -s-t-a-t-u-s-:- -"-o-p-e-n-"-,--
+- - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
+- - -}-)-;--
+--
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-"-)-;--
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-l-i-v-e---h-e-l-p-"-)-;--
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-l-i-v-e---h-e-l-p-"-)-;--
+-}--
+--
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -a-n-s-w-e-r-L-i-v-e-Q-a-R-e-q-u-e-s-t-A-c-t-i-o-n-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{--
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;--
+- - -c-o-n-s-t- -a-d-m-i-n- -=- -c-r-e-a-t-e-A-d-m-i-n-C-l-i-e-n-t-(-)-;--
+--
+- - -c-o-n-s-t- -i-d- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-i-d-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -a-n-s-w-e-r- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-a-n-s-w-e-r-"-)- -|-|- -"-"-)-.-t-r-i-m-(-)-;--
+- - -c-o-n-s-t- -s-t-a-t-u-s- -=- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-"-s-t-a-t-u-s-"-)- -|-|- -"-a-n-s-w-e-r-e-d-"-)-.-t-r-i-m-(-)-;--
+--
+- - -i-f- -(-!-i-d-)- -r-e-t-u-r-n-;--
+--
+- - -c-o-n-s-t- -{--
+- - - - -d-a-t-a-:- -{- -u-s-e-r- -}-,--
+- - -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;--
+--
+- - -a-w-a-i-t- -a-d-m-i-n--
+- - - - -.-f-r-o-m-(-"-l-i-v-e-_-q-a-_-r-e-q-u-e-s-t-s-"-)--
+- - - - -.-u-p-d-a-t-e-(-{--
+- - - - - - -a-n-s-w-e-r-,--
+- - - - - - -s-t-a-t-u-s-,--
+- - - - - - -a-n-s-w-e-r-e-d-_-b-y-:- -u-s-e-r-?-.-i-d- -|-|- -n-u-l-l-,--
+- - - - - - -a-n-s-w-e-r-e-d-_-a-t-:- -a-n-s-w-e-r- -?- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)- -:- -n-u-l-l-,--
+- - - - - - -u-p-d-a-t-e-d-_-a-t-:- -n-e-w- -D-a-t-e-(-)-.-t-o-I-S-O-S-t-r-i-n-g-(-)-,--
+- - - - -}-)--
+- - - - -.-e-q-(-"-i-d-"-,- -i-d-)-;--
+--
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-m-a-n-a-g-e-r-/-l-i-v-e---h-e-l-p-"-)-;--
+- - -r-e-v-a-l-i-d-a-t-e-P-a-t-h-(-"-/-a-d-m-i-n-/-l-i-v-e---h-e-l-p-"-)-;--
+-}-

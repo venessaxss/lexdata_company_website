@@ -1,65 +1,65 @@
-"use client";
-
-import { useState } from "react";
-import { uploadReceiptAction } from "@/app/workshops/[slug]/receipt-actions";
-
-type Props = {
-  slug: string;
-  workshopId: string;
-  registrationId: string;
-  receiptUrl?: string | null;
-};
-
-export default function PaymentReceiptUploadForm({
-  slug,
-  registrationId,
-  receiptUrl,
-}: Props) {
-  const [fileName, setFileName] = useState("");
-
-  return (
-    <section className="rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-      <h2 className="text-2xl font-black text-slate-950">
-        Upload payment receipt
-      </h2>
-
-      <form action={uploadReceiptAction} className="mt-5 space-y-4">
-        <input type="hidden" name="slug" value={slug} />
-        <input type="hidden" name="registrationId" value={registrationId} />
-
-        <input
-          type="file"
-          name="receipt"
-          accept="image/*,.pdf"
-          required
-          onChange={(event) =>
-            setFileName(event.target.files?.[0]?.name || "")
-          }
-          className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700"
-        />
-
-        {fileName ? (
-          <p className="text-sm font-bold text-slate-500">{fileName}</p>
-        ) : null}
-
-        <button
-          type="submit"
-          className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
-        >
-          Upload receipt
-        </button>
-      </form>
-
-      {receiptUrl ? (
-        <a
-          href={receiptUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 inline-flex rounded-2xl border border-slate-300 px-4 py-3 text-sm font-black text-slate-700"
-        >
-          View current receipt
-        </a>
-      ) : null}
-    </section>
-  );
-}
+-"-u-s-e- -c-l-i-e-n-t-"-;--
+--
+-i-m-p-o-r-t- -{- -u-s-e-S-t-a-t-e- -}- -f-r-o-m- -"-r-e-a-c-t-"-;--
+-i-m-p-o-r-t- -{- -u-p-l-o-a-d-R-e-c-e-i-p-t-A-c-t-i-o-n- -}- -f-r-o-m- -"-@-/-a-p-p-/-w-o-r-k-s-h-o-p-s-/-[-s-l-u-g-]-/-r-e-c-e-i-p-t---a-c-t-i-o-n-s-"-;--
+--
+-t-y-p-e- -P-r-o-p-s- -=- -{--
+- - -s-l-u-g-:- -s-t-r-i-n-g-;--
+- - -w-o-r-k-s-h-o-p-I-d-:- -s-t-r-i-n-g-;--
+- - -r-e-g-i-s-t-r-a-t-i-o-n-I-d-:- -s-t-r-i-n-g-;--
+- - -r-e-c-e-i-p-t-U-r-l-?-:- -s-t-r-i-n-g- -|- -n-u-l-l-;--
+-}-;--
+--
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -P-a-y-m-e-n-t-R-e-c-e-i-p-t-U-p-l-o-a-d-F-o-r-m-(-{--
+- - -s-l-u-g-,--
+- - -r-e-g-i-s-t-r-a-t-i-o-n-I-d-,--
+- - -r-e-c-e-i-p-t-U-r-l-,--
+-}-:- -P-r-o-p-s-)- -{--
+- - -c-o-n-s-t- -[-f-i-l-e-N-a-m-e-,- -s-e-t-F-i-l-e-N-a-m-e-]- -=- -u-s-e-S-t-a-t-e-(-"-"-)-;--
+--
+- - -r-e-t-u-r-n- -(--
+- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---3-x-l- -b-g---w-h-i-t-e- -p---8- -s-h-a-d-o-w---s-m- -r-i-n-g---1- -r-i-n-g---s-l-a-t-e---2-0-0-"->--
+- - - - - - -<-h-2- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---2-x-l- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---9-5-0-"->--
+- - - - - - - - -U-p-l-o-a-d- -p-a-y-m-e-n-t- -r-e-c-e-i-p-t--
+- - - - - - -<-/-h-2->--
+--
+- - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-u-p-l-o-a-d-R-e-c-e-i-p-t-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -s-p-a-c-e---y---4-"->--
+- - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-s-l-u-g-"- -v-a-l-u-e-=-{-s-l-u-g-}- -/->--
+- - - - - - - - -<-i-n-p-u-t- -t-y-p-e-=-"-h-i-d-d-e-n-"- -n-a-m-e-=-"-r-e-g-i-s-t-r-a-t-i-o-n-I-d-"- -v-a-l-u-e-=-{-r-e-g-i-s-t-r-a-t-i-o-n-I-d-}- -/->--
+--
+- - - - - - - - -<-i-n-p-u-t--
+- - - - - - - - - - -t-y-p-e-=-"-f-i-l-e-"--
+- - - - - - - - - - -n-a-m-e-=-"-r-e-c-e-i-p-t-"--
+- - - - - - - - - - -a-c-c-e-p-t-=-"-i-m-a-g-e-/-*-,-.-p-d-f-"--
+- - - - - - - - - - -r-e-q-u-i-r-e-d--
+- - - - - - - - - - -o-n-C-h-a-n-g-e-=-{-(-e-v-e-n-t-)- -=->--
+- - - - - - - - - - - - -s-e-t-F-i-l-e-N-a-m-e-(-e-v-e-n-t-.-t-a-r-g-e-t-.-f-i-l-e-s-?-.-[-0-]-?-.-n-a-m-e- -|-|- -"-"-)--
+- - - - - - - - - - -}--
+- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-w---f-u-l-l- -r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -b-g---w-h-i-t-e- -p-x---4- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---7-0-0-"--
+- - - - - - - - -/->--
+--
+- - - - - - - - -{-f-i-l-e-N-a-m-e- -?- -(--
+- - - - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---b-o-l-d- -t-e-x-t---s-l-a-t-e---5-0-0-"->-{-f-i-l-e-N-a-m-e-}-<-/-p->--
+- - - - - - - - -)- -:- -n-u-l-l-}--
+--
+- - - - - - - - -<-b-u-t-t-o-n--
+- - - - - - - - - - -t-y-p-e-=-"-s-u-b-m-i-t-"--
+- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---9-5-0- -p-x---5- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---w-h-i-t-e- -h-o-v-e-r-:-b-g---s-l-a-t-e---7-0-0-"--
+- - - - - - - - ->--
+- - - - - - - - - - -U-p-l-o-a-d- -r-e-c-e-i-p-t--
+- - - - - - - - -<-/-b-u-t-t-o-n->--
+- - - - - - -<-/-f-o-r-m->--
+--
+- - - - - - -{-r-e-c-e-i-p-t-U-r-l- -?- -(--
+- - - - - - - - -<-a--
+- - - - - - - - - - -h-r-e-f-=-{-r-e-c-e-i-p-t-U-r-l-}--
+- - - - - - - - - - -t-a-r-g-e-t-=-"-_-b-l-a-n-k-"--
+- - - - - - - - - - -r-e-l-=-"-n-o-r-e-f-e-r-r-e-r-"--
+- - - - - - - - - - -c-l-a-s-s-N-a-m-e-=-"-m-t---5- -i-n-l-i-n-e---f-l-e-x- -r-o-u-n-d-e-d---2-x-l- -b-o-r-d-e-r- -b-o-r-d-e-r---s-l-a-t-e---3-0-0- -p-x---4- -p-y---3- -t-e-x-t---s-m- -f-o-n-t---b-l-a-c-k- -t-e-x-t---s-l-a-t-e---7-0-0-"--
+- - - - - - - - ->--
+- - - - - - - - - - -V-i-e-w- -c-u-r-r-e-n-t- -r-e-c-e-i-p-t--
+- - - - - - - - -<-/-a->--
+- - - - - - -)- -:- -n-u-l-l-}--
+- - - - -<-/-s-e-c-t-i-o-n->--
+- - -)-;--
+-}-

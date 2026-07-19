@@ -1,59 +1,60 @@
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { markLessonComplete } from "./progress-actions";
-
-export default async function LessonPage({ params }: { params: Promise<{ slug: string; lessonId: string }> }) {
-  const { slug, lessonId } = await params;
-  const supabase = await createClient();
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) redirect("/login?message=Please login first");
-
-  const { data: course } = await supabase
-    .from("courses")
-    .select("id,title,slug")
-    .eq("slug", slug)
-    .eq("is_published", true)
-    .single();
-  if (!course) notFound();
-
-  const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id")
-    .eq("course_id", course.id)
-    .eq("user_id", userData.user.id)
-    .maybeSingle();
-  if (!enrollment) redirect(`/courses/${slug}?message=Enroll before opening lessons`);
-
-  const { data: lesson } = await supabase
-    .from("lessons")
-    .select("id,title,content,video_url,position")
-    .eq("id", lessonId)
-    .eq("course_id", course.id)
-    .eq("is_published", true)
-    .single();
-  if (!lesson) notFound();
-
-  const completeAction = markLessonComplete.bind(null, lesson.id, slug);
-
-  return (
-    <section className="mx-auto max-w-4xl px-4 py-12">
-      <Link href={`/courses/${slug}`} className="text-sm font-semibold">← Back to course</Link>
-      <article className="card mt-5 p-8">
-        <p className="text-sm text-slate-500">Lesson {lesson.position} · {course.title}</p>
-        <h1 className="mt-2 text-3xl font-bold">{lesson.title}</h1>
-        {lesson.video_url ? (
-          <div className="mt-6 aspect-video overflow-hidden rounded-2xl bg-slate-200">
-            <iframe src={lesson.video_url} className="h-full w-full" allowFullScreen />
-          </div>
-        ) : null}
-        <div className="prose prose-slate mt-8 max-w-none whitespace-pre-line text-slate-700">
-          {lesson.content}
-        </div>
-        <form action={completeAction} className="mt-8">
-          <button className="btn-primary">Mark complete</button>
-        </form>
-      </article>
-    </section>
-  );
-}
+-i-m-p-o-r-t- -L-i-n-k- -f-r-o-m- -"-n-e-x-t-/-l-i-n-k-"-;-
+-i-m-p-o-r-t- -{- -n-o-t-F-o-u-n-d-,- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -{- -m-a-r-k-L-e-s-s-o-n-C-o-m-p-l-e-t-e- -}- -f-r-o-m- -"-.-/-p-r-o-g-r-e-s-s---a-c-t-i-o-n-s-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -L-e-s-s-o-n-P-a-g-e-(-{- -p-a-r-a-m-s- -}-:- -{- -p-a-r-a-m-s-:- -P-r-o-m-i-s-e-<-{- -s-l-u-g-:- -s-t-r-i-n-g-;- -l-e-s-s-o-n-I-d-:- -s-t-r-i-n-g- -}->- -}-)- -{-
+- - -c-o-n-s-t- -{- -s-l-u-g-,- -l-e-s-s-o-n-I-d- -}- -=- -a-w-a-i-t- -p-a-r-a-m-s-;-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -u-s-e-r-D-a-t-a- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-g-e-t-U-s-e-r-(-)-;-
+- - -i-f- -(-!-u-s-e-r-D-a-t-a-.-u-s-e-r-)- -r-e-d-i-r-e-c-t-(-"-/-l-o-g-i-n-?-m-e-s-s-a-g-e-=-P-l-e-a-s-e- -l-o-g-i-n- -f-i-r-s-t-"-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -c-o-u-r-s-e- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-c-o-u-r-s-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-s-l-u-g-"-)-
+- - - - -.-e-q-(-"-s-l-u-g-"-,- -s-l-u-g-)-
+- - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
+- - - - -.-s-i-n-g-l-e-(-)-;-
+- - -i-f- -(-!-c-o-u-r-s-e-)- -n-o-t-F-o-u-n-d-(-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -e-n-r-o-l-l-m-e-n-t- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-e-n-r-o-l-l-m-e-n-t-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-i-d-"-)-
+- - - - -.-e-q-(-"-c-o-u-r-s-e-_-i-d-"-,- -c-o-u-r-s-e-.-i-d-)-
+- - - - -.-e-q-(-"-u-s-e-r-_-i-d-"-,- -u-s-e-r-D-a-t-a-.-u-s-e-r-.-i-d-)-
+- - - - -.-m-a-y-b-e-S-i-n-g-l-e-(-)-;-
+- - -i-f- -(-!-e-n-r-o-l-l-m-e-n-t-)- -r-e-d-i-r-e-c-t-(-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-?-m-e-s-s-a-g-e-=-E-n-r-o-l-l- -b-e-f-o-r-e- -o-p-e-n-i-n-g- -l-e-s-s-o-n-s-`-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-:- -l-e-s-s-o-n- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-l-e-s-s-o-n-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-i-d-,-t-i-t-l-e-,-c-o-n-t-e-n-t-,-v-i-d-e-o-_-u-r-l-,-p-o-s-i-t-i-o-n-"-)-
+- - - - -.-e-q-(-"-i-d-"-,- -l-e-s-s-o-n-I-d-)-
+- - - - -.-e-q-(-"-c-o-u-r-s-e-_-i-d-"-,- -c-o-u-r-s-e-.-i-d-)-
+- - - - -.-e-q-(-"-i-s-_-p-u-b-l-i-s-h-e-d-"-,- -t-r-u-e-)-
+- - - - -.-s-i-n-g-l-e-(-)-;-
+- - -i-f- -(-!-l-e-s-s-o-n-)- -n-o-t-F-o-u-n-d-(-)-;-
+-
+- - -c-o-n-s-t- -c-o-m-p-l-e-t-e-A-c-t-i-o-n- -=- -m-a-r-k-L-e-s-s-o-n-C-o-m-p-l-e-t-e-.-b-i-n-d-(-n-u-l-l-,- -l-e-s-s-o-n-.-i-d-,- -s-l-u-g-)-;-
+-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-s-e-c-t-i-o-n- -c-l-a-s-s-N-a-m-e-=-"-m-x---a-u-t-o- -m-a-x---w---4-x-l- -p-x---4- -p-y---1-2-"->-
+- - - - - - -<-L-i-n-k- -h-r-e-f-=-{-`-/-c-o-u-r-s-e-s-/-$-{-s-l-u-g-}-`-}- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -f-o-n-t---s-e-m-i-b-o-l-d-"->-←- -B-a-c-k- -t-o- -c-o-u-r-s-e-<-/-L-i-n-k->-
+- - - - - - -<-a-r-t-i-c-l-e- -c-l-a-s-s-N-a-m-e-=-"-c-a-r-d- -m-t---5- -p---8-"->-
+- - - - - - - - -<-p- -c-l-a-s-s-N-a-m-e-=-"-t-e-x-t---s-m- -t-e-x-t---s-l-a-t-e---5-0-0-"->-L-e-s-s-o-n- -{-l-e-s-s-o-n-.-p-o-s-i-t-i-o-n-}- -·- -{-c-o-u-r-s-e-.-t-i-t-l-e-}-<-/-p->-
+- - - - - - - - -<-h-1- -c-l-a-s-s-N-a-m-e-=-"-m-t---2- -t-e-x-t---3-x-l- -f-o-n-t---b-o-l-d-"->-{-l-e-s-s-o-n-.-t-i-t-l-e-}-<-/-h-1->-
+- - - - - - - - -{-l-e-s-s-o-n-.-v-i-d-e-o-_-u-r-l- -?- -(-
+- - - - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-m-t---6- -a-s-p-e-c-t---v-i-d-e-o- -o-v-e-r-f-l-o-w---h-i-d-d-e-n- -r-o-u-n-d-e-d---2-x-l- -b-g---s-l-a-t-e---2-0-0-"->-
+- - - - - - - - - - - - -<-i-f-r-a-m-e- -s-r-c-=-{-l-e-s-s-o-n-.-v-i-d-e-o-_-u-r-l-}- -c-l-a-s-s-N-a-m-e-=-"-h---f-u-l-l- -w---f-u-l-l-"- -a-l-l-o-w-F-u-l-l-S-c-r-e-e-n- -/->-
+- - - - - - - - - - -<-/-d-i-v->-
+- - - - - - - - -)- -:- -n-u-l-l-}-
+- - - - - - - - -<-d-i-v- -c-l-a-s-s-N-a-m-e-=-"-p-r-o-s-e- -p-r-o-s-e---s-l-a-t-e- -m-t---8- -m-a-x---w---n-o-n-e- -w-h-i-t-e-s-p-a-c-e---p-r-e---l-i-n-e- -t-e-x-t---s-l-a-t-e---7-0-0-"->-
+- - - - - - - - - - -{-l-e-s-s-o-n-.-c-o-n-t-e-n-t-}-
+- - - - - - - - -<-/-d-i-v->-
+- - - - - - - - -<-f-o-r-m- -a-c-t-i-o-n-=-{-c-o-m-p-l-e-t-e-A-c-t-i-o-n-}- -c-l-a-s-s-N-a-m-e-=-"-m-t---8-"->-
+- - - - - - - - - - -<-b-u-t-t-o-n- -c-l-a-s-s-N-a-m-e-=-"-b-t-n---p-r-i-m-a-r-y-"->-M-a-r-k- -c-o-m-p-l-e-t-e-<-/-b-u-t-t-o-n->-
+- - - - - - - - -<-/-f-o-r-m->-
+- - - - - - -<-/-a-r-t-i-c-l-e->-
+- - - - -<-/-s-e-c-t-i-o-n->-
+- - -)-;-
+-}-
+-

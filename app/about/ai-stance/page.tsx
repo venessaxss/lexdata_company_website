@@ -1,25 +1,25 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function AiStancePage() {
-  return (
-    <LexPaperSubPage
-      kicker="Our stance on AI"
-      title="Human-centered AI for language research."
-      body="LexData uses AI as a research assistant, not a replacement for human expertise, interpretation, and accountability."
-      cards={[
-        {
-          title: "Human judgment first",
-          body: "AI can support workflow speed, but interpretation and evaluation remain human responsibilities.",
-        },
-        {
-          title: "Transparent methods",
-          body: "We value clear documentation, reproducible steps, and explainable research decisions.",
-        },
-        {
-          title: "Data responsibility",
-          body: "Language data should be handled with care, consent, context, and scholarly ethics.",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -A-i-S-t-a-n-c-e-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-O-u-r- -s-t-a-n-c-e- -o-n- -A-I-"-
+- - - - - - -t-i-t-l-e-=-"-H-u-m-a-n---c-e-n-t-e-r-e-d- -A-I- -f-o-r- -l-a-n-g-u-a-g-e- -r-e-s-e-a-r-c-h-.-"-
+- - - - - - -b-o-d-y-=-"-L-e-x-D-a-t-a- -u-s-e-s- -A-I- -a-s- -a- -r-e-s-e-a-r-c-h- -a-s-s-i-s-t-a-n-t-,- -n-o-t- -a- -r-e-p-l-a-c-e-m-e-n-t- -f-o-r- -h-u-m-a-n- -e-x-p-e-r-t-i-s-e-,- -i-n-t-e-r-p-r-e-t-a-t-i-o-n-,- -a-n-d- -a-c-c-o-u-n-t-a-b-i-l-i-t-y-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-H-u-m-a-n- -j-u-d-g-m-e-n-t- -f-i-r-s-t-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A-I- -c-a-n- -s-u-p-p-o-r-t- -w-o-r-k-f-l-o-w- -s-p-e-e-d-,- -b-u-t- -i-n-t-e-r-p-r-e-t-a-t-i-o-n- -a-n-d- -e-v-a-l-u-a-t-i-o-n- -r-e-m-a-i-n- -h-u-m-a-n- -r-e-s-p-o-n-s-i-b-i-l-i-t-i-e-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-T-r-a-n-s-p-a-r-e-n-t- -m-e-t-h-o-d-s-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-W-e- -v-a-l-u-e- -c-l-e-a-r- -d-o-c-u-m-e-n-t-a-t-i-o-n-,- -r-e-p-r-o-d-u-c-i-b-l-e- -s-t-e-p-s-,- -a-n-d- -e-x-p-l-a-i-n-a-b-l-e- -r-e-s-e-a-r-c-h- -d-e-c-i-s-i-o-n-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-D-a-t-a- -r-e-s-p-o-n-s-i-b-i-l-i-t-y-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-L-a-n-g-u-a-g-e- -d-a-t-a- -s-h-o-u-l-d- -b-e- -h-a-n-d-l-e-d- -w-i-t-h- -c-a-r-e-,- -c-o-n-s-e-n-t-,- -c-o-n-t-e-x-t-,- -a-n-d- -s-c-h-o-l-a-r-l-y- -e-t-h-i-c-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-

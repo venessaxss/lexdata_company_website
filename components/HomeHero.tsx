@@ -1,22 +1,23 @@
-import { unstable_noStore as noStore } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
-import HomeHeroCarousel, { HomeHeroSlide } from "@/components/HomeHeroCarousel";
-
-export default async function HomeHero() {
-  noStore();
-
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("home_hero_slides")
-    .select("*")
-    .eq("is_active", true)
-    .order("display_order", { ascending: true })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("HomeHero error:", error.message);
-  }
-
-  return <HomeHeroCarousel slides={(data ?? []) as HomeHeroSlide[]} />;
-}
+-i-m-p-o-r-t- -{- -u-n-s-t-a-b-l-e-_-n-o-S-t-o-r-e- -a-s- -n-o-S-t-o-r-e- -}- -f-r-o-m- -"-n-e-x-t-/-c-a-c-h-e-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-i-m-p-o-r-t- -H-o-m-e-H-e-r-o-C-a-r-o-u-s-e-l-,- -{- -H-o-m-e-H-e-r-o-S-l-i-d-e- -}- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-H-o-m-e-H-e-r-o-C-a-r-o-u-s-e-l-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -H-o-m-e-H-e-r-o-(-)- -{-
+- - -n-o-S-t-o-r-e-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{- -d-a-t-a-,- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-
+- - - - -.-f-r-o-m-(-"-h-o-m-e-_-h-e-r-o-_-s-l-i-d-e-s-"-)-
+- - - - -.-s-e-l-e-c-t-(-"-*-"-)-
+- - - - -.-e-q-(-"-i-s-_-a-c-t-i-v-e-"-,- -t-r-u-e-)-
+- - - - -.-o-r-d-e-r-(-"-d-i-s-p-l-a-y-_-o-r-d-e-r-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -t-r-u-e- -}-)-
+- - - - -.-o-r-d-e-r-(-"-c-r-e-a-t-e-d-_-a-t-"-,- -{- -a-s-c-e-n-d-i-n-g-:- -t-r-u-e- -}-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -c-o-n-s-o-l-e-.-e-r-r-o-r-(-"-H-o-m-e-H-e-r-o- -e-r-r-o-r-:-"-,- -e-r-r-o-r-.-m-e-s-s-a-g-e-)-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -<-H-o-m-e-H-e-r-o-C-a-r-o-u-s-e-l- -s-l-i-d-e-s-=-{-(-d-a-t-a- -?-?- -[-]-)- -a-s- -H-o-m-e-H-e-r-o-S-l-i-d-e-[-]-}- -/->-;-
+-}-
+-

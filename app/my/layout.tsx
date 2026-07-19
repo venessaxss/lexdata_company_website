@@ -1,6 +1,7 @@
-import { requireUser } from "@/lib/auth";
-
-export default async function MyLearningLayout({ children }: { children: React.ReactNode }) {
-  await requireUser();
-  return <>{children}</>;
-}
+-i-m-p-o-r-t- -{- -r-e-q-u-i-r-e-U-s-e-r- -}- -f-r-o-m- -"-@-/-l-i-b-/-a-u-t-h-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -M-y-L-e-a-r-n-i-n-g-L-a-y-o-u-t-(-{- -c-h-i-l-d-r-e-n- -}-:- -{- -c-h-i-l-d-r-e-n-:- -R-e-a-c-t-.-R-e-a-c-t-N-o-d-e- -}-)- -{-
+- - -a-w-a-i-t- -r-e-q-u-i-r-e-U-s-e-r-(-)-;-
+- - -r-e-t-u-r-n- -<->-{-c-h-i-l-d-r-e-n-}-<-/->-;-
+-}-
+-

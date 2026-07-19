@@ -1,42 +1,42 @@
-"use server";
-
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-
-function field(formData: FormData, key: string) {
-  return String(formData.get(key) ?? "").trim();
-}
-
-function getSiteUrl() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-
-  if (!siteUrl) {
-    return "http://localhost:3000";
-  }
-
-  return siteUrl.replace(/\/$/, "");
-}
-
-export async function sendPasswordResetEmail(formData: FormData) {
-  const email = field(formData, "email");
-
-  if (!email) {
-    redirect("/forgot-password?message=Email is required");
-  }
-
-  const siteUrl = getSiteUrl();
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/auth/callback?next=/reset-password`,
-  });
-
-  if (error) {
-    redirect(`/forgot-password?message=${encodeURIComponent(error.message)}`);
-  }
-
-  redirect(
-    "/forgot-password?message=Password reset email sent. Please check your inbox."
-  );
-}
+-"-u-s-e- -s-e-r-v-e-r-"-;-
+-
+-i-m-p-o-r-t- -{- -r-e-d-i-r-e-c-t- -}- -f-r-o-m- -"-n-e-x-t-/-n-a-v-i-g-a-t-i-o-n-"-;-
+-i-m-p-o-r-t- -{- -c-r-e-a-t-e-C-l-i-e-n-t- -}- -f-r-o-m- -"-@-/-l-i-b-/-s-u-p-a-b-a-s-e-/-s-e-r-v-e-r-"-;-
+-
+-f-u-n-c-t-i-o-n- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-,- -k-e-y-:- -s-t-r-i-n-g-)- -{-
+- - -r-e-t-u-r-n- -S-t-r-i-n-g-(-f-o-r-m-D-a-t-a-.-g-e-t-(-k-e-y-)- -?-?- -"-"-)-.-t-r-i-m-(-)-;-
+-}-
+-
+-f-u-n-c-t-i-o-n- -g-e-t-S-i-t-e-U-r-l-(-)- -{-
+- - -c-o-n-s-t- -s-i-t-e-U-r-l- -=- -p-r-o-c-e-s-s-.-e-n-v-.-N-E-X-T-_-P-U-B-L-I-C-_-S-I-T-E-_-U-R-L-;-
+-
+- - -i-f- -(-!-s-i-t-e-U-r-l-)- -{-
+- - - - -r-e-t-u-r-n- -"-h-t-t-p-:-/-/-l-o-c-a-l-h-o-s-t-:-3-0-0-0-"-;-
+- - -}-
+-
+- - -r-e-t-u-r-n- -s-i-t-e-U-r-l-.-r-e-p-l-a-c-e-(-/-\-/-$-/-,- -"-"-)-;-
+-}-
+-
+-e-x-p-o-r-t- -a-s-y-n-c- -f-u-n-c-t-i-o-n- -s-e-n-d-P-a-s-s-w-o-r-d-R-e-s-e-t-E-m-a-i-l-(-f-o-r-m-D-a-t-a-:- -F-o-r-m-D-a-t-a-)- -{-
+- - -c-o-n-s-t- -e-m-a-i-l- -=- -f-i-e-l-d-(-f-o-r-m-D-a-t-a-,- -"-e-m-a-i-l-"-)-;-
+-
+- - -i-f- -(-!-e-m-a-i-l-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-"-/-f-o-r-g-o-t---p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-E-m-a-i-l- -i-s- -r-e-q-u-i-r-e-d-"-)-;-
+- - -}-
+-
+- - -c-o-n-s-t- -s-i-t-e-U-r-l- -=- -g-e-t-S-i-t-e-U-r-l-(-)-;-
+-
+- - -c-o-n-s-t- -s-u-p-a-b-a-s-e- -=- -a-w-a-i-t- -c-r-e-a-t-e-C-l-i-e-n-t-(-)-;-
+-
+- - -c-o-n-s-t- -{- -e-r-r-o-r- -}- -=- -a-w-a-i-t- -s-u-p-a-b-a-s-e-.-a-u-t-h-.-r-e-s-e-t-P-a-s-s-w-o-r-d-F-o-r-E-m-a-i-l-(-e-m-a-i-l-,- -{-
+- - - - -r-e-d-i-r-e-c-t-T-o-:- -`-$-{-s-i-t-e-U-r-l-}-/-a-u-t-h-/-c-a-l-l-b-a-c-k-?-n-e-x-t-=-/-r-e-s-e-t---p-a-s-s-w-o-r-d-`-,-
+- - -}-)-;-
+-
+- - -i-f- -(-e-r-r-o-r-)- -{-
+- - - - -r-e-d-i-r-e-c-t-(-`-/-f-o-r-g-o-t---p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-$-{-e-n-c-o-d-e-U-R-I-C-o-m-p-o-n-e-n-t-(-e-r-r-o-r-.-m-e-s-s-a-g-e-)-}-`-)-;-
+- - -}-
+-
+- - -r-e-d-i-r-e-c-t-(-
+- - - - -"-/-f-o-r-g-o-t---p-a-s-s-w-o-r-d-?-m-e-s-s-a-g-e-=-P-a-s-s-w-o-r-d- -r-e-s-e-t- -e-m-a-i-l- -s-e-n-t-.- -P-l-e-a-s-e- -c-h-e-c-k- -y-o-u-r- -i-n-b-o-x-.-"-
+- - -)-;-
+-}-

@@ -1,25 +1,25 @@
-import LexPaperSubPage from "@/components/LexPaperSubPage";
-
-export default function CasesPage() {
-  return (
-    <LexPaperSubPage
-      kicker="Previous cases"
-      title="Selected LexData cases and research workflows."
-      body="A curated space for past projects, workshops, corpus tasks, NLP demos, and collaboration outcomes."
-      cards={[
-        {
-          title: "AI-assisted literature review",
-          body: "A workshop case showing how researchers can use GenAI without losing academic judgment.",
-        },
-        {
-          title: "Corpus annotation workflow",
-          body: "A research case for preparing multilingual textual data for discourse and translation analysis.",
-        },
-        {
-          title: "Machine translation evaluation",
-          body: "A case for comparing MT output, human revision, error patterns, and quality evidence.",
-        },
-      ]}
-    />
-  );
-}
+-i-m-p-o-r-t- -L-e-x-P-a-p-e-r-S-u-b-P-a-g-e- -f-r-o-m- -"-@-/-c-o-m-p-o-n-e-n-t-s-/-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-"-;-
+-
+-e-x-p-o-r-t- -d-e-f-a-u-l-t- -f-u-n-c-t-i-o-n- -C-a-s-e-s-P-a-g-e-(-)- -{-
+- - -r-e-t-u-r-n- -(-
+- - - - -<-L-e-x-P-a-p-e-r-S-u-b-P-a-g-e-
+- - - - - - -k-i-c-k-e-r-=-"-P-r-e-v-i-o-u-s- -c-a-s-e-s-"-
+- - - - - - -t-i-t-l-e-=-"-S-e-l-e-c-t-e-d- -L-e-x-D-a-t-a- -c-a-s-e-s- -a-n-d- -r-e-s-e-a-r-c-h- -w-o-r-k-f-l-o-w-s-.-"-
+- - - - - - -b-o-d-y-=-"-A- -c-u-r-a-t-e-d- -s-p-a-c-e- -f-o-r- -p-a-s-t- -p-r-o-j-e-c-t-s-,- -w-o-r-k-s-h-o-p-s-,- -c-o-r-p-u-s- -t-a-s-k-s-,- -N-L-P- -d-e-m-o-s-,- -a-n-d- -c-o-l-l-a-b-o-r-a-t-i-o-n- -o-u-t-c-o-m-e-s-.-"-
+- - - - - - -c-a-r-d-s-=-{-[-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-A-I---a-s-s-i-s-t-e-d- -l-i-t-e-r-a-t-u-r-e- -r-e-v-i-e-w-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A- -w-o-r-k-s-h-o-p- -c-a-s-e- -s-h-o-w-i-n-g- -h-o-w- -r-e-s-e-a-r-c-h-e-r-s- -c-a-n- -u-s-e- -G-e-n-A-I- -w-i-t-h-o-u-t- -l-o-s-i-n-g- -a-c-a-d-e-m-i-c- -j-u-d-g-m-e-n-t-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-C-o-r-p-u-s- -a-n-n-o-t-a-t-i-o-n- -w-o-r-k-f-l-o-w-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A- -r-e-s-e-a-r-c-h- -c-a-s-e- -f-o-r- -p-r-e-p-a-r-i-n-g- -m-u-l-t-i-l-i-n-g-u-a-l- -t-e-x-t-u-a-l- -d-a-t-a- -f-o-r- -d-i-s-c-o-u-r-s-e- -a-n-d- -t-r-a-n-s-l-a-t-i-o-n- -a-n-a-l-y-s-i-s-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - - - -{-
+- - - - - - - - - - -t-i-t-l-e-:- -"-M-a-c-h-i-n-e- -t-r-a-n-s-l-a-t-i-o-n- -e-v-a-l-u-a-t-i-o-n-"-,-
+- - - - - - - - - - -b-o-d-y-:- -"-A- -c-a-s-e- -f-o-r- -c-o-m-p-a-r-i-n-g- -M-T- -o-u-t-p-u-t-,- -h-u-m-a-n- -r-e-v-i-s-i-o-n-,- -e-r-r-o-r- -p-a-t-t-e-r-n-s-,- -a-n-d- -q-u-a-l-i-t-y- -e-v-i-d-e-n-c-e-.-"-,-
+- - - - - - - - -}-,-
+- - - - - - -]-}-
+- - - - -/->-
+- - -)-;-
+-}-
