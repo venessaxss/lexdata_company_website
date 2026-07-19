@@ -1,150 +1,113 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import Image from "next/image";
+import { getCurrentProfile, normalizeRole } from "@/lib/auth";
 
-const navGroups = [
-  {
-    label: "Features",
-    href: "/features",
-    items: [
-      {
-        label: "What is new",
-        href: "/blog/whats-new",
-        icon: "NW",
-        text: "Events, workshops, posters, and LexData updates.",
-      },
-      {
-        label: "AI research workflows",
-        href: "/features",
-        icon: "AI",
-        text: "Corpus, annotation, NLP, and model evaluation.",
-      },
-      {
-        label: "Previous cases",
-        href: "/cases",
-        icon: "CS",
-        text: "See how LexData supports real projects.",
-      },
-    ],
-  },
-  {
-    label: "Library",
-    href: "/library",
-    items: [
-      {
-        label: "Blog",
-        href: "/blog",
-        icon: "BL",
-        text: "Research notes, tutorials, and updates.",
-      },
-      {
-        label: "Help center",
-        href: "/help",
-        icon: "HP",
-        text: "Guides for courses, workshops, and dashboards.",
-      },
-      {
-        label: "Resources",
-        href: "/resources",
-        icon: "RS",
-        text: "Templates, corpora notes, and learning materials.",
-      },
-    ],
-  },
-  {
-    label: "About",
-    href: "/about",
-    items: [
-      {
-        label: "Who we are",
-        href: "/about",
-        icon: "LX",
-        text: "A language-data studio for humanists.",
-      },
-      {
-        label: "Our stance on AI",
-        href: "/about/ai-stance",
-        icon: "ST",
-        text: "Human-centered AI and transparent methods.",
-      },
-    ],
-  },
-];
+function getDisplayName(profile: any) {
+  const raw =
+    profile?.full_name ||
+    profile?.name ||
+    profile?.display_name ||
+    profile?.email ||
+    "Member";
+
+  return String(raw).trim();
+}
 
 export default async function LexPaperNavbar() {
-  let isLoggedIn = false;
+  const profile = await getCurrentProfile();
+  const isLoggedIn = Boolean(profile);
+  const role = normalizeRole(profile?.role);
+  const displayName = getDisplayName(profile);
 
-  try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    isLoggedIn = Boolean(user);
-  } catch {
-    isLoggedIn = false;
-  }
+  const canManage = role === "admin" || role === "manager";
+  const isAdmin = role === "admin";
 
   return (
-    <header className="lex-paper-nav">
-      <Link href="/" className="lex-paper-logo-image" aria-label="LexData home">
-        <img src="/lexdata-logo.png" alt="LexData intelligent data solutions" />
-      </Link>
+    <header className="site">
+      <div className="wrap">
+        <Link className="logo" href="/" aria-label="LexData home">
+          <Image
+            src="/lexdata-logo.png"
+            alt="LexData"
+            width={170}
+            height={54}
+            priority
+          />
+        </Link>
 
-      <nav className="lex-paper-menu" aria-label="Main navigation">
-        {navGroups.map((group) => (
-          <div key={group.label} className="lex-paper-menu-group">
-            <Link href={group.href} className="lex-paper-menu-trigger">
-              <span>{group.label}</span>
-              <b aria-hidden="true">v</b>
-            </Link>
-
-            <div className="lex-paper-dropdown">
-              {group.items.map((item) => (
-                <Link
-                  key={`${group.label}-${item.label}`}
-                  href={item.href}
-                  className="lex-paper-dropdown-item"
-                >
-                  <span className="lex-paper-dropdown-icon">{item.icon}</span>
-
-                  <span>
-                    <strong>{item.label}</strong>
-                    <small>{item.text}</small>
-                  </span>
-                </Link>
-              ))}
+        <nav className="main" aria-label="Main navigation">
+          <div className="paper-nav-item">
+            <button type="button">Features v</button>
+            <div className="paper-nav-menu">
+              <Link href="/courses">Courses</Link>
+              <Link href="/workshops">Workshops</Link>
+              <Link href="/blog/whats-new">What&apos;s new</Link>
+              <Link href="/about/ai-stance">AI stance</Link>
             </div>
           </div>
-        ))}
 
-        <Link href="/plus" className="lex-paper-menu-trigger lex-paper-plus">
-          Plus+
-        </Link>
-      </nav>
+          <div className="paper-nav-item">
+            <button type="button">Library v</button>
+            <div className="paper-nav-menu">
+              <Link href="/courses">Course library</Link>
+              <Link href="/workshops">Workshop library</Link>
+              <Link href="/my/courses">My courses</Link>
+              <Link href="/my/workshops">My workshops</Link>
+            </div>
+          </div>
 
-      <div className="lex-paper-auth">
-        {isLoggedIn ? (
-          <>
-            <Link href="/dashboard" className="lex-paper-login">
-              Dashboard
-            </Link>
+          <div className="paper-nav-item">
+            <button type="button">About v</button>
+            <div className="paper-nav-menu">
+              <Link href="/about">About</Link>
+              <Link href="/team">Team</Link>
+              <Link href="/collaboration">Collaboration</Link>
+            </div>
+          </div>
 
-            <Link href="/logout" className="lex-paper-signup">
-              Log out
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link href="/login" className="lex-paper-login">
-              Log in
-            </Link>
+          <Link href="/plus" className="paper-nav-plain">
+            Plus+
+          </Link>
 
-            <Link href="/signup" className="lex-paper-signup">
-              Sign up
-            </Link>
-          </>
-        )}
+          {isLoggedIn ? (
+            <>
+              <div className="paper-profile-control">
+                <button type="button" className="paper-profile-button">
+                  <span className="paper-profile-dot">
+                    {displayName.slice(0, 1).toUpperCase()}
+                  </span>
+                  <span>{displayName}</span>
+                </button>
+
+                <div className="paper-profile-menu">
+                  <Link href="/dashboard/profile">Profile settings</Link>
+                  <Link href="/my/courses">My courses</Link>
+                  <Link href="/my/workshops">My workshops</Link>
+                  {canManage ? <Link href="/manager">Manager panel</Link> : null}
+                  {isAdmin ? <Link href="/admin">Admin panel</Link> : null}
+                </div>
+              </div>
+
+              <Link className="btn ghost small" href="/dashboard">
+                Dashboard
+              </Link>
+
+              <Link className="btn small" href="/logout">
+                Log out
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link className="btn ghost small" href="/login">
+                Log in
+              </Link>
+
+              <Link className="btn small" href="/signup">
+                Sign up
+              </Link>
+            </>
+          )}
+        </nav>
       </div>
     </header>
   );

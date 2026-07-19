@@ -7866,3 +7866,327 @@ body.lex-pro-dark-body {
 .paper-home .lex-member-access {
   display: none !important;
 }
+
+
+/* Personalized homepage board */
+.lex-home-user-board {
+  max-width: 560px;
+  margin: 22px 0;
+  padding: 22px;
+  border: 3px solid #17172f;
+  border-radius: 28px;
+  background: #fffdf8;
+  color: #17172f;
+  box-shadow: 10px 10px 0 #17172f;
+}
+
+.lex-home-user-board p {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 950;
+  color: #5b64d8;
+}
+
+.lex-home-user-board h2 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.lex-home-user-board span {
+  display: block;
+  margin-top: 10px;
+  font-weight: 750;
+  color: #27324f;
+}
+
+.lex-home-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.lex-home-user-actions a {
+  border: 2px solid #17172f;
+  border-radius: 999px;
+  padding: 9px 13px;
+  background: #8b93f8;
+  color: #17172f;
+  text-decoration: none;
+  font-weight: 900;
+  box-shadow: 4px 4px 0 #17172f;
+}
+
+@media (max-width: 900px) {
+  .lex-profile-role {
+    display: none;
+  }
+
+  .lex-profile-name {
+    max-width: 100px;
+  }
+
+  .lex-profile-menu {
+    right: -10px;
+  }
+}
+
+/* === Paper-style navbar exact restore start === */
+
+header.site {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background: var(--paper, #fbf6ed) !important;
+  padding: 14px 0 !important;
+  border-bottom: 1px solid rgba(33, 32, 58, 0.18) !important;
+  box-shadow: none !important;
+}
+
+header.site .wrap {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+}
+
+.logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: var(--ink, #21203a) !important;
+  text-decoration: none !important;
+  flex: 0 0 auto !important;
+}
+
+.logo img {
+  display: block !important;
+  width: 170px !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+nav.main {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: clamp(22px, 3.2vw, 60px) !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  flex: 1 1 auto !important;
+}
+
+nav.main a,
+nav.main button {
+  font-family: var(--font-body, "Work Sans", system-ui, sans-serif) !important;
+}
+
+.paper-nav-item {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.paper-nav-item > button,
+.paper-nav-plain {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--ink, #21203a) !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  padding: 8px 0 !important;
+}
+
+.paper-nav-item > button:hover,
+.paper-nav-plain:hover {
+  color: var(--coral, #f0876c) !important;
+}
+
+.paper-nav-menu {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  min-width: 220px !important;
+  display: none !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  padding: 12px !important;
+  border: 2px solid var(--ink, #21203a) !important;
+  border-radius: 18px !important;
+  background: var(--card, #fffdf8) !important;
+  box-shadow: 5px 5px 0 var(--ink, #21203a) !important;
+}
+
+.paper-nav-item:hover .paper-nav-menu,
+.paper-nav-item:focus-within .paper-nav-menu {
+  display: flex !important;
+}
+
+.paper-nav-menu a {
+  color: var(--ink, #21203a) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+}
+
+.paper-nav-menu a:hover {
+  background: var(--peri-soft, #c9cdfb) !important;
+}
+
+nav.main .btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 9px 20px !important;
+  border-radius: 999px !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  color: var(--ink, #21203a) !important;
+  background: var(--peri, #8b93f8) !important;
+  border: 2px solid var(--ink, #21203a) !important;
+  box-shadow: 4px 4px 0 var(--ink, #21203a) !important;
+  white-space: nowrap !important;
+}
+
+nav.main .btn.ghost {
+  background: var(--card, #fffdf8) !important;
+  box-shadow: none !important;
+}
+
+nav.main .btn:hover {
+  transform: translate(-2px, -2px) !important;
+  box-shadow: 6px 6px 0 var(--ink, #21203a) !important;
+}
+
+/* Small profile control added without changing the original nav style */
+.paper-profile-control {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.paper-profile-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  max-width: 190px !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--ink, #21203a) !important;
+  background: var(--card, #fffdf8) !important;
+  color: var(--ink, #21203a) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.paper-profile-dot {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 999px !important;
+  background: var(--ink, #21203a) !important;
+  color: var(--card, #fffdf8) !important;
+  font-size: 12px !important;
+  flex: 0 0 auto !important;
+}
+
+.paper-profile-button span:last-child {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.paper-profile-menu {
+  position: absolute !important;
+  top: calc(100% + 12px) !important;
+  right: 0 !important;
+  min-width: 220px !important;
+  display: none !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  padding: 12px !important;
+  border: 2px solid var(--ink, #21203a) !important;
+  border-radius: 18px !important;
+  background: var(--card, #fffdf8) !important;
+  box-shadow: 5px 5px 0 var(--ink, #21203a) !important;
+  z-index: 1400 !important;
+}
+
+.paper-profile-control:hover .paper-profile-menu,
+.paper-profile-control:focus-within .paper-profile-menu {
+  display: flex !important;
+}
+
+.paper-profile-menu a {
+  color: var(--ink, #21203a) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+}
+
+.paper-profile-menu a:hover {
+  background: var(--peri-soft, #c9cdfb) !important;
+}
+
+.lex-auth-page {
+  padding-top: 80px !important;
+}
+
+@media (max-width: 980px) {
+  header.site .wrap {
+    flex-wrap: wrap !important;
+    padding: 0 18px !important;
+  }
+
+  nav.main {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    gap: 22px !important;
+    padding-bottom: 4px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .logo img {
+    width: 138px !important;
+  }
+
+  .paper-profile-button span:last-child {
+    display: none !important;
+  }
+
+  nav.main {
+    font-size: 14px !important;
+  }
+
+  .paper-nav-item > button,
+  .paper-nav-plain {
+    font-size: 14px !important;
+  }
+
+  nav.main .btn {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* === Paper-style navbar exact restore end === */

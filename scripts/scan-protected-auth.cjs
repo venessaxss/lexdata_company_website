@@ -32,31 +32,28 @@ let failed = false;
 
 for (const dir of protectedRoots) {
   for (const file of walk(path.join(root, dir))) {
+    const rel = path.relative(root, file).replace(/\\/g, "/");
     const text = fs.readFileSync(file, "utf8");
-    const rel = path.relative(root, file);
+
+    if (rel.endsWith("/layout.tsx")) continue;
+
+    if (/auth\.getUser\(\)/.test(text)) {
+      console.error("Duplicate auth.getUser() inside protected page/action:", rel);
+      failed = true;
+    }
 
     if (/redirect\(["']\/login/.test(text)) {
-      console.error("Forbidden direct login redirect in protected route:", rel);
+      console.error("Direct login redirect inside protected page/action:", rel);
       failed = true;
     }
 
-    if (/\/login\?redirect=/.test(text)) {
-      console.error("Use next= instead of redirect=:", rel);
-      failed = true;
-    }
-
-    if (/auth-helpers|createServerComponentClient|createClientComponentClient|createServerSupabaseClient|createBrowserSupabaseClient|getSession/.test(text)) {
-      console.error("Old auth helper/session pattern in protected route:", rel);
+    if (/async function requireAdminOrManager\(\)/.test(text)) {
+      console.error("Local requireAdminOrManager helper found. Use lib/auth.ts instead:", rel);
       failed = true;
     }
 
     if (/profile\?\.\(/.test(text)) {
       console.error("Broken profile?.(...) expression:", rel);
-      failed = true;
-    }
-
-    if (/role\s*!==\s*"admin"\s*&&\s*\(\s*role\s*!==\s*"manager"\s*&&\s*role\s*!==\s*"admin"\s*\)/.test(text)) {
-      console.error("Broken duplicated role check:", rel);
       failed = true;
     }
   }

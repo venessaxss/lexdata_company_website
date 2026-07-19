@@ -181,11 +181,3 @@ export async function signOut() {
   revalidatePath("/", "layout");
   redirect("/");
 }
-
-export async function loginAction(formData: FormData) {
-  return loginWithPassword(formData);
-}
-
-export async function signupAction(formData: FormData) {
-  return registerWithPassword(formData);
-}

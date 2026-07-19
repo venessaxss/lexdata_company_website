@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getHomepageContentSlots } from "@/lib/homepage-content";
 
 import HomeControlPanelButton from "@/components/HomeControlPanelButton";
+import HomeGreetingBadge from "@/components/HomeGreetingBadge";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import HomeHighlightedCourses from "@/components/HomeHighlightedCourses";
 import HomeMediaShowcase from "@/components/HomeMediaShowcase";
@@ -111,6 +112,7 @@ function HeroSection({
         </Link>
         <h1 className="paper-rev">{title?.title || "Write like a human."}</h1>
 
+        <HomeGreetingBadge />
         <PaperTypewriterLine messages={typingMessages} />
 
         <div className="paper-hero-actions paper-rev">
