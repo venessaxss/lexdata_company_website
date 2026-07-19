@@ -11,6 +11,7 @@ import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import TeamShowcase from "@/components/TeamShowcase";
+import PaperTypewriterLine from "@/components/PaperTypewriterLine";
 
 type StatCard = {
   label: string;
@@ -74,6 +75,13 @@ function HeroSection({
 }) {
   const title = getSlot(slots, "hero_title");
   const subtitle = getSlot(slots, "hero_subtitle");
+  const typingMessages = [
+    subtitle?.title,
+    getSlot(slots, "hero_typing_01")?.title,
+    getSlot(slots, "hero_typing_02")?.title,
+    getSlot(slots, "hero_typing_03")?.title,
+    getSlot(slots, "hero_typing_04")?.title,
+  ].filter(Boolean) as string[];
   const primary = getSlot(slots, "hero_primary_button");
   const secondary = getSlot(slots, "hero_secondary_button");
 
@@ -97,10 +105,7 @@ function HeroSection({
       <div className="paper-hero-center">
         <h1 className="paper-rev">{title?.title || "Write like a human."}</h1>
 
-        <p className="paper-hero-sub paper-rev">
-          {subtitle?.title ||
-            "LexData is a language-data studio made for humanists."}
-        </p>
+        <PaperTypewriterLine messages={typingMessages} />
 
         <div className="paper-hero-actions paper-rev">
           <Link className="paper-hero-btn" href={primary?.href || "/signup"}>
@@ -395,7 +400,7 @@ function PaperFooter() {
         </div>
 
         <div className="paper-footer-bottom">
-          <span>© 2026 LexData</span>
+          <span>婵?2026 LexData</span>
           <span>made by humans</span>
         </div>
       </div>

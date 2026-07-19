@@ -4425,3 +4425,118 @@ body.lex-pro-dark-body {
     font-size: clamp(48px, 15vw, 82px);
   }
 }
+
+/* ============================================================
+   Fix empty-looking homepage sections and oversized gaps
+   ============================================================ */
+
+.paper-home .paper-block {
+  padding-top: 56px !important;
+  padding-bottom: 56px !important;
+}
+
+.paper-home .paper-section-head {
+  margin-bottom: 24px !important;
+}
+
+.paper-home .paper-dynamic-panel {
+  min-height: 0 !important;
+  height: auto !important;
+  margin-top: 20px !important;
+}
+
+.paper-home .paper-dynamic-panel:empty {
+  display: none !important;
+}
+
+.paper-home .paper-dynamic-panel > section,
+.paper-home .paper-dynamic-panel > div {
+  min-height: 0 !important;
+  height: auto !important;
+  padding-top: 28px !important;
+  padding-bottom: 28px !important;
+}
+
+/* Reduce oversized internal spacing from older homepage components */
+.paper-home .paper-dynamic-panel .py-20,
+.paper-home .paper-dynamic-panel .py-24,
+.paper-home .paper-dynamic-panel .py-28,
+.paper-home .paper-dynamic-panel .py-32 {
+  padding-top: 32px !important;
+  padding-bottom: 32px !important;
+}
+
+.paper-home .paper-dynamic-panel .mt-20,
+.paper-home .paper-dynamic-panel .mt-24,
+.paper-home .paper-dynamic-panel .mt-28,
+.paper-home .paper-dynamic-panel .mt-32 {
+  margin-top: 32px !important;
+}
+
+/* If a dynamic component has no content, do not leave a big visual hole */
+.paper-home .paper-dynamic-panel > section:empty,
+.paper-home .paper-dynamic-panel > div:empty {
+  display: none !important;
+}
+
+/* Keep course cards compact inside the paper frame */
+.paper-home #courses .paper-dynamic-panel {
+  padding: 24px !important;
+}
+
+.paper-home #courses .paper-dynamic-panel > section,
+.paper-home #courses .paper-dynamic-panel > div {
+  padding: 0 !important;
+}
+
+/* Tighter spacing between course section and the next section */
+.paper-home #courses {
+  padding-bottom: 36px !important;
+}
+
+.paper-home #videos,
+.paper-home #messages,
+.paper-home #nlp,
+.paper-home #collaboration,
+.paper-home #team {
+  padding-top: 48px !important;
+}
+
+/* Dynamic typing effect under Ellipsus-style hero */
+
+.paper-typewriter-line {
+  min-height: 72px;
+}
+
+.paper-typewriter-line span {
+  display: inline;
+}
+
+.paper-typewriter-line b {
+  display: inline-block;
+  width: 3px;
+  height: 1.1em;
+  margin-left: 5px;
+  transform: translateY(4px);
+  border-radius: 999px;
+  background: #f8f5ee;
+  animation: paper-type-cursor 0.8s steps(1) infinite;
+}
+
+@keyframes paper-type-cursor {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Hide empty hero button if admin accidentally leaves title empty */
+
+.paper-hero-btn:empty {
+  display: none !important;
+}

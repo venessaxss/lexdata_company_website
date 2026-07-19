@@ -1,6 +1,5 @@
-import IntegratedHomePage from "@/components/IntegratedHomePage";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default IntegratedHomePage;
+export default function HomeV2Page() {
+  redirect("/");
+}
