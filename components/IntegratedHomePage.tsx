@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type React from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getHomepageContentSlots } from "@/lib/homepage-content";
@@ -11,6 +12,7 @@ import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import TeamShowcase from "@/components/TeamShowcase";
+import PreviousCasesShowcase from "@/components/PreviousCasesShowcase";
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
 
 type StatCard = {
@@ -103,6 +105,9 @@ function HeroSection({
       </div>
 
       <div className="paper-hero-center">
+        <Link href="/" className="paper-hero-logo paper-rev" aria-label="LexData home">
+          <span>LexData</span>
+        </Link>
         <h1 className="paper-rev">{title?.title || "Write like a human."}</h1>
 
         <PaperTypewriterLine messages={typingMessages} />
@@ -344,6 +349,125 @@ function StanceBand() {
   );
 }
 
+
+function LexDataDarkStorySection() {
+  return (
+    <section className="lex-dark-story paper-page">
+      <div className="lex-dark-doodle lex-dark-doodle-left" aria-hidden="true">
+        <svg viewBox="0 0 220 170">
+          <path d="M35 116h92M52 94h78M67 73h56M52 45h78l18 49-18 49H52L34 94Z" />
+          <path d="M142 94h45M158 77l28 17-28 17" />
+        </svg>
+      </div>
+
+      <div className="lex-dark-doodle lex-dark-doodle-right" aria-hidden="true">
+        <svg viewBox="0 0 220 180">
+          <path d="M112 142V45M112 45l45 28M112 45 66 76" />
+          <path d="M76 89c-21-18-47 11-20 34 8 7 20 13 20 13s15-10 22-21c8-13-7-25-22-26Z" />
+          <path d="M141 89c21-18 47 11 20 34-8 7-20 13-20 13s-15-10-22-21c-8-13 7-25 22-26Z" />
+          <path d="M75 154h75" />
+        </svg>
+      </div>
+
+      <div className="paper-wrap lex-dark-story-inner">
+        <h2 className="paper-rev">
+          One place for corpora, annotation, and AI workflows.
+        </h2>
+
+        <p className="paper-rev">
+          LexData brings courses, research tools, NLP workflows, translation
+          technology, and human-centered AI training into one language-data
+          studio.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function LexDataManifestoSection() {
+  return (
+    <section className="lex-manifesto paper-page">
+      <div className="paper-wrap">
+        <p className="paper-rev">
+          Plenty of AI tools are made for generic prompts, dashboards, and
+          automation. <em>That is not us.</em>
+        </p>
+
+        <p className="paper-rev">
+          LexData is here to help language researchers build corpora, evaluate
+          translation, teach with evidence, and use AI with human judgment
+          <span> in all its forms.</span>
+        </p>
+
+        <div className="lex-manifesto-doodle" aria-hidden="true">
+          <svg viewBox="0 0 320 220">
+            <path d="M65 166c38-44 89-63 152-56" />
+            <path d="M205 87l32 23-36 11" />
+            <path d="M55 176h83M74 156h60M94 136h38" />
+            <path d="M205 151c26-32 54-35 80-8" />
+            <path d="M239 111l20 17 22-33" />
+            <path d="M37 66l11 11M48 66 37 77M283 55l11 11M294 55l-11 11" />
+          </svg>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LexDataResearchToolsSection() {
+  const cards = [
+    {
+      title: "Corpus design",
+      body: "Collect, clean, segment, document, and prepare multilingual text data for research.",
+    },
+    {
+      title: "NLP workflows",
+      body: "Move from raw text to tokenization, annotation, embeddings, topic models, and evaluation.",
+    },
+    {
+      title: "Translation technology",
+      body: "Study machine translation, terminology, quality estimation, and human-AI revision.",
+    },
+  ];
+
+  return (
+    <section className="lex-made-section paper-page" data-paper-cover>
+      <div className="lex-made-visual" aria-hidden="true">
+        <div className="lex-made-screen">
+          <div className="lex-made-sidebar">
+            <span>My work</span>
+            <span>Shared</span>
+            <span>Settings</span>
+          </div>
+
+          <div className="lex-made-grid">
+            <div>Corpus project</div>
+            <div>Translation notes</div>
+            <div>NLP pipeline</div>
+            <div>Annotation plan</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="paper-wrap">
+        <div className="lex-made-paper">
+          <h2 className="paper-rev">
+            Made for <span>language researchers</span>
+          </h2>
+
+          <div className="lex-made-cards">
+            {cards.map((card) => (
+              <article key={card.title} className="paper-rev paper-turn">
+                <h3>{card.title}</h3>
+                <p>{card.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 function ClosingSection() {
   return (
     <section className="paper-closing paper-page" id="courses">
@@ -503,6 +627,9 @@ export default async function IntegratedHomePage() {
         <HeroSection slots={slots} canManageHomepage={canManageHomepage} />
         <StripSection />
         <IntroSection />
+        <LexDataDarkStorySection />
+        <PreviousCasesShowcase />
+        <LexDataManifestoSection />
         <DashboardSection stats={stats} slots={slots} />
 
         <PaperPanel
@@ -520,6 +647,8 @@ export default async function IntegratedHomePage() {
         >
           <HomeHighlightedCourses />
         </PaperPanel>
+
+        <LexDataResearchToolsSection />
 
         <VideoSection
           homepageVideos={homepageVideos}

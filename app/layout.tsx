@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
+import LexPaperNavbar from "@/components/LexPaperNavbar";
 import VisitTracker from "@/components/VisitTracker";
 import AutoTranslator from "@/components/AutoTranslator";
 import PaperRevealShell from "@/components/PaperRevealShell";
@@ -35,7 +35,7 @@ export default async function RootLayout({
         <AutoTranslator language={language} />
 
         <PaperRevealShell>
-          <Navbar />
+          <LexPaperNavbar />
           {children}
         </PaperRevealShell>
       </body>

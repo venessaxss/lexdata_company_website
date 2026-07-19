@@ -6,10 +6,25 @@ export default function PaperRevealShell({ children }: { children: ReactNode }) 
   useEffect(() => {
     const nav = document.querySelector<HTMLElement>("header");
 
+    function clamp(value: number, min: number, max: number) {
+      return Math.min(Math.max(value, min), max);
+    }
+
     function handleScroll() {
+      const scrollY = window.scrollY;
+
       if (nav) {
-        nav.classList.toggle("paper-scrolled", window.scrollY > 10);
+        nav.classList.toggle("paper-scrolled", scrollY > 12);
+        nav.classList.toggle("paper-nav-hero", scrollY < window.innerHeight * 0.72);
       }
+
+      document.querySelectorAll<HTMLElement>("[data-paper-cover]").forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const start = window.innerHeight * 0.88;
+        const end = window.innerHeight * 0.18;
+        const progress = clamp((start - rect.top) / (start - end), 0, 1);
+        section.style.setProperty("--paper-cover", progress.toFixed(3));
+      });
     }
 
     handleScroll();
