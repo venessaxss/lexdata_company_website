@@ -7,6 +7,12 @@ const navGroups = [
     href: "/features",
     items: [
       {
+        label: "What is new",
+        href: "/blog/whats-new",
+        icon: "NW",
+        text: "Events, workshops, posters, and LexData updates.",
+      },
+      {
         label: "AI research workflows",
         href: "/features",
         icon: "AI",
@@ -58,7 +64,7 @@ const navGroups = [
         label: "Our stance on AI",
         href: "/about/ai-stance",
         icon: "ST",
-        text: "Human-centered AI, transparent methods.",
+        text: "Human-centered AI and transparent methods.",
       },
     ],
   },
@@ -69,6 +75,7 @@ export default async function LexPaperNavbar() {
 
   try {
     const supabase = await createClient();
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -80,8 +87,8 @@ export default async function LexPaperNavbar() {
 
   return (
     <header className="lex-paper-nav">
-      <Link href="/" className="lex-paper-wordmark" aria-label="LexData home">
-        LexData
+      <Link href="/" className="lex-paper-logo-image" aria-label="LexData home">
+        <img src="/lexdata-logo.png" alt="LexData intelligent data solutions" />
       </Link>
 
       <nav className="lex-paper-menu" aria-label="Main navigation">
@@ -89,13 +96,18 @@ export default async function LexPaperNavbar() {
           <div key={group.label} className="lex-paper-menu-group">
             <Link href={group.href} className="lex-paper-menu-trigger">
               <span>{group.label}</span>
-              <b aria-hidden="true">⌄</b>
+              <b aria-hidden="true">v</b>
             </Link>
 
             <div className="lex-paper-dropdown">
               {group.items.map((item) => (
-                <Link key={item.href + item.label} href={item.href} className="lex-paper-dropdown-item">
+                <Link
+                  key={`${group.label}-${item.label}`}
+                  href={item.href}
+                  className="lex-paper-dropdown-item"
+                >
                   <span className="lex-paper-dropdown-icon">{item.icon}</span>
+
                   <span>
                     <strong>{item.label}</strong>
                     <small>{item.text}</small>
@@ -113,7 +125,7 @@ export default async function LexPaperNavbar() {
 
       <div className="lex-paper-auth">
         {isLoggedIn ? (
-          <Link href="/dashboard" className="lex-paper-login">
+          <Link href="/dashboard" className="lex-paper-signup">
             Dashboard
           </Link>
         ) : (
@@ -121,8 +133,9 @@ export default async function LexPaperNavbar() {
             <Link href="/login" className="lex-paper-login">
               Log in
             </Link>
+
             <Link href="/signup" className="lex-paper-signup">
-              Sign up
+              Register
             </Link>
           </>
         )}

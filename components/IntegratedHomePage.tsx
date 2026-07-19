@@ -12,6 +12,7 @@ import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
 import TeamShowcase from "@/components/TeamShowcase";
+import LatestEventsHomeSection from "@/components/LatestEventsHomeSection";
 import PreviousCasesShowcase from "@/components/PreviousCasesShowcase";
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
 
@@ -113,12 +114,16 @@ function HeroSection({
         <PaperTypewriterLine messages={typingMessages} />
 
         <div className="paper-hero-actions paper-rev">
-          <Link className="paper-hero-btn" href={primary?.href || "/signup"}>
-            {primary?.title || "Join for free"}
+          <Link className="paper-hero-btn" href="/signup">
+            Register
           </Link>
 
-          <Link className="paper-hero-btn paper-hero-btn-ghost" href={secondary?.href || "/courses"}>
-            {secondary?.title || "Browse courses"}
+          <Link className="paper-hero-btn paper-hero-btn-ghost" href="/login">
+            Log in
+          </Link>
+
+          <Link className="paper-hero-btn paper-hero-btn-outline" href="/courses">
+            Browse courses
           </Link>
         </div>
 
@@ -468,6 +473,160 @@ function LexDataResearchToolsSection() {
     </section>
   );
 }
+
+function PrimaryVideoStage({
+  homepageVideos,
+  canManageHomepage,
+}: {
+  homepageVideos: any[];
+  canManageHomepage: boolean;
+}) {
+  return (
+    <section className="lex-primary-video paper-page" id="primary-videos">
+      <div className="lex-primary-video-doodle lex-primary-video-left" aria-hidden="true">
+        <svg viewBox="0 0 220 170">
+          <path d="M34 126h118M47 102h88M61 78h62M51 48h84l24 58-24 38H51L29 103Z" />
+          <path d="M142 102h48M165 82l28 20-28 20" />
+        </svg>
+      </div>
+
+      <div className="lex-primary-video-doodle lex-primary-video-right" aria-hidden="true">
+        <svg viewBox="0 0 220 180">
+          <path d="M112 142V45M112 45l45 28M112 45 66 76" />
+          <path d="M76 89c-21-18-47 11-20 34 8 7 20 13 20 13s15-10 22-21c8-13-7-25-22-26Z" />
+          <path d="M141 89c21-18 47 11 20 34-8 7-20 13-20 13s-15-10-22-21c-8-13 7-25 22-26Z" />
+          <path d="M75 154h75" />
+        </svg>
+      </div>
+
+      <div className="paper-wrap">
+        <div className="lex-primary-video-head paper-rev">
+          <p>Video studio</p>
+          <h2>Watch how language data becomes research.</h2>
+          <span>
+            Courses, workshops, demos, and AI/NLP workflows appear here as a
+            primary visual section.
+          </span>
+        </div>
+
+        <div className="lex-primary-video-shell paper-rev paper-turn">
+          <HomeMediaShowcase
+            videos={homepageVideos}
+            canManage={canManageHomepage}
+          />
+        </div>
+
+        <div className="lex-primary-video-actions paper-rev">
+          <Link href="/workshops">Upcoming workshops -&gt;</Link>
+          <Link href="/courses">Browse courses -&gt;</Link>
+
+          {canManageHomepage ? (
+            <Link href="/manager/homepage-videos">Manage homepage videos -&gt;</Link>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WorkshopFounderFeatureSection() {
+  const workshopCards = [
+    {
+      tag: "Workshop 01",
+      title: "AI Research Workflow Bootcamp",
+      body: "Learn how to use AI for literature review, coding support, annotation planning, and academic writing without losing scholarly control.",
+      href: "/workshops",
+    },
+    {
+      tag: "Workshop 02",
+      title: "NLP for Humanists",
+      body: "Move from raw text to corpus cleaning, keywords, embeddings, topic modeling, and interpretable language-data analysis.",
+      href: "/workshops",
+    },
+    {
+      tag: "Workshop 03",
+      title: "Translation Technology Lab",
+      body: "Explore machine translation evaluation, terminology workflows, post-editing, and human-AI revision practices.",
+      href: "/workshops",
+    },
+  ];
+
+  return (
+    <section className="lex-workshop-founder paper-page" id="workshop-founder">
+      <div className="lex-workshop-orbit" aria-hidden="true">
+        <span>AI</span>
+        <span>NLP</span>
+        <span>Corpus</span>
+        <span>MT</span>
+        <span>Data</span>
+        <span>Research</span>
+      </div>
+
+      <div className="paper-wrap">
+        <div className="lex-workshop-founder-head paper-rev">
+          <p>Workshops and founder message</p>
+          <h2>
+            Learn the workflow. Keep the judgment.
+          </h2>
+        </div>
+
+        <div className="lex-workshop-founder-grid">
+          <article className="lex-founder-card paper-rev paper-turn">
+            <span>Founder message</span>
+
+            <h3>
+              LexData is built for people who work seriously with language.
+            </h3>
+
+            <p>
+              Our goal is not to replace researchers, teachers, translators, or
+              students with automation. Our goal is to give them better language
+              data workflows: clearer corpora, cleaner annotation, smarter NLP,
+              and more responsible AI use.
+            </p>
+
+            <p>
+              We believe the future of language research belongs to people who
+              can combine human interpretation with computational methods.
+            </p>
+
+            <Link href="/about">Read our story -&gt;</Link>
+          </article>
+
+          <div className="lex-workshop-stack">
+            {workshopCards.map((item) => (
+              <Link key={item.title} href={item.href} className="lex-workshop-card paper-rev paper-turn">
+                <small>{item.tag}</small>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <b>View workshop -&gt;</b>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="lex-workshop-marquee paper-rev" aria-hidden="true">
+          <div>
+            <span>AI literacy</span>
+            <span>Corpus methods</span>
+            <span>NLP workflows</span>
+            <span>Translation technology</span>
+            <span>Research writing</span>
+            <span>Human-centered AI</span>
+          </div>
+          <div>
+            <span>AI literacy</span>
+            <span>Corpus methods</span>
+            <span>NLP workflows</span>
+            <span>Translation technology</span>
+            <span>Research writing</span>
+            <span>Human-centered AI</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 function ClosingSection() {
   return (
     <section className="paper-closing paper-page" id="courses">
@@ -524,7 +683,7 @@ function PaperFooter() {
         </div>
 
         <div className="paper-footer-bottom">
-          <span>婵?2026 LexData</span>
+          <span>濠?2026 LexData</span>
           <span>made by humans</span>
         </div>
       </div>
@@ -650,11 +809,12 @@ export default async function IntegratedHomePage() {
 
         <LexDataResearchToolsSection />
 
-        <VideoSection
+        <PrimaryVideoStage
           homepageVideos={homepageVideos}
           canManageHomepage={canManageHomepage}
-          slots={slots}
         />
+
+        <LatestEventsHomeSection />
 
         <MessageSection slots={slots} />
         <StanceBand />
