@@ -18,7 +18,7 @@ async function requireManagerOrAdmin() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?redirect=/manager/workshops");
+    redirect("/login?next=%2Fmanager%2Fworkshops%2Factions.ts");
   }
 
   const { data: profile } = await supabase

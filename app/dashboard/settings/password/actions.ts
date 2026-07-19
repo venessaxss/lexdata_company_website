@@ -34,7 +34,7 @@ export async function changePassword(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=%2Fdashboard%2Fsettings%2Fpassword%2Factions.ts");
   }
 
   const { error } = await supabase.auth.updateUser({

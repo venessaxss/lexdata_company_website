@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * About page editing — allowed for BOTH admin and manager.
- * requireRole(["manager"]) admits managers, and admins pass every
+ * requireRole(["admin", "manager"]) admits managers, and admins pass every
  * role check via hasRoleAccess. RLS enforces the same rule in the DB
  * (public.is_admin_or_manager in migration 004).
  */

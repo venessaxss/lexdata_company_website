@@ -20,7 +20,7 @@ async function requireMessageSender() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=%2Fdashboard%2Fmessages%2Fsend%2Factions.ts");
   }
 
   const { data: profile } = await supabase

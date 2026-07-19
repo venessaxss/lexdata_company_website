@@ -9,7 +9,7 @@ export default async function AdminAboutPage({
   searchParams: Promise<{ message?: string }>;
 }) {
   // Managers AND admins may edit the About page.
-  await requireRole(["manager"]);
+  await requireRole(["admin", "manager"]);
   const { message } = await searchParams;
   return <AboutEditor returnTo="/admin/about" message={message} />;
 }

@@ -30,8 +30,10 @@ async function requireAdminOrManager() {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile?.role !== "admin" && profile?.role !== "manager") {
-    redirect("/");
+  const role = String(profile?.role || "").toLowerCase();
+
+  if (role !== "admin" && role !== "manager") {
+    redirect("/unauthorized");
   }
 }
 

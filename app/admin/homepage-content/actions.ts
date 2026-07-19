@@ -13,7 +13,7 @@ async function requireAdminOrManager() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=%2Fadmin%2Fhomepage-content%2Factions.ts");
   }
 
   const admin = createAdminClient();
@@ -24,7 +24,9 @@ async function requireAdminOrManager() {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile?.role !== "admin" && profile?.role !== "manager") {
+  const role = String(profile?.role || "").toLowerCase();
+
+  if (role !== "admin" && role !== "manager") {
     throw new Error("You do not have permission to edit homepage content.");
   }
 

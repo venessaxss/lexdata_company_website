@@ -21,7 +21,7 @@ export default async function LanguageSettingsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?redirect=/dashboard/settings/language");
+    redirect("/login?next=%2Fdashboard%2Fsettings%2Flanguage");
   }
 
   return (
