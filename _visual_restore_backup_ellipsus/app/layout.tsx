@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import LexPaperNavbar from "@/components/LexPaperNavbar";
-import AuthSync from "@/components/AuthSync";
+import Navbar from "@/components/Navbar";
 import VisitTracker from "@/components/VisitTracker";
 import AutoTranslator from "@/components/AutoTranslator";
-import { PaperMotion } from "@/components/site/PaperMotion";
 import { site } from "@/lib/site";
 import { getServerI18n } from "@/lib/language-server";
 import "./globals.css";
@@ -22,12 +20,10 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={direction}>
-      <body className="lex-paper-site">
-        <PaperMotion />
-        <AuthSync />
+      <body>
         <VisitTracker />
         <AutoTranslator language={language} />
-        <LexPaperNavbar />
+        <Navbar />
         {children}
       </body>
     </html>
