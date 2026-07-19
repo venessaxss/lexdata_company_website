@@ -24,7 +24,7 @@ export default async function MemberProfilePage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?redirect=/dashboard/profile");
+    redirect("/login?next=%2Fdashboard%2Fprofile");
   }
 
   const { data: profile } = await admin

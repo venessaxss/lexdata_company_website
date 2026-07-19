@@ -12,7 +12,7 @@ import { createClient } from "@/lib/supabase/server";
  * (public.is_admin_or_manager in migration 004).
  */
 export async function updateAboutSection(formData: FormData) {
-  const { profile } = await requireRole(["manager"]);
+  const { profile } = await requireRole(["admin", "manager"]);
 
   const id = String(formData.get("id") ?? "").trim();
   const returnTo =

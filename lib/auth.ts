@@ -1,104 +1,157 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { AppRole, hasRoleAccess, normalizeRole } from "@/lib/roles";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export type { AppRole } from "@/lib/roles";
+export type AppRole =
+  | "admin"
+  | "manager"
+  | "speaker"
+  | "staff"
+  | "member"
+  | "user"
+  | string;
 
 export type CurrentProfile = {
   id: string;
-  full_name: string | null;
-  avatar_url: string | null;
-  role: AppRole;
+  email?: string | null;
+  role?: AppRole | null;
+  full_name?: string | null;
+  name?: string | null;
+
+  // Compatibility aliases for older code:
+  user?: any;
+  profile?: CurrentProfile | null;
 };
+
+export function normalizeRole(role?: string | null) {
+  return String(role || "member").trim().toLowerCase();
+}
+
+function withCompatibilityAliases(profile: CurrentProfile, user?: any) {
+  return {
+    ...profile,
+    user: user || null,
+    profile,
+  } as CurrentProfile;
+}
 
 export async function getCurrentUser() {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  return data.user;
-}
 
-export async function getCurrentProfile(): Promise<CurrentProfile | null> {
-  const supabase = await createClient();
-  const { data: userData } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!userData.user) return null;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id,full_name,avatar_url,role")
-    .eq("id", userData.user.id)
-    .single();
-
-  return {
-    id: userData.user.id,
-    full_name: profile?.full_name ?? userData.user.email ?? null,
-    avatar_url: profile?.avatar_url ?? null,
-    role: normalizeRole(profile?.role)
-  };
+  return user;
 }
 
 export async function requireUser() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
-  if (!data.user) {
-    redirect("/login?message=Please login first");
+  if (!user) {
+    redirect("/login?next=/dashboard");
   }
 
-  return data.user;
+  return user;
+}
+
+export async function getCurrentProfile() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const admin = createAdminClient();
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const current: CurrentProfile = {
+    ...(profile || {}),
+    id: user.id,
+    email: user.email,
+    role: normalizeRole(profile?.role),
+  };
+
+  return withCompatibilityAliases(current, user);
 }
 
 export async function requireProfile() {
   const user = await requireUser();
-  const profile = await getCurrentProfile();
 
-  if (!profile) {
-    redirect("/login?message=Profile not found. Please login again.");
-  }
+  const admin = createAdminClient();
 
-  return { user, profile };
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const current: CurrentProfile = {
+    ...(profile || {}),
+    id: user.id,
+    email: user.email,
+    role: normalizeRole(profile?.role),
+  };
+
+  return withCompatibilityAliases(current, user);
 }
 
-export async function requireRole(allowedRoles: AppRole[]) {
-  const supabase = await createClient();
-  const { data: userData } = await supabase.auth.getUser();
+export async function requireRole(allowedRoles: string[]) {
+  const current = await requireProfile();
+  const role = normalizeRole(current.role);
+  const allowed = allowedRoles.map((item) => normalizeRole(item));
 
-  if (!userData.user) {
-    redirect("/login?message=Please login first");
+  if (!allowed.includes(role)) {
+    redirect("/unauthorized");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id,full_name,avatar_url,role")
-    .eq("id", userData.user.id)
-    .single();
-
-  const role = normalizeRole(profile?.role);
-
-  if (!hasRoleAccess(role, allowedRoles)) {
-    redirect(`/unauthorized?required=${encodeURIComponent(allowedRoles.join(", "))}`);
-  }
-
-  return {
-    user: userData.user,
-    profile: {
-      id: userData.user.id,
-      full_name: profile?.full_name ?? userData.user.email ?? null,
-      avatar_url: profile?.avatar_url ?? null,
-      role
-    }
-  };
+  return current;
 }
 
 export async function requireAdmin() {
-  const { user } = await requireRole(["admin"]);
-  return user;
+  return requireRole(["admin"]);
 }
 
-export async function requireSpeakerOrAdmin() {
-  return requireRole(["speaker"]);
+export async function requireManager() {
+  return requireRole(["manager", "admin"]);
+}
+
+export async function requireAdminOrManager() {
+  return requireRole(["admin", "manager"]);
 }
 
 export async function requireManagerOrAdmin() {
-  return requireRole(["manager"]);
+  return requireRole(["manager", "admin"]);
+}
+
+export async function requireSpeaker() {
+  return requireRole(["speaker", "admin"]);
+}
+
+export async function requireSpeakerOrAdmin() {
+  return requireRole(["speaker", "admin"]);
+}
+
+export async function requireStaffOrAdmin() {
+  return requireRole(["staff", "manager", "admin"]);
+}
+
+export async function getUserRole() {
+  const profile = await getCurrentProfile();
+  return normalizeRole(profile?.role);
+}
+
+export async function isAdmin() {
+  const role = await getUserRole();
+  return role === "admin";
+}
+
+export async function isManagerOrAdmin() {
+  const role = await getUserRole();
+  return role === "manager" || role === "admin";
 }

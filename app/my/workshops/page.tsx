@@ -97,7 +97,7 @@ export default async function RegisteredWorkshopsPage() {
   } = await authSupabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=%2Fmy%2Fworkshops");
   }
 
   const supabase = createAdminClient();

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { loginWithPassword } from "./actions";
+import { loginAction, signupAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -7,95 +7,71 @@ export const revalidate = 0;
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ message?: string; redirect?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
-  const { message, redirect: redirectPath } = await searchParams;
+  const params = await searchParams;
+  const next = params.next || "/dashboard";
 
   return (
-    <main className="mx-auto flex min-h-[70vh] max-w-xl items-center px-4 py-16">
-      <div className="w-full rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <Link
-          href="/"
-          className="text-sm font-semibold text-slate-600 hover:text-slate-950"
-        >
-          ← Back to homepage
-        </Link>
+    <main className="lex-auth-page">
+      <section className="lex-auth-card">
+        <p>Member access</p>
+        <h1>Access your LexData account</h1>
+        <span>
+          Log in once to access your dashboard, workshops, admin tools, manager
+          pages, and learning materials.
+        </span>
 
-        <h1 className="mt-6 text-4xl font-black text-slate-950">Login</h1>
-
-        <p className="mt-3 text-slate-600">
-          Login to access your LexData dashboard, workshop registrations,
-          messages, and learning materials.
-        </p>
-
-        {message ? (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-            {message}
-          </div>
+        {params.error ? (
+          <div className="lex-auth-error">{params.error}</div>
         ) : null}
 
-        <form action={loginWithPassword} className="mt-6 grid gap-5">
-          <input
-            type="hidden"
-            name="redirect"
-            value={redirectPath || "/dashboard"}
-          />
+        <form action={loginAction} className="lex-auth-form">
+          <input type="hidden" name="next" value={next} />
 
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Email address
-            </label>
+          <label>
+            Email
+            <input name="email" type="email" required autoComplete="email" />
+          </label>
 
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              className="w-full rounded-xl border px-4 py-3"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Password
-            </label>
-
+          <label>
+            Password
             <input
               name="password"
               type="password"
               required
-              placeholder="Your password"
-              className="w-full rounded-xl border px-4 py-3"
+              autoComplete="current-password"
             />
-          </div>
+          </label>
 
-          <button
-            type="submit"
-            className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
-          >
-            Login
-          </button>
+          <button type="submit">Log in</button>
         </form>
 
-        <div className="mt-6 flex flex-col gap-3 text-sm">
-          <Link
-            href="/forgot-password"
-            className="font-semibold text-slate-600 hover:text-slate-950"
-          >
-            Forgot password?
-          </Link>
+        <form action={signupAction} className="lex-auth-form lex-auth-signup">
+          <input type="hidden" name="next" value={next} />
 
-          <p className="text-slate-600">
-            Do not have an account?{" "}
-            <Link
-              href="/signup"
-              className="font-semibold text-slate-950 hover:underline"
-            >
-              Create account
-            </Link>
-          </p>
-        </div>
-      </div>
+          <h2>Create account</h2>
+
+          <label>
+            Email
+            <input name="email" type="email" required autoComplete="email" />
+          </label>
+
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              required
+              autoComplete="new-password"
+            />
+          </label>
+
+          <button type="submit">Create account</button>
+        </form>
+
+        <Link href="/">Back to homepage</Link>
+      </section>
     </main>
   );
 }

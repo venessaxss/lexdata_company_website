@@ -8,7 +8,7 @@ function money(cents: number, currency: string) {
 export default async function MyPaymentsPage() {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) redirect("/login");
+  if (!userData.user) redirect("/login?next=%2Fmy%2Fpayments");
 
   const { data: payments } = await supabase
     .from("payments")

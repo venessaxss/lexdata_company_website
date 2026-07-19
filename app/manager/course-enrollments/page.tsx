@@ -13,7 +13,7 @@ async function requireAdminOrManager() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user) redirect("/login?next=%2Fmanager%2Fcourse-enrollments");
 
   const admin = createAdminClient();
 

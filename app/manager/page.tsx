@@ -24,7 +24,7 @@ export default async function ManagerDashboardPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?redirect=/manager");
+    redirect("/login?next=%2Fmanager");
   }
 
   const { data: profile } = await admin
