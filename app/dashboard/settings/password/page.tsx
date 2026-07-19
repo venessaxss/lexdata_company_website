@@ -21,7 +21,7 @@ export default async function ChangePasswordPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=%2Fdashboard%2Fsettings%2Fpassword");
+    redirect("/unauthorized");
   }
 
   const { message } = await searchParams;

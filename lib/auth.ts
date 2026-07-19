@@ -17,39 +17,48 @@ export type AuthContext = {
   role: AppRole;
   full_name?: string | null;
   name?: string | null;
+  display_name?: string | null;
 
-  // Backward compatibility for old code:
-  user?: any;
-  profile?: any;
+  user: any;
+  profile: any;
 };
 
 export function normalizeRole(role?: string | null) {
   return String(role || "member").trim().toLowerCase();
 }
 
-function envAdminEmails() {
+function getAdminEmails() {
   return String(process.env.LEXDATA_ADMIN_EMAILS || "")
     .split(",")
-    .map((email) => email.trim().toLowerCase())
+    .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
 }
 
-function roleWithAdminOverride(email?: string | null, role?: string | null) {
+function applyAdminOverride(email?: string | null, role?: string | null) {
   const normalized = normalizeRole(role);
 
-  if (email && envAdminEmails().includes(email.toLowerCase())) {
+  if (email && getAdminEmails().includes(email.toLowerCase())) {
     return "admin";
   }
 
   return normalized;
 }
 
-function withAliases(context: AuthContext) {
-  return {
-    ...context,
-    profile: context,
-    user: context.user || null,
-  };
+function makeContext(user: any, profile: any): AuthContext {
+  const role = applyAdminOverride(user?.email, profile?.role);
+
+  const context = {
+    ...(profile || {}),
+    id: user.id,
+    email: user.email,
+    role,
+    user,
+    profile: null,
+  } as AuthContext;
+
+  context.profile = context;
+
+  return context;
 }
 
 export async function getCurrentUser() {
@@ -87,17 +96,7 @@ export async function getCurrentProfile() {
     .eq("id", user.id)
     .maybeSingle();
 
-  const role = roleWithAdminOverride(user.email, profile?.role);
-
-  const context: AuthContext = {
-    ...(profile || {}),
-    id: user.id,
-    email: user.email,
-    role,
-    user,
-  };
-
-  return withAliases(context);
+  return makeContext(user, profile);
 }
 
 export async function requireProfile(next = "/dashboard") {
@@ -111,17 +110,7 @@ export async function requireProfile(next = "/dashboard") {
     .eq("id", user.id)
     .maybeSingle();
 
-  const role = roleWithAdminOverride(user.email, profile?.role);
-
-  const context: AuthContext = {
-    ...(profile || {}),
-    id: user.id,
-    email: user.email,
-    role,
-    user,
-  };
-
-  return withAliases(context);
+  return makeContext(user, profile);
 }
 
 export async function requireRole(allowedRoles: string[], next = "/dashboard") {
@@ -129,12 +118,10 @@ export async function requireRole(allowedRoles: string[], next = "/dashboard") {
   const role = normalizeRole(context.role);
   const allowed = allowedRoles.map((item) => normalizeRole(item));
 
-  // Admin can access all admin/manager/speaker/member areas.
   if (role === "admin") {
     return context;
   }
 
-  // Manager can access manager-level areas.
   if (role === "manager" && allowed.includes("manager")) {
     return context;
   }

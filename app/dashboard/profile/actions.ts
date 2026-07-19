@@ -18,7 +18,7 @@ export async function updateMemberProfileAction(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=%2Fdashboard%2Fprofile%2Factions.ts");
+    redirect("/unauthorized");
   }
 
   const fullName = field(formData, "full_name");

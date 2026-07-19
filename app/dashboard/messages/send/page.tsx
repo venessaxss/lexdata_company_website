@@ -15,7 +15,7 @@ async function requireMessageSender() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=%2Fdashboard%2Fmessages%2Fsend");
+    redirect("/unauthorized");
   }
 
   const { data: profile } = await supabase

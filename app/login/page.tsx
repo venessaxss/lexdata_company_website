@@ -18,8 +18,8 @@ export default async function LoginPage({
         <p>Member access</p>
         <h1>Access your LexData account</h1>
         <span>
-          Log in once to access your dashboard, workshops, admin tools, manager
-          pages, and learning materials.
+          Create an account or log in to access your personal dashboard,
+          workshop registrations, messages, and learning materials.
         </span>
 
         {params.error ? (

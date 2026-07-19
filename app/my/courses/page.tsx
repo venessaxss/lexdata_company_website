@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 export default async function MyCoursesPage() {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user) redirect("/login?next=%2Fmy%2Fcourses");
+  if (!userData.user) redirect("/unauthorized");
 
   const { data: enrollments } = await supabase
     .from("enrollments")

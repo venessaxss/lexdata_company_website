@@ -19,7 +19,7 @@ async function requireAdminOrManager() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=%2Fadmin%2Fevents");
+    redirect("/unauthorized");
   }
 
   const admin = createAdminClient();

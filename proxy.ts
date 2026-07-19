@@ -46,17 +46,21 @@ export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const fullPath = `${path}${request.nextUrl.search}`;
 
-  const isProtected =
-    path.startsWith("/dashboard") ||
-    path.startsWith("/admin") ||
-    path.startsWith("/manager") ||
-    path.startsWith("/my") ||
-    path.startsWith("/speaker");
+  const protectedPaths = [
+    "/dashboard",
+    "/manager",
+    "/admin",
+    "/my",
+    "/speaker",
+  ];
 
-  const isAuthPage =
-    path === "/login" ||
-    path === "/signup" ||
-    path === "/register";
+  const authPaths = ["/login", "/signup", "/register"];
+
+  const isProtected = protectedPaths.some(
+    (item) => path === item || path.startsWith(`${item}/`)
+  );
+
+  const isAuthPage = authPaths.includes(path);
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();

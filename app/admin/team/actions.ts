@@ -14,7 +14,7 @@ async function requireAdminOrManager() {
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    redirect("/login?next=%2Fadmin%2Fteam%2Factions.ts");
+    redirect("/unauthorized");
   }
 
   const { data: profile, error: profileError } = await supabase

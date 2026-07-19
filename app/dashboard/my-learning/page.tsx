@@ -76,7 +76,7 @@ export default async function MyLearningPage() {
   } = await authSupabase.auth.getUser();
 
   if (!user) {
-    redirect("/login?next=%2Fdashboard%2Fmy-learning");
+    redirect("/unauthorized");
   }
 
   const supabase = createAdminClient();

@@ -9,6 +9,5 @@ export default async function ManagerLayout({
   children: React.ReactNode;
 }) {
   await requireManagerOrAdmin("/manager");
-
   return <>{children}</>;
 }

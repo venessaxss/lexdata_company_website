@@ -1,8 +1,13 @@
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-import { requireRole } from "@/lib/auth";
+import { requireAdminOrManager } from "@/lib/auth";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireRole(["admin"]);
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  await requireAdminOrManager("/admin");
   return <>{children}</>;
 }

@@ -1,34 +1,31 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AuthCheckPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const profile = await getCurrentProfile();
 
   return (
     <main style={{ padding: 40, fontFamily: "system-ui" }}>
       <h1>Auth check</h1>
-
-      {user ? (
-        <pre>
-          {JSON.stringify(
-            {
-              loggedIn: true,
-              email: user.email,
-              id: user.id,
-            },
-            null,
-            2
-          )}
-        </pre>
-      ) : (
-        <pre>{JSON.stringify({ loggedIn: false }, null, 2)}</pre>
-      )}
+      <pre>
+        {JSON.stringify(
+          profile
+            ? {
+                loggedIn: true,
+                email: profile.email,
+                id: profile.id,
+                role: profile.role,
+                name: profile.full_name || profile.name || profile.display_name,
+              }
+            : {
+                loggedIn: false,
+              },
+          null,
+          2
+        )}
+      </pre>
     </main>
   );
 }
