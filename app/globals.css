@@ -7634,3 +7634,235 @@ body.lex-pro-dark-body {
   background: #8b93f8 !important;
   color: #17172f !important;
 }
+
+/* LexData stable login portal */
+.lex-auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 120px 24px;
+  background: #f8f5ee;
+  color: #17172f;
+}
+
+.lex-auth-card {
+  width: min(760px, 100%);
+  border: 3px solid #17172f;
+  border-radius: 36px;
+  background: #fffdf8;
+  box-shadow: 10px 10px 0 #17172f;
+  padding: 42px;
+}
+
+.lex-auth-card > p {
+  margin: 0 0 14px;
+  color: #f4775f;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lex-auth-card h1 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(48px, 7vw, 82px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.lex-auth-card > span {
+  display: block;
+  margin-top: 20px;
+  color: #44445e;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.lex-auth-error {
+  margin-top: 24px;
+  border: 2px solid #b42318;
+  border-radius: 18px;
+  background: #fff0ed;
+  color: #b42318;
+  padding: 14px 16px;
+  font-weight: 800;
+}
+
+.lex-auth-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.lex-auth-form label {
+  display: grid;
+  gap: 8px;
+  color: #17172f;
+  font-weight: 900;
+}
+
+.lex-auth-form input {
+  min-height: 54px;
+  border: 2px solid #17172f;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #17172f;
+  padding: 0 16px;
+  font-size: 18px;
+}
+
+.lex-auth-form button,
+.lex-auth-card > a {
+  min-height: 58px;
+  border: 3px solid #17172f;
+  border-radius: 999px;
+  background: #8b93f8;
+  color: #17172f;
+  box-shadow: 7px 7px 0 #17172f;
+  padding: 0 24px;
+  font-size: 18px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lex-auth-signup {
+  margin-top: 44px;
+  border-top: 2px solid rgba(23, 23, 47, 0.18);
+  padding-top: 30px;
+}
+
+.lex-auth-signup h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.lex-auth-card > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  background: #fffdf8;
+}
+
+/* LexData stable login portal */
+.lex-auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 120px 24px;
+  background: #f8f5ee;
+  color: #17172f;
+}
+
+.lex-auth-card {
+  width: min(760px, 100%);
+  border: 3px solid #17172f;
+  border-radius: 36px;
+  background: #fffdf8;
+  box-shadow: 10px 10px 0 #17172f;
+  padding: 42px;
+}
+
+.lex-auth-card > p {
+  margin: 0 0 14px;
+  color: #f4775f;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lex-auth-card h1 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(48px, 7vw, 82px);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.lex-auth-card > span {
+  display: block;
+  margin-top: 20px;
+  color: #44445e;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.lex-auth-error {
+  margin-top: 24px;
+  border: 2px solid #b42318;
+  border-radius: 18px;
+  background: #fff0ed;
+  color: #b42318;
+  padding: 14px 16px;
+  font-weight: 800;
+}
+
+.lex-auth-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.lex-auth-form label {
+  display: grid;
+  gap: 8px;
+  color: #17172f;
+  font-weight: 900;
+}
+
+.lex-auth-form input {
+  min-height: 54px;
+  border: 2px solid #17172f;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #17172f;
+  padding: 0 16px;
+  font-size: 18px;
+}
+
+.lex-auth-form button,
+.lex-auth-card > a {
+  min-height: 58px;
+  border: 3px solid #17172f;
+  border-radius: 999px;
+  background: #8b93f8;
+  color: #17172f;
+  box-shadow: 7px 7px 0 #17172f;
+  padding: 0 24px;
+  font-size: 18px;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lex-auth-signup {
+  margin-top: 44px;
+  border-top: 2px solid rgba(23, 23, 47, 0.18);
+  padding-top: 30px;
+}
+
+.lex-auth-signup h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.lex-auth-card > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  background: #fffdf8;
+}
+
+/* Remove old homepage Member Access block */
+.paper-home #dashboard,
+.paper-home #member-access,
+.paper-home .member-access,
+.paper-home .dashboard-section,
+.paper-home .paper-dashboard,
+.paper-home .lex-member-access {
+  display: none !important;
+}

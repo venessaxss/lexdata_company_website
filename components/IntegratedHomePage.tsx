@@ -683,7 +683,7 @@ function PaperFooter() {
         </div>
 
         <div className="paper-footer-bottom">
-          <span>婵?2026 LexData</span>
+          <span>濠?2026 LexData</span>
           <span>made by humans</span>
         </div>
       </div>
