@@ -24,11 +24,11 @@ export default async function RootLayout({
     <html lang={language} dir={direction}>
       <body className="lex-paper-site">
         <PaperMotion />
-        <AuthSync />
-        <VisitTracker />
+<VisitTracker />
         <AutoTranslator language={language} />
         <LexPaperNavbar />
         {children}
+              <AuthSync />
       </body>
     </html>
   );

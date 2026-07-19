@@ -1,104 +1,24 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { normalizeRole } from "@/lib/roles";
 
-const publicRoutes = [
-  "/",
-  "/login",
-  "/signup",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/auth/callback",
-  "/member-manual",
-  "/workshops",
-  "/notices",
-  "/team",
-  "/about",
-  "/contact",
-];
-
-const publicApiPrefixes = [
-  "/api/auto-translate",
-  "/api/language",
-  "/api/visit",
-];
-
-const protectedPrefixes = [
-  "/dashboard",
-  "/admin",
-  "/manager",
-];
-
-function isStaticAsset(pathname: string) {
-  return (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/manuals") ||
-    pathname.startsWith("/assets") ||
-    pathname.match(/\.(png|jpg|jpeg|gif|webp|svg|ico|css|js|pdf|txt|xml)$/)
-  );
+function safeNextPath(value: string | null) {
+  if (!value) return "/dashboard";
+  if (!value.startsWith("/")) return "/dashboard";
+  if (value.startsWith("//")) return "/dashboard";
+  return value;
 }
 
-function isPublicApiRoute(pathname: string) {
-  return publicApiPrefixes.some((prefix) => pathname.startsWith(prefix));
-}
+function redirectWithFreshCookies(response: NextResponse, url: URL) {
+  const redirected = NextResponse.redirect(url);
 
-function isPublicRoute(pathname: string) {
-  if (publicRoutes.includes(pathname)) {
-    return true;
-  }
-
-  if (pathname.startsWith("/workshops/")) {
-    return true;
-  }
-
-  if (pathname.startsWith("/notices/")) {
-    return true;
-  }
-
-  return false;
-}
-
-function isProtectedRoute(pathname: string) {
-  return protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
-}
-
-function isAdminRoute(pathname: string) {
-  return pathname.startsWith("/admin");
-}
-
-function isManagerRoute(pathname: string) {
-  return pathname.startsWith("/manager");
-}
-
-
-function redirectPreservingCookies(
-  base: NextResponse,
-  redirectUrl: ReturnType<NextRequest["nextUrl"]["clone"]>
-) {
-  const redirectResponse = NextResponse.redirect(redirectUrl);
-  // CRITICAL: carry refreshed Supabase auth cookies onto the redirect.
-  // Without this, rotated refresh tokens are dropped and the session dies,
-  // forcing users to log in again.
-  base.cookies.getAll().forEach((cookie) => {
-    redirectResponse.cookies.set(cookie);
+  response.cookies.getAll().forEach((cookie) => {
+    redirected.cookies.set(cookie);
   });
-  return redirectResponse;
+
+  return redirected;
 }
 
 export async function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-
-  if (isStaticAsset(pathname)) {
-    return NextResponse.next();
-  }
-
-  if (isPublicApiRoute(pathname)) {
-    return NextResponse.next();
-  }
-
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -128,69 +48,34 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user && (pathname === "/login" || pathname === "/signup")) {
-    const requested =
-      request.nextUrl.searchParams.get("redirect") ||
+  const path = request.nextUrl.pathname;
+  const fullPath = `${path}${request.nextUrl.search}`;
+
+  const protectedPaths = ["/dashboard", "/admin", "/manager", "/my", "/speaker"];
+  const authPaths = ["/login", "/signup", "/register"];
+
+  const isProtected = protectedPaths.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
+
+  const isAuthPage = authPaths.includes(path);
+
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("next", fullPath);
+    return redirectWithFreshCookies(response, url);
+  }
+
+  if (isAuthPage && user) {
+    const next =
       request.nextUrl.searchParams.get("next") ||
-      "";
-    // Forward already-authenticated users to where they were headed
-    // (internal paths only), instead of forcing /dashboard.
-    const destination =
-      requested.startsWith("/") && !requested.startsWith("//")
-        ? requested
-        : "/dashboard";
+      request.nextUrl.searchParams.get("redirect");
 
-    const redirectUrl = request.nextUrl.clone();
-    const [destPath, destQuery = ""] = destination.split("?");
-    redirectUrl.pathname = destPath;
-    redirectUrl.search = destQuery ? `?${destQuery}` : "";
-
-    return redirectPreservingCookies(response, redirectUrl);
-  }
-
-  if (!user && isProtectedRoute(pathname)) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    redirectUrl.searchParams.set(
-      "redirect",
-      `${request.nextUrl.pathname}${request.nextUrl.search}`
-    );
-
-    return redirectPreservingCookies(response, redirectUrl);
-  }
-
-  if (user && (isAdminRoute(pathname) || isManagerRoute(pathname))) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    const role = normalizeRole(profile?.role);
-
-    if (isAdminRoute(pathname) && role !== "admin") {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/dashboard";
-      redirectUrl.search = "";
-
-      return redirectPreservingCookies(response, redirectUrl);
-    }
-
-    if (
-      isManagerRoute(pathname) &&
-      role !== "admin" &&
-      role !== "manager"
-    ) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/dashboard";
-      redirectUrl.search = "";
-
-      return redirectPreservingCookies(response, redirectUrl);
-    }
-  }
-
-  if (isPublicRoute(pathname)) {
-    return response;
+    const url = request.nextUrl.clone();
+    url.pathname = safeNextPath(next);
+    url.search = "";
+    return redirectWithFreshCookies(response, url);
   }
 
   return response;

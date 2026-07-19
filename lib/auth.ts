@@ -1,44 +1,36 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { AppRole, hasRoleAccess, normalizeRole } from "@/lib/roles";
 
-export type AppRole =
-  | "admin"
-  | "manager"
-  | "speaker"
-  | "staff"
-  | "member"
-  | "user"
-  | string;
+export type { AppRole } from "@/lib/roles";
 
 export type AuthContext = {
   id: string;
   email?: string | null;
-  role: AppRole;
+  role: AppRole | string;
   full_name?: string | null;
+  avatar_url?: string | null;
   name?: string | null;
   display_name?: string | null;
-
   user: any;
   profile: any;
   admin: ReturnType<typeof createAdminClient>;
 };
 
-export function normalizeRole(role?: string | null) {
-  return String(role || "member").trim().toLowerCase();
-}
+export { normalizeRole };
 
-function getAdminEmails() {
+function envAdminEmails() {
   return String(process.env.LEXDATA_ADMIN_EMAILS || "")
     .split(",")
-    .map((item) => item.trim().toLowerCase())
+    .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
 }
 
-function applyAdminOverride(email?: string | null, role?: string | null) {
+function roleWithAdminOverride(email?: string | null, role?: string | null) {
   const normalized = normalizeRole(role);
 
-  if (email && getAdminEmails().includes(email.toLowerCase())) {
+  if (email && envAdminEmails().includes(email.toLowerCase())) {
     return "admin";
   }
 
@@ -50,30 +42,29 @@ function makeContext(
   profile: any,
   admin: ReturnType<typeof createAdminClient>
 ): AuthContext {
-  const role = applyAdminOverride(user?.email, profile?.role);
+  const role = roleWithAdminOverride(user?.email, profile?.role);
 
   const context = {
     ...(profile || {}),
     id: user.id,
     email: user.email,
     role,
+    full_name: profile?.full_name ?? user?.user_metadata?.full_name ?? user?.email ?? null,
+    avatar_url: profile?.avatar_url ?? null,
     user,
     admin,
     profile: null,
   } as AuthContext;
 
   context.profile = context;
-
   return context;
 }
 
 export async function getCurrentUser() {
   const supabase = await createClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   return user;
 }
 
@@ -90,9 +81,7 @@ export async function requireUser(next = "/dashboard") {
 export async function getCurrentProfile() {
   const user = await getCurrentUser();
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const admin = createAdminClient();
 
@@ -118,21 +107,12 @@ export async function requireProfile(next = "/dashboard") {
   return makeContext(user, profile, admin);
 }
 
-export async function requireRole(allowedRoles: string[], next = "/dashboard") {
+export async function requireRole(allowedRoles: (AppRole | string)[], next = "/dashboard") {
   const context = await requireProfile(next);
-  const role = normalizeRole(context.role);
-  const allowed = allowedRoles.map((item) => normalizeRole(item));
+  const role = normalizeRole(String(context.role));
 
-  if (role === "admin") {
-    return context;
-  }
-
-  if (role === "manager" && allowed.includes("manager")) {
-    return context;
-  }
-
-  if (!allowed.includes(role)) {
-    redirect("/unauthorized");
+  if (!hasRoleAccess(role, allowedRoles)) {
+    redirect(`/unauthorized?required=${encodeURIComponent(allowedRoles.join(", "))}`);
   }
 
   return context;
@@ -168,12 +148,11 @@ export async function requireStaffOrAdmin(next = "/admin") {
 
 export async function getUserRole() {
   const profile = await getCurrentProfile();
-  return normalizeRole(profile?.role);
+  return normalizeRole(String(profile?.role || "member"));
 }
 
 export async function isAdmin() {
-  const role = await getUserRole();
-  return role === "admin";
+  return (await getUserRole()) === "admin";
 }
 
 export async function isManagerOrAdmin() {
