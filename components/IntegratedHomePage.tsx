@@ -11,7 +11,7 @@ import HomeMediaShowcase from "@/components/HomeMediaShowcase";
 import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
 import NlpAttractionSection from "@/components/NlpAttractionSection";
 import MouCollaborationSection from "@/components/MouCollaborationSection";
-import TeamShowcase from "@/components/TeamShowcase";
+import DynamicPosterSlider from "@/components/DynamicPosterSlider";
 import LatestEventsHomeSection from "@/components/LatestEventsHomeSection";
 import PreviousCasesShowcase from "@/components/PreviousCasesShowcase";
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
@@ -785,7 +785,7 @@ export default async function IntegratedHomePage() {
       <main className="paper-home">
         <HeroSection slots={slots} canManageHomepage={canManageHomepage} />
         <StripSection />
-        <IntroSection />
+        <DynamicPosterSlider />
         <LexDataDarkStorySection />
         <PreviousCasesShowcase />
         <LexDataManifestoSection />
@@ -831,9 +831,7 @@ export default async function IntegratedHomePage() {
           <MouCollaborationSection />
         </PaperPanel>
 
-        <PaperPanel id="team" kicker="LexData team" title="Dynamic team presentation.">
-          <TeamShowcase />
-        </PaperPanel>
+
 
         <ClosingSection />
         <PaperFooter />

@@ -125,9 +125,15 @@ export default async function LexPaperNavbar() {
 
       <div className="lex-paper-auth">
         {isLoggedIn ? (
-          <Link href="/dashboard" className="lex-paper-signup">
-            Dashboard
-          </Link>
+          <>
+            <Link href="/dashboard" className="lex-paper-login">
+              Dashboard
+            </Link>
+
+            <Link href="/logout" className="lex-paper-signup">
+              Log out
+            </Link>
+          </>
         ) : (
           <>
             <Link href="/login" className="lex-paper-login">
@@ -135,7 +141,7 @@ export default async function LexPaperNavbar() {
             </Link>
 
             <Link href="/signup" className="lex-paper-signup">
-              Register
+              Sign up
             </Link>
           </>
         )}

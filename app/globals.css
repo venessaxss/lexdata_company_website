@@ -7598,3 +7598,39 @@ body.lex-pro-dark-body {
   backface-visibility: hidden;
   transform: translateZ(0);
 }
+
+/* Force navbar auth buttons visible */
+.lex-paper-auth {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  justify-self: end !important;
+  z-index: 9999 !important;
+}
+
+.lex-paper-login,
+.lex-paper-signup {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+  padding: 0 20px !important;
+  border: 3px solid #17172f !important;
+  border-radius: 999px !important;
+  box-shadow: 6px 6px 0 #17172f !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.lex-paper-login {
+  background: #fffdf8 !important;
+  color: #17172f !important;
+}
+
+.lex-paper-signup {
+  background: #8b93f8 !important;
+  color: #17172f !important;
+}
