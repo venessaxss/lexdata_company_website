@@ -1,3 +1,55 @@
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$root = (Get-Location).Path
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+$stamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$parent = Split-Path $root -Parent
+$backupRoot = Join-Path $parent ("lexdata_home_nav_unblock_backup_" + $stamp)
+
+New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
+
+function Backup-File([string]$RelativePath) {
+    $src = Join-Path $root $RelativePath
+    if (Test-Path $src) {
+        $dst = Join-Path $backupRoot $RelativePath
+        $dir = Split-Path $dst -Parent
+        if ($dir) {
+            New-Item -ItemType Directory -Path $dir -Force | Out-Null
+        }
+        Copy-Item $src $dst -Force
+    }
+}
+
+function Write-Utf8([string]$Path, [string]$Content) {
+    $dir = Split-Path $Path -Parent
+    if ($dir -and !(Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    [System.IO.File]::WriteAllText($Path, $Content, $utf8)
+}
+
+if (!(Test-Path (Join-Path $root "package.json"))) {
+    throw "Run this script from the LexData Next.js project root."
+}
+
+Write-Host "LexData homepage navbar/dashboard unblock patch" -ForegroundColor Cyan
+Write-Host "Backup: $backupRoot"
+Write-Host ""
+
+Backup-File "components\EllipsusNav.tsx"
+Backup-File "components\IntegratedHomePage.tsx"
+Backup-File "app\globals.css"
+
+# -------------------------------------------------------------------
+# 1. Rewrite EllipsusNav:
+#    - do not auto-open a menu merely because the button receives focus
+#    - close on outside click, Escape, route change, or scroll
+#    - retain hover tolerance for moving into the submenu
+#    - sync login state from the browser session after hydration
+# -------------------------------------------------------------------
+
+$navTsx = @'
 "use client";
 
 import Link from "next/link";
@@ -302,3 +354,106 @@ export default function EllipsusNav({
     </header>
   );
 }
+'@
+
+Write-Utf8 (Join-Path $root "components\EllipsusNav.tsx") $navTsx
+
+# -------------------------------------------------------------------
+# 2. Pass the actual role-aware dashboard URL to the homepage navbar
+#    and remove the stale third slider label.
+# -------------------------------------------------------------------
+
+$homePath = Join-Path $root "components\IntegratedHomePage.tsx"
+$homePageContent = [System.IO.File]::ReadAllText($homePath)
+
+$homePageContent = $homePageContent.Replace(
+    '<EllipsusNav isLoggedIn={isLoggedIn} />',
+    '<EllipsusNav isLoggedIn={isLoggedIn} dashboardHref={dashboardHref} />'
+)
+
+$homePageContent = $homePageContent.Replace(
+    'labels={["Workspace", "Notifications", "Video"]}',
+    'labels={["Workspace", "Notifications"]}'
+)
+
+Write-Utf8 $homePath $homePageContent
+
+# -------------------------------------------------------------------
+# 3. Fix the real visual collision:
+#
+# RootLayout renders LexPaperNavbar on every page, while the homepage
+# ALSO renders EllipsusNav. Hide the global paper navbar only when the
+# direct page child is the Ellipsus homepage. Other panels keep it.
+# -------------------------------------------------------------------
+
+$globalsPath = Join-Path $root "app\globals.css"
+$globals = [System.IO.File]::ReadAllText($globalsPath)
+
+$marker = "/* LEXDATA HOMEPAGE NAV COLLISION FIX */"
+
+if (-not $globals.Contains($marker)) {
+    $css = @'
+
+/* LEXDATA HOMEPAGE NAV COLLISION FIX */
+
+/*
+  RootLayout renders header.site globally.
+  IntegratedHomePage renders its own lx-site-nav.
+  Showing both creates two navigation layers and lets the fixed mega-menu
+  sit over the homepage dashboard/showcase area.
+
+  Keep exactly one navbar on the homepage:
+  - homepage: Ellipsus navbar
+  - dashboard/manager/admin/other routes: global paper navbar
+*/
+body:has(> main.lx-page) > header.site {
+  display: none !important;
+}
+
+/* The homepage already accounts for its own fixed Ellipsus navbar. */
+body:has(> main.lx-page) > main.lx-page {
+  margin-top: 0 !important;
+}
+
+/* Keep the menu above the page only while it is actually open. */
+.lx-site-nav {
+  z-index: 1000;
+}
+
+.lx-mega {
+  z-index: 1001;
+  pointer-events: auto;
+}
+
+/* Do not let decorative mega-menu artwork steal clicks. */
+.lx-mega-art,
+.lx-mega-sketch {
+  pointer-events: none;
+}
+'@
+
+    $globals = $globals + $css
+    Write-Utf8 $globalsPath $globals
+}
+
+# Clear Next cache
+Remove-Item -Recurse -Force (Join-Path $root ".next") -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "Homepage navbar/dashboard unblock fix applied." -ForegroundColor Green
+Write-Host ""
+Write-Host "Fixed:" -ForegroundColor Cyan
+Write-Host "  - Duplicate navbar collision on the homepage"
+Write-Host "  - Mega menu staying open after focus/outside navigation"
+Write-Host "  - Menu closes on outside click, Escape, route change, and scrolling"
+Write-Host "  - Browser auth session updates Log in -> Dashboard after hydration"
+Write-Host "  - Role-aware homepage Dashboard link"
+Write-Host "  - Removed stale Video label from the two-slide dashboard board"
+Write-Host ""
+Write-Host "Run:" -ForegroundColor Cyan
+Write-Host "  npm.cmd run build"
+Write-Host ""
+Write-Host "Then:" -ForegroundColor Cyan
+Write-Host "  git add components/EllipsusNav.tsx components/IntegratedHomePage.tsx app/globals.css"
+Write-Host '  git commit -m "Fix homepage navbar overlay and unblock dashboard showcase"'
+Write-Host "  git push origin HEAD"

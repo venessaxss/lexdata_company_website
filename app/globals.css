@@ -8192,3 +8192,40 @@ nav.main .btn:hover {
 }
 
 /* === Paper-style navbar exact restore end === */
+
+/* LEXDATA HOMEPAGE NAV COLLISION FIX */
+
+/*
+  RootLayout renders header.site globally.
+  IntegratedHomePage renders its own lx-site-nav.
+  Showing both creates two navigation layers and lets the fixed mega-menu
+  sit over the homepage dashboard/showcase area.
+
+  Keep exactly one navbar on the homepage:
+  - homepage: Ellipsus navbar
+  - dashboard/manager/admin/other routes: global paper navbar
+*/
+body:has(> main.lx-page) > header.site {
+  display: none !important;
+}
+
+/* The homepage already accounts for its own fixed Ellipsus navbar. */
+body:has(> main.lx-page) > main.lx-page {
+  margin-top: 0 !important;
+}
+
+/* Keep the menu above the page only while it is actually open. */
+.lx-site-nav {
+  z-index: 1000;
+}
+
+.lx-mega {
+  z-index: 1001;
+  pointer-events: auto;
+}
+
+/* Do not let decorative mega-menu artwork steal clicks. */
+.lx-mega-art,
+.lx-mega-sketch {
+  pointer-events: none;
+}

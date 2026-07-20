@@ -52,7 +52,7 @@ export default async function IntegratedHomePage() {
 
   return (
     <main className="ell-page lx-page">
-      <EllipsusNav isLoggedIn={isLoggedIn} />
+      <EllipsusNav isLoggedIn={isLoggedIn} dashboardHref={dashboardHref} />
 
       <div className="lx-cover-sequence">
         <section className="lx-hero-sticky" aria-label="LexData introduction">
@@ -138,7 +138,7 @@ export default async function IntegratedHomePage() {
           </div>
         </div>
         <div className="lx-dashboard-stage lx-dashboard-stage-sliding">
-          <DashboardBoardSlider labels={["Workspace", "Notifications", "Video"]}>
+          <DashboardBoardSlider labels={["Workspace", "Notifications"]}>
             <div className="lx-dashboard-main lx-dashboard-main-slide"><DynamicHomeShowcase /></div>
             <div className="lx-dashboard-main lx-dashboard-main-slide lx-dashboard-notice-slide"><NoticeSpotlight /></div>
             
