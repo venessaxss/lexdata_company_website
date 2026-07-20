@@ -1,9 +1,27 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { redirect } from "next/navigation";
+import { requireManagerOrAdmin } from "@/lib/auth";
+
+function text(formData: FormData, key: string) {
+  return String(formData.get(key) || "").trim();
+}
+
+function safeReturnTo(value: string) {
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return "/manager/registrations";
+  }
+  return value;
+}
+
+function withMessage(path: string, key: "message" | "error", message: string) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}${key}=${encodeURIComponent(message)}`;
+}
 
 async function notifyUser(input: {
+  admin: any;
   userId?: string | null;
   email?: string | null;
   title: string;
@@ -11,9 +29,7 @@ async function notifyUser(input: {
   sourceType: string;
   sourceId: string;
 }) {
-  const admin = createAdminClient();
-
-  await admin.from("internal_messages").insert({
+  const { error } = await input.admin.from("internal_messages").insert({
     user_id: input.userId || null,
     recipient_email: input.email || null,
     title: input.title,
@@ -22,26 +38,35 @@ async function notifyUser(input: {
     source_id: input.sourceId,
   });
 
+  if (error) {
+    console.error("Internal notification failed:", error.message);
+  }
+
   if (!input.email || !process.env.RESEND_API_KEY) return;
 
-  await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: process.env.EMAIL_FROM || "LexData <noreply@lexdataai.com>",
-      to: input.email,
-      subject: input.title,
-      text: input.body,
-    }),
-  });
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: process.env.EMAIL_FROM || "LexData <noreply@lexdataai.com>",
+        to: input.email,
+        subject: input.title,
+        text: input.body,
+      }),
+    });
+  } catch (error) {
+    console.error("Email notification failed:", error);
+  }
 }
 
-async function revalidateRegistrationPages(workshopId?: string | null) {
-  const admin = createAdminClient();
-
+async function revalidateRegistrationPages(
+  admin: any,
+  workshopId?: string | null
+) {
   if (workshopId) {
     const { data: workshop } = await admin
       .from("workshops")
@@ -54,155 +79,184 @@ async function revalidateRegistrationPages(workshopId?: string | null) {
     }
   }
 
+  revalidatePath("/manager");
   revalidatePath("/manager/registrations");
   revalidatePath("/admin/registrations");
   revalidatePath("/manager/monitor");
+  revalidatePath("/dashboard");
   revalidatePath("/dashboard/messages");
   revalidatePath("/dashboard/my-learning");
   revalidatePath("/my/workshops");
 }
 
 export async function handleRegistrationManagementAction(formData: FormData) {
-  const admin = createAdminClient();
-
-  const intent = String(formData.get("intent") || "").trim();
-  const registrationId = String(formData.get("registration_id") || "").trim();
-
-  const registrationStatus = String(
-    formData.get("registration_status") || "pending"
+  const returnTo = safeReturnTo(
+    text(formData, "return_to") || "/manager/registrations"
   );
 
-  const paymentStatus = String(formData.get("payment_status") || "pending");
-  const paymentLink = String(formData.get("payment_link") || "").trim();
-  const paymentNote = String(formData.get("payment_note") || "").trim();
-  const paymentCurrency = String(formData.get("payment_currency") || "USD");
-  const amountReceived = Number(formData.get("amount_received") || 0);
+  const actor = await requireManagerOrAdmin("/manager/registrations");
+  const admin = actor.admin;
 
-  if (!registrationId) return;
+  const intent = text(formData, "intent");
+  const registrationId = text(formData, "registration_id");
 
-  const { data: registration } = await admin
+  if (!registrationId) {
+    redirect(withMessage(returnTo, "error", "Missing registration ID."));
+  }
+
+  const { data: registration, error: loadError } = await admin
     .from("workshop_registrations")
-    .select("id, user_id, email, full_name, workshop_id")
+    .select(
+      "id, user_id, email, full_name, workshop_id, registration_status, payment_status"
+    )
     .eq("id", registrationId)
     .maybeSingle();
 
-  if (!registration) return;
-
-  if (intent === "save_statuses") {
-    await admin
-      .from("workshop_registrations")
-      .update({
-        registration_status: registrationStatus,
-        payment_status: paymentStatus,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
-
-    await revalidateRegistrationPages(registration.workshop_id);
-    return;
+  if (loadError || !registration) {
+    redirect(
+      withMessage(
+        returnTo,
+        "error",
+        loadError?.message || "Registration not found."
+      )
+    );
   }
 
-  if (intent === "send_payment_message") {
-    const messageBody =
-      paymentNote ||
-      (paymentLink
-        ? `Payment instructions have been sent. Please complete payment using this link: ${paymentLink}`
-        : "Payment instructions have been sent. Please complete payment and upload your receipt.");
+  const registrationStatus =
+    text(formData, "registration_status") ||
+    registration.registration_status ||
+    "pending";
 
-    await admin
-      .from("workshop_registrations")
-      .update({
-        registration_status: "pending",
+  const paymentStatus =
+    text(formData, "payment_status") ||
+    registration.payment_status ||
+    "pending";
+
+  const paymentLink = text(formData, "payment_link");
+  const paymentNote = text(formData, "payment_note");
+  const paymentCurrency = text(formData, "payment_currency") || "USD";
+  const parsedAmount = Number(text(formData, "amount_received") || 0);
+  const amountReceived = Number.isFinite(parsedAmount) ? parsedAmount : 0;
+
+  let updatePayload: Record<string, unknown>;
+  let successMessage = "Registration updated.";
+  let notification:
+    | {
+        title: string;
+        body: string;
+        sourceType: string;
+      }
+    | undefined;
+
+  switch (intent) {
+    case "save_statuses":
+      updatePayload = {
+        registration_status: registrationStatus,
+        payment_status: paymentStatus,
+      };
+      successMessage = "Registration and payment statuses saved.";
+      break;
+
+    case "send_payment_message":
+      updatePayload = {
+        registration_status: registrationStatus,
         payment_status: "instructions_sent",
         payment_link: paymentLink || null,
         payment_note: paymentNote || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
+      };
+      successMessage = "Payment instructions saved and sent.";
+      notification = {
+        title: "Payment instructions sent",
+        body:
+          paymentNote ||
+          (paymentLink
+            ? `Payment instructions have been sent. Please complete payment using this link: ${paymentLink}`
+            : "Payment instructions have been sent. Please complete payment and upload your receipt."),
+        sourceType: "payment_instructions",
+      };
+      break;
 
-    await notifyUser({
-      userId: registration.user_id,
-      email: registration.email,
-      title: "Payment instructions sent",
-      body: messageBody,
-      sourceType: "payment_instructions",
-      sourceId: registrationId,
-    });
-  }
-
-  if (intent === "record_payment_received") {
-    await admin
-      .from("workshop_registrations")
-      .update({
-        registration_status: "pending",
+    case "record_payment_received":
+      updatePayload = {
+        registration_status: registrationStatus,
         payment_status: "under_review",
-        amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
-        payment_currency: paymentCurrency || "USD",
+        amount_received: amountReceived,
+        payment_currency: paymentCurrency,
         payment_note: paymentNote || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
+      };
+      successMessage = "Payment information recorded.";
+      notification = {
+        title: "Payment information received",
+        body: "Your payment information has been recorded and is now under review.",
+        sourceType: "payment_received",
+      };
+      break;
 
-    await notifyUser({
-      userId: registration.user_id,
-      email: registration.email,
-      title: "Payment information received",
-      body: "Your payment information has been recorded and is now under review.",
-      sourceType: "payment_received",
-      sourceId: registrationId,
-    });
-  }
-
-  if (intent === "confirm_payment") {
-    await admin
-      .from("workshop_registrations")
-      .update({
+    case "confirm_payment":
+      updatePayload = {
         registration_status: "confirmed",
         payment_status: "confirmed",
-        amount_received: Number.isFinite(amountReceived) ? amountReceived : 0,
-        payment_currency: paymentCurrency || "USD",
+        amount_received: amountReceived,
+        payment_currency: paymentCurrency,
         payment_note: paymentNote || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
+      };
+      successMessage = "Payment confirmed and workshop access unlocked.";
+      notification = {
+        title: "Payment confirmed",
+        body: "Your payment has been confirmed. Your workshop access is now unlocked.",
+        sourceType: "payment_confirmed",
+      };
+      break;
 
-    await notifyUser({
-      userId: registration.user_id,
-      email: registration.email,
-      title: "Payment confirmed",
-      body: "Your payment has been confirmed. Your workshop access is now unlocked.",
-      sourceType: "payment_confirmed",
-      sourceId: registrationId,
-    });
-  }
-
-  if (intent === "waive_payment") {
-    await admin
-      .from("workshop_registrations")
-      .update({
+    case "waive_payment":
+      updatePayload = {
         registration_status: "confirmed",
         payment_status: "waived",
         amount_received: 0,
         payment_note: paymentNote || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", registrationId);
+      };
+      successMessage = "Payment waived and workshop access unlocked.";
+      notification = {
+        title: "Workshop access unlocked",
+        body: "Your payment has been waived. Your workshop access is now unlocked.",
+        sourceType: "payment_waived",
+      };
+      break;
 
+    default:
+      redirect(withMessage(returnTo, "error", "Unknown registration action."));
+  }
+
+  const { error: updateError } = await admin
+    .from("workshop_registrations")
+    .update(updatePayload)
+    .eq("id", registrationId);
+
+  if (updateError) {
+    redirect(withMessage(returnTo, "error", updateError.message));
+  }
+
+  if (notification) {
     await notifyUser({
+      admin,
       userId: registration.user_id,
       email: registration.email,
-      title: "Workshop access unlocked",
-      body: "Your payment has been waived. Your workshop access is now unlocked.",
-      sourceType: "payment_waived",
+      title: notification.title,
+      body: notification.body,
+      sourceType: notification.sourceType,
       sourceId: registrationId,
     });
   }
 
-  await revalidateRegistrationPages(registration.workshop_id);
+  await revalidateRegistrationPages(admin, registration.workshop_id);
+
+  redirect(withMessage(returnTo, "message", successMessage));
 }
 
-export const sendPaymentInstructionsAction = handleRegistrationManagementAction;
+export const sendPaymentInstructionsAction =
+  handleRegistrationManagementAction;
 export const updateWorkshopRegistrationPaymentAction =
   handleRegistrationManagementAction;
 export const updatePaymentAction = handleRegistrationManagementAction;
-export const updateWorkshopRegistration = handleRegistrationManagementAction;
+export const updateWorkshopRegistration =
+  handleRegistrationManagementAction;

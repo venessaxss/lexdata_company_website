@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { unstable_noStore as noStore } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeRole } from "@/lib/roles";
+import { requireProfile } from "@/lib/auth";
 import { getServerI18n } from "@/lib/language-server";
 import { translateRole } from "@/lib/languages";
 
@@ -19,23 +20,13 @@ export default async function DashboardPage() {
 
   const { language, t } = await getServerI18n();
 
-  const supabase = await createClient();
+  const auth = await requireProfile("/dashboard");
+  const user = auth.user;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/unauthorized");
-  }
-
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("full_name, role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const profile = profileData as Profile | null;
+  const profile = {
+    full_name: auth.full_name,
+    role: auth.role,
+  } as Profile;
 
   const role = normalizeRole(profile?.role);
 

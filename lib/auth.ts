@@ -65,32 +65,59 @@ function makeContext(
   return context;
 }
 
-export async function getCurrentUser() {
+async function getVerifiedIdentity() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+
+  const { data, error } = await supabase.auth.getClaims();
+  const claims = data?.claims as Record<string, any> | undefined;
+
+  if (error || !claims?.sub) {
+    return null;
+  }
+
+  return {
+    id: String(claims.sub),
+    email: typeof claims.email === "string" ? claims.email : null,
+    user_metadata:
+      claims.user_metadata && typeof claims.user_metadata === "object"
+        ? claims.user_metadata
+        : {},
+    app_metadata:
+      claims.app_metadata && typeof claims.app_metadata === "object"
+        ? claims.app_metadata
+        : {},
+  };
+}
+
+export async function getCurrentUser() {
+  return getVerifiedIdentity();
 }
 
 export async function requireUser(next = "/dashboard") {
-  const user = await getCurrentUser();
+  const user = await getVerifiedIdentity();
+
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(next)}`);
   }
+
   return user;
 }
 
 export async function getCurrentProfile() {
-  const user = await getCurrentUser();
+  const user = await getVerifiedIdentity();
   if (!user) return null;
 
   const admin = createAdminClient();
-  const { data: profile } = await admin
+
+  const { data: profile, error } = await admin
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .maybeSingle();
+
+  if (error) {
+    console.error("Profile lookup failed:", error.message);
+  }
 
   return makeContext(user, profile, admin);
 }
@@ -98,11 +125,16 @@ export async function getCurrentProfile() {
 export async function requireProfile(next = "/dashboard") {
   const user = await requireUser(next);
   const admin = createAdminClient();
-  const { data: profile } = await admin
+
+  const { data: profile, error } = await admin
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .maybeSingle();
+
+  if (error) {
+    console.error("Profile lookup failed:", error.message);
+  }
 
   return makeContext(user, profile, admin);
 }

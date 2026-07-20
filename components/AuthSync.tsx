@@ -20,7 +20,6 @@ export default function AuthSync() {
       if (
         event === "SIGNED_IN" ||
         event === "SIGNED_OUT" ||
-        event === "TOKEN_REFRESHED" ||
         event === "USER_UPDATED"
       ) {
         router.refresh();

@@ -13,6 +13,8 @@ type SearchParams = {
   payment?: string;
   page?: string;
   pageSize?: string;
+  message?: string;
+  error?: string;
 };
 
 type PageProps = {
@@ -295,6 +297,17 @@ export default async function ManagerRegistrationsPage({
           </Link>
         </div>
 
+        {resolvedSearchParams.message ? (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">
+            {resolvedSearchParams.message}
+          </div>
+        ) : null}
+
+        {resolvedSearchParams.error ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-700">
+            {resolvedSearchParams.error}
+          </div>
+        ) : null}
         {workshopsError ? (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
             Failed to load workshops: {workshopsError.message}
