@@ -68,25 +68,29 @@ function makeContext(
 async function getVerifiedIdentity() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.getClaims();
-  const claims = data?.claims as Record<string, any> | undefined;
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const claims = claimsData?.claims as Record<string, any> | undefined;
 
-  if (error || !claims?.sub) {
-    return null;
+  if (claims?.sub) {
+    return {
+      id: String(claims.sub),
+      email: typeof claims.email === "string" ? claims.email : null,
+      user_metadata:
+        claims.user_metadata && typeof claims.user_metadata === "object"
+          ? claims.user_metadata
+          : {},
+      app_metadata:
+        claims.app_metadata && typeof claims.app_metadata === "object"
+          ? claims.app_metadata
+          : {},
+    };
   }
 
-  return {
-    id: String(claims.sub),
-    email: typeof claims.email === "string" ? claims.email : null,
-    user_metadata:
-      claims.user_metadata && typeof claims.user_metadata === "object"
-        ? claims.user_metadata
-        : {},
-    app_metadata:
-      claims.app_metadata && typeof claims.app_metadata === "object"
-        ? claims.app_metadata
-        : {},
-  };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user || null;
 }
 
 export async function getCurrentUser() {
