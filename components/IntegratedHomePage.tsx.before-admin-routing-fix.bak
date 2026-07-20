@@ -36,20 +36,6 @@ export default async function IntegratedHomePage() {
   const isLoggedIn = Boolean(profile);
   const canManage = role === "admin" || role === "manager";
 
-  const dashboardHref =
-    role === "admin"
-      ? "/admin"
-      : role === "manager"
-        ? "/manager"
-        : role === "speaker"
-          ? "/speaker"
-          : "/dashboard";
-
-  const registrationsHref =
-    role === "admin"
-      ? "/admin/registrations"
-      : "/manager/registrations";
-
   return (
     <main className="ell-page lx-page">
       <EllipsusNav isLoggedIn={isLoggedIn} />
@@ -75,10 +61,10 @@ export default async function IntegratedHomePage() {
             <h1><PaperTypewriterLine phrases={typingPhrases} /></h1>
             <p>LexData is a collaborative research and learning platform made for language, translation, AI, and data-driven creativity.</p>
             <div className="lx-hero-actions">
-              <Link href={isLoggedIn ? dashboardHref : "/signup"} className="lx-join-btn">
+              <Link href={isLoggedIn ? "/dashboard" : "/signup"} className="lx-join-btn">
                 {isLoggedIn ? `Open ${displayName(profile)} dashboard` : "Join for free"}
               </Link>
-              {canManage ? <Link href={registrationsHref} className="lx-text-link">Review registrations</Link> : null}
+              {canManage ? <Link href="/manager/registrations" className="lx-text-link">Review registrations</Link> : null}
             </div>
           </div>
         </section>
@@ -186,7 +172,7 @@ export default async function IntegratedHomePage() {
         <p>One login. One dashboard.</p>
         <h2>Complete the whole research flow without breaking your rhythm.</h2>
         <div>
-          <Link href={isLoggedIn ? dashboardHref : "/signup"} className="lx-join-btn">{isLoggedIn ? "Open dashboard" : "Get started"}</Link>
+          <Link href={isLoggedIn ? "/dashboard" : "/signup"} className="lx-join-btn">{isLoggedIn ? "Open dashboard" : "Get started"}</Link>
           <a href="#workshops" className="lx-final-link">Explore upcoming workshops</a>
         </div>
       </section>

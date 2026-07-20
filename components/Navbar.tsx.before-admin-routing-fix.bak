@@ -84,14 +84,6 @@ export default async function Navbar() {
   const isSpeaker = role === "speaker";
   const isAdminOrManager = isAdmin || isManager;
 
-  const dashboardHref = isAdmin
-    ? "/admin"
-    : isManager
-      ? "/manager"
-      : isSpeaker
-        ? "/speaker"
-        : "/dashboard";
-
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
@@ -181,7 +173,7 @@ export default async function Navbar() {
                 </Link>
 
                 <Link
-                  href={dashboardHref}
+                  href="/dashboard"
                   className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-black text-slate-800 hover:bg-slate-50"
                 >
                   Dashboard
@@ -321,7 +313,7 @@ export default async function Navbar() {
                     </Link>
 
                     <Link
-                      href={dashboardHref}
+                      href="/dashboard"
                       className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
                     >
                       Dashboard
