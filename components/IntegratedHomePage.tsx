@@ -3,7 +3,9 @@ import PaperTypewriterLine from "@/components/PaperTypewriterLine";
 import EllipsusNav from "@/components/EllipsusNav";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import DashboardBoardSlider from "@/components/DashboardBoardSlider";
+import DynamicDoodleBand from "@/components/DynamicDoodleBand";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
+import BubblingCaseGrid from "@/components/BubblingCaseGrid";
 import WorkshopNoticeSlider from "@/components/WorkshopNoticeSlider";
 import DynamicArtisticStatement from "@/components/DynamicArtisticStatement";
 import { getPublicWorkshopNotices } from "@/lib/workshop-notices";
@@ -108,21 +110,7 @@ export default async function IntegratedHomePage() {
       </div>
 
       <section className="lx-showcase-shell lx-dashboard-section">
-        <div className="lx-dashboard-intro">
-          <div className="lx-dashboard-doodle lx-dashboard-doodle-left" aria-hidden="true">
-            <span className="lx-doodle-cup" />
-            <span className="lx-doodle-books" />
-          </div>
-          <div className="lx-dashboard-copy">
-            <p>One connected workspace</p>
-            <h2>Dashboards, drafts, cases, and discussions</h2>
-            <span>Keep the serious work organized without making the interface feel corporate. Move from research to review to feedback in one visual flow.</span>
-          </div>
-          <div className="lx-dashboard-doodle lx-dashboard-doodle-right" aria-hidden="true">
-            <span className="lx-doodle-plant" />
-            <span className="lx-doodle-pen" />
-          </div>
-        </div>
+        <DynamicDoodleBand />
         <div className="lx-dashboard-stage lx-dashboard-stage-sliding">
           <DashboardBoardSlider labels={["Workspace", "Notifications"]}>
             <div className="lx-dashboard-main lx-dashboard-main-slide"><DynamicHomeShowcase /></div>
@@ -138,15 +126,7 @@ export default async function IntegratedHomePage() {
           <p>Selected work</p>
           <h2>Cases, methods, and research stories.</h2>
         </div>
-        <div className="lx-case-grid">
-          {caseCards.map((card) => (
-            <article key={card.title} className="lx-case-card">
-              <span>{card.label}</span>
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-            </article>
-          ))}
-        </div>
+        <BubblingCaseGrid />
       </section>
 
       <section className="lx-notification-section" id="notifications">
