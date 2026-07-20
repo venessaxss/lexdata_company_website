@@ -22,7 +22,7 @@ export default async function NewCoursePage({
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-12">
-      <Link href="/admin/courses" className="text-sm font-semibold">
+      <Link prefetch={false} href="/admin/courses" className="text-sm font-semibold">
         -&gt;Back
       </Link>
 

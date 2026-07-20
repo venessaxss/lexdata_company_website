@@ -24,7 +24,7 @@ export default async function SendMessagePage({
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
       <section className="mx-auto max-w-5xl">
-        <Link href="/dashboard/messages" className="text-sm font-black text-slate-600">
+        <Link prefetch={false} href="/dashboard/messages" className="text-sm font-black text-slate-600">
           -&gt; Back to message box
         </Link>
 

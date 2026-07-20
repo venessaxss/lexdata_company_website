@@ -33,7 +33,7 @@ export default async function SpeakerSessionsPage() {
                 <td>{session.workshops?.title}</td>
                 <td>{new Date(session.starts_at).toLocaleString()}</td>
                 <td><span className="badge">{session.is_published ? "Published" : "Draft"}</span></td>
-                <td><Link href="/speaker/attendees" className="btn-light">Attendees</Link></td>
+                <td><Link prefetch={false} href="/speaker/attendees" className="btn-light">Attendees</Link></td>
               </tr>
             ))}
             {(!sessions || sessions.length === 0) ? <tr><td className="p-4 text-slate-600" colSpan={5}>No sessions assigned yet.</td></tr> : null}

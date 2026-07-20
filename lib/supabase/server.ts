@@ -4,24 +4,21 @@ import {
   getDurableAppSession,
   setDurableAppSession,
 } from "@/lib/app-session";
-import { createAdminClient } from "@/lib/supabase/admin";
 
-async function verifiedFallbackUser() {
-  const fallback = await getDurableAppSession();
-  if (!fallback?.id) return null;
-
-  try {
-    const admin = createAdminClient();
-    const { data, error } = await admin.auth.admin.getUserById(fallback.id);
-
-    if (error || !data.user) {
-      return null;
-    }
-
-    return data.user;
-  } catch {
-    return null;
-  }
+function fallbackUserFromDurable(session: {
+  id: string;
+  email?: string | null;
+}) {
+  return {
+    id: session.id,
+    email: session.email || undefined,
+    aud: "authenticated",
+    role: "authenticated",
+    app_metadata: {},
+    user_metadata: {},
+    identities: [],
+    created_at: new Date(0).toISOString(),
+  };
 }
 
 export async function createClient() {
@@ -48,7 +45,7 @@ export async function createClient() {
           });
         } catch {
           // Server Components cannot always write cookies.
-          // proxy.ts writes refreshed Supabase cookies at the request boundary.
+          // proxy.ts refreshes Supabase cookies at the request boundary.
         }
       },
     },
@@ -57,35 +54,46 @@ export async function createClient() {
   const originalGetUser = client.auth.getUser.bind(client.auth);
 
   (client.auth as any).getUser = async (jwt?: string) => {
-    const result = await originalGetUser(jwt);
+    try {
+      const result = await originalGetUser(jwt);
 
-    if (result?.data?.user) {
-      if (!jwt) {
-        try {
-          await setDurableAppSession({
-            id: result.data.user.id,
-            email: result.data.user.email,
-          });
-        } catch {
-          // Cookie writes are not allowed from every Server Component.
+      if (result?.data?.user) {
+        if (!jwt) {
+          try {
+            await setDurableAppSession({
+              id: result.data.user.id,
+              email: result.data.user.email,
+            });
+          } catch {
+            // Cookie writes are not allowed in every Server Component.
+          }
         }
+
+        return result;
       }
 
-      return result;
+      if (jwt) {
+        return result;
+      }
+    } catch {
+      if (jwt) {
+        throw new Error("Unable to validate supplied JWT.");
+      }
     }
 
-    if (jwt) {
-      return result;
-    }
+    const durable = await getDurableAppSession();
 
-    const fallbackUser = await verifiedFallbackUser();
-
-    if (!fallbackUser) {
-      return result;
+    if (!durable?.id) {
+      return {
+        data: { user: null },
+        error: null,
+      };
     }
 
     return {
-      data: { user: fallbackUser },
+      data: {
+        user: fallbackUserFromDurable(durable),
+      },
       error: null,
     };
   };
@@ -93,42 +101,48 @@ export async function createClient() {
   const originalGetClaims = client.auth.getClaims.bind(client.auth);
 
   (client.auth as any).getClaims = async (...args: any[]) => {
-    const result = await originalGetClaims(...args);
-    const claims = result?.data?.claims as Record<string, any> | undefined;
+    try {
+      const result = await originalGetClaims(...args);
+      const claims = result?.data?.claims as Record<string, any> | undefined;
 
-    if (claims?.sub) {
-      try {
-        await setDurableAppSession({
-          id: String(claims.sub),
-          email: typeof claims.email === "string" ? claims.email : null,
-        });
-      } catch {
-        // Cookie writes are not allowed from every Server Component.
+      if (claims?.sub) {
+        try {
+          await setDurableAppSession({
+            id: String(claims.sub),
+            email: typeof claims.email === "string" ? claims.email : null,
+          });
+        } catch {
+          // Cookie writes are not allowed in every Server Component.
+        }
+
+        return result;
       }
-
-      return result;
+    } catch {
+      // Continue to the durable session fallback.
     }
 
-    const fallbackUser = await verifiedFallbackUser();
+    const durable = await getDurableAppSession();
 
-    if (!fallbackUser) {
-      return result;
+    if (!durable?.id) {
+      return {
+        data: { claims: null },
+        error: null,
+      };
     }
 
-    const fallback = await getDurableAppSession();
     const now = Math.floor(Date.now() / 1000);
 
     return {
       data: {
         claims: {
-          sub: fallbackUser.id,
-          email: fallbackUser.email,
+          sub: durable.id,
+          email: durable.email || null,
           role: "authenticated",
           aud: "authenticated",
-          iat: fallback?.iat || now,
-          exp: fallback?.exp || now + 3600,
-          user_metadata: fallbackUser.user_metadata || {},
-          app_metadata: fallbackUser.app_metadata || {},
+          iat: durable.iat || now,
+          exp: durable.exp || now + 3600,
+          user_metadata: {},
+          app_metadata: {},
         },
       },
       error: null,

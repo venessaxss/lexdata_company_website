@@ -158,7 +158,7 @@ export default async function RegisteredWorkshopsPage() {
             After you register for a workshop, it will appear here.
           </p>
 
-          <Link
+          <Link prefetch={false}
             href="/workshops"
             className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
           >
@@ -234,7 +234,7 @@ export default async function RegisteredWorkshopsPage() {
 
                     <div className="flex shrink-0 flex-col gap-3">
                       {href ? (
-                        <Link
+                        <Link prefetch={false}
                           href={href}
                           className="rounded-2xl border border-slate-300 bg-white px-7 py-4 text-center text-base font-black text-slate-950 hover:bg-slate-50"
                         >
@@ -247,7 +247,7 @@ export default async function RegisteredWorkshopsPage() {
                       )}
 
                       {!paidAccess ? (
-                        <Link
+                        <Link prefetch={false}
                           href="/dashboard/messages"
                           className="rounded-2xl bg-slate-950 px-7 py-4 text-center text-base font-black text-white hover:bg-slate-700"
                         >

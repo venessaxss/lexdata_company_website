@@ -90,14 +90,14 @@ export default async function ManagerTeamPage({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link
+          <Link prefetch={false}
             href="/"
             className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
           >
             View Homepage
           </Link>
 
-          <Link href="/manager/team/new" className="btn-primary">
+          <Link prefetch={false} href="/manager/team/new" className="btn-primary">
             Add member
           </Link>
         </div>
@@ -170,14 +170,14 @@ export default async function ManagerTeamPage({
 
                   <td className="px-4 py-4">
                     <div className="flex gap-2">
-                      <Link
+                      <Link prefetch={false}
                         href={`/team/${member.profile_slug || member.id}`}
                         className="rounded-lg border border-blue-200 px-3 py-2 text-blue-700 hover:bg-blue-50"
                       >
                         View
                       </Link>
 
-                      <Link
+                      <Link prefetch={false}
                         href={`/manager/team/${member.id}/edit`}
                         className="rounded-lg border border-slate-300 px-3 py-2 hover:bg-slate-100"
                       >

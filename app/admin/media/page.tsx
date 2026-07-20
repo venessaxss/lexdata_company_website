@@ -48,7 +48,7 @@ export default async function AdminMediaPage({
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10">
-        <Link
+        <Link prefetch={false}
           href="/admin"
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
         >

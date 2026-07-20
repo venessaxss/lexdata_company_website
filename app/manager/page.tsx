@@ -73,14 +73,14 @@ export default async function ManagerPage() {
             One login session covers registration review, payment approval, participant messages, and dashboard tools.
           </p>
           <div className="mt-7 flex flex-wrap gap-4">
-            <Link href="/manager/registrations" className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-slate-950">{pendingRegistrations ?? 0} pending registrations</Link>
-            <Link href="/dashboard/messages" className="rounded-2xl bg-[#8b93f8] px-5 py-4 text-sm font-black text-slate-950">{unreadMessages ?? 0} unread messages</Link>
+            <Link prefetch={false} href="/manager/registrations" className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-slate-950">{pendingRegistrations ?? 0} pending registrations</Link>
+            <Link prefetch={false} href="/dashboard/messages" className="rounded-2xl bg-[#8b93f8] px-5 py-4 text-sm font-black text-slate-950">{unreadMessages ?? 0} unread messages</Link>
           </div>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {managerCards.map((card) => (
-            <Link key={card.href} href={card.href} className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <Link prefetch={false} key={card.href} href={card.href} className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
               <h2 className="text-2xl font-black tracking-tight text-slate-950">{card.title}</h2>
               <p className="mt-3 leading-7 text-slate-600">{card.description}</p>
               <span className="mt-6 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">Open -&gt;</span>

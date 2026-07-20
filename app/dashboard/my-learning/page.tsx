@@ -112,7 +112,7 @@ export default async function MyLearningPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10">
-        <Link
+        <Link prefetch={false}
           href="/dashboard"
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
         >
@@ -145,7 +145,7 @@ export default async function MyLearningPage() {
             After you register for a workshop, it will appear here.
           </p>
 
-          <Link
+          <Link prefetch={false}
             href="/workshops"
             className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 font-bold text-white hover:bg-slate-700"
           >
@@ -230,7 +230,7 @@ export default async function MyLearningPage() {
 
                   <div className="mt-6 flex flex-wrap gap-3">
                     {href ? (
-                      <Link
+                      <Link prefetch={false}
                         href={href}
                         className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
                       >
@@ -243,7 +243,7 @@ export default async function MyLearningPage() {
                     )}
 
                     {!paidAccess ? (
-                      <Link
+                      <Link prefetch={false}
                         href="/dashboard/messages"
                         className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
                       >

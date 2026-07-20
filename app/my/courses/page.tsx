@@ -28,14 +28,14 @@ export default async function MyCoursesPage() {
                 <p className="mt-1 text-sm text-slate-600">{item.courses?.short_description}</p>
                 <p className="mt-2 text-xs text-slate-500">{item.courses?.level} · {item.courses?.language}</p>
               </div>
-              <Link href={`/courses/${item.courses?.slug}`} className="btn-primary">Continue</Link>
+              <Link prefetch={false} href={`/courses/${item.courses?.slug}`} className="btn-primary">Continue</Link>
             </div>
           </div>
         ))}
 
         {(!enrollments || enrollments.length === 0) ? (
           <div className="card p-6 text-slate-600">
-            You have not purchased or enrolled in any course yet. <Link href="/courses" className="font-semibold underline">Browse courses</Link>.
+            You have not purchased or enrolled in any course yet. <Link prefetch={false} href="/courses" className="font-semibold underline">Browse courses</Link>.
           </div>
         ) : null}
       </div>

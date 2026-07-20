@@ -182,7 +182,7 @@ export default async function AdminWorkshopsPage({
   return (
     <main className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10">
-        <Link
+        <Link prefetch={false}
           href="/admin"
           className="text-sm font-semibold text-slate-600 hover:text-slate-950"
         >
@@ -690,7 +690,7 @@ export default async function AdminWorkshopsPage({
                               </div>
 
                               <div className="flex flex-wrap gap-2">
-                                <Link
+                                <Link prefetch={false}
                                   href={`/admin/workshops/subsessions/${subsession.id}/edit`}
                                   className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
                                 >
@@ -792,7 +792,7 @@ export default async function AdminWorkshopsPage({
 
                     <div className="mt-6 flex flex-wrap gap-2">
                       {workshop.slug ? (
-                        <Link
+                        <Link prefetch={false}
                           href={`/workshops/${workshop.slug}`}
                           className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
                         >
@@ -800,7 +800,7 @@ export default async function AdminWorkshopsPage({
                         </Link>
                       ) : null}
 
-                      <Link
+                      <Link prefetch={false}
                         href={`/admin/workshops/${workshop.id}/edit`}
                         className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
                       >

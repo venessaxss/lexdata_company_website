@@ -87,7 +87,7 @@ export default async function ManagerMemberProfilesPage({
           </p>
         </div>
 
-        <Link
+        <Link prefetch={false}
           href="/manager"
           className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
         >

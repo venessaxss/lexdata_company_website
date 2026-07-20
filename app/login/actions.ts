@@ -52,7 +52,7 @@ export async function loginAction(formData: FormData) {
   });
 
   revalidatePath("/", "layout");
-  redirect(next);
+  redirect(`/auth/session-ready?next=${encodeURIComponent(next)}`);
 }
 
 export async function signupAction(formData: FormData) {
@@ -90,7 +90,7 @@ export async function signupAction(formData: FormData) {
     });
 
     revalidatePath("/", "layout");
-    redirect(next);
+    redirect(`/auth/session-ready?next=${encodeURIComponent(next)}`);
   }
 
   redirect(

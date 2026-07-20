@@ -45,14 +45,14 @@ export default async function AdminHomepageContentPage({
           </div>
 
           <div className="flex gap-3">
-            <Link
+            <Link prefetch={false}
               href="/"
               className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-900"
             >
               View homepage
             </Link>
 
-            <Link
+            <Link prefetch={false}
               href="/admin"
               className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white"
             >

@@ -108,11 +108,11 @@ export default async function AdminPage() {
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-              <Link href="/manager/registrations" className="rounded-[1.5rem] bg-white p-5 text-slate-950">
+              <Link prefetch={false} href="/manager/registrations" className="rounded-[1.5rem] bg-white p-5 text-slate-950">
                 <p className="text-3xl font-black">{pendingRegistrations ?? 0}</p>
                 <p className="mt-1 text-xs font-black uppercase tracking-[0.18em] text-slate-500">pending registrations</p>
               </Link>
-              <Link href="/dashboard/messages" className="rounded-[1.5rem] bg-[#8b93f8] p-5 text-slate-950">
+              <Link prefetch={false} href="/dashboard/messages" className="rounded-[1.5rem] bg-[#8b93f8] p-5 text-slate-950">
                 <p className="text-3xl font-black">{unreadMessages ?? 0}</p>
                 <p className="mt-1 text-xs font-black uppercase tracking-[0.18em] text-slate-700">unread messages</p>
               </Link>
@@ -122,7 +122,7 @@ export default async function AdminPage() {
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {adminCards.map((card) => (
-            <Link key={`${card.title}-${card.href}`} href={card.href} className="group rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <Link prefetch={false} key={`${card.title}-${card.href}`} href={card.href} className="group rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-slate-600">{card.tag}</span>
               <h2 className="mt-5 text-2xl font-black tracking-tight text-slate-950">{card.title}</h2>
               <p className="mt-3 leading-7 text-slate-600">{card.description}</p>

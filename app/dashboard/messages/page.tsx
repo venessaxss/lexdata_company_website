@@ -64,7 +64,7 @@ export default async function DashboardMessagesPage({
     <main className="min-h-screen bg-slate-50 px-4 py-10">
       <section className="mx-auto max-w-6xl">
         <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-          <Link href={backHref} className="text-sm font-bold text-blue-200">
+          <Link prefetch={false} href={backHref} className="text-sm font-bold text-blue-200">
             -&gt; Back to dashboard
           </Link>
           <div className="mt-6 flex flex-col justify-between gap-5 md:flex-row md:items-end">
@@ -76,10 +76,10 @@ export default async function DashboardMessagesPage({
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/dashboard/messages" className="rounded-xl bg-white px-4 py-3 text-sm font-black text-slate-950">All</Link>
-              <Link href="/dashboard/messages?unread=1" className="rounded-xl bg-blue-100 px-4 py-3 text-sm font-black text-blue-800">Unread</Link>
+              <Link prefetch={false} href="/dashboard/messages" className="rounded-xl bg-white px-4 py-3 text-sm font-black text-slate-950">All</Link>
+              <Link prefetch={false} href="/dashboard/messages?unread=1" className="rounded-xl bg-blue-100 px-4 py-3 text-sm font-black text-blue-800">Unread</Link>
               {canSendMessages ? (
-                <Link href="/dashboard/messages/send" className="rounded-xl bg-[#8b93f8] px-4 py-3 text-sm font-black text-slate-950">Send message</Link>
+                <Link prefetch={false} href="/dashboard/messages/send" className="rounded-xl bg-[#8b93f8] px-4 py-3 text-sm font-black text-slate-950">Send message</Link>
               ) : null}
             </div>
           </div>
@@ -152,8 +152,8 @@ export default async function DashboardMessagesPage({
         <div className="mt-8 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
           <span className="text-sm font-bold text-slate-600">Page {page} of {totalPages}</span>
           <div className="flex gap-2">
-            <Link href={pageHref(Math.max(1, page - 1), params.unread)} className={`rounded-xl px-4 py-2 text-sm font-black ${page <= 1 ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Previous</Link>
-            <Link href={pageHref(Math.min(totalPages, page + 1), params.unread)} className={`rounded-xl px-4 py-2 text-sm font-black ${page >= totalPages ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Next</Link>
+            <Link prefetch={false} href={pageHref(Math.max(1, page - 1), params.unread)} className={`rounded-xl px-4 py-2 text-sm font-black ${page <= 1 ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Previous</Link>
+            <Link prefetch={false} href={pageHref(Math.min(totalPages, page + 1), params.unread)} className={`rounded-xl px-4 py-2 text-sm font-black ${page >= totalPages ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Next</Link>
           </div>
         </div>
       </section>

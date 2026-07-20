@@ -130,7 +130,7 @@ export default async function DashboardPage() {
 
       <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
-          <Link
+          <Link prefetch={false}
             key={card.href}
             href={card.href}
             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"

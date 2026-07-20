@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getDurableAppSession } from "@/lib/app-session";
 
 export type AppRole =
   | "admin"
@@ -66,31 +67,56 @@ function makeContext(
 }
 
 async function getVerifiedIdentity() {
-  const supabase = await createClient();
+  // Primary identity source after a successful login:
+  // a server-signed HttpOnly LexData session cookie.
+  // This avoids false logout redirects caused by transient SSR token reads
+  // or route-prefetch requests racing immediately after sign-in.
+  const durable = await getDurableAppSession();
 
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const claims = claimsData?.claims as Record<string, any> | undefined;
-
-  if (claims?.sub) {
+  if (durable?.id) {
     return {
-      id: String(claims.sub),
-      email: typeof claims.email === "string" ? claims.email : null,
-      user_metadata:
-        claims.user_metadata && typeof claims.user_metadata === "object"
-          ? claims.user_metadata
-          : {},
-      app_metadata:
-        claims.app_metadata && typeof claims.app_metadata === "object"
-          ? claims.app_metadata
-          : {},
+      id: durable.id,
+      email: durable.email || null,
+      user_metadata: {},
+      app_metadata: {},
     };
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Fallback/backfill path for users who already have a valid Supabase
+  // cookie but have not yet received the durable LexData session cookie.
+  const supabase = await createClient();
 
-  return user || null;
+  try {
+    const { data: claimsData } = await supabase.auth.getClaims();
+    const claims = claimsData?.claims as Record<string, any> | undefined;
+
+    if (claims?.sub) {
+      return {
+        id: String(claims.sub),
+        email: typeof claims.email === "string" ? claims.email : null,
+        user_metadata:
+          claims.user_metadata && typeof claims.user_metadata === "object"
+            ? claims.user_metadata
+            : {},
+        app_metadata:
+          claims.app_metadata && typeof claims.app_metadata === "object"
+            ? claims.app_metadata
+            : {},
+      };
+    }
+  } catch {
+    // Continue to getUser fallback.
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    return user || null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getCurrentUser() {

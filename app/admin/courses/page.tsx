@@ -37,7 +37,7 @@ export default async function AdminCoursesPage() {
           </p>
         </div>
 
-        <Link href="/admin/courses/new" className="btn-primary">
+        <Link prefetch={false} href="/admin/courses/new" className="btn-primary">
           New course
         </Link>
       </div>
@@ -99,18 +99,18 @@ export default async function AdminCoursesPage() {
                   </td>
 
                   <td className="flex flex-wrap gap-2 py-3 pr-4">
-                    <Link href={`/courses/${course.slug}`} className="btn-light">
+                    <Link prefetch={false} href={`/courses/${course.slug}`} className="btn-light">
                       View
                     </Link>
 
-                    <Link
+                    <Link prefetch={false}
                       href={`/admin/courses/${course.id}/edit`}
                       className="btn-light"
                     >
                       Edit
                     </Link>
 
-                    <Link
+                    <Link prefetch={false}
                       href={`/admin/courses/${course.id}/lessons`}
                       className="btn-light"
                     >

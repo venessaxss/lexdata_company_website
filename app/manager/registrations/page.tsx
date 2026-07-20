@@ -289,7 +289,7 @@ export default async function ManagerRegistrationsPage({
             </p>
           </div>
 
-          <Link
+          <Link prefetch={false}
             href="/manager"
             className="w-fit rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
           >
@@ -420,7 +420,7 @@ export default async function ManagerRegistrationsPage({
               Apply filters
             </button>
 
-            <Link
+            <Link prefetch={false}
               href="/manager/registrations"
               className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
             >
@@ -499,7 +499,7 @@ export default async function ManagerRegistrationsPage({
               </div>
 
               <div className="flex items-center gap-2 text-sm font-bold">
-                <Link
+                <Link prefetch={false}
                   href={buildHref({
                     workshop: selectedWorkshopId,
                     q: searchText,
@@ -521,7 +521,7 @@ export default async function ManagerRegistrationsPage({
                   Page {page} / {totalPages}
                 </span>
 
-                <Link
+                <Link prefetch={false}
                   href={buildHref({
                     workshop: selectedWorkshopId,
                     q: searchText,

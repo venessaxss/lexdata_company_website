@@ -28,7 +28,7 @@ export default async function ChangePasswordPage({
 
   return (
     <main className="mx-auto max-w-xl px-4 py-10">
-      <Link
+      <Link prefetch={false}
         href="/dashboard"
         className="text-sm font-semibold text-slate-600 hover:text-slate-950"
       >

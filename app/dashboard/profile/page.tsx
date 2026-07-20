@@ -35,7 +35,7 @@ export default async function MemberProfilePage({
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
-      <Link href="/dashboard" className="text-sm font-black text-blue-700">
+      <Link prefetch={false} href="/dashboard" className="text-sm font-black text-blue-700">
         -&gt;Back to dashboard
       </Link>
 
