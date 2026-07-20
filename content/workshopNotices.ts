@@ -13,7 +13,8 @@ export const workshopNotices: WorkshopNotice[] = [
   {
     id: "workshop-01",
     title: "Upcoming LexData workshop",
-    summary: "Add the workshop title, schedule, venue, registration link, and poster here.",
+    summary:
+      "Add the workshop title, schedule, venue, registration link, and poster here.",
     date: "Coming soon",
     venue: "LexData",
     poster: "",
@@ -23,7 +24,8 @@ export const workshopNotices: WorkshopNotice[] = [
   {
     id: "workshop-02",
     title: "Research methods training",
-    summary: "Use this card for a new training session, seminar, or academic workshop notice.",
+    summary:
+      "Use this card for a new training session, seminar, or academic workshop notice.",
     date: "Coming soon",
     venue: "Online or on site",
     poster: "",
@@ -33,7 +35,8 @@ export const workshopNotices: WorkshopNotice[] = [
   {
     id: "workshop-03",
     title: "Language and AI workshop",
-    summary: "Upload a poster to public/workshop-posters and add its path in this file.",
+    summary:
+      "Upload and manage this poster directly from the LexData admin control panel.",
     date: "Coming soon",
     venue: "LexData",
     poster: "",

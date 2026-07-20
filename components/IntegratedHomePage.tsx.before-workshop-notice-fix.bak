@@ -31,7 +31,6 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function IntegratedHomePage() {
-  const workshopNotices = await getPublicWorkshopNotices();
   const profile = await getCurrentProfile();
   const role = normalizeRole(profile?.role);
   const isLoggedIn = Boolean(profile);
