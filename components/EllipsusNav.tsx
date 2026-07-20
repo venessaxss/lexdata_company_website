@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -132,9 +133,7 @@ export default function EllipsusNav({
   return (
     <header ref={navRef} className="lx-site-nav">
       <div className="lx-nav-inner">
-        <Link href="/" className="lx-logo" aria-label="LexData home" onClick={closeMenus}>
-          lexdata
-        </Link>
+        <Link href="/" className="lx-logo" aria-label="LexData home" onClick={closeMenus}><Image src="/lexdata-logo.png" alt="LexData" width={170} height={54} priority /></Link>
 
         <nav className="lx-nav-links" aria-label="Primary navigation">
           <div
