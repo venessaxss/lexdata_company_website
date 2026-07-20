@@ -117,15 +117,11 @@ export default function DynamicArtisticStatement() {
       <div className="lx-art-copy-panel">
         <p className="lx-art-eyebrow">RESEARCH, NOT OPAQUE AUTOMATION</p>
 
-                <h3>
+        <h3>
           We think researchers should be free to{" "}
-          <span className="lx-art-underline">
-            express their creative vision
-          </span>{" "}
-          &mdash; away from opaque automation and the{" "}
-          <span className="lx-art-circle">
-            prying eyes of AI.
-          </span>
+          <span className="lx-art-underline">express their creative vision</span>{" "}
+          鈥?away from opaque automation and the{" "}
+          <span className="lx-art-circle">prying eyes of AI.</span>
         </h3>
 
         <div className="lx-art-principle">
