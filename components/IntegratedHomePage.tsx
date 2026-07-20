@@ -5,6 +5,7 @@ import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import DashboardBoardSlider from "@/components/DashboardBoardSlider";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import WorkshopNoticeSlider from "@/components/WorkshopNoticeSlider";
+import DynamicArtisticStatement from "@/components/DynamicArtisticStatement";
 import { getPublicWorkshopNotices } from "@/lib/workshop-notices";
 import { getCurrentProfile, normalizeRole } from "@/lib/auth";
 
@@ -102,23 +103,7 @@ export default async function IntegratedHomePage() {
               <strong className="lx-circle-green"> all its forms.</strong>
             </p>
           </div>
-
-          <div className="lx-ai-stance">
-            <div className="lx-robot" aria-hidden="true">
-              <div className="lx-robot-head"><span>x</span><span>x</span></div>
-              <div className="lx-robot-body">KEYS</div>
-              <div className="lx-paper-bin">o o o</div>
-            </div>
-            <div className="lx-ai-copy">
-              <p>
-                We think researchers should be free to
-                <span className="lx-underline-green"> express their creative vision</span> - away
-                from opaque automation and the
-                <span className="lx-circle-red"> prying eyes of AI.</span>
-              </p>
-              <small>Your content is <b>YOURS.</b> Human judgment stays in control.</small>
-            </div>
-          </div>
+          <DynamicArtisticStatement />
         </section>
       </div>
 
