@@ -1,80 +1,45 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-function safeNextPath(value: string | null) {
-  if (!value) return "/dashboard";
-  if (!value.startsWith("/")) return "/dashboard";
-  if (value.startsWith("//")) return "/dashboard";
-  return value;
-}
-
-function redirectPreservingCookies(response: NextResponse, url: URL) {
-  const redirectResponse = NextResponse.redirect(url);
-  response.cookies.getAll().forEach((cookie) => {
-    redirectResponse.cookies.set(cookie);
-  });
-  return redirectResponse;
-}
-
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) return response;
+
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
       },
-    }
-  );
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+        response = NextResponse.next({
+          request: { headers: request.headers },
+        });
 
-  const path = request.nextUrl.pathname;
-  const fullPath = `${path}${request.nextUrl.search}`;
+        cookiesToSet.forEach(({ name, value, options }) => {
+          response.cookies.set(name, value, options);
+        });
+      },
+    },
+  });
 
-  const protectedPaths = ["/dashboard", "/manager", "/admin", "/my", "/speaker"];
-  const authPaths = ["/login", "/signup", "/register"];
+  await supabase.auth.getUser();
 
-  const isProtected = protectedPaths.some(
-    (item) => path === item || path.startsWith(`${item}/`)
-  );
-  const isAuthPage = authPaths.includes(path);
-
-  if (isProtected && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", fullPath);
-    return redirectPreservingCookies(response, url);
-  }
-
-  if (isAuthPage && user) {
-    const next =
-      request.nextUrl.searchParams.get("next") ||
-      request.nextUrl.searchParams.get("redirect");
-    const url = request.nextUrl.clone();
-    url.pathname = safeNextPath(next);
-    url.search = "";
-    return redirectPreservingCookies(response, url);
-  }
-
+  // Deliberately NO redirect to /login here.
   return response;
 }
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|pdf|txt|xml)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
