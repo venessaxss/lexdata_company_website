@@ -113,7 +113,7 @@ function HeroSection({
         <h1 className="paper-rev">{title?.title || "Write like a human."}</h1>
 
         <HomeGreetingBadge />
-        <PaperTypewriterLine messages={typingMessages} />
+        <PaperTypewriterLine phrases={typingMessages} />
 
         <div className="paper-hero-actions paper-rev">
           <Link className="paper-hero-btn" href="/signup">

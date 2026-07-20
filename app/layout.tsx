@@ -7,6 +7,7 @@ import { PaperMotion } from "@/components/site/PaperMotion";
 import { site } from "@/lib/site";
 import { getServerI18n } from "@/lib/language-server";
 import "./globals.css";
+import "./lexdata-theme.css";
 
 export const metadata: Metadata = {
   title: `${site.name} | Data-driven Research Training Platform`,
@@ -28,7 +29,7 @@ export default async function RootLayout({
         <AutoTranslator language={language} />
         <LexPaperNavbar />
         {children}
-              <AuthSync />
+        <AuthSync />
       </body>
     </html>
   );

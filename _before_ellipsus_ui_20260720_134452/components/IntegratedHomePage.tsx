@@ -1,0 +1,207 @@
+import Link from "next/link";
+import PaperTypewriterLine from "@/components/PaperTypewriterLine";
+import HomeControlPanelButton from "@/components/HomeControlPanelButton";
+import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
+import NoticeSpotlight from "@/components/NoticeSpotlight";
+import HomeMediaShowcase from "@/components/HomeMediaShowcase";
+import HomeVideoSpotlight from "@/components/HomeVideoSpotlight";
+import LatestWorkshopVideos from "@/components/LatestWorkshopVideos";
+import TeamShowcase from "@/components/TeamShowcase";
+import { getCurrentProfile, normalizeRole } from "@/lib/auth";
+
+const typingPhrases = [
+  "language data into research clarity",
+  "translation work into measurable systems",
+  "AI training into practical learning paths",
+  "workshops into long-term research capacity",
+];
+
+const caseCards = [
+  {
+    label: "Case 01",
+    title: "Corpus-based research training",
+    body: "Guided learners from raw text collection to cleaning, annotation, and analysis-ready datasets.",
+  },
+  {
+    label: "Case 02",
+    title: "Multilingual translation workflow",
+    body: "Built a human-in-the-loop process for terminology, MT review, and bilingual quality control.",
+  },
+  {
+    label: "Case 03",
+    title: "AI research classroom",
+    body: "Turned generative AI, Python, and NLP into hands-on workshops for humanities researchers.",
+  },
+];
+
+const messageCards = [
+  {
+    title: "For learners",
+    body: "Check workshop approval, registration status, payment notes, and course messages from your dashboard.",
+    href: "/dashboard/messages",
+  },
+  {
+    title: "For managers",
+    body: "Review registrations, confirm participation, reject incomplete records, and send messages in one place.",
+    href: "/manager/registrations",
+  },
+  {
+    title: "For admins",
+    body: "Manage notices, cases, videos, courses, team members, and homepage content without leaving the dashboard.",
+    href: "/admin",
+  },
+];
+
+function displayName(profile: any) {
+  return (
+    profile?.full_name ||
+    profile?.name ||
+    profile?.display_name ||
+    profile?.email ||
+    "Member"
+  );
+}
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function IntegratedHomePage() {
+  const profile = await getCurrentProfile();
+  const role = normalizeRole(profile?.role);
+  const isLoggedIn = Boolean(profile);
+  const canManage = role === "admin" || role === "manager";
+
+  return (
+    <main className="ell-page">
+      <HomeControlPanelButton />
+
+      <section className="ell-hero">
+        <div className="ell-paper-noise" aria-hidden="true" />
+        <div className="ell-floating ell-floating-one" aria-hidden="true">data</div>
+        <div className="ell-floating ell-floating-two" aria-hidden="true">AI</div>
+        <div className="ell-floating ell-floating-three" aria-hidden="true">NLP</div>
+
+        <div className="ell-container ell-hero-grid">
+          <div className="ell-hero-copy">
+            <p className="ell-eyebrow">LexData research platform</p>
+            <h1>
+              Research training that feels alive, human, and data-driven.
+            </h1>
+            <p className="ell-type-line">
+              <PaperTypewriterLine prefix="We turn " phrases={typingPhrases} />
+            </p>
+            <p className="ell-hero-body">
+              LexData connects language science, translation, AI, Python, and
+              digital humanities through workshops, courses, cases, notices,
+              media, and team-led research support.
+            </p>
+
+            <div className="ell-actions">
+              <Link href={isLoggedIn ? "/dashboard" : "/login"} className="ell-btn ell-btn-primary">
+                {isLoggedIn ? `Open ${displayName(profile)} dashboard` : "Register / Log in"}
+              </Link>
+              <Link href="/workshops" className="ell-btn ell-btn-ghost">
+                Browse workshops
+              </Link>
+              {canManage ? (
+                <Link href="/manager/registrations" className="ell-btn ell-btn-ghost">
+                  Review registrations
+                </Link>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="ell-hero-board">
+            <div className="ell-board-top">
+              <span>Live workspace</span>
+              <strong>{isLoggedIn ? role : "guest"}</strong>
+            </div>
+            <div className="ell-board-card ell-tilt-left">
+              <p>Current focus</p>
+              <h3>Typing effect, videos, messages, cases, notices, team</h3>
+            </div>
+            <div className="ell-board-card ell-tilt-right">
+              <p>Session rule</p>
+              <h3>Log in once, stay inside the dashboard flow</h3>
+            </div>
+            <div className="ell-board-card">
+              <p>Manager action</p>
+              <h3>Confirm, review, reject, message, and reply</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="ell-marquee" aria-hidden="true">
+        <div>
+          <span>Corpus linguistics</span><i>◆</i><span>Translation technology</span><i>◆</i>
+          <span>AI research</span><i>◆</i><span>Python training</span><i>◆</i>
+          <span>Digital humanities</span><i>◆</i><span>Workshop management</span><i>◆</i>
+        </div>
+      </section>
+
+      <section className="ell-section ell-section-warm">
+        <div className="ell-container ell-section-head">
+          <p className="ell-eyebrow">Message center</p>
+          <h2>Messages are part of the workflow, not an afterthought.</h2>
+          <p>
+            The dashboard connects registration review, participant replies,
+            payment notes, notices, and direct messages so users do not need to
+            log in again for each step.
+          </p>
+        </div>
+        <div className="ell-container ell-card-grid">
+          {messageCards.map((card) => (
+            <Link href={card.href} key={card.title} className="ell-feature-card">
+              <span>{card.title}</span>
+              <p>{card.body}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <DynamicHomeShowcase />
+
+      <section className="ell-section">
+        <div className="ell-container ell-section-head">
+          <p className="ell-eyebrow">Case center</p>
+          <h2>Previous cases, research stories, and practical outcomes.</h2>
+        </div>
+        <div className="ell-container ell-case-grid">
+          {caseCards.map((card) => (
+            <article key={card.title} className="ell-case-card">
+              <span>{card.label}</span>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <NoticeSpotlight />
+
+      <section className="ell-section ell-video-shell">
+        <div className="ell-container ell-section-head">
+          <p className="ell-eyebrow">Video and media</p>
+          <h2>Watch the platform move: workshop clips, video highlights, and media showcases.</h2>
+        </div>
+        <HomeMediaShowcase videos={[]} />
+        <HomeVideoSpotlight />
+        <LatestWorkshopVideos />
+      </section>
+
+      <TeamShowcase />
+
+      <section className="ell-cta">
+        <div className="ell-container">
+          <p className="ell-eyebrow">Ready</p>
+          <h2>One login. One dashboard. Complete rendering.</h2>
+          <div className="ell-actions ell-actions-center">
+            <Link href="/dashboard" className="ell-btn ell-btn-primary">Open dashboard</Link>
+            <Link href="/manager/registrations" className="ell-btn ell-btn-ghost">Manage registrations</Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

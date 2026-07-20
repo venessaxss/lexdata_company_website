@@ -1,97 +1,105 @@
-"use client";
+﻿"use client";
 
-/**
- * LexData motion primitives V2 — "Night Archive". Zero dependencies.
- * Scoped to lx2-* classes; safe to ship alongside components/motion.tsx (V1).
- */
-
+import Link from "next/link";
 import {
   useEffect,
   useRef,
   useState,
-  type ReactNode,
   type CSSProperties,
+  type ReactNode,
 } from "react";
 
-/* ---------- Reveal2: scroll-triggered fade/slide ---------- */
+export function ScrollProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const height =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      if (height <= 0) {
+        setProgress(0);
+        return;
+      }
+
+      setProgress(Math.min(1, Math.max(0, scrollTop / height)));
+    }
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, []);
+
+  return (
+    <div
+      className="lx2-scroll-progress"
+      style={{ "--lx2-scroll": progress } as CSSProperties}
+    />
+  );
+}
+
 export function Reveal2({
   children,
   delay = 0,
-  className = "",
 }: {
   children: ReactNode;
   delay?: number;
-  className?: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add("is-visible");
-          io.disconnect();
+          setVisible(true);
+          observer.unobserve(element);
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.16 }
     );
-    io.observe(el);
-    return () => io.disconnect();
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
   }, []);
+
   return (
     <div
       ref={ref}
-      className={`lx2-reveal ${className}`}
-      style={{ "--lx2-delay": `${delay}s` } as CSSProperties}
+      className={`lx2-reveal ${visible ? "is-visible" : ""}`}
+      style={{ transitionDelay: `${delay}s` }}
     >
       {children}
     </div>
   );
 }
 
-/* ---------- CharReveal: headline appears character by character ---------- */
 export function CharReveal({ text }: { text: string }) {
   return (
-    <span className="lx2-chars" aria-label={text}>
-      {Array.from(text).map((ch, i) => (
+    <>
+      {text.split("").map((char, index) => (
         <span
-          key={i}
-          aria-hidden="true"
-          style={{ "--lx2-i": i } as CSSProperties}
+          key={`${char}-${index}`}
+          className="lx2-char"
+          style={{ "--lx2-i": index } as CSSProperties}
         >
-          {ch === " " ? "\u00A0" : ch}
+          {char === " " ? "\u00A0" : char}
         </span>
       ))}
-    </span>
+    </>
   );
 }
 
-/* ---------- ScrollProgress: top bar filling with page scroll ---------- */
-export function ScrollProgress() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - innerHeight;
-        el.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
-      });
-    };
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-  return <div ref={ref} className="lx2-progress" aria-hidden="true" />;
-}
-
-/* ---------- SpotlightSection: mouse-follow lamplight on the hero ---------- */
 export function SpotlightSection({
   children,
   className = "",
@@ -99,199 +107,192 @@ export function SpotlightSection({
   children: ReactNode;
   className?: string;
 }) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--lx2-mx", `${((e.clientX - r.left) / r.width) * 100}%`);
-      el.style.setProperty("--lx2-my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    const element = ref.current;
+    if (!element) return;
+
+    function handleMove(event: MouseEvent) {
+      const rect = element.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      element.style.setProperty("--lx2-mx", `${x}px`);
+      element.style.setProperty("--lx2-my", `${y}px`);
+    }
+
+    element.addEventListener("mousemove", handleMove);
+
+    return () => {
+      element.removeEventListener("mousemove", handleMove);
     };
-    el.addEventListener("pointermove", onMove);
-    return () => el.removeEventListener("pointermove", onMove);
   }, []);
+
   return (
-    <section ref={ref} className={className}>
-      <div className="lx2-spot" aria-hidden="true" />
+    <section ref={ref} className={`lx2-spotlight ${className}`}>
       {children}
     </section>
   );
 }
 
-/* ---------- GlyphGrid: faint field of multilingual glyphs ---------- */
-const GLYPHS =
-  "言 語 λ Σ ω ة ض ح あ ん 한 글 म ॐ ß Ж я δ φ ト 字 义 ñ ç ê ü ř α β θ π µ 学 文 訳".split(" ");
+export function GlyphGrid() {
+  const glyphs = "AI NLP DATA TEXT LANG CORPUS MODEL TOKEN CODE".split(" ");
 
-export function GlyphGrid({ count = 60 }: { count?: number }) {
   return (
-    <div className="lx2-glyphgrid" aria-hidden="true">
-      {Array.from({ length: count }, (_, i) => (
-        <span key={i}>{GLYPHS[i % GLYPHS.length]}</span>
+    <div className="lx2-glyph-grid" aria-hidden="true">
+      {Array.from({ length: 90 }).map((_, index) => (
+        <span key={index}>{glyphs[index % glyphs.length]}</span>
       ))}
     </div>
   );
 }
 
-/* ---------- ScrollTicker: strip that moves with scroll velocity ---------- */
 export function ScrollTicker({ items }: { items: string[] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        el.style.transform = `translateX(${-(scrollY * 0.35) % (el.scrollWidth / 2)}px)`;
-      });
-    };
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-  const doubled = [...items, ...items];
+  const safeItems = items.length > 0 ? items : ["LexData"];
+
   return (
     <div className="lx2-ticker" aria-hidden="true">
-      <div ref={ref} className="lx2-ticker-track">
-        {doubled.map((t, i) => (
-          <span key={i}>
-            <b>◆</b> {t}
-          </span>
+      <div className="lx2-ticker-track">
+        {[0, 1].map((copy) => (
+          <div key={copy} className="lx2-ticker-row">
+            {safeItems.map((item, index) => (
+              <span key={`${copy}-${item}-${index}`}>
+                {item}
+                <i>*</i>
+              </span>
+            ))}
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-/* ---------- Pipeline: sticky scroll-driven stage activation ---------- */
 export function Pipeline({
-  heightVh = 260,
   children,
+  heightVh = 240,
 }: {
+  children: (progress: number, active: number) => ReactNode;
   heightVh?: number;
-  children: (progress: number, activeIndex: number) => ReactNode;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const [progress, setProgress] = useState(0);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rect = el.getBoundingClientRect();
-        const total = rect.height - innerHeight;
-        const p = Math.min(Math.max(-rect.top / Math.max(total, 1), 0), 1);
-        setProgress(p);
-      });
-    };
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
+    const element = ref.current;
+    if (!element) return;
+
+    function updateProgress() {
+      const rect = element.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const total = rect.height - viewport;
+
+      if (total <= 0) {
+        setProgress(0);
+        return;
+      }
+
+      const raw = -rect.top / total;
+      setProgress(Math.min(1, Math.max(0, raw)));
+    }
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
     return () => {
-      removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
     };
   }, []);
-  const activeIndex = Math.min(Math.floor(progress * 4), 3);
+
+  const active = Math.min(3, Math.floor(progress * 4));
+
   return (
-    <div ref={ref} className="lx2-pipeline" style={{ height: `${heightVh}vh` }}>
-      <div className="lx2-pipeline-sticky">{children(progress, activeIndex)}</div>
-    </div>
+    <section
+      ref={ref}
+      className="lx2-pipeline"
+      style={{ minHeight: `${heightVh}vh` }}
+    >
+      <div className="lx2-pipeline-sticky">{children(progress, active)}</div>
+    </section>
   );
 }
 
-/* ---------- TiltCard: pointer-tracking 3D tilt with glow ---------- */
 export function TiltCard({
   children,
   href,
-  className = "",
-  max = 8,
 }: {
   children: ReactNode;
-  href?: string;
-  className?: string;
-  max?: number;
+  href: string;
 }) {
-  const ref = useRef<HTMLElement | null>(null);
+  const ref = useRef<HTMLAnchorElement | null>(null);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-      el.style.transform = `rotateY(${(px - 0.5) * max * 2}deg) rotateX(${(0.5 - py) * max * 2}deg)`;
-      el.style.setProperty("--lx2-cx", `${px * 100}%`);
-      el.style.setProperty("--lx2-cy", `${py * 100}%`);
-    };
-    const onLeave = () => {
-      el.style.transform = "";
-    };
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", onLeave);
+    const element = ref.current;
+    if (!element) return;
+
+    function handleMove(event: MouseEvent) {
+      const rect = element.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width - 0.5;
+      const py = (event.clientY - rect.top) / rect.height - 0.5;
+
+      element.style.setProperty("--lx2-rx", `${-py * 8}deg`);
+      element.style.setProperty("--lx2-ry", `${px * 8}deg`);
+    }
+
+    function handleLeave() {
+      element.style.setProperty("--lx2-rx", "0deg");
+      element.style.setProperty("--lx2-ry", "0deg");
+    }
+
+    element.addEventListener("mousemove", handleMove);
+    element.addEventListener("mouseleave", handleLeave);
+
     return () => {
-      el.removeEventListener("pointermove", onMove);
-      el.removeEventListener("pointerleave", onLeave);
+      element.removeEventListener("mousemove", handleMove);
+      element.removeEventListener("mouseleave", handleLeave);
     };
-  }, [max]);
-  const cls = `lx2-tilt ${className}`;
-  if (href) {
-    return (
-      <a ref={ref as any} href={href} className={cls}>
-        {children}
-      </a>
-    );
-  }
+  }, []);
+
   return (
-    <div ref={ref as any} className={cls}>
+    <Link ref={ref} href={href} className="lx2-tilt-card">
       {children}
-    </div>
+    </Link>
   );
 }
 
-/* ---------- Magnetic: button leans toward the cursor ---------- */
-export function Magnetic({
-  children,
-  strength = 0.3,
-}: {
-  children: ReactNode;
-  strength?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
+export function Magnetic({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const target = el.firstElementChild as HTMLElement | null;
-    if (!target) return;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      const dx = e.clientX - (r.left + r.width / 2);
-      const dy = e.clientY - (r.top + r.height / 2);
-      target.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
-    };
-    const onLeave = () => {
-      target.style.transition = "transform .4s cubic-bezier(.22,1,.36,1)";
-      target.style.transform = "";
-      setTimeout(() => (target.style.transition = ""), 400);
-    };
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", onLeave);
+    const element = ref.current;
+    if (!element) return;
+
+    function handleMove(event: MouseEvent) {
+      const rect = element.getBoundingClientRect();
+      const x = event.clientX - rect.left - rect.width / 2;
+      const y = event.clientY - rect.top - rect.height / 2;
+
+      element.style.transform = `translate(${x * 0.08}px, ${y * 0.08}px)`;
+    }
+
+    function handleLeave() {
+      element.style.transform = "translate(0px, 0px)";
+    }
+
+    element.addEventListener("mousemove", handleMove);
+    element.addEventListener("mouseleave", handleLeave);
+
     return () => {
-      el.removeEventListener("pointermove", onMove);
-      el.removeEventListener("pointerleave", onLeave);
+      element.removeEventListener("mousemove", handleMove);
+      element.removeEventListener("mouseleave", handleLeave);
     };
-  }, [strength]);
+  }, []);
+
   return (
-    <div ref={ref} style={{ display: "inline-block" }}>
+    <div ref={ref} className="lx2-magnetic">
       {children}
     </div>
   );

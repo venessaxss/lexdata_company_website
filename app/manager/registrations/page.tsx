@@ -1,210 +1,856 @@
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
-import { requireManagerOrAdmin } from "@/lib/auth";
-import {
-  confirmRegistrationAction,
-  rejectRegistrationAction,
-  reviewRegistrationAction,
-  sendRegistrationMessageAction,
-} from "@/app/admin/registrations/actions";
+import { createAdminClient } from "@/lib/supabase/admin";
+import * as paymentActions from "@/app/manager/actions/payment-actions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const PAGE_SIZE = 10;
-
 type SearchParams = {
-  page?: string;
-  status?: string;
-  payment?: string;
+  workshop?: string;
   q?: string;
-  message?: string;
+  registration?: string;
+  payment?: string;
+  page?: string;
+  pageSize?: string;
 };
 
-function formatDate(value?: string | null) {
-  if (!value) return "-";
+type PageProps = {
+  searchParams?: Promise<SearchParams> | SearchParams;
+};
+
+type Workshop = {
+  id: string;
+  title?: string | null;
+  slug?: string | null;
+  currency?: string | null;
+};
+
+type Registration = {
+  id: string;
+  workshop_id: string;
+  user_id?: string | null;
+  full_name?: string | null;
+  email?: string | null;
+  registration_status?: string | null;
+  payment_status?: string | null;
+  amount_received?: number | null;
+  payment_currency?: string | null;
+  payment_note?: string | null;
+  payment_link?: string | null;
+  receipt_url?: string | null;
+  created_at?: string | null;
+};
+
+function label(status?: string | null) {
+  if (!status) return "Pending";
+
+  return status
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function badgeClass(status?: string | null) {
+  if (status === "confirmed" || status === "waived") {
+    return "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  }
+
+  if (status === "instructions_sent" || status === "under_review") {
+    return "bg-blue-50 text-blue-700 ring-blue-200";
+  }
+
+  if (status === "rejected" || status === "cancelled") {
+    return "bg-red-50 text-red-700 ring-red-200";
+  }
+
+  return "bg-amber-50 text-amber-700 ring-amber-200";
+}
+
+function money(amount?: number | null, currency?: string | null) {
+  const code = (currency || "USD").toUpperCase();
+  const value = Number(amount || 0);
+
   try {
-    return new Date(value).toLocaleString();
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+    }).format(value);
   } catch {
-    return value;
+    return `${code} ${value.toFixed(2)}`;
   }
 }
 
-function badge(status?: string | null) {
-  const value = String(status || "pending").toLowerCase();
-  if (value.includes("confirm") || value.includes("approved") || value.includes("paid")) {
-    return "bg-emerald-50 text-emerald-700 border-emerald-100";
-  }
-  if (value.includes("reject") || value.includes("failed")) {
-    return "bg-red-50 text-red-700 border-red-100";
-  }
-  if (value.includes("review")) {
-    return "bg-amber-50 text-amber-700 border-amber-100";
-  }
-  return "bg-slate-100 text-slate-700 border-slate-200";
+function normalizeCurrency(currency?: string | null) {
+  return (currency || "USD").trim().toUpperCase();
 }
 
-function makeHref(page: number, params: SearchParams) {
-  const next = new URLSearchParams();
-  next.set("page", String(page));
-  if (params.status) next.set("status", params.status);
-  if (params.payment) next.set("payment", params.payment);
-  if (params.q) next.set("q", params.q);
-  return `/manager/registrations?${next.toString()}`;
+function safePositiveInt(value: string | undefined, fallback: number) {
+  const parsed = Number(value || "");
+  if (!Number.isFinite(parsed) || parsed < 1) return fallback;
+  return Math.floor(parsed);
+}
+
+function cleanSearch(value?: string) {
+  return String(value || "")
+    .replace(/[%_,]/g, " ")
+    .trim();
+}
+
+function buildHref(input: {
+  workshop: string;
+  q: string;
+  registration: string;
+  payment: string;
+  page: number;
+  pageSize: number;
+}) {
+  const params = new URLSearchParams();
+
+  if (input.workshop && input.workshop !== "all") {
+    params.set("workshop", input.workshop);
+  }
+
+  if (input.q) {
+    params.set("q", input.q);
+  }
+
+  if (input.registration && input.registration !== "all") {
+    params.set("registration", input.registration);
+  }
+
+  if (input.payment && input.payment !== "all") {
+    params.set("payment", input.payment);
+  }
+
+  params.set("page", String(input.page));
+  params.set("pageSize", String(input.pageSize));
+
+  return `/manager/registrations?${params.toString()}`;
+}
+
+function applyRegistrationFilters(query: any, input: {
+  selectedWorkshopId: string;
+  searchText: string;
+  registrationFilter: string;
+  paymentFilter: string;
+}) {
+  let next = query;
+
+  if (input.selectedWorkshopId !== "all") {
+    next = next.eq("workshop_id", input.selectedWorkshopId);
+  }
+
+  if (input.registrationFilter !== "all") {
+    next = next.eq("registration_status", input.registrationFilter);
+  }
+
+  if (input.paymentFilter !== "all") {
+    next = next.eq("payment_status", input.paymentFilter);
+  }
+
+  if (input.searchText) {
+    next = next.or(
+      `full_name.ilike.%${input.searchText}%,email.ilike.%${input.searchText}%`
+    );
+  }
+
+  return next;
 }
 
 export default async function ManagerRegistrationsPage({
   searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+}: PageProps) {
   noStore();
-  const params = await searchParams;
-  const auth = await requireManagerOrAdmin("/manager/registrations");
-  const page = Math.max(1, Number(params.page || "1") || 1);
-  const from = (page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
-  const q = String(params.q || "").trim();
 
-  let query = auth.admin
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+
+  const selectedWorkshopId = resolvedSearchParams.workshop || "all";
+  const searchText = cleanSearch(resolvedSearchParams.q);
+  const registrationFilter = resolvedSearchParams.registration || "all";
+  const paymentFilter = resolvedSearchParams.payment || "all";
+  const page = safePositiveInt(resolvedSearchParams.page, 1);
+  const pageSize = safePositiveInt(resolvedSearchParams.pageSize, 25);
+
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize - 1;
+
+  const admin = createAdminClient();
+
+  const { data: workshopsData, error: workshopsError } = await admin
+    .from("workshops")
+    .select("id, title, slug, currency")
+    .order("title", { ascending: true });
+
+  let registrationsQuery = admin
     .from("workshop_registrations")
-    .select("*, workshops(title, slug)", { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range(from, to);
+    .select(
+      `
+      id,
+      workshop_id,
+      user_id,
+      full_name,
+      email,
+      registration_status,
+      payment_status,
+      amount_received,
+      payment_currency,
+      payment_note,
+      payment_link,
+      receipt_url,
+      created_at
+    `,
+      { count: "exact" }
+    )
+    .order("created_at", { ascending: false });
 
-  if (params.status && params.status !== "all") {
-    query = query.eq("registration_status", params.status);
+  registrationsQuery = applyRegistrationFilters(registrationsQuery, {
+    selectedWorkshopId,
+    searchText,
+    registrationFilter,
+    paymentFilter,
+  });
+
+  const {
+    data: registrationsData,
+    error: registrationsError,
+    count: totalCount,
+  } = await registrationsQuery.range(start, end);
+
+  let summaryQuery = admin
+    .from("workshop_registrations")
+    .select(
+      `
+      id,
+      workshop_id,
+      registration_status,
+      payment_status,
+      amount_received,
+      payment_currency
+    `
+    );
+
+  summaryQuery = applyRegistrationFilters(summaryQuery, {
+    selectedWorkshopId,
+    searchText,
+    registrationFilter,
+    paymentFilter,
+  });
+
+  const { data: summaryData, error: summaryError } = await summaryQuery;
+
+  const workshops = (workshopsData ?? []) as Workshop[];
+  const registrations = (registrationsData ?? []) as Registration[];
+  const summaryRegistrations = (summaryData ?? []) as Registration[];
+
+  const workshopById = new Map<string, Workshop>();
+
+  for (const workshop of workshops) {
+    workshopById.set(workshop.id, workshop);
   }
 
-  if (params.payment && params.payment !== "all") {
-    query = query.eq("payment_status", params.payment);
+  const confirmedPaid = summaryRegistrations.filter(
+    (registration) =>
+      registration.registration_status === "confirmed" &&
+      registration.payment_status === "confirmed"
+  );
+
+  const currencyTotals = new Map<string, number>();
+
+  for (const registration of confirmedPaid) {
+    const currency = normalizeCurrency(registration.payment_currency);
+    const amount = Number(registration.amount_received || 0);
+
+    currencyTotals.set(currency, (currencyTotals.get(currency) || 0) + amount);
   }
 
-  if (q) {
-    query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%,manager_note.ilike.%${q}%`);
-  }
+  const currencySummary = Array.from(currencyTotals.entries()).sort((a, b) =>
+    a[0].localeCompare(b[0])
+  );
 
-  const { data, error, count } = await query;
-  const registrations = data ?? [];
-  const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+  const totalRecords = totalCount ?? registrations.length;
+  const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
+  const showingFrom = totalRecords === 0 ? 0 : start + 1;
+  const showingTo = Math.min(start + registrations.length, totalRecords);
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] px-4 py-10">
-      <section className="mx-auto max-w-7xl">
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-            <div>
-              <Link href="/manager" className="text-sm font-bold text-blue-200">-&gt; Back to manager dashboard</Link>
-              <p className="mt-6 text-sm font-black uppercase tracking-[0.25em] text-blue-300">Registration command center</p>
-              <h1 className="mt-3 text-4xl font-black tracking-tight">Review, confirm, reject, and message registrants</h1>
-              <p className="mt-3 max-w-3xl text-slate-300">
-                One login gives you access to every registration step. No second login, no duplicate redirects.
-              </p>
-            </div>
-            <div className="rounded-2xl bg-white/10 px-5 py-4 text-right">
-              <p className="text-3xl font-black">{count ?? 0}</p>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-300">matching records</p>
-            </div>
+    <main className="min-h-screen bg-slate-50 px-4 py-8">
+      <section className="mx-auto max-w-7xl space-y-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <h1 className="text-3xl font-black text-slate-950">
+              Registration & Payment Management
+            </h1>
+
+            <p className="mt-2 text-sm font-medium text-slate-600">
+              Manage workshop registrations, payment status, receipts, and
+              access approval.
+            </p>
           </div>
+
+          <Link
+            href="/manager"
+            className="w-fit rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+          >
+            Back to manager dashboard
+          </Link>
         </div>
 
-        <form className="mt-6 grid gap-3 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-[1fr_180px_180px_auto]">
-          <input name="q" defaultValue={q} placeholder="Search name, email, note..." className="rounded-xl border border-slate-300 px-4 py-3" />
-          <select name="status" defaultValue={params.status || "all"} className="rounded-xl border border-slate-300 px-4 py-3">
-            <option value="all">All statuses</option>
-            <option value="pending">Pending</option>
-            <option value="reviewing">Reviewing</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="rejected">Rejected</option>
-          </select>
-          <select name="payment" defaultValue={params.payment || "all"} className="rounded-xl border border-slate-300 px-4 py-3">
-            <option value="all">All payments</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="rejected">Rejected</option>
-            <option value="paid">Paid</option>
-          </select>
-          <button className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-black text-white">Filter</button>
+        {workshopsError ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
+            Failed to load workshops: {workshopsError.message}
+          </div>
+        ) : null}
+
+        {registrationsError ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
+            Failed to load registrations: {registrationsError.message}
+          </div>
+        ) : null}
+
+        {summaryError ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm font-bold text-red-700">
+            Failed to load payment summary: {summaryError.message}
+          </div>
+        ) : null}
+
+        <form className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div className="grid gap-4 md:grid-cols-5">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-black text-slate-600">
+                Search name or email
+              </label>
+
+              <input
+                name="q"
+                defaultValue={searchText}
+                placeholder="Search participant..."
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Workshop
+              </label>
+
+              <select
+                name="workshop"
+                defaultValue={selectedWorkshopId}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All workshops</option>
+                {workshops.map((workshop) => (
+                  <option key={workshop.id} value={workshop.id}>
+                    {workshop.title || "Untitled workshop"}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Registration
+              </label>
+
+              <select
+                name="registration"
+                defaultValue={registrationFilter}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="rejected">Rejected</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-black text-slate-600">
+                Payment
+              </label>
+
+              <select
+                name="payment"
+                defaultValue={paymentFilter}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="instructions_sent">Instructions Sent</option>
+                <option value="under_review">Under Review</option>
+                <option value="confirmed">Confirmed Paid</option>
+                <option value="waived">Waived</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <select
+              name="pageSize"
+              defaultValue={String(pageSize)}
+              className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold text-slate-800"
+            >
+              <option value="10">10 per page</option>
+              <option value="25">25 per page</option>
+              <option value="50">50 per page</option>
+              <option value="100">100 per page</option>
+            </select>
+
+            <input type="hidden" name="page" value="1" />
+
+            <button
+              type="submit"
+              className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
+            >
+              Apply filters
+            </button>
+
+            <Link
+              href="/manager/registrations"
+              className="rounded-2xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 hover:bg-slate-100"
+            >
+              Reset
+            </Link>
+          </div>
         </form>
 
-        {params.message ? (
-          <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4 text-sm font-bold text-blue-700">{params.message}</div>
-        ) : null}
+        <div className="grid gap-5 md:grid-cols-3">
+          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
+              Confirmed Amount by Currency
+            </p>
 
-        {error ? (
-          <div className="mt-6 rounded-2xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-bold text-red-700">{error.message}</div>
-        ) : null}
-
-        <div className="mt-8 grid gap-5">
-          {registrations.length === 0 ? (
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-10 text-center shadow-sm">
-              <h2 className="text-2xl font-black text-slate-950">No registrations found</h2>
-              <p className="mt-2 text-slate-600">Try another search or status filter.</p>
+            <div className="mt-4 space-y-2">
+              {currencySummary.length === 0 ? (
+                <p className="text-3xl font-black text-slate-950">0.00</p>
+              ) : (
+                currencySummary.map(([currency, amount]) => (
+                  <p
+                    key={currency}
+                    className="text-3xl font-black text-slate-950"
+                  >
+                    {money(amount, currency)}
+                  </p>
+                ))
+              )}
             </div>
-          ) : null}
 
-          {registrations.map((r: any) => (
-            <article key={r.id} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-              <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_1fr]">
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-2xl font-black text-slate-950">{r.full_name || r.name || r.email || "Registrant"}</h2>
-                    <span className={`rounded-full border px-3 py-1 text-xs font-black ${badge(r.registration_status)}`}>{r.registration_status || "pending"}</span>
-                    <span className={`rounded-full border px-3 py-1 text-xs font-black ${badge(r.payment_status)}`}>{r.payment_status || "pending"}</span>
-                  </div>
-                  <p className="mt-2 text-sm text-slate-600">{r.email || "No email"} {r.phone ? ` / ${r.phone}` : ""}</p>
-                  <p className="mt-3 font-bold text-slate-800">{r.workshops?.title || r.workshop_title || "Unknown workshop"}</p>
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Submitted: {formatDate(r.created_at)}</p>
-                  <div className="mt-4 grid gap-2 text-sm text-slate-600 md:grid-cols-2">
-                    {r.institution ? <p><b>Institution:</b> {r.institution}</p> : null}
-                    {r.country ? <p><b>Country:</b> {r.country}</p> : null}
-                    {r.profession ? <p><b>Profession:</b> {r.profession}</p> : null}
-                    {r.receipt_url ? <p><a href={r.receipt_url} target="_blank" className="font-black text-blue-700">View receipt -&gt;</a></p> : null}
-                  </div>
-                  {r.manager_note ? <p className="mt-4 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700"><b>Manager note:</b> {r.manager_note}</p> : null}
-                </div>
+            <p className="mt-3 text-sm font-medium text-slate-500">
+              Only confirmed paid registrations. Currencies are not mixed.
+            </p>
+          </div>
 
-                <div className="grid gap-4">
-                  <form action={reviewRegistrationAction} className="rounded-2xl bg-slate-50 p-4">
-                    <input type="hidden" name="id" value={r.id} />
-                    <label className="block text-sm font-black text-slate-700">Review note</label>
-                    <textarea name="manager_note" rows={3} defaultValue={r.manager_note || ""} className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" placeholder="Add internal review note..." />
-                    <button className="mt-3 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800">Save review</button>
-                  </form>
+          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
+              Confirmed Paid Records
+            </p>
 
-                  <div className="grid gap-3 md:grid-cols-2">
-                    <form action={confirmRegistrationAction}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <input type="hidden" name="manager_note" value={r.manager_note || ""} />
-                      <button className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white">Confirm</button>
-                    </form>
-                    <form action={rejectRegistrationAction}>
-                      <input type="hidden" name="id" value={r.id} />
-                      <input type="hidden" name="manager_note" value={r.manager_note || ""} />
-                      <button className="w-full rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white">Reject</button>
-                    </form>
-                  </div>
+            <p className="mt-4 text-4xl font-black text-slate-950">
+              {confirmedPaid.length}
+            </p>
 
-                  <form action={sendRegistrationMessageAction} className="rounded-2xl bg-blue-50 p-4">
-                    <input type="hidden" name="id" value={r.id} />
-                    <label className="block text-sm font-black text-blue-900">Message registrant</label>
-                    <input name="title" placeholder="Message title" defaultValue="LexData registration update" className="mt-2 w-full rounded-xl border border-blue-100 px-4 py-3" />
-                    <textarea name="body" required rows={3} className="mt-2 w-full rounded-xl border border-blue-100 px-4 py-3" placeholder="Write a message or reply..." />
-                    <button className="mt-3 rounded-xl bg-blue-700 px-4 py-2 text-sm font-black text-white">Send message</button>
-                  </form>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+            <p className="mt-3 text-sm font-medium text-slate-500">
+              Excludes waived/free registrations
+            </p>
+          </div>
 
-        <div className="mt-8 flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
-          <span className="text-sm font-bold text-slate-600">Page {page} of {totalPages}</span>
-          <div className="flex gap-2">
-            <Link href={makeHref(Math.max(1, page - 1), params)} className={`rounded-xl px-4 py-2 text-sm font-black ${page <= 1 ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Previous</Link>
-            <Link href={makeHref(Math.min(totalPages, page + 1), params)} className={`rounded-xl px-4 py-2 text-sm font-black ${page >= totalPages ? "pointer-events-none bg-slate-100 text-slate-400" : "bg-slate-950 text-white"}`}>Next</Link>
+          <div className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-slate-400">
+              Filtered Records
+            </p>
+
+            <p className="mt-4 text-4xl font-black text-slate-950">
+              {totalRecords}
+            </p>
+
+            <p className="mt-3 text-sm font-medium text-slate-500">
+              Showing {showingFrom}–{showingTo} of {totalRecords}
+            </p>
           </div>
         </div>
+
+        <section className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+            <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+              <div>
+                <h2 className="text-lg font-black text-slate-950">
+                  Registrations
+                </h2>
+
+                <p className="text-sm font-medium text-slate-500">
+                  Compact list. Open “Manage” only when you need to edit one
+                  registration.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <Link
+                  href={buildHref({
+                    workshop: selectedWorkshopId,
+                    q: searchText,
+                    registration: registrationFilter,
+                    payment: paymentFilter,
+                    page: Math.max(1, page - 1),
+                    pageSize,
+                  })}
+                  className={`rounded-xl border px-4 py-2 ${
+                    page <= 1
+                      ? "pointer-events-none border-slate-200 text-slate-300"
+                      : "border-slate-300 text-slate-700 hover:bg-white"
+                  }`}
+                >
+                  Previous
+                </Link>
+
+                <span className="px-2 text-slate-500">
+                  Page {page} / {totalPages}
+                </span>
+
+                <Link
+                  href={buildHref({
+                    workshop: selectedWorkshopId,
+                    q: searchText,
+                    registration: registrationFilter,
+                    payment: paymentFilter,
+                    page: Math.min(totalPages, page + 1),
+                    pageSize,
+                  })}
+                  className={`rounded-xl border px-4 py-2 ${
+                    page >= totalPages
+                      ? "pointer-events-none border-slate-200 text-slate-300"
+                      : "border-slate-300 text-slate-700 hover:bg-white"
+                  }`}
+                >
+                  Next
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-h-[75vh] overflow-auto">
+            <table className="w-full min-w-[1100px] text-left text-sm">
+              <thead className="sticky top-0 z-10 bg-slate-100 text-xs uppercase tracking-[0.16em] text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Participant</th>
+                  <th className="px-4 py-3">Workshop</th>
+                  <th className="px-4 py-3">Registration</th>
+                  <th className="px-4 py-3">Payment</th>
+                  <th className="px-4 py-3">Amount</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Files</th>
+                  <th className="px-4 py-3">Manage</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {registrations.map((registration) => {
+                  const workshop = workshopById.get(registration.workshop_id);
+
+                  return (
+                    <tr
+                      key={registration.id}
+                      className="border-t border-slate-100 align-top"
+                    >
+                      <td className="px-4 py-4">
+                        <p className="font-black text-slate-950">
+                          {registration.full_name || "Unnamed participant"}
+                        </p>
+
+                        <p className="mt-1 text-xs font-semibold text-slate-500">
+                          {registration.email || "No email"}
+                        </p>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <p className="max-w-[260px] font-bold text-slate-700">
+                          {workshop?.title || "Unknown workshop"}
+                        </p>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
+                            registration.registration_status
+                          )}`}
+                        >
+                          {label(registration.registration_status)}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
+                            registration.payment_status
+                          )}`}
+                        >
+                          {label(registration.payment_status)}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-4 font-black text-slate-950">
+                        {money(
+                          registration.amount_received,
+                          registration.payment_currency
+                        )}
+                      </td>
+
+                      <td className="px-4 py-4 text-xs font-semibold text-slate-500">
+                        {registration.created_at
+                          ? new Date(registration.created_at).toLocaleString()
+                          : "-"}
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <div className="flex flex-col gap-2">
+                          {registration.payment_link ? (
+                            <a
+                              href={registration.payment_link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-black text-blue-700 hover:underline"
+                            >
+                              Payment link
+                            </a>
+                          ) : null}
+
+                          {registration.receipt_url ? (
+                            <a
+                              href={registration.receipt_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-black text-emerald-700 hover:underline"
+                            >
+                              Receipt
+                            </a>
+                          ) : null}
+
+                          {!registration.payment_link &&
+                          !registration.receipt_url ? (
+                            <span className="text-xs font-semibold text-slate-400">
+                              No file/link
+                            </span>
+                          ) : null}
+                        </div>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <details className="group relative">
+                          <summary className="cursor-pointer list-none rounded-xl bg-slate-950 px-4 py-2 text-center text-xs font-black text-white hover:bg-slate-700">
+                              Manage
+                          </summary>
+
+                           <div className="mt-3 w-[420px] max-w-[calc(100vw-2rem)] rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl">
+                            <form
+                              action={
+                                paymentActions.handleRegistrationManagementAction
+                              }
+                              className="space-y-4"
+                            >
+                              <input
+                                type="hidden"
+                                name="registration_id"
+                                value={registration.id}
+                              />
+
+                              <div>
+                                <h3 className="text-lg font-black text-slate-950">
+                                  Payment actions
+                                </h3>
+
+                                <p className="mt-1 text-xs font-semibold text-slate-500">
+                                  {registration.full_name || "Participant"}
+                                </p>
+                              </div>
+
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Registration status
+                                  </label>
+
+                                  <select
+                                    name="registration_status"
+                                    defaultValue={
+                                      registration.registration_status ||
+                                      "pending"
+                                    }
+                                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                  >
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="rejected">Rejected</option>
+                                    <option value="cancelled">Cancelled</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Payment status
+                                  </label>
+
+                                  <select
+                                    name="payment_status"
+                                    defaultValue={
+                                      registration.payment_status || "pending"
+                                    }
+                                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                  >
+                                    <option value="pending">
+                                      Unpaid / Pending
+                                    </option>
+                                    <option value="instructions_sent">
+                                      Instructions Sent
+                                    </option>
+                                    <option value="under_review">
+                                      Under Review
+                                    </option>
+                                    <option value="confirmed">
+                                      Confirmed Paid
+                                    </option>
+                                    <option value="waived">Waived</option>
+                                    <option value="rejected">Rejected</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              <button
+                                type="submit"
+                                name="intent"
+                                value="save_statuses"
+                                className="w-full rounded-2xl bg-slate-800 px-4 py-3 text-sm font-black text-white hover:bg-slate-700"
+                              >
+                                Save status changes
+                              </button>
+
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Payment link
+                                </label>
+
+                                <input
+                                  name="payment_link"
+                                  defaultValue={
+                                    registration.payment_link || ""
+                                  }
+                                  placeholder="https://... or leave empty"
+                                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                />
+                              </div>
+
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Amount received
+                                  </label>
+
+                                  <input
+                                    name="amount_received"
+                                    type="number"
+                                    step="0.01"
+                                    defaultValue={
+                                      registration.amount_received || 0
+                                    }
+                                    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Currency
+                                  </label>
+
+                                  <select
+                                    name="payment_currency"
+                                    defaultValue={normalizeCurrency(
+                                      registration.payment_currency
+                                    )}
+                                    className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                  >
+                                    <option value="USD">USD</option>
+                                    <option value="MNT">MNT</option>
+                                    <option value="PKR">PKR</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="KRW">KRW</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Message / internal note
+                                </label>
+
+                                <textarea
+                                  name="payment_note"
+                                  defaultValue={
+                                    registration.payment_note || ""
+                                  }
+                                  rows={4}
+                                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                />
+                              </div>
+
+                              <div className="grid gap-3 md:grid-cols-2">
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="send_payment_message"
+                                  className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-black text-white hover:bg-blue-800"
+                                >
+                                  Send instruction
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="record_payment_received"
+                                  className="rounded-2xl bg-orange-600 px-4 py-3 text-sm font-black text-white hover:bg-orange-700"
+                                >
+                                  Record received
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="confirm_payment"
+                                  className="rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-black text-white hover:bg-emerald-800"
+                                >
+                                  Confirm & unlock
+                                </button>
+
+                                <button
+                                  type="submit"
+                                  name="intent"
+                                  value="waive_payment"
+                                  className="rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-700 hover:bg-slate-50"
+                                >
+                                  Waive & unlock
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </details>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {registrations.length === 0 ? (
+              <div className="p-8 text-center font-bold text-slate-400">
+                No registrations found.
+              </div>
+            ) : null}
+          </div>
+        </section>
       </section>
     </main>
   );
