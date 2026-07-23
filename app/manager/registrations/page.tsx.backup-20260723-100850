@@ -11,7 +11,6 @@ type SearchParams = {
   q?: string;
   registration?: string;
   payment?: string;
-  access?: string;
   page?: string;
   pageSize?: string;
   message?: string;
@@ -480,7 +479,7 @@ export default async function ManagerRegistrationsPage({
             </p>
 
             <p className="mt-3 text-sm font-medium text-slate-500">
-              Showing {showingFrom} - {showingTo} of {totalRecords}
+              Showing {showingFrom}–{showingTo} of {totalRecords}
             </p>
           </div>
         </div>
@@ -494,7 +493,7 @@ export default async function ManagerRegistrationsPage({
                 </h2>
 
                 <p className="text-sm font-medium text-slate-500">
-                  Compact list. Open 闂佺偨鍎查崣鎱硁age闂?only when you need to edit one
+                  Compact list. Open “Manage” only when you need to edit one
                   registration.
                 </p>
               </div>
