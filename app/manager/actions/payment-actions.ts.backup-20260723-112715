@@ -149,30 +149,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     | undefined;
 
   switch (intent) {
-    case "grant_access":
-      updatePayload = {
-        access_status: "granted",
-      };
-      successMessage = "Workshop access granted.";
-      notification = {
-        title: "Workshop access granted",
-        body: "Your workshop access has been granted by the LexData team.",
-        sourceType: "access_granted",
-      };
-      break;
-
-    case "revoke_access":
-      updatePayload = {
-        access_status: "revoked",
-      };
-      successMessage = "Workshop access revoked.";
-      notification = {
-        title: "Workshop access revoked",
-        body: "Your workshop access has been revoked. Please contact the LexData team if you believe this is a mistake.",
-        sourceType: "access_revoked",
-      };
-      break;
-
     case "save_statuses":
       updatePayload = {
         registration_status: registrationStatus,
@@ -220,7 +196,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       updatePayload = {
         registration_status: "confirmed",
         payment_status: "confirmed",
-        access_status: "granted",
         amount_received: amountReceived,
         payment_currency: paymentCurrency,
         payment_note: paymentNote || null,
@@ -237,7 +212,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       updatePayload = {
         registration_status: "confirmed",
         payment_status: "waived",
-        access_status: "granted",
         amount_received: 0,
         payment_note: paymentNote || null,
       };

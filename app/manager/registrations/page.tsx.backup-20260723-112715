@@ -2,7 +2,6 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import * as paymentActions from "@/app/manager/actions/payment-actions";
-import { canAccessWorkshop } from "@/lib/access-control";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -31,7 +30,6 @@ type Workshop = {
 };
 
 type Registration = {
-  access_status?: string | null;
   id: string;
   workshop_id: string;
   user_id?: string | null;
@@ -496,8 +494,9 @@ export default async function ManagerRegistrationsPage({
                 </h2>
 
                 <p className="text-sm font-medium text-slate-500">
-                    Compact list. Open Manage only when you need to edit one registration.
-                  </p>
+                  Compact list. Open 闂佺偨鍎查崣鎱硁age闂?only when you need to edit one
+                  registration.
+                </p>
               </div>
 
               <div className="flex items-center gap-2 text-sm font-bold">
@@ -562,26 +561,6 @@ export default async function ManagerRegistrationsPage({
               <tbody>
                 {registrations.map((registration) => {
                   const workshop = workshopById.get(registration.workshop_id);
-                    const rawAccessStatus = String(
-                      registration.access_status || ""
-                    ).toLowerCase();
-                    const explicitlyRevoked = [
-                      "revoked",
-                      "blocked",
-                      "denied",
-                      "suspended",
-                    ].includes(rawAccessStatus);
-                    const hasWorkshopAccess = canAccessWorkshop(registration);
-                    const accessLabel = explicitlyRevoked
-                      ? "Revoked"
-                      : hasWorkshopAccess
-                        ? "Unlocked"
-                        : "Locked";
-                    const accessBadgeClass = explicitlyRevoked
-                      ? "border-red-200 bg-red-50 text-red-700"
-                      : hasWorkshopAccess
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-amber-200 bg-amber-50 text-amber-700";
 
                   return (
                     <tr
@@ -622,14 +601,7 @@ export default async function ManagerRegistrationsPage({
                         >
                           {label(registration.payment_status)}
                         </span>
-                      
-                          <div className="mt-2">
-                            <span
-                              className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${accessBadgeClass}`}
-                            >
-                              Access: {accessLabel}
-                            </span>
-                          </div>                        </td>
+                      </td>
 
                       <td className="px-4 py-4 font-black text-slate-950">
                         {money(
@@ -876,50 +848,7 @@ export default async function ManagerRegistrationsPage({
                                   Waive & unlock
                                 </button>
                               </div>
-                            
-                                <div className="border-t border-slate-200 pt-4">
-                                  <div className="flex flex-wrap items-center justify-between gap-3">
-                                    <div>
-                                      <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-500">
-                                        Workshop access control
-                                      </p>
-                                      <div className="mt-2 flex items-center gap-2">
-                                        <span className="text-sm font-bold text-slate-700">
-                                          Current access:
-                                        </span>
-                                        <span
-                                          className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${accessBadgeClass}`}
-                                        >
-                                          {accessLabel}
-                                        </span>
-                                      </div>
-                                    </div>
-
-                                    {hasWorkshopAccess ? (
-                                      <button
-                                        type="submit"
-                                        name="intent"
-                                        value="revoke_access"
-                                        className="rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white hover:bg-red-700"
-                                      >
-                                        Revoke access
-                                      </button>
-                                    ) : (
-                                      <button
-                                        type="submit"
-                                        name="intent"
-                                        value="grant_access"
-                                        className="rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white hover:bg-emerald-700"
-                                      >
-                                        Grant access
-                                      </button>
-                                    )}
-                                  </div>
-
-                                  <p className="mt-3 text-xs font-medium text-slate-500">
-                                    Revoked access overrides confirmed registration and payment-derived access.
-                                  </p>
-                                </div></form>
+                            </form>
                           </div>
                         </details>
                       </td>
