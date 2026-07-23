@@ -169,22 +169,6 @@ export default async function ManagerRegistrationsPage({
 
   const resolvedSearchParams = searchParams ? await searchParams : {};
 
-    const currentReturnParams = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(resolvedSearchParams)) {
-      if (key === "message" || key === "error") continue;
-
-      if (typeof value === "string" && value) {
-        currentReturnParams.set(key, value);
-      }
-    }
-
-    const currentReturnQuery = currentReturnParams.toString();
-
-    const currentReturnTo = currentReturnQuery
-      ? `/manager/registrations?${currentReturnQuery}`
-      : "/manager/registrations";
-
   const selectedWorkshopId = resolvedSearchParams.workshop || "all";
   const searchText = cleanSearch(resolvedSearchParams.q);
   const registrationFilter = resolvedSearchParams.registration || "all";
@@ -711,11 +695,6 @@ export default async function ManagerRegistrationsPage({
                                 name="registration_id"
                                 value={registration.id}
                               />
-                                <input
-                                  type="hidden"
-                                  name="return_to"
-                                  value={currentReturnTo}
-                                />
 
                               <div>
                                 <h3 className="text-lg font-black text-slate-950">
