@@ -10,7 +10,7 @@ import {
   deleteWorkshopSession,
   deleteWorkshopSubsession,
 } from "./actions";
-import WorkshopScheduleManager from "@/components/admin/WorkshopScheduleManager";
+import SessionMediaUploader from "@/components/SessionMediaUploader";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -377,12 +377,355 @@ export default async function AdminWorkshopsPage({
         </form>
       </section>
 
-            <WorkshopScheduleManager
-        workshops={workshops}
-        sessions={sessions}
-        subsessions={subsessions}
-      />
-<section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-black text-slate-950">
+          Add Major Session
+        </h2>
+
+        <form action={createWorkshopSession} className="mt-6 grid gap-5">
+          <select
+            name="workshop_id"
+            required
+            className="w-full rounded-xl border px-4 py-3"
+          >
+            <option value="">Choose workshop</option>
+            {workshops.map((workshop) => (
+              <option key={workshop.id} value={workshop.id}>
+                {workshop.title}
+              </option>
+            ))}
+          </select>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <input
+              name="title"
+              required
+              placeholder="Major session title"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+
+            <input
+              name="display_order"
+              type="number"
+              defaultValue={0}
+              placeholder="Display order"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            <input
+              name="session_date"
+              type="date"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+
+            <input
+              name="start_time"
+              type="time"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+
+            <input
+              name="end_time"
+              type="time"
+              className="w-full rounded-xl border px-4 py-3"
+            />
+          </div>
+
+          <input
+            name="location"
+            placeholder="Location"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <input
+            name="meeting_url"
+            placeholder="Meeting / Zoom URL"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <input
+            name="recording_url"
+            placeholder="Recording URL"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <input
+            name="material_url"
+            placeholder="Material URL"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <SessionMediaUploader />
+
+          <input
+            name="external_video_url"
+            placeholder="YouTube / Jianying / external video link"
+            className="w-full rounded-xl border px-4 py-3"
+          />
+
+          <label className="flex items-center gap-2">
+            <input name="is_active" type="checkbox" defaultChecked />
+            <span>Show this session</span>
+          </label>
+
+          <button
+            type="submit"
+            className="w-fit rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+          >
+            Add Major Session
+          </button>
+        </form>
+      </section>
+
+      <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-2xl font-black text-slate-950">
+          Existing Sessions and Subsessions
+        </h2>
+
+        {sessions.length === 0 ? (
+          <p className="mt-4 text-slate-600">No sessions yet.</p>
+        ) : (
+          <div className="mt-6 space-y-6">
+            {sessions.map((session) => {
+              const workshop = session.workshop_id
+                ? workshopById.get(session.workshop_id)
+                : null;
+
+              const childSubsessions =
+                subsessionsBySessionId.get(session.id) ?? [];
+
+              return (
+                <article
+                  key={session.id}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-5"
+                >
+                  <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                        Major Session 路 Order {session.display_order ?? 0}
+                      </p>
+
+                      <h3 className="mt-2 text-2xl font-black text-slate-950">
+                        {session.title || "Workshop Session"}
+                      </h3>
+
+                      <p className="mt-2 text-sm text-slate-600">
+                        Workshop: {workshop?.title || "Unknown workshop"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-600">
+                        Date: {session.session_date || "-"} 路 Time:{" "}
+                        {session.start_time || "-"} - {session.end_time || "-"}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-600">
+                        Status:{" "}
+                        {session.is_active === false ? "Hidden" : "Visible"}
+                      </p>
+
+                      {session.media_url ? (
+                        <p className="mt-1 break-all text-sm text-slate-600">
+                          Media: {session.media_url}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <form action={deleteWorkshopSession}>
+                      <input type="hidden" name="id" value={session.id} />
+
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+                      >
+                        Delete major session
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+                    <h4 className="font-black text-slate-950">
+                      Add Subsession
+                    </h4>
+
+                    <form
+                      action={createWorkshopSubsession}
+                      className="mt-4 grid gap-4"
+                    >
+                      <input
+                        type="hidden"
+                        name="session_id"
+                        value={session.id}
+                      />
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <input
+                          name="title"
+                          required
+                          placeholder="Subsession title"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+
+                        <input
+                          name="display_order"
+                          type="number"
+                          defaultValue={0}
+                          placeholder="Display order"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+                      </div>
+
+                      <textarea
+                        name="description"
+                        rows={3}
+                        placeholder="Subsession description"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <input
+                          name="start_time"
+                          type="time"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+
+                        <input
+                          name="end_time"
+                          type="time"
+                          className="w-full rounded-xl border px-4 py-3"
+                        />
+                      </div>
+
+                      <input
+                        name="meeting_url"
+                        placeholder="Meeting / Zoom URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <input
+                        name="recording_url"
+                        placeholder="Recording URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <input
+                        name="material_url"
+                        placeholder="Material URL"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <SessionMediaUploader />
+
+                      <input
+                        name="external_video_url"
+                        placeholder="YouTube / Jianying / external video link"
+                        className="w-full rounded-xl border px-4 py-3"
+                      />
+
+                      <label className="flex items-center gap-2">
+                        <input name="is_active" type="checkbox" defaultChecked />
+                        <span>Show this subsession</span>
+                      </label>
+
+                      <button
+                        type="submit"
+                        className="w-fit rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white hover:bg-slate-700"
+                      >
+                        Add Subsession
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="mt-6">
+                    <h4 className="font-black text-slate-950">
+                      Subsessions
+                    </h4>
+
+                    {childSubsessions.length === 0 ? (
+                      <p className="mt-3 text-sm text-slate-600">
+                        No subsessions yet.
+                      </p>
+                    ) : (
+                      <div className="mt-4 space-y-3">
+                        {childSubsessions.map((subsession) => (
+                          <div
+                            key={subsession.id}
+                            className="rounded-2xl border border-slate-200 bg-white p-4"
+                          >
+                            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+                              <div>
+                                <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                                  Subsession 路 Order{" "}
+                                  {subsession.display_order ?? 0}
+                                </p>
+
+                                <h5 className="mt-2 text-lg font-black text-slate-950">
+                                  {subsession.title || "Subsession"}
+                                </h5>
+
+                                <p className="mt-2 text-sm text-slate-600">
+                                  Time: {subsession.start_time || "-"} -{" "}
+                                  {subsession.end_time || "-"}
+                                </p>
+
+                                <p className="mt-1 text-sm text-slate-600">
+                                  Status:{" "}
+                                  {subsession.is_active === false
+                                    ? "Hidden"
+                                    : "Visible"}
+                                </p>
+
+                                {subsession.description ? (
+                                  <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-slate-600">
+                                    {subsession.description}
+                                  </p>
+                                ) : null}
+
+                                {subsession.media_url ? (
+                                  <p className="mt-3 break-all text-sm text-slate-500">
+                                    Media: {subsession.media_url}
+                                  </p>
+                                ) : null}
+                              </div>
+
+                              <div className="flex flex-wrap gap-2">
+                                <Link prefetch={false}
+                                  href={`/admin/workshops/subsessions/${subsession.id}/edit`}
+                                  className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white hover:bg-slate-700"
+                                >
+                                  Edit subsession
+                                </Link>
+
+                                <form action={deleteWorkshopSubsession}>
+                                  <input
+                                    type="hidden"
+                                    name="id"
+                                    value={subsession.id}
+                                  />
+
+                                  <button
+                                    type="submit"
+                                    className="rounded-xl border border-red-200 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50"
+                                  >
+                                    Delete subsession
+                                  </button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-2xl font-black text-slate-950">
           Existing Workshops
         </h2>
