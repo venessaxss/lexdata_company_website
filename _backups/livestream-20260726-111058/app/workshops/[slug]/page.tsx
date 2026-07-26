@@ -428,14 +428,6 @@ export default async function WorkshopDetailPage({
               <h1 className="text-4xl font-black text-slate-950">
                 {workshop.title}
               </h1>
-                <div className="mt-5">
-                  <Link
-                    href={`/workshops/${workshop.slug}/live`}
-                    className="inline-flex rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white hover:bg-slate-700"
-                  >
-                    Open live room
-                  </Link>
-                </div>
 
               {workshop.summary ? (
                 <p className="mt-4 text-lg leading-8 text-slate-600">

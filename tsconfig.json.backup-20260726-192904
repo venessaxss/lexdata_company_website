@@ -36,10 +36,6 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    ".next",
-    "_backups",
-    "lexdata-registered-livestream-module",
-    "**/*.backup-*"
+    "node_modules"
   ]
 }
