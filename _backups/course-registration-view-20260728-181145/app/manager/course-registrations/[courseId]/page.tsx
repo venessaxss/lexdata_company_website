@@ -184,9 +184,9 @@ export default async function CourseRegistrationDetailPage({
   return (
     <main
       className="min-h-screen bg-[#f6f8fb] px-4 pb-16 sm:px-6 lg:px-8"
-      style={{ paddingTop: "112px" }}
+      style={{ paddingTop: "128px" }}
     >
-      <div className="mx-auto w-full max-w-[1320px] space-y-6">
+      <div className="mx-auto w-full max-w-[1480px] space-y-6">
         <Link
           href="/manager/course-registrations"
           className="text-sm font-black text-slate-600 hover:text-slate-950"
@@ -194,12 +194,12 @@ export default async function CourseRegistrationDetailPage({
           &larr; All course registrations
         </Link>
 
-        <section className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <header className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600">
             Course registration workspace
           </p>
 
-          <h1 className="mt-2 text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">
             {title(course)}
           </h1>
 
@@ -207,7 +207,7 @@ export default async function CourseRegistrationDetailPage({
             Manage only the registrations belonging to this course.
           </p>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 grid gap-3 sm:grid-cols-4">
             <div className="rounded-2xl bg-slate-50 px-5 py-4">
               <p className="text-xs font-black uppercase text-slate-500">
                 Total
@@ -244,7 +244,7 @@ export default async function CourseRegistrationDetailPage({
               </p>
             </div>
           </div>
-        </section>
+        </header>
 
         {filters.message ? (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-800">
@@ -258,7 +258,7 @@ export default async function CourseRegistrationDetailPage({
           </div>
         ) : null}
 
-        <section className="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
           <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_auto]">
             <input
               name="q"
@@ -287,7 +287,7 @@ export default async function CourseRegistrationDetailPage({
 
         <section className="space-y-4">
           {visible.length === 0 ? (
-            <div className="rounded-[24px] border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-sm">
+            <div className="rounded-[24px] border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
               <p className="font-black text-slate-800">
                 No registrations match these filters.
               </p>
