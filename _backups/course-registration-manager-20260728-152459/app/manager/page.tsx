@@ -88,19 +88,6 @@ export default async function ManagerPage() {
           ))}
         </div>
       </section>
-            <Link
-          href="/manager/course-registrations"
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-        >
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-indigo-600">
-            Courses
-          </p>
-          <h2 className="mt-2 text-xl font-black text-slate-950">
-            Course registrations
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Manage participants one course at a time.
-          </p>
-        </Link></main>
+    </main>
   );
 }
