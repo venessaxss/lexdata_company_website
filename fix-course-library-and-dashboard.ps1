@@ -1,3 +1,50 @@
+$ErrorActionPreference = "Stop"
+
+$root = (Get-Location).Path
+$coursePagePath = Join-Path $root "app\admin\courses\page.tsx"
+$managerPagePath = Join-Path $root "app\manager\page.tsx"
+$registrationIndex = Join-Path $root "app\manager\course-registrations\page.tsx"
+$registrationDetail = Join-Path $root "app\manager\course-registrations\[courseId]\page.tsx"
+
+foreach ($path in @($coursePagePath, $managerPagePath)) {
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw "Cannot find required file: $path`nRun this script from the project root."
+    }
+}
+
+if (
+    -not (Test-Path -LiteralPath $registrationIndex) -or
+    -not (Test-Path -LiteralPath $registrationDetail)
+) {
+    throw @"
+The course-registration pages are missing.
+
+Run install-course-wise-registration-manager.ps1 first.
+Expected:
+  app\manager\course-registrations\page.tsx
+  app\manager\course-registrations\[courseId]\page.tsx
+"@
+}
+
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$backupRoot = Join-Path $root "_backups\course-dashboard-ui-$timestamp"
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+
+function Backup-File([string]$Path) {
+    $relative = $Path.Substring($root.Length).TrimStart("\", "/")
+    $destination = Join-Path $backupRoot $relative
+    New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
+    Copy-Item -LiteralPath $Path -Destination $destination -Force
+}
+
+function Write-Utf8([string]$Path, [string]$Content) {
+    [System.IO.File]::WriteAllText($Path, $Content, $utf8)
+}
+
+Backup-File $coursePagePath
+Backup-File $managerPagePath
+
+$coursePage = @'
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
@@ -288,3 +335,308 @@ export default async function AdminCoursesPage() {
     </main>
   );
 }
+'@
+
+Write-Utf8 $coursePagePath $coursePage
+
+$managerPage = @'
+import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
+import { requireManagerOrAdmin } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const managerCards = [
+  {
+    title: "Registration Command Center",
+    description:
+      "Review, confirm, reject, and message workshop registrants with pagination and status filters.",
+    href: "/manager/registrations",
+  },
+  {
+    title: "Course Registration Center",
+    description:
+      "Choose one course and manage its participants, payment status, and learning access.",
+    href: "/manager/course-registrations",
+  },
+  {
+    title: "Message Center",
+    description:
+      "Open your inbox and reply to participants or team members.",
+    href: "/dashboard/messages",
+  },
+  {
+    title: "Send Messages",
+    description:
+      "Send direct or broadcast messages to participants and roles.",
+    href: "/dashboard/messages/send",
+  },
+  {
+    title: "Payments",
+    description:
+      "Review payment receipts and workshop access status.",
+    href: "/manager/payments",
+  },
+  {
+    title: "Monitoring Board",
+    description:
+      "View registration, payment, workshop and user activity statistics.",
+    href: "/manager/monitor",
+  },
+  {
+    title: "Notices",
+    description:
+      "Publish public notices, announcements and media updates.",
+    href: "/manager/notices",
+  },
+  {
+    title: "Workshops",
+    description:
+      "Manage workshop operations, access, materials and video links.",
+    href: "/manager/workshops",
+  },
+  {
+    title: "Courses",
+    description:
+      "Open the admin course library and manage course content.",
+    href: "/admin/courses",
+  },
+  {
+    title: "Team",
+    description:
+      "Manage visible team profiles and member information.",
+    href: "/manager/team",
+  },
+];
+
+export default async function ManagerPage() {
+  noStore();
+
+  const auth = await requireManagerOrAdmin("/manager");
+
+  const [
+    pendingWorkshopResult,
+    pendingCourseResult,
+    unreadResult,
+  ] = await Promise.all([
+    auth.admin
+      .from("workshop_registrations")
+      .select("id", { count: "exact", head: true })
+      .eq("registration_status", "pending"),
+
+    auth.admin
+      .from("enrollments")
+      .select("id", { count: "exact", head: true })
+      .eq("registration_status", "pending"),
+
+    auth.admin
+      .from("user_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", auth.user.id)
+      .eq("is_read", false),
+  ]);
+
+  const pendingWorkshopRegistrations =
+    pendingWorkshopResult.count || 0;
+
+  const pendingCourseRegistrations =
+    pendingCourseResult.count || 0;
+
+  const unreadMessages = unreadResult.count || 0;
+
+  return (
+    <main
+      className="min-h-screen bg-[#f8fafc] px-4 pb-16 sm:px-6 lg:px-8"
+      style={{ paddingTop: "128px" }}
+    >
+      <section className="mx-auto max-w-7xl">
+        <div className="rounded-[2.5rem] bg-slate-950 p-8 text-white shadow-xl md:p-10">
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-300">
+            Manager dashboard
+          </p>
+
+          <h1 className="mt-4 text-4xl font-black tracking-tight md:text-6xl">
+            Operations board
+          </h1>
+
+          <p className="mt-5 max-w-3xl leading-8 text-slate-300">
+            One login session covers workshop and course registrations,
+            payment approval, participant messages, and management tools.
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-4">
+            <Link
+              prefetch={false}
+              href="/manager/registrations"
+              className="rounded-2xl bg-white px-5 py-4 text-sm font-black text-slate-950"
+            >
+              {pendingWorkshopRegistrations} pending workshop registrations
+            </Link>
+
+            <Link
+              prefetch={false}
+              href="/manager/course-registrations"
+              className="rounded-2xl bg-indigo-300 px-5 py-4 text-sm font-black text-slate-950"
+            >
+              {pendingCourseRegistrations} pending course registrations
+            </Link>
+
+            <Link
+              prefetch={false}
+              href="/dashboard/messages"
+              className="rounded-2xl bg-[#8b93f8] px-5 py-4 text-sm font-black text-slate-950"
+            >
+              {unreadMessages} unread messages
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {managerCards.map((card) => (
+            <Link
+              prefetch={false}
+              key={card.href}
+              href={card.href}
+              className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
+              <h2 className="text-2xl font-black tracking-tight text-slate-950">
+                {card.title}
+              </h2>
+
+              <p className="mt-3 leading-7 text-slate-600">
+                {card.description}
+              </p>
+
+              <span className="mt-6 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-bold text-white">
+                Open -&gt;
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+'@
+
+Write-Utf8 $managerPagePath $managerPage
+
+$tsconfigPath = Join-Path $root "tsconfig.json"
+
+if (Test-Path -LiteralPath $tsconfigPath) {
+    $tempScript = Join-Path $env:TEMP "course-dashboard-tsconfig-$timestamp.cjs"
+
+    $nodeScript = @'
+const fs = require("fs");
+const path = require("path");
+const root = process.cwd();
+const file = path.join(root, "tsconfig.json");
+const ts = require(require.resolve("typescript", { paths: [root] }));
+const source = fs.readFileSync(file, "utf8");
+const parsed = ts.parseConfigFileTextToJson(file, source);
+
+if (parsed.error) {
+  throw new Error(
+    ts.flattenDiagnosticMessageText(parsed.error.messageText, "\n")
+  );
+}
+
+const config = parsed.config || {};
+const current = Array.isArray(config.exclude)
+  ? config.exclude
+  : [];
+
+config.exclude = Array.from(
+  new Set([
+    ...current,
+    "node_modules",
+    ".next",
+    "_backups",
+    "**/*.backup-*"
+  ])
+);
+
+fs.writeFileSync(
+  file,
+  JSON.stringify(config, null, 2) + "\n",
+  "utf8"
+);
+'@
+
+    [System.IO.File]::WriteAllText($tempScript, $nodeScript, $utf8)
+
+    try {
+        node $tempScript
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not update tsconfig.json."
+        }
+    }
+    finally {
+        Remove-Item -LiteralPath $tempScript -Force -ErrorAction SilentlyContinue
+    }
+}
+
+Remove-Item -LiteralPath (Join-Path $root ".next") -Recurse -Force -ErrorAction SilentlyContinue
+
+$packageJson = Get-Content -LiteralPath (Join-Path $root "package.json") -Raw | ConvertFrom-Json
+$scripts = $packageJson.scripts
+
+Write-Host ""
+Write-Host "Course library and manager dashboard updated." -ForegroundColor Green
+Write-Host "Backup:" -ForegroundColor Cyan
+Write-Host "  $backupRoot"
+Write-Host ""
+Write-Host "Running TypeScript validation..." -ForegroundColor Yellow
+
+if (
+    $null -ne $scripts -and
+    $scripts.PSObject.Properties.Name -contains "typecheck"
+) {
+    npm.cmd run typecheck
+}
+else {
+    npx.cmd tsc --noEmit
+}
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "TypeScript validation failed." -ForegroundColor Red
+    Write-Host "Backup:" -ForegroundColor Yellow
+    Write-Host "  $backupRoot"
+    exit 1
+}
+
+Write-Host ""
+Write-Host "TypeScript validation passed." -ForegroundColor Green
+
+if (
+    $null -ne $scripts -and
+    $scripts.PSObject.Properties.Name -contains "build"
+) {
+    Write-Host ""
+    Write-Host "Running production build..." -ForegroundColor Yellow
+    npm.cmd run build
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "Production build failed." -ForegroundColor Red
+        Write-Host "Backup:" -ForegroundColor Yellow
+        Write-Host "  $backupRoot"
+        exit 1
+    }
+}
+
+Write-Host ""
+Write-Host "COURSE DASHBOARD UI FIX COMPLETE" -ForegroundColor Green
+Write-Host ""
+Write-Host "Updated:" -ForegroundColor Cyan
+Write-Host "  /admin/courses"
+Write-Host "  /manager"
+Write-Host ""
+Write-Host "Course registration center:" -ForegroundColor Cyan
+Write-Host "  /manager/course-registrations"
+Write-Host ""
+Write-Host "Run:" -ForegroundColor Yellow
+Write-Host "  npm.cmd run dev"
