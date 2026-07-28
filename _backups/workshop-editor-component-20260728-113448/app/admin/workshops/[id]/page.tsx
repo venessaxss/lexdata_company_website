@@ -152,10 +152,10 @@ export default async function WorkshopWorkspacePage({
     workshop.is_published === true || workshop.is_active === true;
 
   return (
-    <main className="min-h-screen bg-[#f6f8fb] px-4 pb-16 sm:px-6 lg:px-8" style={{ paddingTop: "136px" }}>
-      <div className="mx-auto w-full max-w-[1480px] space-y-6">
-        <header className="rounded-[26px] border border-slate-200 bg-white p-7 shadow-sm">
-          <div className="flex flex-col justify-between gap-6 xl:flex-row xl:items-start">
+    <main className="min-h-screen bg-slate-50 px-4 py-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <header className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
               <Link
                 href="/admin/workshops"
@@ -194,7 +194,7 @@ export default async function WorkshopWorkspacePage({
               </p>
             </div>
 
-            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+            <div className="flex flex-wrap gap-2">
               {workshop.slug ? (
                 <>
                   <Link
@@ -273,9 +273,9 @@ export default async function WorkshopWorkspacePage({
           </div>
         </section>
 
-        <div className="space-y-6">
-          <aside className="grid gap-4 lg:grid-cols-2">
-            <section id="overview" className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="grid gap-6 xl:grid-cols-[330px_minmax(0,1fr)]">
+          <aside className="space-y-5 xl:sticky xl:top-5 xl:self-start">
+            <section id="overview" className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
               <details>
                 <summary className="cursor-pointer list-none text-lg font-black text-slate-950">
                   Workshop overview
@@ -352,7 +352,7 @@ export default async function WorkshopWorkspacePage({
               </details>
             </section>
 
-            <section id="status" className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
+            <section id="status" className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
               <details>
                 <summary className="cursor-pointer list-none text-lg font-black text-slate-950">
                   Recruitment and process
@@ -386,9 +386,9 @@ export default async function WorkshopWorkspacePage({
             </section>
           </aside>
 
-          <section id="schedule" className="w-full space-y-4">
-            <div className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
+          <section id="schedule" className="space-y-5">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600">
                     Schedule builder
@@ -410,7 +410,7 @@ export default async function WorkshopWorkspacePage({
                     <input type="hidden" name="workshop_id" value={workshop.id} />
                     <input name="title" required placeholder="Session title" className={inputClass} />
 
-                    <div className="grid gap-2 sm:grid-cols-3">
+                    <div className="grid grid-cols-3 gap-2">
                       <input name="session_date" required type="date" defaultValue={dateValue(workshop.start_date || workshop.date)} className={inputClass} />
                       <input name="start_time" required type="time" className={inputClass} />
                       <input name="end_time" required type="time" className={inputClass} />
@@ -435,7 +435,7 @@ export default async function WorkshopWorkspacePage({
             </div>
 
             {sessions.length === 0 ? (
-              <div className="rounded-[26px] border border-dashed border-slate-300 bg-white p-12 text-center">
+              <div className="rounded-[2rem] border border-dashed border-slate-300 bg-white p-12 text-center">
                 <h3 className="text-xl font-black text-slate-950">
                   No major sessions yet
                 </h3>
@@ -448,8 +448,8 @@ export default async function WorkshopWorkspacePage({
                 const childSessions = subsessionsBySession.get(session.id) || [];
 
                 return (
-                  <article key={session.id} className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-sm">
-                    <div className="border-b border-slate-200 bg-slate-50/80 p-4 sm:p-5">
+                  <article key={session.id} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+                    <div className="border-b border-slate-200 bg-slate-50 p-5">
                       <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
                         <div className="flex gap-4">
                           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-lg font-black text-white">
@@ -457,7 +457,7 @@ export default async function WorkshopWorkspacePage({
                           </div>
 
                           <div>
-                            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+                            <div className="flex flex-wrap gap-2">
                               <span className={`rounded-full px-3 py-1 text-xs font-black ${session.is_active !== false ? "bg-emerald-50 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
                                 {session.is_active !== false ? "Active" : "Hidden"}
                               </span>
@@ -466,7 +466,7 @@ export default async function WorkshopWorkspacePage({
                               </span>
                             </div>
 
-                            <h3 className="mt-3 text-xl font-black leading-tight text-slate-950 sm:text-2xl">
+                            <h3 className="mt-3 text-2xl font-black text-slate-950">
                               {session.title || "Workshop Session"}
                             </h3>
 
@@ -477,7 +477,7 @@ export default async function WorkshopWorkspacePage({
                           </div>
                         </div>
 
-                        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+                        <div className="flex flex-wrap gap-2">
                           <form action={moveSessionAction}>
                             <input type="hidden" name="workshop_id" value={workshop.id} />
                             <input type="hidden" name="session_id" value={session.id} />
@@ -503,7 +503,7 @@ export default async function WorkshopWorkspacePage({
                       </div>
                     </div>
 
-                    <div className="space-y-4 p-4 sm:p-5">
+                    <div className="space-y-5 p-5">
                       <details className="rounded-2xl border border-slate-200 p-4">
                         <summary className="cursor-pointer list-none font-black text-slate-800">
                           Edit major session
@@ -623,7 +623,7 @@ export default async function WorkshopWorkspacePage({
                                   </div>
                                 </div>
 
-                                <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
+                                <div className="flex flex-wrap gap-2">
                                   <form action={moveSubsessionAction}>
                                     <input type="hidden" name="workshop_id" value={workshop.id} />
                                     <input type="hidden" name="session_id" value={session.id} />
