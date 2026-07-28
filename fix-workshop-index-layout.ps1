@@ -1,3 +1,22 @@
+$ErrorActionPreference = "Stop"
+
+$root = (Get-Location).Path
+$pagePath = Join-Path $root "app\admin\workshops\page.tsx"
+
+if (-not (Test-Path -LiteralPath $pagePath)) {
+    throw "Cannot find app\admin\workshops\page.tsx. Run this script from the project root."
+}
+
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$backupRoot = Join-Path $root "_backups\workshop-index-layout-$timestamp"
+$backupPath = Join-Path $backupRoot "app\admin\workshops\page.tsx"
+
+New-Item -ItemType Directory -Path (Split-Path -Parent $backupPath) -Force | Out-Null
+Copy-Item -LiteralPath $pagePath -Destination $backupPath -Force
+
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+
+$page = @'
 import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
@@ -199,7 +218,7 @@ export default async function AdminWorkshopsPage() {
           href="/admin"
           className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-slate-950"
         >
-          <span aria-hidden="true">&larr;</span>
+          <span aria-hidden="true">←</span>
           Back to admin dashboard
         </Link>
 
@@ -407,3 +426,126 @@ export default async function AdminWorkshopsPage() {
     </main>
   );
 }
+'@
+
+[System.IO.File]::WriteAllText($pagePath, $page, $utf8)
+
+# Keep TypeScript from compiling backup source files.
+$tsconfigPath = Join-Path $root "tsconfig.json"
+
+if (Test-Path -LiteralPath $tsconfigPath) {
+    $tempScript = Join-Path $env:TEMP "fix-tsconfig-workshop-layout-$timestamp.cjs"
+
+    $nodeScript = @'
+const fs = require("fs");
+const path = require("path");
+const root = process.cwd();
+const file = path.join(root, "tsconfig.json");
+const ts = require(require.resolve("typescript", { paths: [root] }));
+const source = fs.readFileSync(file, "utf8");
+const parsed = ts.parseConfigFileTextToJson(file, source);
+
+if (parsed.error) {
+  throw new Error(
+    ts.flattenDiagnosticMessageText(parsed.error.messageText, "\n")
+  );
+}
+
+const config = parsed.config || {};
+const current = Array.isArray(config.exclude) ? config.exclude : [];
+config.exclude = Array.from(
+  new Set([
+    ...current,
+    "node_modules",
+    ".next",
+    "_backups",
+    "**/*.backup-*"
+  ])
+);
+
+fs.writeFileSync(
+  file,
+  JSON.stringify(config, null, 2) + "\n",
+  "utf8"
+);
+'@
+
+    [System.IO.File]::WriteAllText(
+        $tempScript,
+        $nodeScript,
+        $utf8
+    )
+
+    try {
+        node $tempScript
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not update tsconfig.json."
+        }
+    }
+    finally {
+        Remove-Item -LiteralPath $tempScript -Force -ErrorAction SilentlyContinue
+    }
+}
+
+Remove-Item -LiteralPath (Join-Path $root ".next") `
+    -Recurse `
+    -Force `
+    -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "Workshop index layout replaced." -ForegroundColor Green
+Write-Host "Backup:" -ForegroundColor Cyan
+Write-Host "  $backupRoot"
+Write-Host ""
+Write-Host "Running TypeScript validation..." -ForegroundColor Yellow
+
+$packageJson = Get-Content `
+    -LiteralPath (Join-Path $root "package.json") `
+    -Raw |
+    ConvertFrom-Json
+
+$scripts = $packageJson.scripts
+
+if (
+    $null -ne $scripts -and
+    $scripts.PSObject.Properties.Name -contains "typecheck"
+) {
+    npm.cmd run typecheck
+}
+else {
+    npx.cmd tsc --noEmit
+}
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "TypeScript validation failed." -ForegroundColor Red
+    Write-Host "Backup:" -ForegroundColor Yellow
+    Write-Host "  $backupRoot"
+    exit 1
+}
+
+Write-Host ""
+Write-Host "TypeScript validation passed." -ForegroundColor Green
+
+if (
+    $null -ne $scripts -and
+    $scripts.PSObject.Properties.Name -contains "build"
+) {
+    Write-Host ""
+    Write-Host "Running production build..." -ForegroundColor Yellow
+
+    npm.cmd run build
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "Production build failed." -ForegroundColor Red
+        exit 1
+    }
+}
+
+Write-Host ""
+Write-Host "WORKSHOP INDEX LAYOUT FIX COMPLETE" -ForegroundColor Green
+Write-Host ""
+Write-Host "Start the site with:" -ForegroundColor Cyan
+Write-Host "  npm.cmd run dev"

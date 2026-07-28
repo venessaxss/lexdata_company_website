@@ -199,7 +199,7 @@ export default async function AdminWorkshopsPage() {
           href="/admin"
           className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-slate-950"
         >
-          <span aria-hidden="true">&larr;</span>
+          <span aria-hidden="true">鈫?/span>
           Back to admin dashboard
         </Link>
 
