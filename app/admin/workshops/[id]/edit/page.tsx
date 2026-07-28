@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-export default function Page() {
-  redirect("/admin/workshops");
+export default async function WorkshopEditRedirect({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  redirect(`/admin/workshops/${id}#overview`);
 }
