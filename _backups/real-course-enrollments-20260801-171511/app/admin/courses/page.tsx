@@ -58,7 +58,7 @@ export default async function AdminCoursesPage() {
       .order("updated_at", { ascending: false }),
 
     auth.admin
-      .from("course_enrollments")
+      .from("enrollments")
       .select("id, course_id"),
   ]);
 

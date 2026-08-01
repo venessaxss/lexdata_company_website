@@ -84,9 +84,9 @@ export default async function ManagerPage() {
       .eq("registration_status", "pending"),
 
     auth.admin
-      .from("course_enrollments")
+      .from("enrollments")
       .select("id", { count: "exact", head: true })
-      .eq("enrollment_status", "pending"),
+      .eq("registration_status", "pending"),
 
     auth.admin
       .from("user_messages")
