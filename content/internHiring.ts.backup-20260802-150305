@@ -58,7 +58,7 @@ export const internHiringSlides: InternHiringSlide[] = [
     bullets: [
       "Strong communication and responsibility",
       "English working ability",
-      "Chinese is an advantage",
+      "Chinese or Mongolian is an advantage",
     ],
     footer: "A portfolio or GitHub profile is useful but not required.",
   },
