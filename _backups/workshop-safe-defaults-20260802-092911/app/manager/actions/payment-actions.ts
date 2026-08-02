@@ -151,7 +151,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   switch (intent) {
     case "grant_access":
       updatePayload = {
-        access_status: "pending",
+        access_status: "granted",
       };
       successMessage = "Workshop access granted.";
       notification = {
@@ -163,7 +163,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
     case "revoke_access":
       updatePayload = {
-        access_status: "pending",
+        access_status: "revoked",
       };
       successMessage = "Workshop access revoked.";
       notification = {
@@ -184,7 +184,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     case "send_payment_message":
       updatePayload = {
         registration_status: registrationStatus,
-        payment_status: "pending",
+        payment_status: "instructions_sent",
         payment_link: paymentLink || null,
         payment_note: paymentNote || null,
       };
@@ -203,7 +203,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     case "record_payment_received":
       updatePayload = {
         registration_status: registrationStatus,
-        payment_status: "pending",
+        payment_status: "under_review",
         amount_received: amountReceived,
         payment_currency: paymentCurrency,
         payment_note: paymentNote || null,
@@ -218,9 +218,9 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
     case "confirm_payment":
       updatePayload = {
-        registration_status: "pending",
-        payment_status: "pending",
-        access_status: "pending",
+        registration_status: "confirmed",
+        payment_status: "confirmed",
+        access_status: "granted",
         amount_received: amountReceived,
         payment_currency: paymentCurrency,
         payment_note: paymentNote || null,
@@ -235,9 +235,9 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
     case "waive_payment":
       updatePayload = {
-        registration_status: "pending",
-        payment_status: "pending",
-        access_status: "pending",
+        registration_status: "confirmed",
+        payment_status: "waived",
+        access_status: "granted",
         amount_received: 0,
         payment_note: paymentNote || null,
       };

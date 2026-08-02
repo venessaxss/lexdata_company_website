@@ -32,9 +32,9 @@ export async function confirmRegistrationAction(formData: FormData) {
   const { error } = await auth.admin
     .from("workshop_registrations")
     .update({
-      registration_status: "pending",
-      payment_status: "pending",
-      access_status: "pending",
+      registration_status: "confirmed",
+      payment_status: "confirmed",
+      access_status: "granted",
       manager_note: note || null,
       updated_at: new Date().toISOString(),
     })
@@ -77,9 +77,9 @@ export async function rejectRegistrationAction(formData: FormData) {
   const { error } = await auth.admin
     .from("workshop_registrations")
     .update({
-      registration_status: "pending",
-      payment_status: "pending",
-      access_status: "pending",
+      registration_status: "rejected",
+      payment_status: "rejected",
+      access_status: "revoked",
       manager_note: note || null,
       updated_at: new Date().toISOString(),
     })
@@ -120,7 +120,7 @@ export async function reviewRegistrationAction(formData: FormData) {
   const { error } = await auth.admin
     .from("workshop_registrations")
     .update({
-      registration_status: "pending",
+      registration_status: "reviewing",
       manager_note: note || null,
       updated_at: new Date().toISOString(),
     })
@@ -196,7 +196,7 @@ export async function grantWorkshopAccessAction(formData: FormData) {
   const { error } = await auth.admin
     .from("workshop_registrations")
     .update({
-      access_status: "pending",
+      access_status: "granted",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
@@ -228,7 +228,7 @@ export async function revokeWorkshopAccessAction(formData: FormData) {
   const { error } = await auth.admin
     .from("workshop_registrations")
     .update({
-      access_status: "pending",
+      access_status: "revoked",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);

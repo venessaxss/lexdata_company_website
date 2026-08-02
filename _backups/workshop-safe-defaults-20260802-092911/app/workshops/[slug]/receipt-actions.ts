@@ -49,7 +49,7 @@ export async function uploadReceiptAction(formData: FormData) {
     .from("workshop_registrations")
     .update({
       receipt_url: publicUrlData.publicUrl,
-      payment_status: "pending",
+      payment_status: "under_review",
       updated_at: new Date().toISOString(),
     })
     .eq("id", registrationId);
