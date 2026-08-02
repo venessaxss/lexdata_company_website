@@ -7,7 +7,6 @@ import DynamicDoodleBand from "@/components/DynamicDoodleBand";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import BubblingCaseGrid from "@/components/BubblingCaseGrid";
 import WorkshopNoticeSlider from "@/components/WorkshopNoticeSlider";
-import InternHiringSlider from "@/components/InternHiringSlider";
 import DynamicArtisticStatement from "@/components/DynamicArtisticStatement";
 import { getPublicWorkshopNotices } from "@/lib/workshop-notices";
 import { getCurrentProfile, normalizeRole } from "@/lib/auth";
@@ -148,7 +147,6 @@ export default async function IntegratedHomePage() {
         </div>
       </section>
 <WorkshopNoticeSlider notices={workshopNotices} />
-      <InternHiringSlider />
 
       <section className="lx-final-cta">
         <p>One login. One dashboard.</p>
