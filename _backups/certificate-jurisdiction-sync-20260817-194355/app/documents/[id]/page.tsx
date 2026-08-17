@@ -47,9 +47,6 @@ export default async function OfficialDocumentPage({
   const requestedPreview = (await searchParams).format === "current";
   let renderedMetadata = { ...(document.metadata || {}) };
   let renderedIssuerData = issuer(document);
-  let renderedJurisdiction = normalizeJurisdiction(
-    document.jurisdiction
-  );
   let currentFormatPreview = false;
   if (isAdmin && requestedPreview && ["revoked", "void"].includes(document.status)) {
     if (document.document_type === "receipt") {
@@ -97,24 +94,10 @@ export default async function OfficialDocumentPage({
     } else if (document.source_type === "workshop_registration") {
       const { data: registration } = await admin
         .from("workshop_registrations")
-        .select("workshop_id,document_jurisdiction")
+        .select("workshop_id")
         .eq("id", document.source_id)
         .maybeSingle();
       if (registration) {
-        renderedJurisdiction = normalizeJurisdiction(
-          registration.document_jurisdiction
-        );
-
-        const { data: currentCertificateIssuer } = await admin
-          .from("document_issuer_profiles")
-          .select("*")
-          .eq("jurisdiction", renderedJurisdiction)
-          .maybeSingle();
-
-        if (currentCertificateIssuer) {
-          renderedIssuerData = currentCertificateIssuer;
-        }
-
         const { data: template } = await admin
           .from("certificate_templates")
           .select("*")
@@ -142,7 +125,7 @@ export default async function OfficialDocumentPage({
     }
   }
 
-  const jurisdiction = renderedJurisdiction;
+  const jurisdiction = normalizeJurisdiction(document.jurisdiction);
   const issuerData = renderedIssuerData;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const verifyUrl = `${siteUrl}/verify/${document.verification_code}`;
@@ -187,9 +170,7 @@ export default async function OfficialDocumentPage({
       </div>
       {currentFormatPreview ? (
         <div className="mx-auto mb-5 max-w-5xl rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm font-bold text-blue-900 print:hidden">
-          {document.document_type === "certificate"
-            ? "Previewing the current certificate format and the issuing jurisdiction currently selected in Registration Management. The revoked document remains unchanged until Reissue is completed."
-            : "Previewing the current receipt format, current issuer profile, and current active issuer stamp on this voided document. The saved document remains unchanged until Reissue is completed."}
+          Previewing the current receipt format, current issuer profile, and current active issuer stamp on this revoked document. The saved document remains unchanged until Reissue is completed.
         </div>
       ) : null}
 

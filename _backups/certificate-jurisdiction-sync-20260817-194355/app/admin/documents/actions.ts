@@ -717,16 +717,6 @@ export async function reissueRevokedDocumentWithCurrentFormatAction(formData: Fo
   let metadata = { ...(document.metadata || {}) };
   let formatReference: Record<string, unknown> = {};
 
-  let reissueJurisdiction = normalizeJurisdiction(
-    document.jurisdiction
-  );
-
-  let reissueDocumentNumber =
-    document.document_number;
-
-  let reissueIssuerSnapshot =
-    document.issuer_snapshot || {};
-
   if (document.document_type === "receipt") {
     const { data: receiptFormat } = await auth.admin
       .from("document_format_profiles")
@@ -752,69 +742,12 @@ export async function reissueRevokedDocumentWithCurrentFormatAction(formData: Fo
     }
     const { data: registration } = await auth.admin
       .from("workshop_registrations")
-      .select("workshop_id,document_jurisdiction")
+      .select("workshop_id")
       .eq("id", document.source_id)
       .maybeSingle();
     if (!registration) {
       redirect(certificateBack("error", "The original workshop registration could not be found."));
     }
-
-    reissueJurisdiction = normalizeJurisdiction(
-      registration.document_jurisdiction
-    );
-
-    const { data: currentCertificateIssuer } =
-      await auth.admin
-        .from("document_issuer_profiles")
-        .select("*")
-        .eq(
-          "jurisdiction",
-          reissueJurisdiction
-        )
-        .maybeSingle();
-
-    if (currentCertificateIssuer) {
-      reissueIssuerSnapshot =
-        currentCertificateIssuer;
-    }
-
-    if (
-      reissueJurisdiction !==
-      normalizeJurisdiction(
-        document.jurisdiction
-      )
-    ) {
-      const {
-        data: generatedDocumentNumber,
-        error: documentNumberError,
-      } = await auth.admin.rpc(
-        "document_number",
-        {
-          p_type: "certificate",
-          p_jurisdiction:
-            reissueJurisdiction,
-        }
-      );
-
-      if (
-        documentNumberError ||
-        !generatedDocumentNumber
-      ) {
-        redirect(
-          certificateBack(
-            "error",
-            documentNumberError?.message ||
-              "Could not generate a certificate number for the new jurisdiction."
-          )
-        );
-      }
-
-      reissueDocumentNumber =
-        String(
-          generatedDocumentNumber
-        );
-    }
-
     const { data: template } = await auth.admin
       .from("certificate_templates")
       .select("*")
@@ -845,12 +778,6 @@ export async function reissueRevokedDocumentWithCurrentFormatAction(formData: Fo
   const { data: reissued, error } = await auth.admin
     .from("official_documents")
     .update({
-      document_number:
-        reissueDocumentNumber,
-      jurisdiction:
-        reissueJurisdiction,
-      issuer_snapshot:
-        reissueIssuerSnapshot,
       status: "issued",
       issued_at: reissuedAt,
       issued_by: auth.user.id,
@@ -881,14 +808,6 @@ export async function reissueRevokedDocumentWithCurrentFormatAction(formData: Fo
     details: {
       correction_reason: correctionReason,
       previous_revocation_reason: previousRevocationReason,
-      previous_jurisdiction:
-        document.jurisdiction,
-      reissued_jurisdiction:
-        reissueJurisdiction,
-      previous_document_number:
-        document.document_number,
-      reissued_document_number:
-        reissueDocumentNumber,
       ...formatReference,
     },
   });

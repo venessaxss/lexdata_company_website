@@ -102,22 +102,6 @@ export default async function CertificateManagementPage({
 
         <section className="mt-12">
           <h2 className="text-2xl font-black">Certificate register</h2>
-
-          <div className="mt-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-            <p className="font-black">
-              Certificate jurisdiction source
-            </p>
-            <p className="mt-1">
-              The issuing jurisdiction follows the country selected for the participant in Registration Management.
-              Change Pakistan / Saudi Arabia / China there before previewing and reissuing a revoked certificate.
-            </p>
-            <Link
-              href="/manager/registrations"
-              className="mt-3 inline-flex rounded-xl bg-blue-900 px-4 py-2 text-xs font-black text-white"
-            >
-              Open Registration Management
-            </Link>
-          </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {(documentResult.data || []).map((document: any) => (
               <article key={document.id} className="rounded-2xl border bg-white p-5 shadow-sm">
