@@ -826,12 +826,16 @@ export default async function ManagerRegistrationsPage({
                                     <option value="under_review">
                                       Under Review
                                     </option>
-                                    <option value="confirmed">
-                                      Confirmed Paid
-                                    </option>
-                                    <option value="waived">
-                                      Waived
-                                    </option>
+                                    {registration.payment_status === "confirmed" ? (
+                                      <option value="confirmed">
+                                        Confirmed Paid
+                                      </option>
+                                    ) : null}
+                                    {registration.payment_status === "waived" ? (
+                                      <option value="waived">
+                                        Waived
+                                      </option>
+                                    ) : null}
                                     <option value="rejected">Rejected</option>
                                   </select>
                                 </div>
@@ -934,7 +938,7 @@ export default async function ManagerRegistrationsPage({
                                   <option value="CN">China</option>
                                 </select>
                                 <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-500">
-                                  Admin can change the receipt issuing entity here. The saved issuer is inherited by any pending participant receipt application.
+                                  This issuer is inherited by the participant&apos;s receipt application. Choose Pakistan, Saudi Arabia, or China before confirming payment.
                                 </p>
                               </div>
 

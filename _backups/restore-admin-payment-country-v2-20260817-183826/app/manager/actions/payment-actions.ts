@@ -111,7 +111,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   const { data: registration, error: loadError } = await admin
     .from("workshop_registrations")
     .select(
-      "id, user_id, email, full_name, workshop_id, registration_status, payment_status, attendance_status, attendance_confirmed_at, document_jurisdiction"
+      "id, user_id, email, full_name, workshop_id, registration_status, payment_status, attendance_status, attendance_confirmed_at"
     )
     .eq("id", registrationId)
     .maybeSingle();
@@ -139,21 +139,10 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     ? requestedRegistrationStatus
     : registration.registration_status || "pending";
 
-  const requestedPaymentStatus =
+  const paymentStatus =
     text(formData, "payment_status") ||
     registration.payment_status ||
     "pending";
-
-  const paymentStatus = [
-    "pending",
-    "instructions_sent",
-    "under_review",
-    "confirmed",
-    "waived",
-    "rejected",
-  ].includes(requestedPaymentStatus)
-    ? requestedPaymentStatus
-    : registration.payment_status || "pending";
 
   const requestedAttendanceStatus =
     text(formData, "attendance_status") ||
@@ -217,99 +206,55 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     case "save_statuses":
       if (
         paymentStatus === "confirmed" &&
-        amountReceived <= 0
+        registration.payment_status !== "confirmed"
       ) {
         redirect(
           withMessage(
             returnTo,
             "error",
-            "Confirmed Paid requires a positive Amount received."
+            "Use Confirm & unlock to confirm payment. This guarantees the confirmed amount, currency, issuer, and receipt eligibility stay synchronized."
+          )
+        );
+      }
+
+      if (
+        paymentStatus === "waived" &&
+        registration.payment_status !== "waived"
+      ) {
+        redirect(
+          withMessage(
+            returnTo,
+            "error",
+            "Use Waive & unlock to waive payment. This keeps payment and access state synchronized."
           )
         );
       }
 
       updatePayload = {
-        registration_status:
-          registrationStatus,
-
-        payment_status:
-          paymentStatus,
-
-        attendance_status:
-          attendanceStatus,
-
-        attendance_note:
-          attendanceNote || null,
-
+        registration_status: registrationStatus,
+        payment_status: paymentStatus,
+        attendance_status: attendanceStatus,
+        attendance_note: attendanceNote || null,
         attendance_confirmed_at:
           attendanceStatus === "attended"
-            ? registration.attendance_confirmed_at ||
-              new Date().toISOString()
+            ? registration.attendance_confirmed_at || new Date().toISOString()
             : null,
-
         attendance_confirmed_by:
-          attendanceStatus === "attended"
-            ? actor.user.id
-            : null,
-
-        amount_received:
-          paymentStatus === "waived"
-            ? 0
-            : amountReceived,
-
-        payment_currency:
-          paymentCurrency,
-
-        document_jurisdiction:
-          documentJurisdiction,
-
-        payment_link:
-          paymentLink || null,
-
-        payment_note:
-          paymentNote || null,
-
-        ...(paymentStatus === "confirmed" ||
-        paymentStatus === "waived"
-          ? {
-              access_status: "granted",
-            }
-          : {}),
+          attendanceStatus === "attended" ? actor.user.id : null,
       };
-
-      successMessage =
-        "Registration, payment, attendance, amount, currency, and receipt issuer saved.";
-
+      successMessage = "Registration, payment, and attendance statuses saved.";
       if (
-        paymentStatus === "confirmed" &&
-        registration.payment_status !==
-          "confirmed"
+        attendanceStatus === "attended" &&
+        registration.attendance_status !== "attended"
       ) {
         notification = {
-          title:
-            "Payment confirmed",
-          body:
-            "Your payment has been confirmed and your workshop access is unlocked. You can now submit your receipt application from Dashboard > Receipts.",
-          sourceType:
-            "payment_confirmed",
-        };
-      } else if (
-        attendanceStatus ===
-          "attended" &&
-        registration.attendance_status !==
-          "attended"
-      ) {
-        notification = {
-          title:
-            "Workshop attendance confirmed",
-          body:
-            "The admin has confirmed your workshop attendance. You can now apply from Dashboard > Certificates.",
-          sourceType:
-            "attendance_confirmed",
+          title: "Workshop attendance confirmed",
+          body: "The admin has confirmed your workshop attendance. You can now apply from Dashboard > Certificates.",
+          sourceType: "attendance_confirmed",
         };
       }
-
       break;
+
     case "send_payment_message":
       updatePayload = {
         registration_status: registrationStatus,
@@ -403,46 +348,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
   if (updateError) {
     redirect(withMessage(returnTo, "error", updateError.message));
-  }
-
-  // receipt application issuer sync:
-  // Registration Management is authoritative until receipt approval.
-  if (
-    [
-      "save_statuses",
-      "record_payment_received",
-      "confirm_payment",
-      "waive_payment",
-    ].includes(intent)
-  ) {
-    const {
-      error:
-        receiptApplicationSyncError,
-    } = await admin
-      .from("receipt_applications")
-      .update({
-        jurisdiction:
-          documentJurisdiction,
-        updated_at:
-          new Date().toISOString(),
-      })
-      .eq(
-        "workshop_registration_id",
-        registrationId
-      )
-      .in(
-        "status",
-        ["pending", "rejected"]
-      );
-
-    if (
-      receiptApplicationSyncError
-    ) {
-      console.error(
-        "Receipt application issuer sync failed:",
-        receiptApplicationSyncError.message
-      );
-    }
   }
 
   if (notification) {
