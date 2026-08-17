@@ -19,8 +19,18 @@ function back(key: "message" | "error", message: string) {
   return `/admin/documents?${key}=${encodeURIComponent(message)}`;
 }
 
+function certificateBack(key: "message" | "error", message: string) {
+  return `/admin/documents/certificates?${key}=${encodeURIComponent(message)}`;
+}
+
+function receiptBack(key: "message" | "error", message: string) {
+  return `/admin/documents/receipts?${key}=${encodeURIComponent(message)}`;
+}
+
 function refresh() {
   revalidatePath("/admin/documents");
+  revalidatePath("/admin/documents/certificates");
+  revalidatePath("/admin/documents/receipts");
   revalidatePath("/dashboard/documents");
 }
 
@@ -31,23 +41,23 @@ function boundedPercent(value: string, fallback: number, minimum: number, maximu
 }
 
 export async function uploadCertificateTemplateAction(formData: FormData) {
-  const auth = await requireAdmin("/admin/documents");
+  const auth = await requireAdmin("/admin/documents/certificates");
   const workshopId = field(formData, "workshop_id");
   const templateName = field(formData, "template_name");
   const textColor = field(formData, "text_color") || "#0B2545";
   const file = formData.get("template_file") as File | null;
 
   if (!workshopId || !templateName || !file || file.size === 0) {
-    redirect(back("error", "Workshop, template name, and image file are required."));
+    redirect(certificateBack("error", "Workshop, template name, and image file are required."));
   }
   if (!CERTIFICATE_TEMPLATE_TYPES.has(file.type)) {
-    redirect(back("error", "Certificate templates must be PNG, JPG, or WebP images."));
+    redirect(certificateBack("error", "Certificate templates must be PNG, JPG, or WebP images."));
   }
   if (file.size > 10 * 1024 * 1024) {
-    redirect(back("error", "Certificate template must be 10 MB or smaller."));
+    redirect(certificateBack("error", "Certificate template must be 10 MB or smaller."));
   }
   if (!/^#[0-9a-fA-F]{6}$/.test(textColor)) {
-    redirect(back("error", "Text color must be a six-digit hex color."));
+    redirect(certificateBack("error", "Text color must be a six-digit hex color."));
   }
 
   const { data: workshop } = await auth.admin
@@ -55,7 +65,7 @@ export async function uploadCertificateTemplateAction(formData: FormData) {
     .select("id")
     .eq("id", workshopId)
     .maybeSingle();
-  if (!workshop) redirect(back("error", "Workshop not found."));
+  if (!workshop) redirect(certificateBack("error", "Workshop not found."));
 
   const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
   const storagePath = `${workshopId}/${crypto.randomUUID()}.${extension}`;
@@ -65,7 +75,7 @@ export async function uploadCertificateTemplateAction(formData: FormData) {
       contentType: file.type,
       upsert: false,
     });
-  if (uploadError) redirect(back("error", uploadError.message));
+  if (uploadError) redirect(certificateBack("error", uploadError.message));
 
   const { data: publicUrl } = auth.admin.storage
     .from("certificate-templates")
@@ -83,12 +93,19 @@ export async function uploadCertificateTemplateAction(formData: FormData) {
       name_top_percent: boundedPercent(field(formData, "name_top_percent"), 45, 20, 75),
       program_top_percent: boundedPercent(field(formData, "program_top_percent"), 61, 35, 85),
       details_top_percent: boundedPercent(field(formData, "details_top_percent"), 81, 55, 94),
+      name_font_size: boundedPercent(field(formData, "name_font_size"), 64, 28, 96),
+      program_font_size: boundedPercent(field(formData, "program_font_size"), 30, 16, 56),
+      details_font_size: boundedPercent(field(formData, "details_font_size"), 12, 8, 20),
+      completion_label: field(formData, "completion_label") || "Successfully completed",
+      font_family: ["serif", "sans"].includes(field(formData, "font_family"))
+        ? field(formData, "font_family")
+        : "serif",
       is_active: false,
       uploaded_by: auth.user.id,
     })
     .select("id")
     .single();
-  if (insertError || !inserted) redirect(back("error", insertError?.message || "Template record could not be created."));
+  if (insertError || !inserted) redirect(certificateBack("error", insertError?.message || "Template record could not be created."));
 
   await auth.admin
     .from("certificate_templates")
@@ -99,10 +116,81 @@ export async function uploadCertificateTemplateAction(formData: FormData) {
     .from("certificate_templates")
     .update({ is_active: true, updated_at: new Date().toISOString() })
     .eq("id", inserted.id);
-  if (activateError) redirect(back("error", activateError.message));
+  if (activateError) redirect(certificateBack("error", activateError.message));
 
   refresh();
-  redirect(back("message", "Certificate template uploaded and activated for the workshop."));
+  redirect(certificateBack("message", "Certificate template uploaded and activated for the workshop."));
+}
+
+export async function updateCertificateTemplateFormatAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents/certificates");
+  const templateId = field(formData, "template_id");
+  const textColor = field(formData, "text_color") || "#0B2545";
+  const fontFamily = field(formData, "font_family");
+  if (!templateId) redirect(certificateBack("error", "Missing certificate template ID."));
+  if (!/^#[0-9a-fA-F]{6}$/.test(textColor)) {
+    redirect(certificateBack("error", "Text color must be a six-digit hex color."));
+  }
+
+  const { error } = await auth.admin
+    .from("certificate_templates")
+    .update({
+      template_name: field(formData, "template_name") || "Certificate template",
+      text_color: textColor.toUpperCase(),
+      name_top_percent: boundedPercent(field(formData, "name_top_percent"), 45, 20, 75),
+      program_top_percent: boundedPercent(field(formData, "program_top_percent"), 61, 35, 85),
+      details_top_percent: boundedPercent(field(formData, "details_top_percent"), 81, 55, 94),
+      name_font_size: boundedPercent(field(formData, "name_font_size"), 64, 28, 96),
+      program_font_size: boundedPercent(field(formData, "program_font_size"), 30, 16, 56),
+      details_font_size: boundedPercent(field(formData, "details_font_size"), 12, 8, 20),
+      completion_label: field(formData, "completion_label") || "Successfully completed",
+      font_family: ["serif", "sans"].includes(fontFamily)
+        ? fontFamily
+        : "serif",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", templateId)
+    .eq("is_active", true);
+  if (error) redirect(certificateBack("error", error.message));
+
+  refresh();
+  redirect(certificateBack("message", "Certificate format saved. It will be used for future approvals."));
+}
+
+export async function updateReceiptFormatAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents/receipts");
+  const jurisdiction = normalizeJurisdiction(field(formData, "jurisdiction"));
+  const primaryColor = field(formData, "primary_color") || "#0F172A";
+  const accentColor = field(formData, "accent_color") || "#1D4ED8";
+  if (!/^#[0-9a-fA-F]{6}$/.test(primaryColor) || !/^#[0-9a-fA-F]{6}$/.test(accentColor)) {
+    redirect(receiptBack("error", "Receipt colors must be six-digit hex colors."));
+  }
+
+  const { error } = await auth.admin.from("document_format_profiles").upsert(
+    {
+      document_type: "receipt",
+      jurisdiction,
+      format_name: field(formData, "format_name") || `${jurisdiction} receipt`,
+      heading: field(formData, "heading") || "Official Payment Receipt",
+      subheading: field(formData, "subheading") || "PAID - PAYMENT CONFIRMED",
+      primary_color: primaryColor.toUpperCase(),
+      accent_color: accentColor.toUpperCase(),
+      font_family: ["serif", "sans"].includes(field(formData, "font_family"))
+        ? field(formData, "font_family")
+        : "sans",
+      layout_style: ["classic", "modern", "compact"].includes(field(formData, "layout_style"))
+        ? field(formData, "layout_style")
+        : "classic",
+      footer_text: field(formData, "footer_text") || "Thank you for your payment.",
+      updated_by: auth.user.id,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "document_type,jurisdiction" }
+  );
+  if (error) redirect(receiptBack("error", error.message));
+
+  refresh();
+  redirect(receiptBack("message", `${jurisdiction} receipt format saved for future receipts.`));
 }
 
 export async function approveWorkshopCertificateApplicationAction(formData: FormData) {
@@ -152,6 +240,11 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
         name_top_percent: template.name_top_percent,
         program_top_percent: template.program_top_percent,
         details_top_percent: template.details_top_percent,
+        name_font_size: template.name_font_size,
+        program_font_size: template.program_font_size,
+        details_font_size: template.details_font_size,
+        font_family: template.font_family,
+        completion_label: template.completion_label,
         completion_source: "participant_application_admin_approval",
       },
     }
@@ -177,6 +270,11 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
         name_top_percent: template.name_top_percent,
         program_top_percent: template.program_top_percent,
         details_top_percent: template.details_top_percent,
+        name_font_size: template.name_font_size,
+        program_font_size: template.program_font_size,
+        details_font_size: template.details_font_size,
+        font_family: template.font_family,
+        completion_label: template.completion_label,
         completion_source: "participant_application_admin_approval",
       },
     })

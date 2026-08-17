@@ -19,10 +19,16 @@ const adminCards = [
     tag: "Inbox + replies",
   },
   {
-    title: "Certificates & Receipts",
-    description: "Approve certificates, monitor automatic receipts, manage issuer jurisdictions, and review the audit log.",
-    href: "/admin/documents",
-    tag: "Controlled issuance",
+    title: "Certificate Manager",
+    description: "Preview and edit certificate templates, review applications, and inspect issued certificates.",
+    href: "/admin/documents/certificates",
+    tag: "Certificate formats",
+  },
+  {
+    title: "Receipt Manager",
+    description: "Preview and edit jurisdiction-specific receipt formats and inspect confirmed-payment receipts.",
+    href: "/admin/documents/receipts",
+    tag: "Receipt formats",
   },
   {
     title: "Send Messages",

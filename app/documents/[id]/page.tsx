@@ -51,11 +51,34 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
     const value = Number(document.metadata?.[key]);
     return Number.isFinite(value) ? `${Math.min(94, Math.max(10, value))}%` : `${fallback}%`;
   };
+  const templateFontSize = (key: string, fallback: number, minimum: number, maximum: number) => {
+    const value = Number(document.metadata?.[key]);
+    return Number.isFinite(value) ? Math.min(maximum, Math.max(minimum, value)) : fallback;
+  };
+  const certificateNameFont =
+    document.metadata?.font_family === "sans"
+      ? "Arial, sans-serif"
+      : "Georgia, serif";
+  const receiptFormat = document.metadata?.receipt_format || {};
+  const formatText = (key: string, fallback: string) => {
+    const value = String(receiptFormat?.[key] || "").trim();
+    return value || fallback;
+  };
+  const formatColor = (key: string, fallback: string) => {
+    const value = String(receiptFormat?.[key] || "");
+    return /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback;
+  };
+  const receiptPrimaryColor = formatColor("primary_color", "#0F172A");
+  const receiptAccentColor = formatColor("accent_color", "#1D4ED8");
+  const receiptLayoutStyle = ["classic", "modern", "compact"].includes(String(receiptFormat.layout_style))
+    ? String(receiptFormat.layout_style)
+    : "classic";
+  const receiptFontFamily = receiptFormat.font_family === "serif" ? "Georgia, serif" : "Arial, sans-serif";
 
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 print:bg-white print:p-0">
       <div className="mx-auto mb-5 flex max-w-5xl items-center justify-between gap-4 print:hidden">
-        <Link href={isAdmin ? "/admin/documents" : "/dashboard/documents"} className="text-sm font-black text-slate-700">&larr; Back to documents</Link>
+        <Link href={isAdmin ? `/admin/documents/${document.document_type === "certificate" ? "certificates" : "receipts"}` : "/dashboard/documents"} className="text-sm font-black text-slate-700">&larr; Back to documents</Link>
         <PrintDocumentButton />
       </div>
 
@@ -64,13 +87,26 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
           <article className="document-sheet custom-certificate-sheet relative mx-auto aspect-[1.414/1] w-full max-w-5xl overflow-hidden bg-white shadow-2xl print:max-w-none print:shadow-none">
             <img src={certificateTemplateUrl} alt="Certificate template" className="absolute inset-0 h-full w-full object-cover" />
             <div className="absolute left-[7%] right-[7%] -translate-y-1/2 text-center" style={{ top: templatePosition("name_top_percent", 45), color: certificateTextColor }}>
-              <p className="font-serif text-4xl font-bold leading-tight sm:text-6xl">{document.recipient_name}</p>
+              <p
+                className="font-bold leading-tight"
+                style={{
+                  fontFamily: certificateNameFont,
+                  fontSize: `${templateFontSize("name_font_size", 64, 28, 96)}px`,
+                }}
+              >
+                {document.recipient_name}
+              </p>
             </div>
             <div className="absolute left-[10%] right-[10%] -translate-y-1/2 text-center" style={{ top: templatePosition("program_top_percent", 61), color: certificateTextColor }}>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">Successfully completed</p>
-              <h1 className="mt-2 text-xl font-black leading-tight sm:text-3xl">{document.title}</h1>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">{String(document.metadata?.completion_label || "Successfully completed")}</p>
+              <h1
+                className="mt-2 font-black leading-tight"
+                style={{ fontSize: `${templateFontSize("program_font_size", 30, 16, 56)}px` }}
+              >
+                {document.title}
+              </h1>
             </div>
-            <div className="absolute left-[7%] right-[7%] -translate-y-1/2 text-center text-[9px] font-semibold sm:text-xs" style={{ top: templatePosition("details_top_percent", 81), color: certificateTextColor }}>
+            <div className="absolute left-[7%] right-[7%] -translate-y-1/2 text-center font-semibold" style={{ top: templatePosition("details_top_percent", 81), color: certificateTextColor, fontSize: `${templateFontSize("details_font_size", 12, 8, 20)}px` }}>
               <p>{new Date(date).toLocaleDateString()} &nbsp; | &nbsp; {document.document_number} &nbsp; | &nbsp; {jurisdictionNames[jurisdiction]}</p>
               <p className="mt-1 opacity-70">Verify: {verifyUrl}</p>
             </div>
@@ -102,17 +138,23 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
         </article>
         )
       ) : (
-        <article className="document-sheet mx-auto max-w-3xl bg-white p-8 shadow-2xl print:max-w-none print:shadow-none sm:p-12">
-          <header className="flex flex-col justify-between gap-6 border-b-2 border-slate-950 pb-8 sm:flex-row">
+        <article className={`document-sheet mx-auto max-w-3xl bg-white shadow-2xl print:max-w-none print:shadow-none ${receiptLayoutStyle === "compact" ? "p-6 sm:p-8" : "p-8 sm:p-12"}`} style={{ color: receiptPrimaryColor, fontFamily: receiptFontFamily }}>
+          <header
+            className={`flex flex-col justify-between gap-6 sm:flex-row ${receiptLayoutStyle === "modern" ? "rounded-2xl p-6 text-white" : "border-b-2 pb-8"}`}
+            style={{
+              borderColor: receiptPrimaryColor,
+              backgroundColor: receiptLayoutStyle === "modern" ? receiptPrimaryColor : undefined,
+            }}
+          >
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-700">{jurisdictionNames[jurisdiction]}</p>
-              <h1 className="mt-2 text-3xl font-black text-slate-950">{receiptHeading(jurisdiction)}</h1>
-              <p className="mt-2 text-sm font-bold text-emerald-700">PAID · PAYMENT CONFIRMED</p>
+              <p className="text-xs font-black uppercase tracking-[0.28em]" style={{ color: receiptAccentColor }}>{jurisdictionNames[jurisdiction]}</p>
+              <h1 className="mt-2 text-3xl font-black">{formatText("heading", receiptHeading(jurisdiction))}</h1>
+              <p className="mt-2 text-sm font-bold text-emerald-700">{formatText("subheading", "PAID - PAYMENT CONFIRMED")}</p>
             </div>
             <div className="text-left text-sm sm:text-right">
               <p className="text-xl font-black">{issuerData.legal_name || "LexData Research & Training"}</p>
               {issuerData.trading_name ? <p>{issuerData.trading_name}</p> : null}
-              {issuerData.registered_address ? <p className="mt-1 max-w-xs text-slate-600">{issuerData.registered_address}</p> : null}
+              {issuerData.registered_address ? <p className={`mt-1 max-w-xs ${receiptLayoutStyle === "modern" ? "text-slate-200" : "text-slate-600"}`}>{issuerData.registered_address}</p> : null}
               {issuerData.tax_registration_number ? <p className="mt-1 font-bold">Tax ID: {issuerData.tax_registration_number}</p> : null}
             </div>
           </header>
@@ -124,10 +166,10 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
 
           <section className="py-8">
             <div className="flex items-start justify-between gap-5 border-b border-slate-200 pb-5">
-              <div><p className="font-black text-slate-950">{document.title}</p><p className="mt-1 text-sm text-slate-600">Confirmed training/service payment</p></div>
+              <div><p className="font-black">{document.title}</p><p className="mt-1 text-sm text-slate-600">{formatText("service_label", "Confirmed training/service payment")}</p></div>
               <p className="whitespace-nowrap text-xl font-black">{formatDocumentMoney(document.amount, document.currency)}</p>
             </div>
-            <div className="mt-6 flex items-center justify-between rounded-2xl bg-slate-950 px-6 py-5 text-white"><span className="font-black">Total received</span><span className="text-2xl font-black">{formatDocumentMoney(document.amount, document.currency)}</span></div>
+            <div className="mt-6 flex items-center justify-between rounded-2xl px-6 py-5 text-white" style={{ backgroundColor: receiptPrimaryColor }}><span className="font-black">Total received</span><span className="text-2xl font-black">{formatDocumentMoney(document.amount, document.currency)}</span></div>
           </section>
 
           <section className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-xs leading-6 text-amber-950">
@@ -137,6 +179,7 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
           </section>
 
           <footer className="mt-8 border-t border-slate-200 pt-5 text-xs leading-5 text-slate-500">
+            <p>{formatText("footer_text", "Verify authenticity and current status using the verification code below.")}</p>
             <p className="font-bold">Verification code: {document.verification_code}</p>
             <p>Verify authenticity and current status: {verifyUrl}</p>
           </footer>
@@ -144,7 +187,7 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
       )}
 
       <style>{`
-        @page { size: A4 landscape; margin: 8mm; }
+        @page { size: ${document.document_type === "certificate" ? "A4 landscape" : "A4 portrait"}; margin: 8mm; }
         @media print {
           nav, header.site-header, footer.site-footer { display: none !important; }
           .document-sheet { break-inside: avoid; }

@@ -9,7 +9,6 @@ import {
   rejectWorkshopCertificateApplicationAction,
   revokeDocumentAction,
   updateIssuerProfileAction,
-  uploadCertificateTemplateAction,
 } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -25,14 +24,12 @@ export default async function AdminDocumentsPage({ searchParams }: { searchParam
     { data: auditRows },
     { data: applications },
     { data: templates },
-    { data: workshops },
   ] = await Promise.all([
     auth.admin.from("official_documents").select("*").order("created_at", { ascending: false }).limit(250),
     auth.admin.from("document_issuer_profiles").select("*").order("jurisdiction"),
     auth.admin.from("official_document_audit_log").select("id,action,from_status,to_status,created_at,official_documents(document_number)").order("created_at", { ascending: false }).limit(15),
     auth.admin.from("certificate_applications").select("id,user_id,workshop_id,preferred_name,participant_note,status,admin_note,created_at,workshops(title)").order("created_at", { ascending: false }).limit(200),
     auth.admin.from("certificate_templates").select("*").order("created_at", { ascending: false }),
-    auth.admin.from("workshops").select("id,title").order("title"),
   ]);
   const rows = documents || [];
   const pending = rows.filter((row: any) => row.status === "pending_review").length;
@@ -67,47 +64,22 @@ export default async function AdminDocumentsPage({ searchParams }: { searchParam
           <p className="mt-2">The system releases organization payment receipts automatically after confirmed funds. Government tax documents remain disabled until the relevant registered entity and real authority integration are configured: FBR in Pakistan, ZATCA FATOORAH in Saudi Arabia, or the State Taxation Administration invoice platform in China.</p>
         </section>
 
-        <section className="mt-10">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Workshop certificate design</p>
-          <h2 className="mt-2 text-2xl font-black">Upload a template for a workshop</h2>
-          <p className="mt-2 max-w-3xl text-sm text-slate-600">Use a landscape PNG, JPG, or WebP image with the participant-name area left blank. The newest upload becomes the active template for that workshop.</p>
-
-          <form action={uploadCertificateTemplateAction} className="mt-5 grid gap-4 rounded-3xl border border-blue-200 bg-white p-6 shadow-sm lg:grid-cols-2">
-            <label className="grid gap-2 text-sm font-black">Workshop
-              <select name="workshop_id" required className="rounded-xl border border-slate-300 px-4 py-3"><option value="">Select workshop</option>{(workshops || []).map((workshop: any) => <option key={workshop.id} value={workshop.id}>{workshop.title}</option>)}</select>
-            </label>
-            <label className="grid gap-2 text-sm font-black">Template name
-              <input name="template_name" required placeholder="Example: 2026 blue-gold certificate" className="rounded-xl border border-slate-300 px-4 py-3" />
-            </label>
-            <label className="grid gap-2 text-sm font-black lg:col-span-2">Certificate background image
-              <input name="template_file" type="file" required accept="image/png,image/jpeg,image/webp" className="rounded-xl border border-dashed border-slate-400 bg-slate-50 px-4 py-4" />
-              <span className="text-xs font-semibold text-slate-500">Maximum 10 MB. Recommended ratio: A4 landscape or 16:9, at least 1600 pixels wide.</span>
-            </label>
-            <label className="grid gap-2 text-sm font-black">Text color
-              <input name="text_color" type="color" defaultValue="#0B2545" className="h-12 w-full rounded-xl border border-slate-300 p-1" />
-            </label>
-            <div className="grid grid-cols-3 gap-3">
-              <label className="grid gap-2 text-xs font-black">Name vertical %<input name="name_top_percent" type="number" min="20" max="75" defaultValue="45" className="rounded-xl border border-slate-300 px-3 py-3" /></label>
-              <label className="grid gap-2 text-xs font-black">Program vertical %<input name="program_top_percent" type="number" min="35" max="85" defaultValue="61" className="rounded-xl border border-slate-300 px-3 py-3" /></label>
-              <label className="grid gap-2 text-xs font-black">Details vertical %<input name="details_top_percent" type="number" min="55" max="94" defaultValue="81" className="rounded-xl border border-slate-300 px-3 py-3" /></label>
-            </div>
-            <button className="rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white lg:col-span-2">Upload and activate template</button>
-          </form>
-
-          <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {(templates || []).filter((template: any) => template.is_active).map((template: any) => {
-              const workshop = (workshops || []).find((item: any) => item.id === template.workshop_id);
-              return (
-                <article key={template.id} className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                  <img src={template.background_url} alt={`${template.template_name} preview`} className="aspect-[1.414/1] w-full bg-slate-100 object-cover" />
-                  <div className="p-5"><span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Active</span><h3 className="mt-3 font-black">{template.template_name}</h3><p className="mt-1 text-sm text-slate-600">{workshop?.title || "Workshop"}</p></div>
-                </article>
-              );
-            })}
-          </div>
+        <section className="mt-10 grid gap-5 lg:grid-cols-2">
+          <Link href="/admin/documents/certificates" className="rounded-3xl border border-blue-200 bg-blue-950 p-7 text-white shadow-sm transition hover:-translate-y-0.5">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-300">Separate workspace</p>
+            <h2 className="mt-3 text-2xl font-black">Certificate Manager</h2>
+            <p className="mt-3 text-sm leading-6 text-blue-100">Upload certificate backgrounds, preview sample output, edit text placement and typography, and inspect certificate records.</p>
+            <span className="mt-5 inline-flex rounded-xl bg-white px-4 py-2 text-sm font-black text-blue-950">Open certificate formats</span>
+          </Link>
+          <Link href="/admin/documents/receipts" className="rounded-3xl border border-emerald-200 bg-emerald-950 p-7 text-white shadow-sm transition hover:-translate-y-0.5">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Separate workspace</p>
+            <h2 className="mt-3 text-2xl font-black">Receipt Manager</h2>
+            <p className="mt-3 text-sm leading-6 text-emerald-100">Preview and edit independent receipt designs for Pakistan, Saudi Arabia, and China, then inspect confirmed-payment receipts.</p>
+            <span className="mt-5 inline-flex rounded-xl bg-white px-4 py-2 text-sm font-black text-emerald-950">Open receipt formats</span>
+          </Link>
         </section>
 
-        <section className="mt-10">
+        <section id="certificate-applications" className="mt-10 scroll-mt-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div><p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Participant requests</p><h2 className="mt-2 text-2xl font-black">Workshop certificate applications</h2></div>
             <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-black text-amber-800">{pendingApplications.length} pending</span>

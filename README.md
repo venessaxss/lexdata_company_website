@@ -61,7 +61,7 @@ Open http://localhost:3000.
 
 ### Certificates and confirmed-payment receipts
 
-Run `supabase/migrations/20260816_certificates_and_official_receipts.sql`, followed by `supabase/migrations/20260817_certificate_applications_and_templates.sql` and `supabase/migrations/20260818_workshop_attendance_confirmation.sql`, after the earlier migrations. Then:
+Run `supabase/migrations/20260816_certificates_and_official_receipts.sql`, followed by `supabase/migrations/20260817_certificate_applications_and_templates.sql`, `supabase/migrations/20260818_workshop_attendance_confirmation.sql`, and `supabase/migrations/20260819_document_format_editor.sql`, after the earlier migrations. Then:
 
 1. Set `NEXT_PUBLIC_SITE_URL`, `STRIPE_SECRET_KEY`, and `STRIPE_WEBHOOK_SECRET`.
 2. Register `https://YOUR_DOMAIN/api/stripe/webhook` in Stripe for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `charge.refunded`.
@@ -69,6 +69,8 @@ Run `supabase/migrations/20260816_certificates_and_official_receipts.sql`, follo
 4. Keep tax-invoice mode disabled until the real FBR, ZATCA FATOORAH, or Chinese tax-platform integration is connected. The built-in document is a proof-of-payment receipt by default.
 
 Participants set the exact printed name in `/dashboard/profile` and access released documents from `/dashboard/documents`. Receipts require a confirmed positive amount. Course completion can create a certificate draft. For workshops, an admin confirms the registration and separately marks Attendance as Attended in `/manager/registrations`; only then can the participant submit a workshop-specific certificate application. An admin uploads an image template for that workshop and must approve the application before the certificate is generated and released.
+
+Certificate and receipt administration are separated. Use `/admin/documents/certificates` to preview and edit workshop certificate backgrounds, positions, colors, and typography. Use `/admin/documents/receipts` to preview and edit future receipt formats independently for Pakistan, Saudi Arabia, and China. Issued documents retain their saved format snapshots.
 
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
