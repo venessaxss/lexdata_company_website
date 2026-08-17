@@ -506,22 +506,10 @@ export default async function ReceiptManagementPage({
                 </div>
 
                 <Link
-                  href={
-                    document.status === "void" &&
-                    !/refund|refunded|cancelled|canceled/i.test(
-                      String(document.revocation_reason || "")
-                    )
-                      ? `/documents/${document.id}?format=current`
-                      : `/documents/${document.id}`
-                  }
+                  href={`/documents/${document.id}`}
                   className="mt-4 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-black"
                 >
-                  {document.status === "void" &&
-                  !/refund|refunded|cancelled|canceled/i.test(
-                    String(document.revocation_reason || "")
-                  )
-                    ? "Preview corrected receipt"
-                    : "Preview receipt"}
+                  Preview receipt
                 </Link>
 
                 {document.status === "void" ? (
@@ -545,21 +533,12 @@ export default async function ReceiptManagementPage({
                           current format and current active issuer stamp.
                         </p>
 
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <Link
-                          href={`/documents/${document.id}?format=current`}
-                          className="inline-flex rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-black text-amber-950"
-                        >
-                          Preview corrected receipt
-                        </Link>
-
-                        <Link
-                          href={`/documents/${document.id}`}
-                          className="inline-flex rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-black text-slate-700"
-                        >
-                          View revoked original
-                        </Link>
-                      </div>
+                      <Link
+                        href={`/documents/${document.id}?format=current`}
+                        className="mt-3 inline-flex rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-black text-amber-950"
+                      >
+                        Preview current format
+                      </Link>
 
                       <form
                         action={reissueReceiptWithCurrentFormatAction}

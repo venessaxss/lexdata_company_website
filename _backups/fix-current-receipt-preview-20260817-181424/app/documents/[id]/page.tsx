@@ -46,50 +46,18 @@ export default async function OfficialDocumentPage({
 
   const requestedPreview = (await searchParams).format === "current";
   let renderedMetadata = { ...(document.metadata || {}) };
-  let renderedIssuerData = issuer(document);
   let currentFormatPreview = false;
   if (isAdmin && requestedPreview && ["revoked", "void"].includes(document.status)) {
     if (document.document_type === "receipt") {
-      const previewJurisdiction = normalizeJurisdiction(
-        document.jurisdiction
-      );
-
-      const [
-        currentFormatResult,
-        currentIssuerResult,
-      ] = await Promise.all([
-        admin
-          .from("document_format_profiles")
-          .select("*")
-          .eq("document_type", "receipt")
-          .eq("jurisdiction", previewJurisdiction)
-          .maybeSingle(),
-
-        admin
-          .from("document_issuer_profiles")
-          .select("*")
-          .eq("jurisdiction", previewJurisdiction)
-          .maybeSingle(),
-      ]);
-
-      const currentFormat =
-        currentFormatResult.data;
-
-      const currentIssuer =
-        currentIssuerResult.data;
-
+      const { data: currentFormat } = await admin
+        .from("document_format_profiles")
+        .select("*")
+        .eq("document_type", "receipt")
+        .eq("jurisdiction", document.jurisdiction)
+        .maybeSingle();
       if (currentFormat) {
-        renderedMetadata = {
-          ...renderedMetadata,
-          receipt_format: currentFormat,
-        };
-
+        renderedMetadata = { ...renderedMetadata, receipt_format: currentFormat };
         currentFormatPreview = true;
-      }
-
-      if (currentIssuer) {
-        renderedIssuerData =
-          currentIssuer;
       }
     } else if (document.source_type === "workshop_registration") {
       const { data: registration } = await admin
@@ -126,7 +94,7 @@ export default async function OfficialDocumentPage({
   }
 
   const jurisdiction = normalizeJurisdiction(document.jurisdiction);
-  const issuerData = renderedIssuerData;
+  const issuerData = issuer(document);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const verifyUrl = `${siteUrl}/verify/${document.verification_code}`;
   const date = document.issued_at || document.payment_confirmed_at || document.created_at;
@@ -170,7 +138,7 @@ export default async function OfficialDocumentPage({
       </div>
       {currentFormatPreview ? (
         <div className="mx-auto mb-5 max-w-5xl rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm font-bold text-blue-900 print:hidden">
-          Previewing the current receipt format, current issuer profile, and current active issuer stamp on this revoked document. The saved document remains unchanged until Reissue is completed.
+          Previewing the current admin format on this revoked document. The saved document is unchanged until the admin reissues it.
         </div>
       ) : null}
 
