@@ -52,7 +52,7 @@ export default async function ReceiptManagementPage({
 
     auth.admin
       .from("receipt_applications")
-      .select("*,workshops(title)")
+      .select("*,workshops(title),profiles(full_name,email)")
       .eq("status", "pending")
       .order("created_at", { ascending: true }),
 
