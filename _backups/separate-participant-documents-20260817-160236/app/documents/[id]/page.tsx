@@ -133,7 +133,7 @@ export default async function OfficialDocumentPage({
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 print:bg-white print:p-0">
       <div className="mx-auto mb-5 flex max-w-5xl items-center justify-between gap-4 print:hidden">
-        <Link href={isAdmin ? `/admin/documents/${document.document_type === "certificate" ? "certificates" : "receipts"}` : document.document_type === "certificate" ? "/dashboard/certificates" : "/dashboard/receipts"} className="text-sm font-black text-slate-700">&larr; Back to documents</Link>
+        <Link href={isAdmin ? `/admin/documents/${document.document_type === "certificate" ? "certificates" : "receipts"}` : "/dashboard/documents"} className="text-sm font-black text-slate-700">&larr; Back to documents</Link>
         <PrintDocumentButton />
       </div>
       {currentFormatPreview ? (

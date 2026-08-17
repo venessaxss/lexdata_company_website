@@ -298,7 +298,7 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
   await auth.admin.from("internal_messages").insert({
     user_id: application.user_id,
     title: "Workshop certificate approved",
-    body: `Your certificate application for ${workshop.title} was approved. The certificate is available in your Certificate workspace.`,
+    body: `Your certificate application for ${workshop.title} was approved. The certificate is available under Certificates & Receipts.`,
     source_type: "certificate_application_approved",
     source_id: application.id,
   });
