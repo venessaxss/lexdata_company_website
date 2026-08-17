@@ -20,11 +20,19 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
   const participantNote = field(formData, "participant_note") || null;
 
   if (!registrationId || preferredName.length < 2) {
-    redirect(result("error", "Select an eligible workshop and enter your preferred certificate name."));
+    redirect(
+      result(
+        "error",
+        "Select an eligible workshop and enter your preferred certificate name."
+      )
+    );
   }
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) redirect("/login");
 
   const admin = createAdminClient();
@@ -40,49 +48,40 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
     redirect(result("error", "Workshop registration not found."));
   }
 
-  const registrationStatus = String(registration.registration_status || "").toLowerCase();
+  const registrationStatus = String(
+    registration.registration_status || ""
+  ).toLowerCase();
 
   if (!["confirmed", "completed"].includes(registrationStatus)) {
-    redirect(result("error", "The admin must confirm your workshop registration before you can apply."));
+    redirect(
+      result(
+        "error",
+        "The admin must confirm your workshop registration before you can apply."
+      )
+    );
   }
 
   if (String(registration.attendance_status || "").toLowerCase() !== "attended") {
-    redirect(result("error", "The admin must confirm your attendance before you can apply."));
+    redirect(
+      result(
+        "error",
+        "The admin must confirm your attendance before you can apply."
+      )
+    );
   }
 
   const { data: existing } = await admin
     .from("certificate_applications")
-    .select("id,status,document_id,preferred_name")
+    .select("id,status")
     .eq("user_id", user.id)
     .eq("workshop_registration_id", registration.id)
     .maybeSingle();
 
-  let revokedDocument: any = null;
-
   if (existing?.status === "approved") {
-    const { data: revoked } = await admin
-      .from("official_documents")
-      .select("id,document_number,recipient_name,revocation_reason")
-      .eq("document_type", "certificate")
-      .eq("source_type", "workshop_registration")
-      .eq("source_id", registration.id)
-      .eq("user_id", user.id)
-      .eq("status", "revoked")
-      .maybeSingle();
-
-    revokedDocument = revoked;
-
-    if (!revokedDocument) {
-      redirect(
-        result(
-          "error",
-          "This certificate has already been approved. Revision becomes available only after the certificate is revoked by an administrator."
-        )
-      );
-    }
+    redirect(
+      result("error", "This certificate application has already been approved.")
+    );
   }
-
-  const now = new Date().toISOString();
 
   const payload = {
     user_id: user.id,
@@ -94,7 +93,7 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
     admin_note: null,
     reviewed_by: null,
     reviewed_at: null,
-    updated_at: now,
+    updated_at: new Date().toISOString(),
   };
 
   const operation = existing
@@ -102,41 +101,26 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
     : admin.from("certificate_applications").insert(payload);
 
   const { error } = await operation;
-  if (error) redirect(result("error", error.message));
+
+  if (error) {
+    redirect(result("error", error.message));
+  }
 
   await admin
     .from("profiles")
     .update({
       preferred_certificate_name: preferredName,
-      updated_at: now,
+      updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
 
-  if (revokedDocument) {
-    await admin.from("official_document_audit_log").insert({
-      document_id: revokedDocument.id,
-      actor_id: user.id,
-      action: "participant_certificate_revision_requested",
-      from_status: "revoked",
-      to_status: "revoked",
-      details: {
-        requested_preferred_name: preferredName,
-        previous_recipient_name: revokedDocument.recipient_name,
-        participant_note: participantNote,
-      },
-    });
-  }
-
   revalidatePath("/dashboard/certificates");
-  revalidatePath("/admin/documents");
   revalidatePath("/admin/documents/certificates");
 
   redirect(
     result(
       "message",
-      revokedDocument
-        ? "Certificate revision submitted. The revoked certificate remains invalid until an administrator reviews and reissues it."
-        : "Certificate application submitted for admin review."
+      "Certificate application submitted for admin review."
     )
   );
 }

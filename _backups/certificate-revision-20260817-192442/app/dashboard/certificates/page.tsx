@@ -45,7 +45,7 @@ export default async function CertificatesPage({
     admin
       .from("official_documents")
       .select(
-        "id,document_number,jurisdiction,status,title,recipient_name,source_type,source_id,revocation_reason,created_at,issued_at"
+        "id,document_number,jurisdiction,status,title,created_at,issued_at"
       )
       .eq("user_id", user.id)
       .eq("document_type", "certificate")
@@ -80,19 +80,6 @@ export default async function CertificatesPage({
       application.workshop_registration_id,
       application,
     ])
-  );
-  const revokedByRegistration = new Map(
-    documents
-      .filter(
-        (document: any) =>
-          document.status === "revoked" &&
-          document.source_type === "workshop_registration" &&
-          document.source_id
-      )
-      .map((document: any) => [
-        String(document.source_id),
-        document,
-      ])
   );
 
   return (
@@ -171,12 +158,6 @@ export default async function CertificatesPage({
             const application: any = applicationByRegistration.get(
               registration.id
             );
-            const revokedCertificate: any =
-              revokedByRegistration.get(String(registration.id));
-
-            const revisionAvailable =
-              Boolean(revokedCertificate) &&
-              application?.status === "approved";
 
             const workshop = Array.isArray(registration.workshops)
               ? registration.workshops[0]
@@ -186,7 +167,7 @@ export default async function CertificatesPage({
 
             if (
               application?.status === "pending" ||
-              (application?.status === "approved" && !revisionAvailable)
+              application?.status === "approved"
             ) {
               return (
                 <article
@@ -236,25 +217,6 @@ export default async function CertificatesPage({
 
                 <h3 className="mt-2 text-xl font-black">{title}</h3>
 
-                {revisionAvailable ? (
-                  <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-                    <p className="text-xs font-black uppercase tracking-wider text-amber-700">
-                      Revision available after revocation
-                    </p>
-                    <p className="mt-2 font-black">
-                      Certificate {revokedCertificate.document_number} was revoked for correction.
-                    </p>
-                    {revokedCertificate.revocation_reason ? (
-                      <p className="mt-2">
-                        Admin reason: {revokedCertificate.revocation_reason}
-                      </p>
-                    ) : null}
-                    <p className="mt-2">
-                      Correct your preferred printed name below and submit it for administrator review.
-                    </p>
-                  </div>
-                ) : null}
-
                 {application?.status === "rejected" ? (
                   <p className="mt-3 rounded-xl bg-red-50 p-3 text-sm font-bold text-red-700">
                     Previous application: rejected
@@ -273,7 +235,6 @@ export default async function CertificatesPage({
                     maxLength={120}
                     defaultValue={
                       application?.preferred_name ||
-                      revokedCertificate?.recipient_name ||
                       profile?.preferred_certificate_name ||
                       profile?.full_name ||
                       ""
@@ -292,14 +253,8 @@ export default async function CertificatesPage({
                   />
                 </label>
 
-                <button
-                  className={`mt-5 rounded-xl px-5 py-3 text-sm font-black text-white ${
-                    revisionAvailable ? "bg-amber-700" : "bg-blue-700"
-                  }`}
-                >
-                  {revisionAvailable
-                    ? "Submit certificate revision"
-                    : "Submit certificate application"}
+                <button className="mt-5 rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white">
+                  Submit certificate application
                 </button>
               </form>
             );

@@ -11,9 +11,6 @@ import {
   uploadCertificateTemplateAction,
 } from "../actions";
 
-import {
-  updateRevokedCertificateInfoAction,
-} from "./revision-actions";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -39,7 +36,7 @@ export default async function CertificateManagementPage({
         .eq("status", "pending"),
       auth.admin
         .from("official_documents")
-        .select("id,recipient_name,title,document_number,status,revocation_reason,created_at")
+        .select("id,recipient_name,title,document_number,status,created_at")
         .eq("document_type", "certificate")
         .order("created_at", { ascending: false })
         .limit(50),
@@ -108,68 +105,6 @@ export default async function CertificateManagementPage({
                 <div className="flex justify-between gap-3"><div><p className="font-black">{document.recipient_name}</p><p className="mt-1 text-sm text-slate-600">{document.title}</p><p className="mt-2 text-xs text-slate-500">{document.document_number}</p></div><span className="h-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-black">{document.status.replace(/_/g, " ")}</span></div>
                 <Link href={`/documents/${document.id}`} className="mt-4 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-black">Preview certificate</Link>
                 {document.status === "revoked" ? (
-                  <>
-                  <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
-                    <p className="text-sm font-black text-blue-950">
-                      Certificate information correction
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-blue-900">
-                      While revoked, the admin may correct the printed participant name
-                      and certificate program/title before reissue.
-                    </p>
-                    {document.revocation_reason ? (
-                      <p className="mt-2 text-xs font-bold text-blue-900">
-                        Revocation reason: {document.revocation_reason}
-                      </p>
-                    ) : null}
-
-                    <form
-                      action={updateRevokedCertificateInfoAction}
-                      className="mt-4 grid gap-3"
-                    >
-                      <input type="hidden" name="id" value={document.id} />
-
-                      <label className="grid gap-1 text-xs font-black text-slate-700">
-                        Printed participant name
-                        <input
-                          name="recipient_name"
-                          required
-                          minLength={2}
-                          maxLength={120}
-                          defaultValue={document.recipient_name}
-                          className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm"
-                        />
-                      </label>
-
-                      <label className="grid gap-1 text-xs font-black text-slate-700">
-                        Certificate program / title
-                        <input
-                          name="title"
-                          required
-                          minLength={2}
-                          maxLength={240}
-                          defaultValue={document.title}
-                          className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm"
-                        />
-                      </label>
-
-                      <label className="grid gap-1 text-xs font-black text-slate-700">
-                        Correction note
-                        <input
-                          name="correction_note"
-                          required
-                          minLength={5}
-                          placeholder="Why is this information being corrected?"
-                          className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-sm"
-                        />
-                      </label>
-
-                      <button className="w-fit rounded-xl bg-blue-800 px-4 py-2 text-sm font-black text-white">
-                        Save corrected certificate information
-                      </button>
-                    </form>
-                  </div>
-
                   <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
                     <p className="text-sm font-black text-amber-950">Format correction</p>
                     <p className="mt-1 text-xs leading-5 text-amber-900">Edit the active workshop format above, preview it with this participant&apos;s data, then reissue.</p>
@@ -180,8 +115,6 @@ export default async function CertificateManagementPage({
                       <button className="rounded-xl bg-amber-800 px-4 py-2 text-sm font-black text-white">Reissue with current format</button>
                     </form>
                   </div>
-                
-                  </>
                 ) : null}
               </article>
             ))}

@@ -425,7 +425,7 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
 
   const { data: application } = await auth.admin
     .from("certificate_applications")
-    .select("id,user_id,workshop_registration_id,workshop_id,preferred_name,participant_note,status,document_id")
+    .select("id,user_id,workshop_registration_id,workshop_id,preferred_name,status")
     .eq("id", applicationId)
     .maybeSingle();
   if (!application || application.status !== "pending") {
@@ -485,9 +485,6 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
       status: "issued",
       issued_at: issuedAt,
       issued_by: auth.user.id,
-      revoked_at: null,
-      revoked_by: null,
-      revocation_reason: null,
       updated_at: issuedAt,
       metadata: {
         application_id: application.id,
@@ -521,22 +518,6 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
     .eq("id", application.id)
     .eq("status", "pending");
   if (applicationError) redirect(back("error", applicationError.message));
-
-  if (application.document_id) {
-    await auth.admin.from("official_document_audit_log").insert({
-      document_id: documentId,
-      actor_id: auth.user.id,
-      action: "participant_revision_approved_and_reissued",
-      from_status: "revoked",
-      to_status: "issued",
-      details: {
-        application_id: application.id,
-        preferred_name: application.preferred_name,
-        participant_note: application.participant_note,
-        admin_note: adminNote,
-      },
-    });
-  }
 
   await auth.admin.from("internal_messages").insert({
     user_id: application.user_id,
@@ -645,7 +626,7 @@ export async function revokeDocumentAction(formData: FormData) {
 
   const { data: document } = await auth.admin
     .from("official_documents")
-    .select("id,user_id,recipient_email,document_type,status,title")
+    .select("document_type,status")
     .eq("id", id)
     .maybeSingle();
   if (!document || document.status !== "issued") redirect(back("error", "Only an issued document can be revoked."));
@@ -668,19 +649,6 @@ export async function revokeDocumentAction(formData: FormData) {
         : certificateBack("error", error.message)
     );
   }
-  if (document.document_type === "certificate") {
-    await auth.admin.from("internal_messages").insert({
-      user_id: document.user_id,
-      recipient_email: document.recipient_email || null,
-      title: "Certificate revision available",
-      body: `Your certificate${document.title ? ` for ${document.title}` : ""} was revoked for correction. You may now update your preferred printed name and submit a revision from Dashboard > Certificates. The revoked certificate remains invalid until it is reissued.`,
-      source_type: "certificate_revoked_for_revision",
-      source_id: document.id,
-    });
-
-    revalidatePath("/dashboard/certificates");
-  }
-
   refresh();
   redirect(
     document.document_type === "receipt"

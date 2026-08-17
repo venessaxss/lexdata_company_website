@@ -108,7 +108,6 @@ export default async function CertificateManagementPage({
                 <div className="flex justify-between gap-3"><div><p className="font-black">{document.recipient_name}</p><p className="mt-1 text-sm text-slate-600">{document.title}</p><p className="mt-2 text-xs text-slate-500">{document.document_number}</p></div><span className="h-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-black">{document.status.replace(/_/g, " ")}</span></div>
                 <Link href={`/documents/${document.id}`} className="mt-4 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-black">Preview certificate</Link>
                 {document.status === "revoked" ? (
-                  <>
                   <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
                     <p className="text-sm font-black text-blue-950">
                       Certificate information correction
@@ -180,8 +179,6 @@ export default async function CertificateManagementPage({
                       <button className="rounded-xl bg-amber-800 px-4 py-2 text-sm font-black text-white">Reissue with current format</button>
                     </form>
                   </div>
-                
-                  </>
                 ) : null}
               </article>
             ))}
