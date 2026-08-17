@@ -15,6 +15,7 @@ function result(key: "message" | "error", value: string) {
 
 export async function applyForWorkshopReceiptAction(formData: FormData) {
   const registrationId = field(formData, "registration_id");
+  const jurisdiction = field(formData, "jurisdiction");
   const recipientType = field(formData, "recipient_type");
   const recipientName = field(formData, "recipient_name");
   const registrationNumber = field(
@@ -25,6 +26,7 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
 
   if (
     !registrationId ||
+    !["PK", "SA"].includes(jurisdiction) ||
     !["personal", "company"].includes(recipientType) ||
     recipientName.length < 2 ||
     registrationNumber.length < 2 ||
@@ -33,7 +35,7 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
     redirect(
       result(
         "error",
-        "Complete the required recipient information."
+        "Complete the issuing entity and required recipient information."
       )
     );
   }
@@ -51,19 +53,14 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
   const { data: registration, error: registrationError } = await admin
     .from("workshop_registrations")
     .select(
-      "id,user_id,workshop_id,payment_status,amount_received,payment_currency,document_jurisdiction"
+      "id,user_id,workshop_id,payment_status,amount_received,payment_currency"
     )
     .eq("id", registrationId)
     .eq("user_id", user.id)
     .maybeSingle();
 
   if (registrationError || !registration) {
-    redirect(
-      result(
-        "error",
-        "Workshop registration not found."
-      )
-    );
+    redirect(result("error", "Workshop registration not found."));
   }
 
   const paymentStatus = String(
@@ -79,44 +76,11 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
     );
   }
 
-  const amount = Number(
-    registration.amount_received || 0
-  );
+  const amount = Number(registration.amount_received || 0);
 
   if (!Number.isFinite(amount) || amount <= 0) {
     redirect(
-      result(
-        "error",
-        "The confirmed payment amount is missing. Ask the manager to reconfirm the payment."
-      )
-    );
-  }
-
-  const jurisdiction = String(
-    registration.document_jurisdiction || ""
-  ).toUpperCase();
-
-  if (!["PK", "SA"].includes(jurisdiction)) {
-    redirect(
-      result(
-        "error",
-        "The receipt issuing entity is not configured as Pakistan or Saudi Arabia. Ask the manager to correct the registration issuer."
-      )
-    );
-  }
-
-  const { data: issuer } = await admin
-    .from("document_issuer_profiles")
-    .select("jurisdiction")
-    .eq("jurisdiction", jurisdiction)
-    .maybeSingle();
-
-  if (!issuer) {
-    redirect(
-      result(
-        "error",
-        "The selected receipt issuing entity has not been configured by the administrator."
-      )
+      result("error", "The confirmed payment amount is missing.")
     );
   }
 
@@ -146,10 +110,7 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
 
   if (existing?.status === "approved") {
     redirect(
-      result(
-        "error",
-        "This receipt application has already been approved."
-      )
+      result("error", "This receipt application has already been approved.")
     );
   }
 
@@ -189,20 +150,13 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
   };
 
   const operation = existing
-    ? admin
-        .from("receipt_applications")
-        .update(payload)
-        .eq("id", existing.id)
-    : admin
-        .from("receipt_applications")
-        .insert(payload);
+    ? admin.from("receipt_applications").update(payload).eq("id", existing.id)
+    : admin.from("receipt_applications").insert(payload);
 
   const { error } = await operation;
 
   if (error) {
-    redirect(
-      result("error", error.message)
-    );
+    redirect(result("error", error.message));
   }
 
   revalidatePath("/dashboard/receipts");

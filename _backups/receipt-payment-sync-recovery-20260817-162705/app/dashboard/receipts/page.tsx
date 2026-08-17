@@ -47,7 +47,7 @@ export default async function ReceiptsPage({
     admin
       .from("workshop_registrations")
       .select(
-        "id,workshop_id,payment_status,amount_received,payment_currency,document_jurisdiction,email,workshops(title)"
+        "id,workshop_id,payment_status,amount_received,payment_currency,email,workshops(title)"
       )
       .eq("user_id", user.id)
       .in("payment_status", ["confirmed", "paid"])
@@ -175,20 +175,6 @@ export default async function ReceiptsPage({
 
             const title = workshop?.title || "Workshop payment";
 
-            const registrationJurisdiction = String(
-              registration.document_jurisdiction || ""
-            ).toUpperCase();
-
-            const issuer = issuers.find(
-              (item: any) =>
-                String(item.jurisdiction).toUpperCase() ===
-                registrationJurisdiction
-            );
-
-            const issuerSupported =
-              ["PK", "SA"].includes(registrationJurisdiction) &&
-              Boolean(issuer);
-
             const issuedDocument = application
               ? documentByApplication.get(String(application.id))
               : null;
@@ -300,33 +286,28 @@ export default async function ReceiptsPage({
                 ) : null}
 
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  <div className="grid gap-2 text-sm font-black">
+                  <label className="grid gap-2 text-sm font-black">
                     Issuing entity
-                    <div
-                      className={`rounded-xl border px-4 py-3 ${
-                        issuerSupported
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-                          : "border-red-200 bg-red-50 text-red-800"
-                      }`}
+                    <select
+                      name="jurisdiction"
+                      required
+                      className="rounded-xl border border-slate-300 px-4 py-3"
                     >
-                      {issuerSupported
-                        ? `${
+                      {issuers.map((issuer: any) => (
+                        <option
+                          key={issuer.jurisdiction}
+                          value={issuer.jurisdiction}
+                        >
+                          {
                             jurisdictionNames[
-                              normalizeJurisdiction(
-                                registrationJurisdiction
-                              )
+                              normalizeJurisdiction(issuer.jurisdiction)
                             ]
-                          } - ${
-                            issuer?.trading_name ||
-                            issuer?.legal_name
-                          }`
-                        : "Issuer unavailable. Ask the manager to set Pakistan or Saudi Arabia on this registration."}
-                    </div>
-                    <p className="text-xs font-medium text-slate-500">
-                      The issuing entity is set by Registration & Payment Management
-                      and cannot be changed in the receipt request.
-                    </p>
-                  </div>
+                          }{" "}
+                          - {issuer.trading_name || issuer.legal_name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
 
                   <label className="grid gap-2 text-sm font-black">
                     Recipient type
@@ -434,10 +415,7 @@ export default async function ReceiptsPage({
                   </label>
                 </div>
 
-                <button
-                  disabled={!issuerSupported}
-                  className="mt-5 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white disabled:cursor-not-allowed disabled:bg-slate-300"
-                >
+                <button className="mt-5 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white">
                   Submit receipt application
                 </button>
               </form>

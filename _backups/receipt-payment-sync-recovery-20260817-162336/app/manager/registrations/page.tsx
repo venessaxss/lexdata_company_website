@@ -826,16 +826,10 @@ export default async function ManagerRegistrationsPage({
                                     <option value="under_review">
                                       Under Review
                                     </option>
-                                    {registration.payment_status === "confirmed" ? (
-                                      <option value="confirmed">
-                                        Confirmed Paid
-                                      </option>
-                                    ) : null}
-                                    {registration.payment_status === "waived" ? (
-                                      <option value="waived">
-                                        Waived
-                                      </option>
-                                    ) : null}
+                                    <option value="confirmed">
+                                      Confirmed Paid
+                                    </option>
+                                    <option value="waived">Waived</option>
                                     <option value="rejected">Rejected</option>
                                   </select>
                                 </div>
@@ -926,7 +920,7 @@ export default async function ManagerRegistrationsPage({
 
                               <div>
                                 <label className="block text-xs font-black text-slate-500">
-                                  Receipt issuing entity
+                                  Receipt / certificate jurisdiction
                                 </label>
                                 <select
                                   name="document_jurisdiction"
@@ -935,9 +929,10 @@ export default async function ManagerRegistrationsPage({
                                 >
                                   <option value="PK">Pakistan</option>
                                   <option value="SA">Saudi Arabia</option>
+                                  <option value="CN">China</option>
                                 </select>
                                 <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-500">
-                                  This issuer is inherited by the participant&apos;s receipt application. Change it here before confirming payment if needed.
+                                  Select the issuing entity, not the participant&apos;s nationality.
                                 </p>
                               </div>
 

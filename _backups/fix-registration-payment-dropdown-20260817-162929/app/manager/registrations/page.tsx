@@ -427,7 +427,11 @@ export default async function ManagerRegistrationsPage({
                 <option value="instructions_sent">Instructions Sent</option>
                 <option value="under_review">Under Review</option>
                 <option value="confirmed">Confirmed Paid</option>
-                <option value="waived">Waived</option>
+                {registration.payment_status === "waived" ? (
+                                      <option value="waived">
+                                        Waived
+                                      </option>
+                                    ) : null}
                 <option value="rejected">Rejected</option>
               </select>
             </div>
@@ -826,16 +830,10 @@ export default async function ManagerRegistrationsPage({
                                     <option value="under_review">
                                       Under Review
                                     </option>
-                                    {registration.payment_status === "confirmed" ? (
-                                      <option value="confirmed">
-                                        Confirmed Paid
-                                      </option>
-                                    ) : null}
-                                    {registration.payment_status === "waived" ? (
-                                      <option value="waived">
-                                        Waived
-                                      </option>
-                                    ) : null}
+                                    <option value="confirmed">
+                                      Confirmed Paid
+                                    </option>
+                                    <option value="waived">Waived</option>
                                     <option value="rejected">Rejected</option>
                                   </select>
                                 </div>

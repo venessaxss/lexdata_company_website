@@ -88,9 +88,7 @@ async function revalidateRegistrationPages(
   revalidatePath("/dashboard/my-learning");
   revalidatePath("/my/workshops");
   revalidatePath("/dashboard/documents");
-  revalidatePath("/dashboard/receipts");
   revalidatePath("/admin/documents");
-  revalidatePath("/admin/documents/receipts");
 }
 
 export async function handleRegistrationManagementAction(formData: FormData) {
@@ -162,7 +160,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   const paymentNote = text(formData, "payment_note");
   const paymentCurrency = text(formData, "payment_currency") || "USD";
   const requestedJurisdiction = text(formData, "document_jurisdiction") || "PK";
-  const documentJurisdiction = ["PK", "SA"].includes(requestedJurisdiction)
+  const documentJurisdiction = ["PK", "SA", "CN"].includes(requestedJurisdiction)
     ? requestedJurisdiction
     : "PK";
   const parsedAmount = Number(text(formData, "amount_received") || 0);
@@ -204,32 +202,6 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       break;
 
     case "save_statuses":
-      if (
-        paymentStatus === "confirmed" &&
-        registration.payment_status !== "confirmed"
-      ) {
-        redirect(
-          withMessage(
-            returnTo,
-            "error",
-            "Use Confirm & unlock to confirm payment. This guarantees the confirmed amount, currency, issuer, and receipt eligibility stay synchronized."
-          )
-        );
-      }
-
-      if (
-        paymentStatus === "waived" &&
-        registration.payment_status !== "waived"
-      ) {
-        redirect(
-          withMessage(
-            returnTo,
-            "error",
-            "Use Waive & unlock to waive payment. This keeps payment and access state synchronized."
-          )
-        );
-      }
-
       updatePayload = {
         registration_status: registrationStatus,
         payment_status: paymentStatus,
@@ -249,7 +221,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       ) {
         notification = {
           title: "Workshop attendance confirmed",
-          body: "The admin has confirmed your workshop attendance. You can now apply from Dashboard > Certificates.",
+          body: "The admin has confirmed your workshop attendance. You can now apply for your certificate under Certificates & Receipts.",
           sourceType: "attendance_confirmed",
         };
       }
@@ -297,7 +269,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
           withMessage(
             returnTo,
             "error",
-            "Enter the confirmed amount before confirming payment."
+            "Enter the confirmed amount before releasing a receipt."
           )
         );
       }
@@ -310,12 +282,10 @@ export async function handleRegistrationManagementAction(formData: FormData) {
         document_jurisdiction: documentJurisdiction,
         payment_note: paymentNote || null,
       };
-      successMessage =
-        "Payment confirmed, workshop access unlocked, and receipt application enabled.";
+      successMessage = "Payment confirmed and workshop access unlocked.";
       notification = {
         title: "Payment confirmed",
-        body:
-          "Your payment has been confirmed and your workshop access is unlocked. You can now submit your receipt application from Dashboard > Receipts.",
+        body: "Your payment has been confirmed, your workshop access is unlocked, and your official payment receipt is available under Certificates & Receipts.",
         sourceType: "payment_confirmed",
       };
       break;

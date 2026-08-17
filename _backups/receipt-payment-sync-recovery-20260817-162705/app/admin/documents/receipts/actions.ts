@@ -73,7 +73,7 @@ export async function approveReceiptApplicationAction(
     auth.admin
       .from("workshop_registrations")
       .select(
-        "id,user_id,workshop_id,payment_status,amount_received,payment_currency,document_jurisdiction"
+        "id,user_id,workshop_id,payment_status,amount_received,payment_currency"
       )
       .eq("id", application.workshop_registration_id)
       .eq("user_id", application.user_id)
@@ -129,33 +129,8 @@ export async function approveReceiptApplicationAction(
     );
   }
 
-  const registrationJurisdiction = String(
-    registration.document_jurisdiction || ""
-  ).toUpperCase();
-
-  if (!["PK", "SA"].includes(registrationJurisdiction)) {
-    redirect(
-      back(
-        "error",
-        "The source registration does not have a valid Pakistan or Saudi Arabia receipt issuer."
-      )
-    );
-  }
-
-  if (
-    registrationJurisdiction !==
-    String(application.jurisdiction || "").toUpperCase()
-  ) {
-    redirect(
-      back(
-        "error",
-        "Receipt issuer mismatch detected. Ask the participant to reapply after the registration issuer is corrected."
-      )
-    );
-  }
-
   const jurisdiction = normalizeJurisdiction(
-    registrationJurisdiction
+    application.jurisdiction
   );
 
   const { data: documentId, error: issueError } =

@@ -40,6 +40,8 @@
     ".next",
     "_backups",
     "lexdata-registered-livestream-module",
-    "**/*.backup-*"
+    "**/*.backup-*",
+    "separate-participant-documents-patch",
+    "separate-participant-documents-patch/**"
   ]
 }
