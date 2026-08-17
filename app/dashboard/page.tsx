@@ -46,6 +46,12 @@ export default async function DashboardPage() {
       href: "/dashboard/my-learning",
     },
     {
+      title: "Certificates & Receipts",
+      description:
+        "View released certificates, confirmed-payment receipts, and verification details.",
+      href: "/dashboard/documents",
+    },
+    {
       title: t("card.messages.title"),
       description: t("card.messages.description"),
       href: "/dashboard/messages",

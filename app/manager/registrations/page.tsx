@@ -41,6 +41,7 @@ type Registration = {
   payment_status?: string | null;
   amount_received?: number | null;
   payment_currency?: string | null;
+  document_jurisdiction?: string | null;
   payment_note?: string | null;
   payment_link?: string | null;
   receipt_url?: string | null;
@@ -215,6 +216,7 @@ export default async function ManagerRegistrationsPage({
       payment_status,
       amount_received,
       payment_currency,
+      document_jurisdiction,
       payment_note,
       payment_link,
       receipt_url,
@@ -743,6 +745,7 @@ export default async function ManagerRegistrationsPage({
                                   >
                                     <option value="pending">Pending</option>
                                     <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
                                     <option value="rejected">Rejected</option>
                                     <option value="cancelled">Cancelled</option>
                                   </select>
@@ -835,6 +838,7 @@ export default async function ManagerRegistrationsPage({
                                     <option value="MNT">MNT</option>
                                     <option value="PKR">PKR</option>
                                     <option value="CNY">CNY</option>
+                                    <option value="SAR">SAR</option>
                                     <option value="EUR">EUR</option>
                                     <option value="GBP">GBP</option>
                                     <option value="AUD">AUD</option>
@@ -843,6 +847,24 @@ export default async function ManagerRegistrationsPage({
                                     <option value="KRW">KRW</option>
                                   </select>
                                 </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Receipt / certificate jurisdiction
+                                </label>
+                                <select
+                                  name="document_jurisdiction"
+                                  defaultValue={registration.document_jurisdiction || "PK"}
+                                  className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+                                >
+                                  <option value="PK">Pakistan</option>
+                                  <option value="SA">Saudi Arabia</option>
+                                  <option value="CN">China</option>
+                                </select>
+                                <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-500">
+                                  Select the issuing entity, not the participant&apos;s nationality.
+                                </p>
                               </div>
 
                               <div>

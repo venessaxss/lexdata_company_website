@@ -22,6 +22,10 @@ export async function updateMemberProfileAction(formData: FormData) {
   }
 
   const fullName = field(formData, "full_name");
+  const preferredCertificateName = field(
+    formData,
+    "preferred_certificate_name"
+  );
   const institution = field(formData, "institution");
   const affiliation = field(formData, "affiliation");
   const affiliationStatus = field(formData, "affiliation_status");
@@ -46,6 +50,8 @@ export async function updateMemberProfileAction(formData: FormData) {
     id: user.id,
     email: user.email || null,
     full_name: fullName || user.user_metadata?.full_name || user.email,
+    preferred_certificate_name:
+      preferredCertificateName || fullName || user.user_metadata?.full_name || user.email,
     institution: institution || null,
     affiliation: affiliation || null,
     affiliation_status: affiliationStatus || null,

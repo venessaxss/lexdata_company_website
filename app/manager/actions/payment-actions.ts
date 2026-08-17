@@ -87,6 +87,8 @@ async function revalidateRegistrationPages(
   revalidatePath("/dashboard/messages");
   revalidatePath("/dashboard/my-learning");
   revalidatePath("/my/workshops");
+  revalidatePath("/dashboard/documents");
+  revalidatePath("/admin/documents");
 }
 
 export async function handleRegistrationManagementAction(formData: FormData) {
@@ -135,6 +137,10 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   const paymentLink = text(formData, "payment_link");
   const paymentNote = text(formData, "payment_note");
   const paymentCurrency = text(formData, "payment_currency") || "USD";
+  const requestedJurisdiction = text(formData, "document_jurisdiction") || "PK";
+  const documentJurisdiction = ["PK", "SA", "CN"].includes(requestedJurisdiction)
+    ? requestedJurisdiction
+    : "PK";
   const parsedAmount = Number(text(formData, "amount_received") || 0);
   const amountReceived = Number.isFinite(parsedAmount) ? parsedAmount : 0;
 
@@ -151,7 +157,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   switch (intent) {
     case "grant_access":
       updatePayload = {
-        access_status: "pending",
+        access_status: "granted",
       };
       successMessage = "Workshop access granted.";
       notification = {
@@ -163,7 +169,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
 
     case "revoke_access":
       updatePayload = {
-        access_status: "pending",
+        access_status: "revoked",
       };
       successMessage = "Workshop access revoked.";
       notification = {
@@ -184,7 +190,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     case "send_payment_message":
       updatePayload = {
         registration_status: registrationStatus,
-        payment_status: "pending",
+        payment_status: "instructions_sent",
         payment_link: paymentLink || null,
         payment_note: paymentNote || null,
       };
@@ -203,9 +209,10 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     case "record_payment_received":
       updatePayload = {
         registration_status: registrationStatus,
-        payment_status: "pending",
+        payment_status: "under_review",
         amount_received: amountReceived,
         payment_currency: paymentCurrency,
+        document_jurisdiction: documentJurisdiction,
         payment_note: paymentNote || null,
       };
       successMessage = "Payment information recorded.";
@@ -217,28 +224,39 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       break;
 
     case "confirm_payment":
+      if (amountReceived <= 0) {
+        redirect(
+          withMessage(
+            returnTo,
+            "error",
+            "Enter the confirmed amount before releasing a receipt."
+          )
+        );
+      }
       updatePayload = {
-        registration_status: "pending",
-        payment_status: "pending",
-        access_status: "pending",
+        registration_status: "confirmed",
+        payment_status: "confirmed",
+        access_status: "granted",
         amount_received: amountReceived,
         payment_currency: paymentCurrency,
+        document_jurisdiction: documentJurisdiction,
         payment_note: paymentNote || null,
       };
       successMessage = "Payment confirmed and workshop access unlocked.";
       notification = {
         title: "Payment confirmed",
-        body: "Your payment has been confirmed. Your workshop access is now unlocked.",
+        body: "Your payment has been confirmed, your workshop access is unlocked, and your official payment receipt is available under Certificates & Receipts.",
         sourceType: "payment_confirmed",
       };
       break;
 
     case "waive_payment":
       updatePayload = {
-        registration_status: "pending",
-        payment_status: "pending",
-        access_status: "pending",
+        registration_status: "confirmed",
+        payment_status: "waived",
+        access_status: "granted",
         amount_received: 0,
+        document_jurisdiction: documentJurisdiction,
         payment_note: paymentNote || null,
       };
       successMessage = "Payment waived and workshop access unlocked.";

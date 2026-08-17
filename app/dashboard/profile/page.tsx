@@ -94,6 +94,28 @@ export default async function MemberProfilePage({
             />
           </div>
 
+          <div className="md:col-span-2">
+            <label className="block text-sm font-black text-slate-600">
+              Preferred name on certificates and receipts *
+            </label>
+            <input
+              name="preferred_certificate_name"
+              defaultValue={
+                profile?.preferred_certificate_name ||
+                profile?.full_name ||
+                user.user_metadata?.full_name ||
+                ""
+              }
+              maxLength={120}
+              required
+              className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm font-bold"
+            />
+            <p className="mt-2 text-xs font-semibold text-slate-500">
+              Enter the exact spelling, capitalization, and script you want printed.
+              Issued documents keep this name as a permanent snapshot.
+            </p>
+          </div>
+
           <div>
             <label className="block text-sm font-black text-slate-600">
               Institution / University *

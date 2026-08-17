@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,6 +21,9 @@ export default async function MyPaymentsPage() {
     <section className="mx-auto max-w-6xl px-4 py-12">
       <h1 className="text-3xl font-bold">Invoices & payments</h1>
       <p className="mt-2 text-slate-600">Your checkout attempts and completed purchases.</p>
+      <Link href="/dashboard/documents" className="mt-4 inline-flex rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white">
+        Open official receipts
+      </Link>
 
       <div className="card mt-8 overflow-hidden">
         <table className="w-full text-left text-sm">

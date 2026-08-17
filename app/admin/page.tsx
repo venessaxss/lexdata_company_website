@@ -19,6 +19,12 @@ const adminCards = [
     tag: "Inbox + replies",
   },
   {
+    title: "Certificates & Receipts",
+    description: "Approve certificates, monitor automatic receipts, manage issuer jurisdictions, and review the audit log.",
+    href: "/admin/documents",
+    tag: "Controlled issuance",
+  },
+  {
     title: "Send Messages",
     description: "Send messages to all users, specific role groups, or individual registrants/users.",
     href: "/dashboard/messages/send",

@@ -37,7 +37,7 @@ export default async function CourseRegistrationDetailPage({
       auth.admin.from("courses").select("*").eq("id", courseId).maybeSingle(),
       auth.admin
         .from("course_enrollments")
-        .select("id,course_id,user_id,full_name,email,enrollment_status,payment_status,note,created_at,updated_at")
+        .select("id,course_id,user_id,full_name,email,enrollment_status,payment_status,document_jurisdiction,note,created_at,updated_at")
         .eq("course_id", courseId)
         .order("created_at", { ascending: false }),
     ]);
@@ -156,7 +156,7 @@ export default async function CourseRegistrationDetailPage({
                   </div>
                 </div>
 
-                <form action={updateCourseEnrollmentAction} className="grid gap-4 p-5 lg:grid-cols-[220px_220px_minmax(0,1fr)_auto]">
+                <form action={updateCourseEnrollmentAction} className="grid gap-4 p-5 lg:grid-cols-[180px_180px_180px_minmax(0,1fr)_auto]">
                   <input type="hidden" name="enrollment_id" value={String(row.id)} />
                   <input type="hidden" name="course_id" value={courseId} />
 
@@ -168,6 +168,15 @@ export default async function CourseRegistrationDetailPage({
                       <option value="confirmed">Confirmed</option>
                       <option value="rejected">Rejected</option>
                       <option value="cancelled">Cancelled</option>
+                    </select>
+                  </label>
+
+                  <label className="grid gap-2 text-sm font-black">
+                    Issuing jurisdiction
+                    <select name="document_jurisdiction" defaultValue={String(row.document_jurisdiction || "PK")} className="rounded-xl border border-slate-300 px-4 py-3">
+                      <option value="PK">Pakistan</option>
+                      <option value="SA">Saudi Arabia</option>
+                      <option value="CN">China</option>
                     </select>
                   </label>
 

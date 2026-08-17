@@ -28,6 +28,10 @@ export async function updateCourseEnrollmentAction(formData: FormData) {
   const enrollmentStatus = value(formData, "enrollment_status");
   const paymentStatus = value(formData, "payment_status");
   const note = value(formData, "note") || null;
+  const requestedJurisdiction = value(formData, "document_jurisdiction") || "PK";
+  const documentJurisdiction = ["PK", "SA", "CN"].includes(requestedJurisdiction)
+    ? requestedJurisdiction
+    : "PK";
 
   if (!id || !courseId) {
     redirect("/manager/course-registrations?error=Missing course enrollment.");
@@ -46,6 +50,7 @@ export async function updateCourseEnrollmentAction(formData: FormData) {
     .update({
       enrollment_status: enrollmentStatus,
       payment_status: paymentStatus,
+      document_jurisdiction: documentJurisdiction,
       note,
       updated_at: new Date().toISOString(),
     })
@@ -59,6 +64,8 @@ export async function updateCourseEnrollmentAction(formData: FormData) {
   revalidatePath("/manager/course-enrollments");
   revalidatePath("/dashboard/my-learning");
   revalidatePath("/courses");
+  revalidatePath("/dashboard/documents");
+  revalidatePath("/admin/documents");
 
   redirect(target(courseId, "message", "Course enrollment updated."));
 }
