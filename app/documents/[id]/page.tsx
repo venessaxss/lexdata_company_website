@@ -20,7 +20,13 @@ function issuer(document: any) {
   return document.issuer_snapshot || {};
 }
 
-export default async function OfficialDocumentPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function OfficialDocumentPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ format?: string }>;
+}) {
   noStore();
   const { id } = await params;
   const supabase = await createClient();
@@ -38,28 +44,77 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
   if (document.user_id !== user.id && !isAdmin) notFound();
   if (document.status !== "issued" && !isAdmin) notFound();
 
+  const requestedPreview = (await searchParams).format === "current";
+  let renderedMetadata = { ...(document.metadata || {}) };
+  let currentFormatPreview = false;
+  if (isAdmin && requestedPreview && ["revoked", "void"].includes(document.status)) {
+    if (document.document_type === "receipt") {
+      const { data: currentFormat } = await admin
+        .from("document_format_profiles")
+        .select("*")
+        .eq("document_type", "receipt")
+        .eq("jurisdiction", document.jurisdiction)
+        .maybeSingle();
+      if (currentFormat) {
+        renderedMetadata = { ...renderedMetadata, receipt_format: currentFormat };
+        currentFormatPreview = true;
+      }
+    } else if (document.source_type === "workshop_registration") {
+      const { data: registration } = await admin
+        .from("workshop_registrations")
+        .select("workshop_id")
+        .eq("id", document.source_id)
+        .maybeSingle();
+      if (registration) {
+        const { data: template } = await admin
+          .from("certificate_templates")
+          .select("*")
+          .eq("workshop_id", registration.workshop_id)
+          .eq("is_active", true)
+          .maybeSingle();
+        if (template) {
+          renderedMetadata = {
+            ...renderedMetadata,
+            template_id: template.id,
+            template_url: template.background_url,
+            text_color: template.text_color,
+            name_top_percent: template.name_top_percent,
+            program_top_percent: template.program_top_percent,
+            details_top_percent: template.details_top_percent,
+            name_font_size: template.name_font_size,
+            program_font_size: template.program_font_size,
+            details_font_size: template.details_font_size,
+            font_family: template.font_family,
+            completion_label: template.completion_label,
+          };
+          currentFormatPreview = true;
+        }
+      }
+    }
+  }
+
   const jurisdiction = normalizeJurisdiction(document.jurisdiction);
   const issuerData = issuer(document);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const verifyUrl = `${siteUrl}/verify/${document.verification_code}`;
   const date = document.issued_at || document.payment_confirmed_at || document.created_at;
-  const certificateTemplateUrl = document.metadata?.template_url as string | undefined;
-  const certificateTextColor = /^#[0-9a-fA-F]{6}$/.test(String(document.metadata?.text_color || ""))
-    ? String(document.metadata.text_color)
+  const certificateTemplateUrl = renderedMetadata?.template_url as string | undefined;
+  const certificateTextColor = /^#[0-9a-fA-F]{6}$/.test(String(renderedMetadata?.text_color || ""))
+    ? String(renderedMetadata.text_color)
     : "#0B2545";
   const templatePosition = (key: string, fallback: number) => {
-    const value = Number(document.metadata?.[key]);
+    const value = Number(renderedMetadata?.[key]);
     return Number.isFinite(value) ? `${Math.min(94, Math.max(10, value))}%` : `${fallback}%`;
   };
   const templateFontSize = (key: string, fallback: number, minimum: number, maximum: number) => {
-    const value = Number(document.metadata?.[key]);
+    const value = Number(renderedMetadata?.[key]);
     return Number.isFinite(value) ? Math.min(maximum, Math.max(minimum, value)) : fallback;
   };
   const certificateNameFont =
-    document.metadata?.font_family === "sans"
+    renderedMetadata?.font_family === "sans"
       ? "Arial, sans-serif"
       : "Georgia, serif";
-  const receiptFormat = document.metadata?.receipt_format || {};
+  const receiptFormat = renderedMetadata?.receipt_format || {};
   const formatText = (key: string, fallback: string) => {
     const value = String(receiptFormat?.[key] || "").trim();
     return value || fallback;
@@ -81,6 +136,11 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
         <Link href={isAdmin ? `/admin/documents/${document.document_type === "certificate" ? "certificates" : "receipts"}` : "/dashboard/documents"} className="text-sm font-black text-slate-700">&larr; Back to documents</Link>
         <PrintDocumentButton />
       </div>
+      {currentFormatPreview ? (
+        <div className="mx-auto mb-5 max-w-5xl rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm font-bold text-blue-900 print:hidden">
+          Previewing the current admin format on this revoked document. The saved document is unchanged until the admin reissues it.
+        </div>
+      ) : null}
 
       {document.document_type === "certificate" ? (
         certificateTemplateUrl ? (
@@ -98,7 +158,7 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
               </p>
             </div>
             <div className="absolute left-[10%] right-[10%] -translate-y-1/2 text-center" style={{ top: templatePosition("program_top_percent", 61), color: certificateTextColor }}>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">{String(document.metadata?.completion_label || "Successfully completed")}</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">{String(renderedMetadata?.completion_label || "Successfully completed")}</p>
               <h1
                 className="mt-2 font-black leading-tight"
                 style={{ fontSize: `${templateFontSize("program_font_size", 30, 16, 56)}px` }}

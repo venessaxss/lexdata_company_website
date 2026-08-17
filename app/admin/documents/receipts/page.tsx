@@ -3,7 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { ReceiptFormatEditor } from "@/components/admin/ReceiptFormatEditor";
 import { formatDocumentMoney, jurisdictionNames } from "@/lib/official-documents";
-import { updateReceiptFormatAction } from "../actions";
+import { reissueRevokedDocumentWithCurrentFormatAction, updateReceiptFormatAction } from "../actions";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -23,7 +23,7 @@ export default async function ReceiptManagementPage({
     auth.admin.from("document_issuer_profiles").select("jurisdiction,legal_name,trading_name").order("jurisdiction"),
     auth.admin
       .from("official_documents")
-      .select("id,recipient_name,title,document_number,status,amount,currency,jurisdiction,created_at")
+      .select("id,recipient_name,title,document_number,status,amount,currency,jurisdiction,revocation_reason,created_at")
       .eq("document_type", "receipt")
       .order("created_at", { ascending: false })
       .limit(100),
@@ -73,6 +73,22 @@ export default async function ReceiptManagementPage({
               <article key={document.id} className="rounded-2xl border bg-white p-5 shadow-sm">
                 <div className="flex justify-between gap-3"><div><p className="font-black">{document.recipient_name}</p><p className="mt-1 text-sm text-slate-600">{document.title}</p><p className="mt-2 text-xs text-slate-500">{document.document_number} · {jurisdictionNames[document.jurisdiction as keyof typeof jurisdictionNames]}</p></div><p className="whitespace-nowrap font-black">{formatDocumentMoney(document.amount, document.currency)}</p></div>
                 <Link href={`/documents/${document.id}`} className="mt-4 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-black">Preview receipt</Link>
+                {document.status === "void" ? (
+                  /refund|refunded|cancelled|canceled/i.test(String(document.revocation_reason || "")) ? (
+                    <p className="mt-4 rounded-xl bg-red-50 p-3 text-xs font-bold text-red-700">This receipt was voided by a refund or cancellation and cannot be reissued.</p>
+                  ) : (
+                    <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                      <p className="text-sm font-black text-amber-950">Format correction</p>
+                      <p className="mt-1 text-xs leading-5 text-amber-900">Edit the jurisdiction format above, preview it with this receipt&apos;s data, then reissue.</p>
+                      <Link href={`/documents/${document.id}?format=current`} className="mt-3 inline-flex rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-black text-amber-950">Preview current format</Link>
+                      <form action={reissueRevokedDocumentWithCurrentFormatAction} className="mt-3 flex flex-col gap-2 sm:flex-row">
+                        <input type="hidden" name="id" value={document.id} />
+                        <input name="correction_reason" required minLength={5} placeholder="Required correction reason" className="min-w-0 flex-1 rounded-xl border border-amber-300 px-3 py-2 text-sm" />
+                        <button className="rounded-xl bg-amber-800 px-4 py-2 text-sm font-black text-white">Reissue with current format</button>
+                      </form>
+                    </div>
+                  )
+                ) : null}
               </article>
             ))}
             {!documentResult.data?.length ? <div className="rounded-3xl border border-dashed bg-white p-10 text-center text-slate-500">No confirmed-payment receipts yet.</div> : null}

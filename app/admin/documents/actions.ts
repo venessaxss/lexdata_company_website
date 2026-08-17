@@ -418,9 +418,158 @@ export async function revokeDocumentAction(formData: FormData) {
     })
     .eq("id", id)
     .eq("status", "issued");
-  if (error) redirect(back("error", error.message));
+  if (error) {
+    redirect(
+      document.document_type === "receipt"
+        ? receiptBack("error", error.message)
+        : certificateBack("error", error.message)
+    );
+  }
   refresh();
-  redirect(back("message", "Document status updated and recorded in the audit log."));
+  redirect(
+    document.document_type === "receipt"
+      ? receiptBack("message", "Receipt voided. Edit its format, preview the correction, and reissue when ready.")
+      : certificateBack("message", "Certificate revoked. Edit its format, preview the correction, and reissue when ready.")
+  );
+}
+
+export async function reissueRevokedDocumentWithCurrentFormatAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents");
+  const id = field(formData, "id");
+  const correctionReason = field(formData, "correction_reason");
+  if (!id || correctionReason.length < 5) {
+    redirect(back("error", "A clear format-correction reason is required."));
+  }
+
+  const { data: document } = await auth.admin
+    .from("official_documents")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (!document || !["revoked", "void"].includes(document.status)) {
+    redirect(back("error", "Only a revoked certificate or administratively voided receipt can be reissued."));
+  }
+
+  const previousRevocationReason = String(document.revocation_reason || "");
+  if (
+    document.document_type === "receipt" &&
+    /refund|refunded|cancelled|canceled/i.test(previousRevocationReason)
+  ) {
+    redirect(receiptBack("error", "A receipt voided because of a refund or cancellation cannot be reissued."));
+  }
+
+  let metadata = { ...(document.metadata || {}) };
+  let formatReference: Record<string, unknown> = {};
+
+  if (document.document_type === "receipt") {
+    const { data: receiptFormat } = await auth.admin
+      .from("document_format_profiles")
+      .select("*")
+      .eq("document_type", "receipt")
+      .eq("jurisdiction", document.jurisdiction)
+      .maybeSingle();
+    if (!receiptFormat) {
+      redirect(receiptBack("error", "Save a receipt format for this jurisdiction before reissuing."));
+    }
+    const {
+      id: formatId,
+      updated_by: _updatedBy,
+      created_at: _createdAt,
+      updated_at: _updatedAt,
+      ...formatSnapshot
+    } = receiptFormat;
+    metadata = { ...metadata, receipt_format: formatSnapshot };
+    formatReference = { receipt_format_id: formatId, format_name: receiptFormat.format_name };
+  } else {
+    if (document.source_type !== "workshop_registration") {
+      redirect(certificateBack("error", "Custom format reissue is currently available for workshop certificates."));
+    }
+    const { data: registration } = await auth.admin
+      .from("workshop_registrations")
+      .select("workshop_id")
+      .eq("id", document.source_id)
+      .maybeSingle();
+    if (!registration) {
+      redirect(certificateBack("error", "The original workshop registration could not be found."));
+    }
+    const { data: template } = await auth.admin
+      .from("certificate_templates")
+      .select("*")
+      .eq("workshop_id", registration.workshop_id)
+      .eq("is_active", true)
+      .maybeSingle();
+    if (!template) {
+      redirect(certificateBack("error", "Upload or activate a certificate format for the workshop before reissuing."));
+    }
+    metadata = {
+      ...metadata,
+      template_id: template.id,
+      template_url: template.background_url,
+      text_color: template.text_color,
+      name_top_percent: template.name_top_percent,
+      program_top_percent: template.program_top_percent,
+      details_top_percent: template.details_top_percent,
+      name_font_size: template.name_font_size,
+      program_font_size: template.program_font_size,
+      details_font_size: template.details_font_size,
+      font_family: template.font_family,
+      completion_label: template.completion_label,
+    };
+    formatReference = { template_id: template.id, template_name: template.template_name };
+  }
+
+  const reissuedAt = new Date().toISOString();
+  const { data: reissued, error } = await auth.admin
+    .from("official_documents")
+    .update({
+      status: "issued",
+      issued_at: reissuedAt,
+      issued_by: auth.user.id,
+      revoked_at: null,
+      revoked_by: null,
+      revocation_reason: null,
+      metadata,
+      updated_at: reissuedAt,
+    })
+    .eq("id", document.id)
+    .in("status", ["revoked", "void"])
+    .select("id")
+    .maybeSingle();
+  if (error || !reissued) {
+    redirect(
+      document.document_type === "receipt"
+        ? receiptBack("error", error?.message || "The receipt status changed before it could be reissued.")
+        : certificateBack("error", error?.message || "The certificate status changed before it could be reissued.")
+    );
+  }
+
+  await auth.admin.from("official_document_audit_log").insert({
+    document_id: document.id,
+    actor_id: auth.user.id,
+    action: "format_corrected_and_reissued",
+    from_status: document.status,
+    to_status: "issued",
+    details: {
+      correction_reason: correctionReason,
+      previous_revocation_reason: previousRevocationReason,
+      ...formatReference,
+    },
+  });
+  await auth.admin.from("internal_messages").insert({
+    user_id: document.user_id,
+    recipient_email: document.recipient_email || null,
+    title: `${document.document_type === "receipt" ? "Receipt" : "Certificate"} corrected and reissued`,
+    body: `Your ${document.document_type} was corrected by the admin and reissued. It is available under Certificates & Receipts.`,
+    source_type: "document_format_reissued",
+    source_id: document.id,
+  });
+
+  refresh();
+  redirect(
+    document.document_type === "receipt"
+      ? receiptBack("message", "Receipt reissued with the current receipt format.")
+      : certificateBack("message", "Certificate reissued with the current workshop format.")
+  );
 }
 
 export async function attachAuthorityReferenceAction(formData: FormData) {

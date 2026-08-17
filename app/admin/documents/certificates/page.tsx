@@ -6,6 +6,7 @@ import {
   CertificateTemplateUploadEditor,
 } from "@/components/admin/CertificateFormatEditors";
 import {
+  reissueRevokedDocumentWithCurrentFormatAction,
   updateCertificateTemplateFormatAction,
   uploadCertificateTemplateAction,
 } from "../actions";
@@ -103,6 +104,18 @@ export default async function CertificateManagementPage({
               <article key={document.id} className="rounded-2xl border bg-white p-5 shadow-sm">
                 <div className="flex justify-between gap-3"><div><p className="font-black">{document.recipient_name}</p><p className="mt-1 text-sm text-slate-600">{document.title}</p><p className="mt-2 text-xs text-slate-500">{document.document_number}</p></div><span className="h-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-black">{document.status.replace(/_/g, " ")}</span></div>
                 <Link href={`/documents/${document.id}`} className="mt-4 inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-black">Preview certificate</Link>
+                {document.status === "revoked" ? (
+                  <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                    <p className="text-sm font-black text-amber-950">Format correction</p>
+                    <p className="mt-1 text-xs leading-5 text-amber-900">Edit the active workshop format above, preview it with this participant&apos;s data, then reissue.</p>
+                    <Link href={`/documents/${document.id}?format=current`} className="mt-3 inline-flex rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-black text-amber-950">Preview current format</Link>
+                    <form action={reissueRevokedDocumentWithCurrentFormatAction} className="mt-3 flex flex-col gap-2 sm:flex-row">
+                      <input type="hidden" name="id" value={document.id} />
+                      <input name="correction_reason" required minLength={5} placeholder="Required correction reason" className="min-w-0 flex-1 rounded-xl border border-amber-300 px-3 py-2 text-sm" />
+                      <button className="rounded-xl bg-amber-800 px-4 py-2 text-sm font-black text-white">Reissue with current format</button>
+                    </form>
+                  </div>
+                ) : null}
               </article>
             ))}
           </div>

@@ -72,6 +72,8 @@ Participants set the exact printed name in `/dashboard/profile` and access relea
 
 Certificate and receipt administration are separated. Use `/admin/documents/certificates` to preview and edit workshop certificate backgrounds, positions, colors, and typography. Use `/admin/documents/receipts` to preview and edit future receipt formats independently for Pakistan, Saudi Arabia, and China. Issued documents retain their saved format snapshots.
 
+For a controlled format correction, revoke the certificate or administratively void the receipt, edit the applicable format, preview the current format against the revoked document, enter a correction reason, and reissue. The action is recorded in the audit log. Receipts voided because of a refund or cancellation cannot be reissued.
+
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
