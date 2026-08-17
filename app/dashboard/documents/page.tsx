@@ -24,7 +24,7 @@ export default async function MyDocumentsPage({
   const [profileResult, documentResult, registrationResult, applicationResult] = await Promise.all([
     admin.from("profiles").select("full_name,preferred_certificate_name").eq("id", user.id).maybeSingle(),
     admin.from("official_documents").select("id,document_type,document_number,jurisdiction,status,title,amount,currency,created_at,issued_at").eq("user_id", user.id).order("created_at", { ascending: false }),
-    admin.from("workshop_registrations").select("id,workshop_id,registration_status,workshops(title)").eq("user_id", user.id).eq("registration_status", "completed").order("created_at", { ascending: false }),
+    admin.from("workshop_registrations").select("id,workshop_id,registration_status,attendance_status,workshops(title)").eq("user_id", user.id).in("registration_status", ["confirmed", "completed"]).eq("attendance_status", "attended").order("created_at", { ascending: false }),
     admin.from("certificate_applications").select("id,workshop_registration_id,preferred_name,status,admin_note,created_at,workshops(title)").eq("user_id", user.id).order("created_at", { ascending: false }),
   ]);
   const profile = profileResult.data;
@@ -43,7 +43,7 @@ export default async function MyDocumentsPage({
         <p className="text-xs font-black uppercase tracking-[0.24em] text-blue-300">Verified documents</p>
         <h1 className="mt-3 text-4xl font-black">Certificates & receipts</h1>
         <p className="mt-4 max-w-3xl text-slate-300">
-          Receipts appear after payment confirmation. For a workshop certificate, complete the workshop, submit an application here, and wait for admin approval.
+          Receipts appear after payment confirmation. For a workshop certificate, the admin must confirm your registration and attendance before the application form appears here.
         </p>
       </section>
 
@@ -63,7 +63,7 @@ export default async function MyDocumentsPage({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-700">Workshop certificates</p>
-            <h2 className="mt-2 text-2xl font-black text-slate-950">Apply after workshop completion</h2>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">Apply after attendance confirmation</h2>
           </div>
           <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">{registrations.length} eligible workshop{registrations.length === 1 ? "" : "s"}</span>
         </div>
@@ -106,7 +106,7 @@ export default async function MyDocumentsPage({
 
         {!registrations.length ? (
           <div className="mt-4 rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
-            No completed workshop is eligible yet. After attendance is confirmed and the workshop is marked completed, the application form will appear here.
+            No workshop is eligible yet. After the admin confirms both your registration and attendance in Registration Management, the application form will appear here.
           </div>
         ) : null}
       </section>

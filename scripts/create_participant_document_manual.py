@@ -399,7 +399,7 @@ def build_manual():
     for cell, label, value in zip(
         table.rows[0].cells,
         ["RECEIPTS", "CERTIFICATES", "VERIFICATION"],
-        ["After confirmed payment", "After completion + approval", "Public status check"],
+        ["After confirmed payment", "After attendance + approval", "Public status check"],
     ):
         set_cell_shading(cell, LIGHT_BLUE)
         p1 = cell.paragraphs[0]
@@ -423,15 +423,15 @@ def build_manual():
     add_callout(
         doc,
         "Important",
-        "Workshop certificates require an application. After the workshop is marked completed, open Certificates & Receipts, apply for that specific workshop, and wait for admin approval.",
+        "Workshop certificates require an application. After the admin confirms your registration and marks Attendance as Attended in Registration Management, open Certificates & Receipts, apply for that workshop, and wait for approval.",
         fill=PALE_GOLD,
         accent=GOLD,
     )
     add_heading(doc, "The complete participant journey", 2)
     add_step(doc, 1, "Set your preferred printed name", "Open your profile and enter your name exactly as it should appear. You may use English, Chinese, Arabic, Urdu, or another supported script.")
     add_step(doc, 2, "Register and complete payment", "Enroll in the course or workshop. Follow the payment instructions and upload proof if a manual payment method is used.")
-    add_step(doc, 3, "Complete the learning requirement", "Complete every published course lesson, or attend the workshop and wait for the admin to mark your participation completed.")
-    add_step(doc, 4, "Apply for the workshop certificate", "Open Certificates & Receipts, select the completed workshop, confirm the exact printed name, and submit the application.")
+    add_step(doc, 3, "Complete the learning requirement", "Complete every published course lesson, or attend the workshop and wait for the admin to confirm your attendance in Registration Management.")
+    add_step(doc, 4, "Apply for the workshop certificate", "When the eligible workshop appears in Certificates & Receipts, confirm the exact printed name and submit the application.")
     add_step(doc, 5, "Open your released documents", "After admin approval, open the issued certificate, then print it or save it as PDF.")
 
     add_heading(doc, "Before you begin", 2)
@@ -530,14 +530,14 @@ def build_manual():
         add_list_item(doc, item, bullet_num)
 
     add_heading(doc, "Workshop certificate", 2)
-    add_body(doc, "Attend the workshop and meet the organizer's participation or completion requirements. After an admin marks your registration completed, an application form appears under Certificates & Receipts. Select that workshop, confirm your preferred printed name, add an optional note, and submit the application.")
+    add_body(doc, "Attend the workshop and meet the organizer's participation requirements. In Registration Management, the admin keeps your registration status as Confirmed and separately changes Attendance from Not confirmed to Attended. Only then does the application form appear under Certificates & Receipts. Select the workshop, confirm your preferred printed name, add an optional note, and submit the application.")
 
     add_heading(doc, "Admin review and release", 2)
-    add_step(doc, 1, "Application submitted", "The application status becomes Pending. It is tied to your completed registration for that specific workshop.")
-    add_step(doc, 2, "Admin checks the record", "The admin confirms completion, participant identity, preferred name, workshop, issuing jurisdiction, and active certificate template.")
+    add_step(doc, 1, "Application submitted", "The application status becomes Pending. It is tied to your confirmed registration and admin-confirmed attendance for that specific workshop.")
+    add_step(doc, 2, "Admin checks the record", "The admin checks confirmed registration, Attended status, participant identity, preferred name, workshop, issuing jurisdiction, and the active certificate template.")
     add_step(doc, 3, "Certificate generated from the template", "Approval places your name and workshop details onto the admin-uploaded template and releases the certificate as Issued.")
 
-    add_callout(doc, "Application required", "Workshop completion makes you eligible, but it does not issue the certificate by itself. Submit the application for that workshop. If it remains pending after the normal review period, contact support through Dashboard > Messages.", fill=PALE_GREEN, accent=GREEN)
+    add_callout(doc, "Application required", "Confirmed registration alone does not show the Apply button. Admin-confirmed attendance makes the workshop eligible, but it does not issue the certificate by itself. Submit the application for that workshop. If it remains pending after the normal review period, contact support through Dashboard > Messages.", fill=PALE_GREEN, accent=GREEN)
     doc.add_page_break()
 
     add_heading(doc, "5. Open, download, print, and verify", 1)
@@ -588,7 +588,8 @@ def build_manual():
     issues = [
         ("Receipt not visible", "Check that payment is confirmed, not merely uploaded or under review. Then refresh Certificates & Receipts."),
         ("Confirmed amount is wrong", "Do not use the receipt. Contact the admin through Messages and include the payment reference and expected amount."),
-        ("Certificate still pending", "Confirm every lesson is complete, or wait for workshop attendance to be marked completed. Then contact support if needed."),
+        ("Apply button not visible", "A confirmed registration is not enough. Wait for the admin to set Attendance to Attended in Registration Management, then refresh Certificates & Receipts."),
+        ("Certificate still pending", "Confirm every course lesson is complete, or check that workshop attendance is marked Attended. Then contact support if needed."),
         ("Name is wrong before issue", "Update Preferred name on certificates and receipts in My Profile before admin approval."),
         ("Name is wrong after issue", "Contact the admin. Issued documents keep a permanent snapshot and require a controlled correction."),
         ("Document shows revoked or void", "Read the verification status and contact support for the recorded reason or next steps."),

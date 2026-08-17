@@ -39,6 +39,9 @@ type Registration = {
   email?: string | null;
   registration_status?: string | null;
   payment_status?: string | null;
+  attendance_status?: string | null;
+  attendance_confirmed_at?: string | null;
+  attendance_note?: string | null;
   amount_received?: number | null;
   payment_currency?: string | null;
   document_jurisdiction?: string | null;
@@ -57,15 +60,23 @@ function label(status?: string | null) {
 }
 
 function badgeClass(status?: string | null) {
-  if (status === "confirmed" || status === "waived") {
+  if (status === "confirmed" || status === "waived" || status === "attended") {
     return "bg-emerald-50 text-emerald-700 ring-emerald-200";
   }
 
-  if (status === "instructions_sent" || status === "under_review") {
+  if (
+    status === "instructions_sent" ||
+    status === "under_review" ||
+    status === "excused"
+  ) {
     return "bg-blue-50 text-blue-700 ring-blue-200";
   }
 
-  if (status === "rejected" || status === "cancelled") {
+  if (
+    status === "rejected" ||
+    status === "cancelled" ||
+    status === "absent"
+  ) {
     return "bg-red-50 text-red-700 ring-red-200";
   }
 
@@ -214,6 +225,9 @@ export default async function ManagerRegistrationsPage({
       email,
       registration_status,
       payment_status,
+      attendance_status,
+      attendance_confirmed_at,
+      attendance_note,
       amount_received,
       payment_currency,
       document_jurisdiction,
@@ -305,8 +319,7 @@ export default async function ManagerRegistrationsPage({
             </h1>
 
             <p className="mt-2 text-sm font-medium text-slate-600">
-              Manage workshop registrations, payment status, receipts, and
-              access approval.
+              Manage registrations, payment, access, and attendance confirmation.
             </p>
           </div>
 
@@ -563,12 +576,13 @@ export default async function ManagerRegistrationsPage({
           </div>
 
           <div className="max-h-[75vh] overflow-auto">
-            <table className="w-full min-w-[1100px] text-left text-sm">
+            <table className="w-full min-w-[1220px] text-left text-sm">
               <thead className="sticky top-0 z-10 bg-slate-100 text-xs uppercase tracking-[0.16em] text-slate-500">
                 <tr>
                   <th className="px-4 py-3">Participant</th>
                   <th className="px-4 py-3">Workshop</th>
                   <th className="px-4 py-3">Registration</th>
+                  <th className="px-4 py-3">Attendance</th>
                   <th className="px-4 py-3">Payment</th>
                   <th className="px-4 py-3">Amount</th>
                   <th className="px-4 py-3">Date</th>
@@ -630,6 +644,25 @@ export default async function ManagerRegistrationsPage({
                         >
                           {label(registration.registration_status)}
                         </span>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-black ring-1 ${badgeClass(
+                            registration.attendance_status
+                          )}`}
+                        >
+                          {label(
+                            registration.attendance_status || "not_confirmed"
+                          )}
+                        </span>
+                        {registration.attendance_confirmed_at ? (
+                          <p className="mt-2 text-[11px] font-semibold text-slate-500">
+                            Confirmed {new Date(
+                              registration.attendance_confirmed_at
+                            ).toLocaleString()}
+                          </p>
+                        ) : null}
                       </td>
 
                       <td className="px-4 py-4">
@@ -721,7 +754,7 @@ export default async function ManagerRegistrationsPage({
 
                               <div>
                                 <h3 className="text-lg font-black text-slate-950">
-                                  Payment actions
+                                  Registration management
                                 </h3>
 
                                 <p className="mt-1 text-xs font-semibold text-slate-500">
@@ -729,7 +762,7 @@ export default async function ManagerRegistrationsPage({
                                 </p>
                               </div>
 
-                              <div className="grid gap-3 md:grid-cols-2">
+                              <div className="grid gap-3 md:grid-cols-3">
                                 <div>
                                   <label className="block text-xs font-black text-slate-500">
                                     Registration status
@@ -745,9 +778,30 @@ export default async function ManagerRegistrationsPage({
                                   >
                                     <option value="pending">Pending</option>
                                     <option value="confirmed">Confirmed</option>
-                                    <option value="completed">Completed</option>
                                     <option value="rejected">Rejected</option>
                                     <option value="cancelled">Cancelled</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-xs font-black text-slate-500">
+                                    Attendance
+                                  </label>
+
+                                  <select
+                                    name="attendance_status"
+                                    defaultValue={
+                                      registration.attendance_status ||
+                                      "not_confirmed"
+                                    }
+                                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                  >
+                                    <option value="not_confirmed">
+                                      Not confirmed
+                                    </option>
+                                    <option value="attended">Attended</option>
+                                    <option value="absent">Absent</option>
+                                    <option value="excused">Excused</option>
                                   </select>
                                 </div>
 
@@ -787,7 +841,7 @@ export default async function ManagerRegistrationsPage({
                                 value="save_statuses"
                                 className="w-full rounded-2xl bg-slate-800 px-4 py-3 text-sm font-black text-white hover:bg-slate-700"
                               >
-                                Save status changes
+                                Save registration, payment &amp; attendance
                               </button>
 
                               <div>
@@ -847,6 +901,21 @@ export default async function ManagerRegistrationsPage({
                                     <option value="KRW">KRW</option>
                                   </select>
                                 </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-xs font-black text-slate-500">
+                                  Attendance note (optional)
+                                </label>
+                                <input
+                                  name="attendance_note"
+                                  defaultValue={registration.attendance_note || ""}
+                                  placeholder="For example: verified from signed attendance list"
+                                  className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold"
+                                />
+                                <p className="mt-2 text-xs font-semibold text-slate-500">
+                                  Selecting Attended unlocks the participant&apos;s certificate application.
+                                </p>
                               </div>
 
                               <div>

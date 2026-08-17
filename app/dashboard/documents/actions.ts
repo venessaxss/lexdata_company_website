@@ -20,7 +20,7 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
   const participantNote = field(formData, "participant_note") || null;
 
   if (!registrationId || preferredName.length < 2) {
-    redirect(result("error", "Select a completed workshop and enter your preferred certificate name."));
+    redirect(result("error", "Select an eligible workshop and enter your preferred certificate name."));
   }
 
   const supabase = await createClient();
@@ -30,7 +30,7 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
   const admin = createAdminClient();
   const { data: registration, error: registrationError } = await admin
     .from("workshop_registrations")
-    .select("id,user_id,workshop_id,registration_status")
+    .select("id,user_id,workshop_id,registration_status,attendance_status")
     .eq("id", registrationId)
     .eq("user_id", user.id)
     .maybeSingle();
@@ -38,8 +38,12 @@ export async function applyForWorkshopCertificateAction(formData: FormData) {
   if (registrationError || !registration) {
     redirect(result("error", "Workshop registration not found."));
   }
-  if (String(registration.registration_status).toLowerCase() !== "completed") {
-    redirect(result("error", "You can apply only after the workshop is marked completed."));
+  const registrationStatus = String(registration.registration_status).toLowerCase();
+  if (!["confirmed", "completed"].includes(registrationStatus)) {
+    redirect(result("error", "The admin must confirm your workshop registration before you can apply."));
+  }
+  if (String(registration.attendance_status).toLowerCase() !== "attended") {
+    redirect(result("error", "The admin must confirm your attendance in Registration Management before you can apply."));
   }
 
   const { data: existing } = await admin

@@ -109,7 +109,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   const { data: registration, error: loadError } = await admin
     .from("workshop_registrations")
     .select(
-      "id, user_id, email, full_name, workshop_id, registration_status, payment_status"
+      "id, user_id, email, full_name, workshop_id, registration_status, payment_status, attendance_status, attendance_confirmed_at"
     )
     .eq("id", registrationId)
     .maybeSingle();
@@ -124,15 +124,37 @@ export async function handleRegistrationManagementAction(formData: FormData) {
     );
   }
 
-  const registrationStatus =
+  const requestedRegistrationStatus =
     text(formData, "registration_status") ||
     registration.registration_status ||
     "pending";
+  const registrationStatus = [
+    "pending",
+    "confirmed",
+    "rejected",
+    "cancelled",
+  ].includes(requestedRegistrationStatus)
+    ? requestedRegistrationStatus
+    : registration.registration_status || "pending";
 
   const paymentStatus =
     text(formData, "payment_status") ||
     registration.payment_status ||
     "pending";
+
+  const requestedAttendanceStatus =
+    text(formData, "attendance_status") ||
+    registration.attendance_status ||
+    "not_confirmed";
+  const attendanceStatus = [
+    "not_confirmed",
+    "attended",
+    "absent",
+    "excused",
+  ].includes(requestedAttendanceStatus)
+    ? requestedAttendanceStatus
+    : "not_confirmed";
+  const attendanceNote = text(formData, "attendance_note");
 
   const paymentLink = text(formData, "payment_link");
   const paymentNote = text(formData, "payment_note");
@@ -183,8 +205,26 @@ export async function handleRegistrationManagementAction(formData: FormData) {
       updatePayload = {
         registration_status: registrationStatus,
         payment_status: paymentStatus,
+        attendance_status: attendanceStatus,
+        attendance_note: attendanceNote || null,
+        attendance_confirmed_at:
+          attendanceStatus === "attended"
+            ? registration.attendance_confirmed_at || new Date().toISOString()
+            : null,
+        attendance_confirmed_by:
+          attendanceStatus === "attended" ? actor.user.id : null,
       };
-      successMessage = "Registration and payment statuses saved.";
+      successMessage = "Registration, payment, and attendance statuses saved.";
+      if (
+        attendanceStatus === "attended" &&
+        registration.attendance_status !== "attended"
+      ) {
+        notification = {
+          title: "Workshop attendance confirmed",
+          body: "The admin has confirmed your workshop attendance. You can now apply for your certificate under Certificates & Receipts.",
+          sourceType: "attendance_confirmed",
+        };
+      }
       break;
 
     case "send_payment_message":

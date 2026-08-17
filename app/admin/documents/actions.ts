@@ -121,12 +121,16 @@ export async function approveWorkshopCertificateApplicationAction(formData: Form
   }
 
   const [{ data: registration }, { data: workshop }, { data: template }] = await Promise.all([
-    auth.admin.from("workshop_registrations").select("id,registration_status,document_jurisdiction").eq("id", application.workshop_registration_id).eq("user_id", application.user_id).maybeSingle(),
+    auth.admin.from("workshop_registrations").select("id,registration_status,attendance_status,document_jurisdiction").eq("id", application.workshop_registration_id).eq("user_id", application.user_id).maybeSingle(),
     auth.admin.from("workshops").select("id,title").eq("id", application.workshop_id).maybeSingle(),
     auth.admin.from("certificate_templates").select("*").eq("workshop_id", application.workshop_id).eq("is_active", true).maybeSingle(),
   ]);
-  if (!registration || String(registration.registration_status).toLowerCase() !== "completed") {
-    redirect(back("error", "The participant's workshop registration is not marked completed."));
+  const registrationStatus = String(registration?.registration_status || "").toLowerCase();
+  if (!registration || !["confirmed", "completed"].includes(registrationStatus)) {
+    redirect(back("error", "The participant's workshop registration is not confirmed."));
+  }
+  if (String(registration.attendance_status).toLowerCase() !== "attended") {
+    redirect(back("error", "Attendance is not confirmed in Registration Management."));
   }
   if (!workshop) redirect(back("error", "Workshop not found."));
   if (!template) redirect(back("error", "Upload and activate a certificate template for this workshop before approval."));
