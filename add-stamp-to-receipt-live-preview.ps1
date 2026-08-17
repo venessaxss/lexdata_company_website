@@ -1,3 +1,56 @@
+$ErrorActionPreference = "Stop"
+
+$root = (Get-Location).Path
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$backupRoot = Join-Path $root "_backups\receipt-live-preview-stamp-$timestamp"
+
+$componentPath = Join-Path $root "components\admin\ReceiptFormatEditor.tsx"
+$adminPagePath = Join-Path $root "app\admin\documents\receipts\page.tsx"
+
+foreach ($path in @(
+    $componentPath,
+    $adminPagePath
+)) {
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw "Cannot find required file: $path`nRun this script from the LexData project root."
+    }
+}
+
+function Backup-File {
+    param([string]$Path)
+
+    $relative = $Path.Substring($root.Length).TrimStart("\", "/")
+    $destination = Join-Path $backupRoot $relative
+
+    New-Item -ItemType Directory `
+        -Path (Split-Path -Parent $destination) `
+        -Force |
+        Out-Null
+
+    Copy-Item `
+        -LiteralPath $Path `
+        -Destination $destination `
+        -Force
+}
+
+function Write-Utf8 {
+    param(
+        [string]$Path,
+        [string]$Content
+    )
+
+    [System.IO.File]::WriteAllText(
+        $Path,
+        $Content,
+        $utf8
+    )
+}
+
+Backup-File $componentPath
+Backup-File $adminPagePath
+
+$component = @'
 "use client";
 
 import { useState } from "react";
@@ -440,3 +493,91 @@ export function ReceiptFormatEditor({
     </form>
   );
 }
+'@
+
+Write-Utf8 $componentPath $component
+Write-Host "[OK] Receipt live preview now supports issuer stamp." -ForegroundColor Green
+
+$adminPage = [System.IO.File]::ReadAllText(
+    $adminPagePath,
+    [System.Text.Encoding]::UTF8
+)
+
+if (
+    -not $adminPage.Contains(
+        'stampUrl={'
+    )
+) {
+    $pattern =
+        '(\s*)initial=\{formatByJurisdiction\.get\(\s*jurisdiction\s*\)\}'
+
+    $regex =
+        [System.Text.RegularExpressions.Regex]::new(
+            $pattern,
+            [System.Text.RegularExpressions.RegexOptions]::Singleline
+        )
+
+    if (-not $regex.IsMatch($adminPage)) {
+        throw "Could not locate ReceiptFormatEditor initial prop in admin receipt page."
+    }
+
+    $replacement = @'
+$1stampUrl={
+$1  issuer?.receipt_stamp_url
+$1}
+$1stampEnabled={
+$1  issuer?.receipt_stamp_enabled
+$1}
+$1initial={formatByJurisdiction.get(
+$1  jurisdiction
+$1)}
+'@
+
+    $adminPage =
+        $regex.Replace(
+            $adminPage,
+            $replacement,
+            1
+        )
+
+    Write-Utf8 $adminPagePath $adminPage
+    Write-Host "[OK] Admin receipt page now passes active stamp into format preview." -ForegroundColor Green
+}
+else {
+    Write-Host "[OK] Admin receipt page already passes stamp preview props." -ForegroundColor DarkGreen
+}
+
+Remove-Item `
+    -LiteralPath (Join-Path $root ".next") `
+    -Recurse `
+    -Force `
+    -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "Running typecheck..." -ForegroundColor Yellow
+
+npm.cmd run typecheck
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "[!] TypeScript still reports an error. Paste the exact output." -ForegroundColor Red
+    Write-Host "Backup:" -ForegroundColor Yellow
+    Write-Host "  $backupRoot"
+    exit 1
+}
+
+Write-Host ""
+Write-Host "==================================================" -ForegroundColor Green
+Write-Host "RECEIPT LIVE PREVIEW STAMP ENABLED" -ForegroundColor Green
+Write-Host "==================================================" -ForegroundColor Green
+Write-Host ""
+Write-Host "Backup:" -ForegroundColor Cyan
+Write-Host "  $backupRoot"
+Write-Host ""
+Write-Host "Restart if needed:" -ForegroundColor Yellow
+Write-Host "  npm.cmd run dev"
+Write-Host ""
+Write-Host "Then open:" -ForegroundColor Cyan
+Write-Host "  /admin/documents/receipts"
+Write-Host ""
+Write-Host "The active PK / SA / CN issuer stamp should now appear in the Live Preview."
