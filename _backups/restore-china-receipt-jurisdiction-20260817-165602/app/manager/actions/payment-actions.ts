@@ -162,7 +162,7 @@ export async function handleRegistrationManagementAction(formData: FormData) {
   const paymentNote = text(formData, "payment_note");
   const paymentCurrency = text(formData, "payment_currency") || "USD";
   const requestedJurisdiction = text(formData, "document_jurisdiction") || "PK";
-  const documentJurisdiction = ["PK", "SA", "CN"].includes(requestedJurisdiction)
+  const documentJurisdiction = ["PK", "SA"].includes(requestedJurisdiction)
     ? requestedJurisdiction
     : "PK";
   const parsedAmount = Number(text(formData, "amount_received") || 0);

@@ -133,11 +133,11 @@ export async function approveReceiptApplicationAction(
     registration.document_jurisdiction || ""
   ).toUpperCase();
 
-  if (!["PK", "SA", "CN"].includes(registrationJurisdiction)) {
+  if (!["PK", "SA"].includes(registrationJurisdiction)) {
     redirect(
       back(
         "error",
-        "The source registration does not have a valid Pakistan, Saudi Arabia, or China receipt issuer."
+        "The source registration does not have a valid Pakistan or Saudi Arabia receipt issuer."
       )
     );
   }

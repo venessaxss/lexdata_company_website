@@ -71,7 +71,7 @@ export default async function ReceiptsPage({
     admin
       .from("document_issuer_profiles")
       .select("jurisdiction,legal_name,trading_name")
-      .in("jurisdiction", ["PK", "SA", "CN"])
+      .in("jurisdiction", ["PK", "SA"])
       .order("jurisdiction"),
   ]);
 
@@ -130,7 +130,7 @@ export default async function ReceiptsPage({
 
         <p className="mt-4 max-w-3xl text-emerald-100">
           After payment is confirmed, submit the legal recipient information
-          for the Pakistan, Saudi Arabia, or China issuing entity. The paid amount is
+          for the Pakistan or Saudi Arabia issuing entity. The paid amount is
           loaded from the confirmed registration and cannot be edited here.
         </p>
       </section>
@@ -186,7 +186,7 @@ export default async function ReceiptsPage({
             );
 
             const issuerSupported =
-              ["PK", "SA", "CN"].includes(registrationJurisdiction) &&
+              ["PK", "SA"].includes(registrationJurisdiction) &&
               Boolean(issuer);
 
             const issuedDocument = application
@@ -320,7 +320,7 @@ export default async function ReceiptsPage({
                             issuer?.trading_name ||
                             issuer?.legal_name
                           }`
-                        : "Issuer unavailable. Ask the manager to set Pakistan, Saudi Arabia, or China on this registration."}
+                        : "Issuer unavailable. Ask the manager to set Pakistan or Saudi Arabia on this registration."}
                     </div>
                     <p className="text-xs font-medium text-slate-500">
                       The issuing entity is set by Registration & Payment Management

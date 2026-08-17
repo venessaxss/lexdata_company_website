@@ -19,7 +19,7 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const jurisdictions = ["PK", "SA", "CN"] as const;
+const jurisdictions = ["PK", "SA"] as const;
 
 export default async function ReceiptManagementPage({
   searchParams,
@@ -41,13 +41,13 @@ export default async function ReceiptManagementPage({
       .from("document_format_profiles")
       .select("*")
       .eq("document_type", "receipt")
-      .in("jurisdiction", ["PK", "SA", "CN"])
+      .in("jurisdiction", ["PK", "SA"])
       .order("jurisdiction"),
 
     auth.admin
       .from("document_issuer_profiles")
       .select("jurisdiction,legal_name,trading_name")
-      .in("jurisdiction", ["PK", "SA", "CN"])
+      .in("jurisdiction", ["PK", "SA"])
       .order("jurisdiction"),
 
     auth.admin
@@ -280,7 +280,7 @@ export default async function ReceiptManagementPage({
                         </label>
 
                         <label className="mt-4 block text-sm font-black">
-                          FBR / ZATCA / China tax authority reference
+                          FBR / ZATCA authority reference
                           <input
                             name="authority_reference"
                             placeholder="Required when marked as tax document"

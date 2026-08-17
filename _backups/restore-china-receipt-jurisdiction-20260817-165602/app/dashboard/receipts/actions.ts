@@ -96,11 +96,11 @@ export async function applyForWorkshopReceiptAction(formData: FormData) {
     registration.document_jurisdiction || ""
   ).toUpperCase();
 
-  if (!["PK", "SA", "CN"].includes(jurisdiction)) {
+  if (!["PK", "SA"].includes(jurisdiction)) {
     redirect(
       result(
         "error",
-        "The receipt issuing entity is not configured as Pakistan, Saudi Arabia, or China. Ask the manager to correct the registration issuer."
+        "The receipt issuing entity is not configured as Pakistan or Saudi Arabia. Ask the manager to correct the registration issuer."
       )
     );
   }

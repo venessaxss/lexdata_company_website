@@ -935,10 +935,9 @@ export default async function ManagerRegistrationsPage({
                                 >
                                   <option value="PK">Pakistan</option>
                                   <option value="SA">Saudi Arabia</option>
-                                  <option value="CN">China</option>
                                 </select>
                                 <p className="mt-2 text-[11px] font-semibold leading-5 text-slate-500">
-                                  This issuer is inherited by the participant&apos;s receipt application. Choose Pakistan, Saudi Arabia, or China before confirming payment.
+                                  This issuer is inherited by the participant&apos;s receipt application. Change it here before confirming payment if needed.
                                 </p>
                               </div>
 
