@@ -9,6 +9,7 @@ import {
   normalizeJurisdiction,
 } from "@/lib/official-documents";
 import {
+  reissueRevokedDocumentWithCurrentFormatAction,
   updateReceiptFormatAction,
   uploadReceiptIssuerStampAction,
   disableReceiptIssuerStampAction,
@@ -18,9 +19,6 @@ import {
   rejectReceiptApplicationAction,
 } from "./actions";
 
-import {
-  reissueReceiptWithCurrentFormatAction,
-} from "./reissue-actions";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -526,13 +524,6 @@ export default async function ReceiptManagementPage({
                         Format correction
                       </p>
 
-                        <p className="mt-2 text-xs leading-5 text-amber-900">
-                          Reissue keeps the original payment, recipient, receipt number,
-                          verification identity, and tax references, but replaces the
-                          saved receipt-format snapshot and issuer snapshot with the
-                          current format and current active issuer stamp.
-                        </p>
-
                       <Link
                         href={`/documents/${document.id}?format=current`}
                         className="mt-3 inline-flex rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-black text-amber-950"
@@ -541,7 +532,7 @@ export default async function ReceiptManagementPage({
                       </Link>
 
                       <form
-                        action={reissueReceiptWithCurrentFormatAction}
+                        action={reissueRevokedDocumentWithCurrentFormatAction}
                         className="mt-3 flex flex-col gap-2 sm:flex-row"
                       >
                         <input
