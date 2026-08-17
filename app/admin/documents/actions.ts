@@ -5,6 +5,12 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { cleanPreferredName, normalizeJurisdiction } from "@/lib/official-documents";
 
+const CERTIFICATE_TEMPLATE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+]);
+
 function field(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim();
 }
@@ -16,6 +22,224 @@ function back(key: "message" | "error", message: string) {
 function refresh() {
   revalidatePath("/admin/documents");
   revalidatePath("/dashboard/documents");
+}
+
+function boundedPercent(value: string, fallback: number, minimum: number, maximum: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(maximum, Math.max(minimum, Math.round(parsed)));
+}
+
+export async function uploadCertificateTemplateAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents");
+  const workshopId = field(formData, "workshop_id");
+  const templateName = field(formData, "template_name");
+  const textColor = field(formData, "text_color") || "#0B2545";
+  const file = formData.get("template_file") as File | null;
+
+  if (!workshopId || !templateName || !file || file.size === 0) {
+    redirect(back("error", "Workshop, template name, and image file are required."));
+  }
+  if (!CERTIFICATE_TEMPLATE_TYPES.has(file.type)) {
+    redirect(back("error", "Certificate templates must be PNG, JPG, or WebP images."));
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    redirect(back("error", "Certificate template must be 10 MB or smaller."));
+  }
+  if (!/^#[0-9a-fA-F]{6}$/.test(textColor)) {
+    redirect(back("error", "Text color must be a six-digit hex color."));
+  }
+
+  const { data: workshop } = await auth.admin
+    .from("workshops")
+    .select("id")
+    .eq("id", workshopId)
+    .maybeSingle();
+  if (!workshop) redirect(back("error", "Workshop not found."));
+
+  const extension = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const storagePath = `${workshopId}/${crypto.randomUUID()}.${extension}`;
+  const { error: uploadError } = await auth.admin.storage
+    .from("certificate-templates")
+    .upload(storagePath, await file.arrayBuffer(), {
+      contentType: file.type,
+      upsert: false,
+    });
+  if (uploadError) redirect(back("error", uploadError.message));
+
+  const { data: publicUrl } = auth.admin.storage
+    .from("certificate-templates")
+    .getPublicUrl(storagePath);
+
+  const { data: inserted, error: insertError } = await auth.admin
+    .from("certificate_templates")
+    .insert({
+      workshop_id: workshopId,
+      template_name: templateName,
+      background_url: publicUrl.publicUrl,
+      storage_path: storagePath,
+      mime_type: file.type,
+      text_color: textColor.toUpperCase(),
+      name_top_percent: boundedPercent(field(formData, "name_top_percent"), 45, 20, 75),
+      program_top_percent: boundedPercent(field(formData, "program_top_percent"), 61, 35, 85),
+      details_top_percent: boundedPercent(field(formData, "details_top_percent"), 81, 55, 94),
+      is_active: false,
+      uploaded_by: auth.user.id,
+    })
+    .select("id")
+    .single();
+  if (insertError || !inserted) redirect(back("error", insertError?.message || "Template record could not be created."));
+
+  await auth.admin
+    .from("certificate_templates")
+    .update({ is_active: false, updated_at: new Date().toISOString() })
+    .eq("workshop_id", workshopId)
+    .neq("id", inserted.id);
+  const { error: activateError } = await auth.admin
+    .from("certificate_templates")
+    .update({ is_active: true, updated_at: new Date().toISOString() })
+    .eq("id", inserted.id);
+  if (activateError) redirect(back("error", activateError.message));
+
+  refresh();
+  redirect(back("message", "Certificate template uploaded and activated for the workshop."));
+}
+
+export async function approveWorkshopCertificateApplicationAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents");
+  const applicationId = field(formData, "application_id");
+  const adminNote = field(formData, "admin_note") || null;
+  if (!applicationId) redirect(back("error", "Missing certificate application ID."));
+
+  const { data: application } = await auth.admin
+    .from("certificate_applications")
+    .select("id,user_id,workshop_registration_id,workshop_id,preferred_name,status")
+    .eq("id", applicationId)
+    .maybeSingle();
+  if (!application || application.status !== "pending") {
+    redirect(back("error", "Only a pending certificate application can be approved."));
+  }
+
+  const [{ data: registration }, { data: workshop }, { data: template }] = await Promise.all([
+    auth.admin.from("workshop_registrations").select("id,registration_status,document_jurisdiction").eq("id", application.workshop_registration_id).eq("user_id", application.user_id).maybeSingle(),
+    auth.admin.from("workshops").select("id,title").eq("id", application.workshop_id).maybeSingle(),
+    auth.admin.from("certificate_templates").select("*").eq("workshop_id", application.workshop_id).eq("is_active", true).maybeSingle(),
+  ]);
+  if (!registration || String(registration.registration_status).toLowerCase() !== "completed") {
+    redirect(back("error", "The participant's workshop registration is not marked completed."));
+  }
+  if (!workshop) redirect(back("error", "Workshop not found."));
+  if (!template) redirect(back("error", "Upload and activate a certificate template for this workshop before approval."));
+
+  const { data: documentId, error: prepareError } = await auth.admin.rpc(
+    "prepare_completion_certificate",
+    {
+      p_user_id: application.user_id,
+      p_source_type: "workshop_registration",
+      p_source_id: application.workshop_registration_id,
+      p_title: workshop.title,
+      p_completed_at: new Date().toISOString(),
+      p_jurisdiction: normalizeJurisdiction(registration.document_jurisdiction),
+      p_metadata: {
+        application_id: application.id,
+        template_id: template.id,
+        template_url: template.background_url,
+        text_color: template.text_color,
+        name_top_percent: template.name_top_percent,
+        program_top_percent: template.program_top_percent,
+        details_top_percent: template.details_top_percent,
+        completion_source: "participant_application_admin_approval",
+      },
+    }
+  );
+  if (prepareError || !documentId) {
+    redirect(back("error", prepareError?.message || "Certificate could not be prepared."));
+  }
+
+  const issuedAt = new Date().toISOString();
+  const { error: issueError } = await auth.admin
+    .from("official_documents")
+    .update({
+      recipient_name: cleanPreferredName(application.preferred_name),
+      status: "issued",
+      issued_at: issuedAt,
+      issued_by: auth.user.id,
+      updated_at: issuedAt,
+      metadata: {
+        application_id: application.id,
+        template_id: template.id,
+        template_url: template.background_url,
+        text_color: template.text_color,
+        name_top_percent: template.name_top_percent,
+        program_top_percent: template.program_top_percent,
+        details_top_percent: template.details_top_percent,
+        completion_source: "participant_application_admin_approval",
+      },
+    })
+    .eq("id", documentId);
+  if (issueError) redirect(back("error", issueError.message));
+
+  const { error: applicationError } = await auth.admin
+    .from("certificate_applications")
+    .update({
+      status: "approved",
+      admin_note: adminNote,
+      reviewed_by: auth.user.id,
+      reviewed_at: issuedAt,
+      document_id: documentId,
+      updated_at: issuedAt,
+    })
+    .eq("id", application.id)
+    .eq("status", "pending");
+  if (applicationError) redirect(back("error", applicationError.message));
+
+  await auth.admin.from("internal_messages").insert({
+    user_id: application.user_id,
+    title: "Workshop certificate approved",
+    body: `Your certificate application for ${workshop.title} was approved. The certificate is available under Certificates & Receipts.`,
+    source_type: "certificate_application_approved",
+    source_id: application.id,
+  });
+
+  refresh();
+  redirect(back("message", "Certificate application approved and certificate released."));
+}
+
+export async function rejectWorkshopCertificateApplicationAction(formData: FormData) {
+  const auth = await requireAdmin("/admin/documents");
+  const applicationId = field(formData, "application_id");
+  const adminNote = field(formData, "admin_note");
+  if (!applicationId || adminNote.length < 5) {
+    redirect(back("error", "A clear rejection note is required."));
+  }
+
+  const reviewedAt = new Date().toISOString();
+  const { data: application, error } = await auth.admin
+    .from("certificate_applications")
+    .update({
+      status: "rejected",
+      admin_note: adminNote,
+      reviewed_by: auth.user.id,
+      reviewed_at: reviewedAt,
+      updated_at: reviewedAt,
+    })
+    .eq("id", applicationId)
+    .eq("status", "pending")
+    .select("id,user_id,workshop_id")
+    .maybeSingle();
+  if (error || !application) redirect(back("error", error?.message || "Pending application not found."));
+
+  const { data: workshop } = await auth.admin.from("workshops").select("title").eq("id", application.workshop_id).maybeSingle();
+  await auth.admin.from("internal_messages").insert({
+    user_id: application.user_id,
+    title: "Certificate application needs attention",
+    body: `Your certificate application${workshop?.title ? ` for ${workshop.title}` : ""} was not approved: ${adminNote}`,
+    source_type: "certificate_application_rejected",
+    source_id: application.id,
+  });
+
+  refresh();
+  redirect(back("message", "Certificate application rejected with participant notification."));
 }
 
 export async function approveCertificateAction(formData: FormData) {

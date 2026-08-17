@@ -43,6 +43,14 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const verifyUrl = `${siteUrl}/verify/${document.verification_code}`;
   const date = document.issued_at || document.payment_confirmed_at || document.created_at;
+  const certificateTemplateUrl = document.metadata?.template_url as string | undefined;
+  const certificateTextColor = /^#[0-9a-fA-F]{6}$/.test(String(document.metadata?.text_color || ""))
+    ? String(document.metadata.text_color)
+    : "#0B2545";
+  const templatePosition = (key: string, fallback: number) => {
+    const value = Number(document.metadata?.[key]);
+    return Number.isFinite(value) ? `${Math.min(94, Math.max(10, value))}%` : `${fallback}%`;
+  };
 
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8 print:bg-white print:p-0">
@@ -52,6 +60,22 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
       </div>
 
       {document.document_type === "certificate" ? (
+        certificateTemplateUrl ? (
+          <article className="document-sheet custom-certificate-sheet relative mx-auto aspect-[1.414/1] w-full max-w-5xl overflow-hidden bg-white shadow-2xl print:max-w-none print:shadow-none">
+            <img src={certificateTemplateUrl} alt="Certificate template" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute left-[7%] right-[7%] -translate-y-1/2 text-center" style={{ top: templatePosition("name_top_percent", 45), color: certificateTextColor }}>
+              <p className="font-serif text-4xl font-bold leading-tight sm:text-6xl">{document.recipient_name}</p>
+            </div>
+            <div className="absolute left-[10%] right-[10%] -translate-y-1/2 text-center" style={{ top: templatePosition("program_top_percent", 61), color: certificateTextColor }}>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">Successfully completed</p>
+              <h1 className="mt-2 text-xl font-black leading-tight sm:text-3xl">{document.title}</h1>
+            </div>
+            <div className="absolute left-[7%] right-[7%] -translate-y-1/2 text-center text-[9px] font-semibold sm:text-xs" style={{ top: templatePosition("details_top_percent", 81), color: certificateTextColor }}>
+              <p>{new Date(date).toLocaleDateString()} &nbsp; | &nbsp; {document.document_number} &nbsp; | &nbsp; {jurisdictionNames[jurisdiction]}</p>
+              <p className="mt-1 opacity-70">Verify: {verifyUrl}</p>
+            </div>
+          </article>
+        ) : (
         <article className="document-sheet certificate-sheet relative mx-auto flex min-h-[720px] max-w-5xl flex-col overflow-hidden bg-[#fffdf7] p-12 text-center shadow-2xl print:min-h-screen print:max-w-none print:shadow-none sm:p-16">
           <div className="absolute inset-4 border-2 border-[#b08d39]" />
           <div className="absolute inset-7 border border-[#d8bf77]" />
@@ -76,6 +100,7 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
             <p>This is a privately issued training certificate and does not claim governmental accreditation.</p>
           </footer>
         </article>
+        )
       ) : (
         <article className="document-sheet mx-auto max-w-3xl bg-white p-8 shadow-2xl print:max-w-none print:shadow-none sm:p-12">
           <header className="flex flex-col justify-between gap-6 border-b-2 border-slate-950 pb-8 sm:flex-row">
@@ -124,6 +149,7 @@ export default async function OfficialDocumentPage({ params }: { params: Promise
           nav, header.site-header, footer.site-footer { display: none !important; }
           .document-sheet { break-inside: avoid; }
           .certificate-sheet { width: 100%; height: 190mm; min-height: 190mm; }
+          .custom-certificate-sheet { width: 100%; height: 190mm; }
         }
       `}</style>
     </main>

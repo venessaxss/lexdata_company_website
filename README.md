@@ -61,14 +61,14 @@ Open http://localhost:3000.
 
 ### Certificates and confirmed-payment receipts
 
-Run `supabase/migrations/20260816_certificates_and_official_receipts.sql` after the earlier migrations. Then:
+Run `supabase/migrations/20260816_certificates_and_official_receipts.sql`, followed by `supabase/migrations/20260817_certificate_applications_and_templates.sql`, after the earlier migrations. Then:
 
 1. Set `NEXT_PUBLIC_SITE_URL`, `STRIPE_SECRET_KEY`, and `STRIPE_WEBHOOK_SECRET`.
 2. Register `https://YOUR_DOMAIN/api/stripe/webhook` in Stripe for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `charge.refunded`.
 3. Open `/admin/documents` and complete the issuer profile for Pakistan, Saudi Arabia, and/or China.
 4. Keep tax-invoice mode disabled until the real FBR, ZATCA FATOORAH, or Chinese tax-platform integration is connected. The built-in document is a proof-of-payment receipt by default.
 
-Participants set the exact printed name in `/dashboard/profile` and access released documents from `/dashboard/documents`. Receipts require a confirmed positive amount. Course completion and an admin-marked completed workshop create a certificate draft; an admin must approve it before release.
+Participants set the exact printed name in `/dashboard/profile` and access released documents from `/dashboard/documents`. Receipts require a confirmed positive amount. Course completion can create a certificate draft. For workshops, completion makes the participant eligible to submit a workshop-specific certificate application. An admin uploads an image template for that workshop and must approve the application before the certificate is generated and released.
 
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
