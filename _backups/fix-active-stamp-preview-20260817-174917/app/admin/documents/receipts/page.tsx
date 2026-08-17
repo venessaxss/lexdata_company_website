@@ -393,9 +393,7 @@ export default async function ReceiptManagementPage({
                       issuer?.receipt_stamp_url
                     }
                     stampEnabled={
-                      issuer?.receipt_stamp_enabled === false
-                        ? false
-                        : Boolean(issuer?.receipt_stamp_url)
+                      issuer?.receipt_stamp_enabled
                     }
                     uploadAction={
                       uploadReceiptIssuerStampAction
@@ -427,17 +425,7 @@ export default async function ReceiptManagementPage({
                   issuer?.legal_name ||
                   "LexData Research & Training"
                 }
-                initial={{
-                      ...(formatByJurisdiction.get(
-                        jurisdiction
-                      ) || {}),
-                      receipt_stamp_url:
-                        issuer?.receipt_stamp_url || null,
-                      receipt_stamp_enabled:
-                        issuer?.receipt_stamp_enabled === false
-                          ? false
-                          : Boolean(issuer?.receipt_stamp_url),
-                    }}
+                initial={formatByJurisdiction.get(jurisdiction)}
               />
             );
           })}

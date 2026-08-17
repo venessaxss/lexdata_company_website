@@ -50,20 +50,9 @@ export function ReceiptFormatEditor({
       "classic",
   });
 
-  const resolvedStampUrl =
-    stampUrl ||
-    initial?.receipt_stamp_url ||
-    null;
-
-  const resolvedStampEnabled =
-    stampEnabled === false ||
-    initial?.receipt_stamp_enabled === false
-      ? false
-      : Boolean(resolvedStampUrl);
-
   const showStamp =
-    resolvedStampEnabled &&
-    Boolean(resolvedStampUrl);
+    Boolean(stampEnabled) &&
+    Boolean(stampUrl);
 
   return (
     <form
@@ -399,7 +388,7 @@ export function ReceiptFormatEditor({
             </p>
           </section>
 
-          {showStamp && resolvedStampUrl ? (
+          {showStamp && stampUrl ? (
             <section className="mt-6 flex justify-end">
               <div className="w-40 text-center">
                 <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">
@@ -407,7 +396,7 @@ export function ReceiptFormatEditor({
                 </p>
 
                 <img
-                  src={resolvedStampUrl}
+                  src={stampUrl}
                   alt={`${issuerName} stamp`}
                   className="mx-auto mt-2 h-28 w-36 object-contain"
                   style={{
