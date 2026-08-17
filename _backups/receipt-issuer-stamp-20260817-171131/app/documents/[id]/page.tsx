@@ -237,30 +237,6 @@ export default async function OfficialDocumentPage({
             <p>{taxDocumentNotice(jurisdiction, Boolean(document.is_tax_document))}</p>
             {document.authority_reference ? <p className="mt-2 font-bold">Authority reference: {document.authority_reference}</p> : null}
           </section>
-          {issuerData.receipt_stamp_enabled &&
-          issuerData.receipt_stamp_url ? (
-            <section className="mt-8 flex justify-end">
-              <div className="w-44 text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
-                  Authorized issuer stamp
-                </p>
-
-                <img
-                  src={issuerData.receipt_stamp_url}
-                  alt={`${issuerData.legal_name || "Issuer"} stamp`}
-                  className="mx-auto mt-2 h-32 w-40 object-contain"
-                  style={{
-                    mixBlendMode: "multiply",
-                  }}
-                />
-
-                <p className="mt-1 text-[10px] font-bold text-slate-500">
-                  {issuerData.legal_name ||
-                    "Authorized issuer"}
-                </p>
-              </div>
-            </section>
-          ) : null}
 
           <footer className="mt-8 border-t border-slate-200 pt-5 text-xs leading-5 text-slate-500">
             <p>{formatText("footer_text", "Verify authenticity and current status using the verification code below.")}</p>

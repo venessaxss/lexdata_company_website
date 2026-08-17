@@ -2,7 +2,6 @@ import Link from "next/link";
 import { unstable_noStore as noStore } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { ReceiptFormatEditor } from "@/components/admin/ReceiptFormatEditor";
-import { IssuerReceiptStampEditor } from "@/components/admin/IssuerReceiptStampEditor";
 import {
   formatDocumentMoney,
   jurisdictionNames,
@@ -11,8 +10,6 @@ import {
 import {
   reissueRevokedDocumentWithCurrentFormatAction,
   updateReceiptFormatAction,
-  uploadReceiptIssuerStampAction,
-  disableReceiptIssuerStampAction,
 } from "../actions";
 import {
   approveReceiptApplicationAction,
@@ -49,7 +46,7 @@ export default async function ReceiptManagementPage({
 
     auth.admin
       .from("document_issuer_profiles")
-      .select("jurisdiction,legal_name,trading_name,receipt_stamp_url,receipt_stamp_enabled")
+      .select("jurisdiction,legal_name,trading_name")
       .in("jurisdiction", ["PK", "SA", "CN"])
       .order("jurisdiction"),
 
@@ -349,67 +346,7 @@ export default async function ReceiptManagementPage({
           keep the saved format snapshot.
         </section>
 
-        <section className="mt-12">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">
-              Issuer authentication
-            </p>
-
-            <h2 className="mt-2 text-2xl font-black">
-              Issuer stamps
-            </h2>
-
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              Upload the company stamp used on future official payment receipts.
-              Each jurisdiction has its own issuer stamp.
-            </p>
-          </div>
-
-          <div className="mt-5 space-y-5">
-            {jurisdictions.map(
-              (jurisdiction) => {
-                const issuer: any =
-                  issuerByJurisdiction.get(
-                    jurisdiction
-                  );
-
-                return (
-                  <IssuerReceiptStampEditor
-                    key={jurisdiction}
-                    jurisdiction={
-                      jurisdiction
-                    }
-                    jurisdictionName={
-                      jurisdictionNames[
-                        jurisdiction
-                      ]
-                    }
-                    issuerName={
-                      issuer?.trading_name ||
-                      issuer?.legal_name ||
-                      "LexData Research & Training"
-                    }
-                    stampUrl={
-                      issuer?.receipt_stamp_url
-                    }
-                    stampEnabled={
-                      issuer?.receipt_stamp_enabled
-                    }
-                    uploadAction={
-                      uploadReceiptIssuerStampAction
-                    }
-                    removeAction={
-                      disableReceiptIssuerStampAction
-                    }
-                  />
-                );
-              }
-            )}
-          </div>
-        </section>
-
-
-<section className="mt-10 space-y-8">
+        <section className="mt-10 space-y-8">
           {jurisdictions.map((jurisdiction) => {
             const issuer: any =
               issuerByJurisdiction.get(jurisdiction);
