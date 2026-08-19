@@ -1,3 +1,36 @@
+$ErrorActionPreference = "Stop"
+
+$root = (Get-Location).Path
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$backupRoot = Join-Path $root "_backups\improve-course-learning-pathways-$timestamp"
+
+$coursesPagePath = Join-Path $root "app\courses\page.tsx"
+$courseCardPath = Join-Path $root "components\CourseCard.tsx"
+
+foreach ($path in @($coursesPagePath, $courseCardPath)) {
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw "Cannot find required file: $path`nRun this script from the LexData project root."
+    }
+}
+
+function Backup-File {
+    param([string]$Path)
+    $relative = $Path.Substring($root.Length).TrimStart("\", "/")
+    $destination = Join-Path $backupRoot $relative
+    New-Item -ItemType Directory -Path (Split-Path -Parent $destination) -Force | Out-Null
+    Copy-Item -LiteralPath $Path -Destination $destination -Force
+}
+
+function Write-Utf8 {
+    param([string]$Path,[string]$Content)
+    [System.IO.File]::WriteAllText($Path,$Content,$utf8)
+}
+
+Backup-File $coursesPagePath
+Backup-File $courseCardPath
+
+$coursesPage = @'
 import Link from "next/link";
 import CourseCard from "@/components/CourseCard";
 import { createClient } from "@/lib/supabase/server";
@@ -439,3 +472,133 @@ export default async function CoursesPage({
     </main>
   );
 }
+'@
+
+Write-Utf8 $coursesPagePath $coursesPage
+Write-Host "[OK] Rebuilt /courses as a multi-level learning pathway." -ForegroundColor Green
+
+$courseCard = @'
+import Link from "next/link";
+
+type CategoryRelation =
+  | { name?: string | null }
+  | { name?: string | null }[]
+  | null;
+
+type CourseCardProps = {
+  course: {
+    title: string;
+    slug: string;
+    short_description: string | null;
+    level: string | null;
+    language: string | null;
+    cover_url: string | null;
+    categories?: CategoryRelation;
+  };
+};
+
+function categoryName(categories: CategoryRelation) {
+  const category = Array.isArray(categories)
+    ? categories[0]
+    : categories;
+
+  return category?.name || null;
+}
+
+export default function CourseCard({
+  course,
+}: CourseCardProps) {
+  const category = categoryName(
+    course.categories || null
+  );
+
+  return (
+    <Link
+      href={`/courses/${course.slug}`}
+      className="group flex min-h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl"
+    >
+      <div className="relative h-48 overflow-hidden bg-slate-900">
+        {course.cover_url ? (
+          <img
+            src={course.cover_url}
+            alt={course.title}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full items-end bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-800 p-6 text-white">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-blue-200">
+                LexData course
+              </p>
+
+              <p className="mt-2 max-w-xs text-lg font-black leading-tight">
+                AI, language, data, and research skills
+              </p>
+            </div>
+          </div>
+        )}
+
+        {category ? (
+          <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-black text-slate-800 shadow-sm">
+            {category}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="flex flex-1 flex-col p-6">
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+            {course.level || "Open level"}
+          </span>
+
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
+            {course.language || "English"}
+          </span>
+        </div>
+
+        <h3 className="mt-5 text-xl font-black leading-tight text-slate-950 transition group-hover:text-blue-700">
+          {course.title}
+        </h3>
+
+        <p className="mt-3 line-clamp-4 text-sm leading-6 text-slate-600">
+          {course.short_description ||
+            "Practical learning designed to connect research questions with computational and digital methods."}
+        </p>
+
+        <div className="mt-auto pt-6">
+          <span className="text-sm font-black text-blue-700">
+            View course &rarr;
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+'@
+
+Write-Utf8 $courseCardPath $courseCard
+Write-Host "[OK] Improved course cards." -ForegroundColor Green
+
+Remove-Item -LiteralPath (Join-Path $root ".next") -Recurse -Force -ErrorAction SilentlyContinue
+
+Write-Host ""
+Write-Host "Running typecheck..." -ForegroundColor Yellow
+npm.cmd run typecheck
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "[!] TypeScript still reports an error. Paste the exact output." -ForegroundColor Red
+    Write-Host "Backup: $backupRoot" -ForegroundColor Yellow
+    exit 1
+}
+
+Write-Host ""
+Write-Host "[OK] Course learning pathways installed." -ForegroundColor Green
+Write-Host "Backup: $backupRoot" -ForegroundColor Cyan
+Write-Host "No Supabase migration is required." -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Then run:" -ForegroundColor Yellow
+Write-Host "  npm.cmd run build"
+Write-Host "  npm.cmd run dev"
+Write-Host ""
+Write-Host "Open: http://localhost:3000/courses" -ForegroundColor Cyan
