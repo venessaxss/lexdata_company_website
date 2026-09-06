@@ -2063,3 +2063,196 @@ body { margin: 0; background: var(--lx-paper); }
   .lx-avatar-stack span, .lx-collab-arrow, .lx-doodle-books-cup, .lx-doodle-lamp-plant, .lx-case-bubbles span, .lx-case-bubble-card.is-visible, .lx-case-bubble-card:hover .lx-case-orbit-a, .lx-case-bubble-card:hover .lx-case-orbit-b { animation: none !important; }
   .lx-case-bubble-card { opacity: 1; transform: none; }
 }
+
+/* ===== MOBILE SIDE-DRAWER NAVIGATION ===== */
+
+.lx-nav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--lx-ink);
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  justify-self: end;
+}
+
+.lx-hamburger-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 20px;
+}
+
+.lx-hamburger-icon span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--lx-ink);
+  border-radius: 2px;
+}
+
+.lx-mobile-backdrop {
+  display: none;
+}
+
+.lx-mobile-drawer {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .lx-nav-links {
+    display: none !important;
+  }
+
+  .lx-nav-actions {
+    display: none !important;
+  }
+
+  .lx-nav-inner {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .lx-nav-hamburger {
+    display: flex;
+  }
+
+  /* Dark backdrop behind the drawer */
+  .lx-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 997;
+    background: rgba(11, 12, 13, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+
+  .lx-mobile-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Slide-in side drawer */
+  .lx-mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    width: min(86vw, 380px);
+    background: var(--lx-white);
+    box-shadow: -18px 0 60px rgba(0, 0, 0, 0.25);
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    overflow-y: auto;
+  }
+
+  .lx-mobile-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  .lx-mobile-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(11,12,13,.08);
+  }
+
+  .lx-mobile-drawer-head .lx-logo {
+    font-size: 0;
+  }
+
+  .lx-mobile-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(11,12,13,.18);
+    border-radius: 50%;
+    background: transparent;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--lx-ink);
+  }
+
+  .lx-mobile-drawer-links {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 20px;
+  }
+
+  .lx-mobile-plain-link {
+    padding: 16px 4px;
+    border-bottom: 1px solid rgba(11,12,13,.08);
+    color: var(--lx-ink);
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .lx-mobile-accordion {
+    border-bottom: 1px solid rgba(11,12,13,.08);
+  }
+
+  .lx-mobile-accordion-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 4px;
+    border: 0;
+    background: transparent;
+    color: var(--lx-ink);
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .lx-mobile-accordion-trigger span {
+    font-size: 14px;
+    color: rgba(11,12,13,.5);
+  }
+
+  .lx-mobile-accordion-trigger.is-open {
+    color: var(--lx-blue);
+  }
+
+  .lx-mobile-accordion-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 12px 12px;
+  }
+
+  .lx-mobile-accordion-panel a {
+    padding: 12px 4px;
+    color: rgba(11,12,13,.72);
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  .lx-mobile-drawer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    margin-top: auto;
+    border-top: 1px solid rgba(11,12,13,.08);
+  }
+
+  .lx-mobile-drawer-actions .lx-login-btn,
+  .lx-mobile-drawer-actions .lx-signup-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+}
