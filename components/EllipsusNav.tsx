@@ -274,6 +274,22 @@ export default function EllipsusNav({
           </div>
 
           <Link
+            href="/contact"
+            className="lx-nav-link"
+            onClick={closeMenus}
+          >
+            Contact
+          </Link>
+
+          <Link
+            href="/privacy"
+            className="lx-nav-link"
+            onClick={closeMenus}
+          >
+            Privacy Policy
+          </Link>
+
+          <Link
             href={loggedIn ? dashboardHref : "/signup"}
             className="lx-nav-link"
             onClick={closeMenus}
