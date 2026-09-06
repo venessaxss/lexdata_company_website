@@ -32,10 +32,13 @@ export default function WorkshopNoticeSlider({
 
     if (!target) return;
 
-    target.scrollIntoView({
+    const targetLeft =
+      target.offsetLeft -
+      (viewport.clientWidth - target.clientWidth) / 2;
+
+    viewport.scrollTo({
+      left: targetLeft,
       behavior: "smooth",
-      block: "nearest",
-      inline: "center",
     });
 
     setActiveIndex(index);

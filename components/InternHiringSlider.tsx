@@ -123,12 +123,18 @@ export default function InternHiringSlider() {
         "[data-intern-slide]"
       );
 
-    slideElements[index]?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
+    const target = slideElements[index];
+    if (target) {
+      const targetLeft =
+        target.offsetLeft -
+        (viewport.clientWidth - target.clientWidth) / 2;
 
+      viewport.scrollTo({
+        left: targetLeft,
+        behavior: "smooth",
+      });
+    }
+  
     setActiveIndex(index);
   };
 

@@ -51,7 +51,7 @@ export default async function AboutPage() {
     .select("*")
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
-    .limit(9);
+    .limit(20);
 
   const members = ((data ?? []) as TeamMember[]).map((member) => ({
     id: member.id,
