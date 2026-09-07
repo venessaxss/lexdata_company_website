@@ -8229,3 +8229,20 @@ body:has(> main.lx-page) > main.lx-page {
 .lx-mega-sketch {
   pointer-events: none;
 }
+
+/* Mobile: hide the old desktop nav row, show only the hamburger */
+@media (max-width: 980px) {
+  header.site nav.main {
+    display: none !important;
+  }
+
+  header.site .lx-nav-hamburger {
+    display: inline-flex !important;
+  }
+}
+
+@media (min-width: 981px) {
+  header.site .lx-nav-hamburger {
+    display: none !important;
+  }
+}

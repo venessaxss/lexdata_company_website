@@ -2,7 +2,6 @@ import Link from "next/link";
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
 import EllipsusNav from "@/components/EllipsusNav";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
-import DashboardBoardSlider from "@/components/DashboardBoardSlider";
 import DynamicDoodleBand from "@/components/DynamicDoodleBand";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
 import BubblingCaseGrid from "@/components/BubblingCaseGrid";
@@ -110,16 +109,9 @@ export default async function IntegratedHomePage() {
         </section>
       </div>
 
-      <section className="lx-showcase-shell lx-dashboard-section">
+      <section className="lx-showcase-shell">
         <DynamicDoodleBand />
-        <div className="lx-dashboard-stage lx-dashboard-stage-sliding">
-          <DashboardBoardSlider labels={["Workspace", "Notifications"]}>
-            <div className="lx-dashboard-main lx-dashboard-main-slide"><DynamicHomeShowcase /></div>
-            <div className="lx-dashboard-main lx-dashboard-main-slide lx-dashboard-notice-slide"><NoticeSpotlight /></div>
-            
-          </DashboardBoardSlider>
-        </div>
-        <div className="lx-dashboard-caption">WRITE, REVIEW, SHARE, REPEAT</div>
+        <DynamicHomeShowcase />
       </section>
 
       <section className="lx-editorial-section" id="cases">

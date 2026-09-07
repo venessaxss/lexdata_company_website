@@ -23,7 +23,10 @@ export default function EllipsusNav({
 
   const [open, setOpen] = useState<MenuName>(null);
   const [loggedIn, setLoggedIn] = useState(isLoggedIn);
-
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState<MenuName>(null);
+  
+ 
   const clearCloseTimer = () => {
     if (closeTimer.current !== null) {
       window.clearTimeout(closeTimer.current);
@@ -34,6 +37,16 @@ export default function EllipsusNav({
   const closeMenus = () => {
     clearCloseTimer();
     setOpen(null);
+  };
+  
+    const closeAll = () => {
+    closeMenus();
+    setMobileOpen(false);
+    setMobileSection(null);
+  };
+
+  const toggleMobileSection = (name: Exclude<MenuName, null>) => {
+    setMobileSection((current) => (current === name ? null : name));
   };
 
   const showMenu = (name: Exclude<MenuName, null>) => {
@@ -115,6 +128,17 @@ export default function EllipsusNav({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [open]);
+  
+   useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   const isCurrent = (name: Exclude<MenuName, null>) => {
     if (name === "about") return pathname.startsWith("/about");
@@ -131,6 +155,7 @@ export default function EllipsusNav({
     } ${isCurrent(name) ? "is-current" : ""}`;
 
   return (
+    <>
     <header ref={navRef} className="lx-site-nav">
       <div className="lx-nav-inner">
         <Link href="/" className="lx-logo" aria-label="LexData home" onClick={closeMenus}><Image src="/lexdata-logo.png" alt="LexData" width={170} height={54} priority /></Link>
@@ -298,7 +323,7 @@ export default function EllipsusNav({
           </Link>
         </nav>
 
-        <div className="lx-nav-actions">
+          <div className="lx-nav-actions">
           <Link
             href={loggedIn ? dashboardHref : "/login"}
             className="lx-login-btn"
@@ -313,7 +338,135 @@ export default function EllipsusNav({
             </Link>
           ) : null}
         </div>
+
+          <button
+          type="button"
+          className="lx-nav-hamburger"
+          aria-label="Open menu"
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen(true)}
+        >
+          <span className="lx-hamburger-icon">
+            <span />
+            <span />
+            <span />
+          </span>
+        </button>
       </div>
-    </header>
+     </header> 
+
+      <div
+        className={`lx-mobile-backdrop ${mobileOpen ? "is-open" : ""}`}
+        onClick={closeAll}
+        aria-hidden="true"
+      />
+
+      <aside className={`lx-mobile-drawer ${mobileOpen ? "is-open" : ""}`} aria-label="Mobile navigation">
+        <div className="lx-mobile-drawer-head">
+          <Link href="/" className="lx-logo" onClick={closeAll}>
+            <Image src="/lexdata-logo.png" alt="LexData" width={140} height={44} />
+          </Link>
+
+          <button
+            type="button"
+            className="lx-mobile-close"
+            aria-label="Close menu"
+            onClick={closeAll}
+          >
+            &times;
+          </button>
+        </div>
+
+        <nav className="lx-mobile-drawer-links">
+          <div className="lx-mobile-accordion">
+            <button
+              type="button"
+              className={`lx-mobile-accordion-trigger ${mobileSection === "features" ? "is-open" : ""}`}
+              onClick={() => toggleMobileSection("features")}
+              aria-expanded={mobileSection === "features"}
+            >
+              Features <span>{mobileSection === "features" ? "^" : "v"}</span>
+            </button>
+
+            {mobileSection === "features" ? (
+              <div className="lx-mobile-accordion-panel">
+                <Link href="/#features" onClick={closeAll}>Features</Link>
+                <Link href="/workshops" onClick={closeAll}>What's new</Link>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="lx-mobile-accordion">
+            <button
+              type="button"
+              className={`lx-mobile-accordion-trigger ${mobileSection === "library" ? "is-open" : ""}`}
+              onClick={() => toggleMobileSection("library")}
+              aria-expanded={mobileSection === "library"}
+            >
+              Library <span>{mobileSection === "library" ? "^" : "v"}</span>
+            </button>
+
+            {mobileSection === "library" ? (
+              <div className="lx-mobile-accordion-panel">
+                <Link href="/workshops" onClick={closeAll}>Workshops</Link>
+                <Link href="/#cases" onClick={closeAll}>Research cases</Link>
+                <Link href="/#notifications" onClick={closeAll}>Notifications</Link>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="lx-mobile-accordion">
+            <button
+              type="button"
+              className={`lx-mobile-accordion-trigger ${mobileSection === "about" ? "is-open" : ""}`}
+              onClick={() => toggleMobileSection("about")}
+              aria-expanded={mobileSection === "about"}
+            >
+              About <span>{mobileSection === "about" ? "^" : "v"}</span>
+            </button>
+
+            {mobileSection === "about" ? (
+              <div className="lx-mobile-accordion-panel">
+                <Link href="/about" onClick={closeAll}>Who we are</Link>
+                <Link href="/about#story" onClick={closeAll}>Our story</Link>
+                <Link href="/about#team" onClick={closeAll}>Meet the team</Link>
+              </div>
+            ) : null}
+          </div>
+
+          <Link href="/contact" className="lx-mobile-plain-link" onClick={closeAll}>
+            Contact
+          </Link>
+
+          <Link href="/privacy" className="lx-mobile-plain-link" onClick={closeAll}>
+            Privacy Policy
+          </Link>
+
+          <Link
+            href={loggedIn ? dashboardHref : "/signup"}
+            className="lx-mobile-plain-link"
+            onClick={closeAll}
+          >
+            Plus+
+          </Link>
+        </nav>
+
+        <div className="lx-mobile-drawer-actions">
+          <Link
+            href={loggedIn ? dashboardHref : "/login"}
+            className="lx-login-btn"
+            onClick={closeAll}
+          >
+            {loggedIn ? "Dashboard" : "Log in"}
+          </Link>
+
+          {!loggedIn ? (
+            <Link href="/signup" className="lx-signup-btn" onClick={closeAll}>
+              Sign up
+            </Link>
+          ) : null}
+        </div>
+        </aside>
+    </>
   );
 }
