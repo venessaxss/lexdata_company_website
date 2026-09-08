@@ -7308,7 +7308,6 @@ body.lex-pro-dark-body {
 
 .lex-about-page {
   min-height: 100vh;
-  padding-top: 58px;
   overflow: hidden;
   background: #f8f5ee;
   color: #232232;
@@ -8205,15 +8204,14 @@ nav.main .btn:hover {
   - homepage: Ellipsus navbar
   - dashboard/manager/admin/other routes: global paper navbar
 */
-body:has(> main.lx-page) > header.site {
+body:has(main > header.lx-site-nav) > header.site {
   display: none !important;
 }
 
 /* The homepage already accounts for its own fixed Ellipsus navbar. */
-body:has(> main.lx-page) > main.lx-page {
+body:has(main > header.lx-site-nav) > main {
   margin-top: 0 !important;
 }
-
 /* Keep the menu above the page only while it is actually open. */
 .lx-site-nav {
   z-index: 1000;
