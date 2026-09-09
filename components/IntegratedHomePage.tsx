@@ -1,6 +1,5 @@
 import Link from "next/link";
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
-import EllipsusNav from "@/components/EllipsusNav";
 import DynamicHomeShowcase from "@/components/DynamicHomeShowcase";
 import DynamicDoodleBand from "@/components/DynamicDoodleBand";
 import NoticeSpotlight from "@/components/NoticeSpotlight";
@@ -56,7 +55,7 @@ export default async function IntegratedHomePage() {
 
   return (
     <main className="ell-page lx-page">
-      <EllipsusNav isLoggedIn={isLoggedIn} dashboardHref={dashboardHref} />
+      
 
       <div className="lx-cover-sequence">
         <section className="lx-hero-sticky" aria-label="LexData introduction">
