@@ -9,6 +9,7 @@ import { getServerI18n } from "@/lib/language-server";
 import { getCurrentProfile, normalizeRole } from "@/lib/auth";
 import "./globals.css";
 import "./lexdata-theme.css";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: `${site.name} | Data-driven Research Training Platform`,
@@ -35,6 +36,14 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={direction}>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957074785168074"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="lex-paper-site">
         <PaperMotion />
         <VisitTracker />
