@@ -20,6 +20,7 @@
     "react": "latest",
     "react-dom": "latest",
     "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",
     "resend": "^6.17.1",
     "stripe": "latest"
