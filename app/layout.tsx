@@ -36,6 +36,13 @@ export default async function RootLayout({
 
   return (
     <html lang={language} dir={direction}>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957074785168074"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="lex-paper-site">
         <PaperMotion />
         <VisitTracker />
