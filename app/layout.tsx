@@ -12,6 +12,7 @@ import "./lexdata-theme.css";
 import Script from "next/script";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: `${site.name} | Data-driven Research Training Platform`,
   description: site.tagline,
 };
@@ -37,11 +38,10 @@ export default async function RootLayout({
   return (
     <html lang={language} dir={direction}>
       <head>
-        <Script
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2957074785168074"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
       </head>
       <body className="lex-paper-site">
