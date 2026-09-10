@@ -1,5 +1,4 @@
 import PaperTypewriterLine from "@/components/PaperTypewriterLine";
-import EllipsusNav from "@/components/EllipsusNav";
 import AboutTeamWall from "@/components/AboutTeamWall";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/auth";
@@ -65,7 +64,7 @@ export default async function AboutPage() {
 
   return (
     <main className="lx-about-page">
-      <EllipsusNav isLoggedIn={Boolean(profile)} />
+      
 
       <section className="lx-about-hero">
         <div className="lx-floating-letters lx-about-letters" aria-hidden="true">

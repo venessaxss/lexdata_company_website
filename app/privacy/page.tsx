@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import EllipsusNav from "@/components/EllipsusNav";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -46,10 +45,10 @@ function ExternalLink({ href, children }: { href: string; children: React.ReactN
 export default function PrivacyPolicyPage() {
   return (
     <main className="lx-page min-h-screen bg-[#f8f5ee]" style={{ paddingTop: "var(--lx-nav-h)" }}>
-      <EllipsusNav />
+      
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-        <header className="overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-10 text-white shadow-xl md:px-10 md:py-14">
+        <div className="overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-10 text-white shadow-xl md:px-10 md:py-14">
           <p className="text-xs font-black uppercase tracking-[0.28em] text-blue-300">
             LexData legal
           </p>
@@ -65,9 +64,9 @@ export default function PrivacyPolicyPage() {
           <p className="mt-6 text-sm font-semibold text-slate-400">
             Effective and last updated: {updatedDate}
           </p>
-        </header>
+        </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
           <aside className="h-fit rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24">
             <h2 className="text-sm font-black uppercase tracking-[0.16em] text-slate-500">
               On this page
