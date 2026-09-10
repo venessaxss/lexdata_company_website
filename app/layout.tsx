@@ -9,6 +9,7 @@ import { getServerI18n } from "@/lib/language-server";
 import { getCurrentProfile, normalizeRole } from "@/lib/auth";
 import "./globals.css";
 import "./lexdata-theme.css";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
