@@ -8368,3 +8368,121 @@ header.lx-site-nav .lx-signup-btn {
   padding-top: var(--lx-nav-h, 72px) !important;
 }
 
+.blog-page .lex-subpage-grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.blog-page .lex-subpage-card h2 {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.3;
+}
+
+.blog-page .lex-subpage-card p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .blog-page .lex-subpage-grid {
+    grid-template-columns: 1fr;
+    margin-top: -40px;
+  }
+}
+
+.blog-article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 80px 24px 120px;
+}
+
+.blog-article-date {
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #d4653f;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.blog-article-title {
+  font-family: Fraunces, Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.15;
+  font-weight: 700;
+  color: #232232;
+  margin-bottom: 20px;
+}
+
+.blog-article-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 48px;
+}
+
+.blog-article-tag {
+  font-size: 0.8rem;
+  background: #f3f1ea;
+  color: #555;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #e4e1d6;
+}
+
+.blog-article-body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+.blog-article-body h1,
+.blog-article-body h2,
+.blog-article-body h3 {
+  font-family: Fraunces, Georgia, serif;
+  color: #232232;
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+}
+
+.blog-article-body h2 { font-size: 1.6rem; }
+.blog-article-body h3 { font-size: 1.3rem; }
+
+.blog-article-body p {
+  margin-bottom: 1.4em;
+}
+
+.blog-article-body strong {
+  color: #232232;
+}
+
+.blog-article-body ul,
+.blog-article-body ol {
+  margin: 1.2em 0 1.4em 1.4em;
+}
+
+.blog-article-body li {
+  margin-bottom: 0.5em;
+}
+
+.blog-article-body a {
+  color: #2777c8;
+  text-decoration: underline;
+}
+
+.blog-article-body blockquote {
+  border-left: 3px solid #232232;
+  padding-left: 20px;
+  margin: 2em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.blog-article-body hr {
+  border: none;
+  border-top: 1px solid #e4e1d6;
+  margin: 2.5em 0;
+}

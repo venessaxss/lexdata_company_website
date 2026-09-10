@@ -192,9 +192,13 @@ export default function EllipsusNav({
                     <b>F</b>
                     <span>Features</span>
                   </Link>
-                  <Link href="/workshops" onClick={closeMenus}>
+                  <Link href="/blog/whats-new" onClick={closeMenus}>
                     <b>*</b>
                     <span>What's new</span>
+                  </Link>
+                  <Link href="/blog" onClick={closeMenus}>
+                    <b>B</b>
+                    <span>Blog</span>
                   </Link>
                 </div>
                 <div className="lx-mega-art lx-mega-art-red" aria-hidden="true" />
@@ -391,7 +395,8 @@ export default function EllipsusNav({
             {mobileSection === "features" ? (
               <div className="lx-mobile-accordion-panel">
                 <Link href="/#features" onClick={closeAll}>Features</Link>
-                <Link href="/workshops" onClick={closeAll}>What's new</Link>
+                <Link href="/blog/whats-new" onClick={closeAll}>What's new</Link>
+                <Link href="/blog" onClick={closeAll}>Blog</Link>
               </div>
             ) : null}
           </div>
