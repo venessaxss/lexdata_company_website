@@ -8,6 +8,7 @@ type LexPaperSubPageProps = {
     title: string;
     body: string;
     href?: string;
+    meta?: string; // optional — date/tags for blog cards; other pages unaffected
   }[];
 };
 
@@ -28,7 +29,7 @@ export default function LexPaperSubPage({
       <section className="lex-subpage-grid">
         {cards.map((card) => (
           <Link key={card.title} href={card.href || "#"} className="lex-subpage-card">
-            <small>LexData</small>
+            <small>{card.meta || "LexData"}</small>
             <h2>{card.title}</h2>
             <p>{card.body}</p>
             <b>Open -&gt;</b>

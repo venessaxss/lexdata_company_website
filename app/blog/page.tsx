@@ -1,21 +1,22 @@
 import LexPaperSubPage from "@/components/LexPaperSubPage";
+import { getAllBlogs } from "@/lib/blog";
 
 export default function BlogPage() {
+  const blogs = getAllBlogs();
+
   return (
-    <LexPaperSubPage
-      kicker="Blog"
-      title="Research notes from the LexData studio."
-      body="Short essays, updates, and tutorials on corpus linguistics, NLP, AI research, and translation technology."
-      cards={[
-        {
-          title: "How to start a corpus project",
-          body: "A practical outline for collecting, cleaning, documenting, and analyzing text data.",
-        },
-        {
-          title: "NLP for humanists",
-          body: "What language researchers need to know before using text mining and embeddings.",
-        },
-      ]}
-    />
+    <div className="blog-page">
+      <LexPaperSubPage
+        kicker="Blog"
+        title="Research notes from the LexData studio."
+        body="Comparative guides, updates, and tutorials on AI models, NLP, and translation technology."
+        cards={blogs.map((blog) => ({
+          title: blog.title,
+          body: blog.excerpt,
+          href: `/blog/${blog.slug}`,
+          meta: `${blog.date}${blog.aiModels ? " · " + blog.aiModels.join(", ") : ""}`,
+        }))}
+      />
+    </div>
   );
 }
