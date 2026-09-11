@@ -8698,6 +8698,127 @@ header.lx-site-nav .lx-signup-btn {
   border-radius: 999px;
 }
 
+.blog-share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.blog-share-label {
+  margin-right: 4px;
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--blog-muted);
+}
+
+.blog-share-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.92;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.blog-share-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.blog-share-icon:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.blog-share-copy {
+  padding: 7px 14px;
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--blog-ink);
+  background: transparent;
+  border: 1px solid var(--blog-rule);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+
+.blog-share-copy:hover {
+  border-color: var(--blog-ink);
+}
+
+.blog-share-qr-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(24, 24, 19, 0.55);
+}
+
+.blog-share-qr-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+  padding: 32px 28px 28px;
+  text-align: center;
+  background: var(--blog-paper, #f7f4ed);
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(24, 24, 19, 0.25);
+}
+
+.blog-share-qr-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--blog-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.blog-share-qr-close:hover {
+  color: var(--blog-ink);
+}
+
+.blog-share-qr-title {
+  margin: 0 0 18px;
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--blog-ink);
+}
+
+.blog-share-qr-modal img {
+  border-radius: 4px;
+}
+
+.blog-share-qr-hint {
+  max-width: 240px;
+  margin: 18px 0 0;
+  font-family: "Work Sans", system-ui, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--blog-muted);
+}
+
 .blog-article-cover {
   margin-top: clamp(58px, 8vw, 100px);
   overflow: hidden;

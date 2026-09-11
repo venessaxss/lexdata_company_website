@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatBlogDate, getBlogBySlug, getAllBlogs } from "@/lib/blog";
 import { notFound } from "next/navigation";
+import ShareButtons from "@/components/ShareButtons";
 
 type BlogArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -70,6 +71,10 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
               ))}
             </div>
           )}
+           <ShareButtons
+            url={`https://lexdataai.com/blog/${slug}`}
+            title={blog.title}
+          />
         </header>
 
         {blog.coverImage && (
