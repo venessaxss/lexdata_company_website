@@ -8,13 +8,23 @@ export default function DynamicDoodleBand() {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let nextX = 0;
+    let nextY = 0;
+
+    const paint = () => {
+      root.style.setProperty("--doodle-x", nextX.toFixed(3));
+      root.style.setProperty("--doodle-y", nextY.toFixed(3));
+      frame = 0;
+    };
 
     const move = (event: PointerEvent) => {
       const rect = root.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-      root.style.setProperty("--doodle-x", String(x));
-      root.style.setProperty("--doodle-y", String(y));
+      nextX = (event.clientX - rect.left) / rect.width - 0.5;
+      nextY = (event.clientY - rect.top) / rect.height - 0.5;
+      if (!frame) frame = window.requestAnimationFrame(paint);
     };
 
     const leave = () => {
@@ -27,16 +37,17 @@ export default function DynamicDoodleBand() {
     return () => {
       root.removeEventListener("pointermove", move);
       root.removeEventListener("pointerleave", leave);
+      if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
 
   return (
-    <div ref={rootRef} className="lx-doodle-band">
+    <div ref={rootRef} className="lx-doodle-band rev">
       <div className="lx-doodle-collab" aria-hidden="true">
         <div className="lx-avatar-stack">
           <span>R</span><span>L</span><span>D</span>
         </div>
-        <svg className="lx-collab-arrow" viewBox="0 0 150 70" fill="none">
+        <svg className="lx-collab-arrow draw" viewBox="0 0 150 70" fill="none">
           <path d="M138 50C108 20 61 18 17 32" />
           <path d="M29 20 15 32l16 9" />
         </svg>
@@ -53,7 +64,7 @@ export default function DynamicDoodleBand() {
       </div>
 
       <div className="lx-doodle-object lx-doodle-books-cup" aria-hidden="true">
-        <svg viewBox="0 0 290 240" fill="none">
+        <svg className="draw" viewBox="0 0 290 240" fill="none">
           <path d="M37 190h164" />
           <path d="M55 169h130v21H55z" />
           <path d="M67 145h111v24H67z" />
@@ -66,7 +77,7 @@ export default function DynamicDoodleBand() {
       </div>
 
       <div className="lx-doodle-object lx-doodle-lamp-plant" aria-hidden="true">
-        <svg viewBox="0 0 340 300" fill="none">
+        <svg className="draw" viewBox="0 0 340 300" fill="none">
           <path d="M238 54 290 25l26 45-50 30z" />
           <path d="m275 94-44 87" />
           <path d="M230 180h53" />

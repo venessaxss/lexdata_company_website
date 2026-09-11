@@ -21,10 +21,15 @@ function AnimatedNumber({ value }: { value: number }) {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
+    const end = Number(value || 0);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayValue(end);
+      return;
+    }
+
     let frame = 0;
     const totalFrames = 36;
     const start = 0;
-    const end = Number(value || 0);
 
     const timer = window.setInterval(() => {
       frame += 1;
@@ -56,7 +61,7 @@ function RotatingWords() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % words.length);
-    }, 1800);
+    }, 2800);
 
     return () => window.clearInterval(timer);
   }, [words.length]);
@@ -100,10 +105,11 @@ export default function DynamicHomeShowcaseClient({
 
   return (
     <section className="relative overflow-hidden bg-slate-950 py-16 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.25),transparent_28%),radial-gradient(circle_at_50%_90%,rgba(14,165,233,0.22),transparent_32%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_18%,rgba(59,130,246,0.20),transparent_34%),radial-gradient(ellipse_at_83%_12%,rgba(168,85,247,0.14),transparent_31%),radial-gradient(ellipse_at_52%_94%,rgba(14,165,233,0.13),transparent_36%)]" />
+      <div className="lx-showcase-grain absolute inset-0" aria-hidden="true" />
 
-      <div className="absolute -left-24 top-20 h-72 w-72 animate-float rounded-full bg-blue-500/20 blur-3xl" />
-      <div className="absolute -right-20 bottom-10 h-80 w-80 animate-float-delayed rounded-full bg-purple-500/20 blur-3xl" />
+      <div className="absolute -left-24 top-20 h-72 w-72 animate-float rounded-[47%_53%_58%_42%/52%_44%_56%_48%] bg-blue-500/15 blur-3xl" />
+      <div className="absolute -right-20 bottom-10 h-80 w-80 animate-float-delayed rounded-[54%_46%_43%_57%/45%_56%_44%_55%] bg-purple-500/15 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
@@ -226,7 +232,7 @@ export default function DynamicHomeShowcaseClient({
             transform: translateY(0px) translateX(0px);
           }
           50% {
-            transform: translateY(-24px) translateX(18px);
+            transform: translateY(-9px) translateX(6px) rotate(1deg);
           }
         }
 
@@ -235,26 +241,30 @@ export default function DynamicHomeShowcaseClient({
             transform: translateY(0px) translateX(0px);
           }
           50% {
-            transform: translateY(20px) translateX(-18px);
+            transform: translateY(8px) translateX(-7px) rotate(-1deg);
           }
         }
 
         @keyframes wordSlide {
           0% {
-            transform: translateY(100%);
+            transform: translateY(65%);
             opacity: 0;
+            filter: blur(3px);
           }
           20% {
             transform: translateY(0%);
             opacity: 1;
+            filter: blur(0);
           }
           80% {
             transform: translateY(0%);
             opacity: 1;
+            filter: blur(0);
           }
           100% {
-            transform: translateY(-100%);
+            transform: translateY(-65%);
             opacity: 0;
+            filter: blur(2px);
           }
         }
 
@@ -268,22 +278,42 @@ export default function DynamicHomeShowcaseClient({
         }
 
         .animate-float {
-          animation: float 8s ease-in-out infinite;
+          animation: float 14.5s cubic-bezier(.45,.05,.55,.95) infinite;
         }
 
         .animate-float-delayed {
-          animation: floatDelayed 9s ease-in-out infinite;
+          animation: floatDelayed 17s -6s cubic-bezier(.45,.05,.55,.95) infinite;
         }
 
         .animate-word-slide {
           display: inline-block;
-          animation: wordSlide 1.8s ease-in-out;
+          animation: wordSlide 2.8s cubic-bezier(.22,.72,.24,1);
         }
 
         .animate-marquee {
           display: inline-block;
           min-width: 200%;
-          animation: marquee 28s linear infinite;
+          animation: marquee 42s linear infinite;
+        }
+
+        .lx-showcase-grain {
+          pointer-events: none;
+          opacity: .2;
+          background-image:
+            repeating-linear-gradient(8deg, rgba(255,255,255,.024) 0 1px, transparent 1px 8px),
+            repeating-linear-gradient(98deg, rgba(0,0,0,.035) 0 1px, transparent 1px 11px);
+          mix-blend-mode: soft-light;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-float,
+          .animate-float-delayed,
+          .animate-word-slide,
+          .animate-marquee {
+            animation: none !important;
+            transform: none !important;
+            filter: none !important;
+          }
         }
       `}</style>
     </section>

@@ -8,6 +8,16 @@ const caseCards = [
   { label: "Case 03", title: "AI research classroom", body: "Generative AI, Python, and NLP turned into practical workshops for humanities researchers." },
 ];
 
+const bubbles = Array.from({ length: 12 }, (_, index) => ({
+  x: 3 + ((index * 31 + 9) % 91),
+  y: 4 + ((index * 47 + 13) % 82),
+  size: 18 + ((index * 19) % 76),
+  driftX: -22 + ((index * 17) % 45),
+  driftY: -18 - ((index * 11) % 32),
+  duration: 12 + ((index * 7) % 10),
+  delay: -((index * 5) % 13),
+}));
+
 export default function BubblingCaseGrid() {
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -55,8 +65,19 @@ export default function BubblingCaseGrid() {
   return (
     <div ref={gridRef} className="lx-case-bubble-stage">
       <div className="lx-case-bubbles" aria-hidden="true">
-        {Array.from({ length: 12 }).map((_, index) => (
-          <span key={index} style={{ "--bubble-i": index } as React.CSSProperties} />
+        {bubbles.map((bubble, index) => (
+          <span
+            key={index}
+            style={{
+              "--bubble-x": `${bubble.x}%`,
+              "--bubble-y": `${bubble.y}%`,
+              "--bubble-size": `${bubble.size}px`,
+              "--bubble-dx": `${bubble.driftX}px`,
+              "--bubble-dy": `${bubble.driftY}px`,
+              "--bubble-duration": `${bubble.duration}s`,
+              "--bubble-delay": `${bubble.delay}s`,
+            } as React.CSSProperties}
+          />
         ))}
       </div>
 
