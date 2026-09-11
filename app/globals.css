@@ -8640,7 +8640,7 @@ header.lx-site-nav .lx-signup-btn {
   max-width: 1180px;
   margin: 18px 0 34px;
   font-family: Fraunces, Georgia, serif;
-  font-size: clamp(3rem, 7vw, 7rem);
+  font-size: clamp(2rem, 4vw, 3.6rem);
   font-weight: 520;
   letter-spacing: -0.058em;
   line-height: 0.94;
