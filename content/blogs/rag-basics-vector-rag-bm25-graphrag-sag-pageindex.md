@@ -259,4 +259,4 @@ If you want to see real-world deployment and implementation details of RAG knowl
 
 - [Learning RAG from WeKnora: multi-channel RRF fusion retrieval, ranking, and chunk merging strategies](https://mp.weixin.qq.com/s?__biz=Mzk0MzY4NzUzMQ==&mid=2247484428&idx=1&sn=d74956ad1ed3529df78ea0b6787a8b3a&scene=21#wechat_redirect)
 
-*Note: the illustrations in this article were generated with the gpt-image-2 model to help explain the logic.*
+
