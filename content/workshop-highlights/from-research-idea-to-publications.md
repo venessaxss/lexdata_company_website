@@ -20,23 +20,23 @@ weeks:
     title: "Academic Writing & Publication Preparation"
 materials:
   - image: "/workshop-highlights/from-research-idea-to-publications/pic1w4.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 1"
+    lecturer: "Ian Joo"
+    topic: "Associate Professor, Otaru University of Commerce, Japan"
   - image: "/workshop-highlights/from-research-idea-to-publications/pic2w4.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 2"
+    lecturer: "Dr. Muhammad Afzaal"
+    topic: "Shanghai International Studies University, China"
   - image: "/workshop-highlights/from-research-idea-to-publications/pic3w4.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 3"
+    lecturer: "Yufeng Liu"
+    topic: "Senior Research Associate, Lancaster University, UK"
   - image: "/workshop-highlights/from-research-idea-to-publications/pic4w4.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 4"
+    lecturer: "Changpeng Huan"
+    topic: "University of Macau, Macao SAR"
   - image: "/workshop-highlights/from-research-idea-to-publications/pic5w5.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 5"
+    lecturer: "Dr. Rafi Ullah Khan"
+    topic: "LOOM Research Institute, Liverpool John Moores University, UK"
   - image: "/workshop-highlights/from-research-idea-to-publications/pic6w6.jpg"
-    lecturer: "International Resource Persons"
-    topic: "Highlight 6"
+    lecturer: "Muhammad Faseeh"
+    topic: "Jeju University, South Korea"
 ---
 
 LexData hosted a three-week intensive programme titled **"From Research Idea to Publications: Future-Ready Language Research — Corpus, AI, Analytics, and Publication Success."** Running from **27 July to 14 August 2026** (weekdays only), the workshop guided participants through the complete research journey, from shaping an initial idea to preparing a manuscript for publication.
@@ -57,9 +57,9 @@ The workshop was delivered by an international panel of experts:
 
 - **Dr. Muhammad Afzaal**, Shanghai International Studies University, China
 - **Changpeng Huan**, University of Macau, Macao SAR
-- **Ian Joo**, Otaru University of Commerce, Japan
-- **Yufeng Liu**, Lancaster University, UK
-- **Rafi Ullah Khan**, Liverpool John Moores University, UK
+- **Ian Joo**, Associate Professor, Otaru University of Commerce, Japan
+- **Yufeng Liu**, Senior Research Associate, Lancaster University, UK
+- **Dr. Rafi Ullah Khan**, LOOM Research Institute, Liverpool John Moores University, UK
 - **Muhammad Faseeh**, Jeju University, South Korea
 
 ## Who This Programme Was For

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getWorkshopBySlug, getAllWorkshops } from "@/lib/workshop-highlights";
 import { notFound } from "next/navigation";
 import ShareButtons from "@/components/ShareButtons";
+import "@/components/WorkshopHighlightsArticle.css";
 
 type WorkshopArticlePageProps = {
   params: Promise<{ slug: string }>;
@@ -54,10 +55,11 @@ export default async function WorkshopArticlePage({ params }: WorkshopArticlePag
   return (
     <main className="wh-page wh-article-page">
       <article>
-        <header className="wh-article-hero">
+        {/* A <div>, not <header>: the site theme pins every <header> to the top of the page. */}
+        <div className="wh-article-hero">
           <div className="wh-article-hero-inner">
             <Link className="wh-back-link" href="/workshop-highlights">
-              <span aria-hidden="true">←</span> All workshops
+              <span aria-hidden="true">←</span>&nbsp;All workshops
             </Link>
             <p className="wh-eyebrow">Workshop</p>
             <h1 className="wh-article-title">{workshop.title}</h1>
@@ -78,28 +80,25 @@ export default async function WorkshopArticlePage({ params }: WorkshopArticlePag
               />
             </div>
           </div>
-        </header>
+        </div>
 
-          {workshop.cover && (
-            <div className="wh-article-cover">
-              <figure className="wh-article-cover-frame">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={workshop.cover}
-                  alt={workshop.title}
-                  className="wh-article-cover-img"
-                />
-              </figure>
-            </div>
-          )}
+        {workshop.cover && (
+          <div className="wh-article-cover">
+            <figure className="wh-article-cover-frame">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={workshop.cover}
+                alt={workshop.title}
+                className="wh-article-cover-img"
+              />
+            </figure>
+          </div>
+        )}
 
         <div className="wh-article-layout">
           <aside className="wh-article-rail" aria-label="Workshop details">
             <span className="wh-article-rail-label">In this workshop</span>
-            <p>
-              {workshop.materials.length} session{workshop.materials.length === 1 ? "" : "s"} of
-              lecture material and photos from the workshop.
-            </p>
+            <p>Photos and lecture material from the workshop.</p>
 
             {lecturer && (
               <>
@@ -147,7 +146,7 @@ export default async function WorkshopArticlePage({ params }: WorkshopArticlePag
           </p>
           <h2>More workshops and training sessions from LexData.</h2>
           <Link className="wh-cta" href="/workshop-highlights">
-            Browse all workshops <span aria-hidden="true">→</span>
+            Browse all workshops
           </Link>
         </section>
       </article>

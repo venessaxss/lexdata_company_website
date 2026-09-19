@@ -8,6 +8,11 @@ export default function WorkshopHighlightsPage() {
     <main className="wh-page wh-index">
       <section className="wh-hero">
         <div className="wh-hero-inner">
+          <svg className="wh-doodle" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M4 28 L60 6 L42 58 L30 38 Z" />
+            <path d="M30 38 L60 6" />
+            <path d="M30 38 L28 52 L36 44" />
+          </svg>
           <p className="wh-eyebrow">LexData Workshop Highlights</p>
           <h1>
             Real sessions, real research.
