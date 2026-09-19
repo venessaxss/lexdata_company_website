@@ -9146,3 +9146,905 @@ header.lx-site-nav .lx-signup-btn {
     margin-left: -4px;
   }
 }
+
+/* Workshop Highlights — materials grid */
+.workshop-materials {
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.workshop-materials h2 {
+  margin-top: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.workshop-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.workshop-material-card {
+  margin: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.workshop-material-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f1f5f9;
+}
+
+.workshop-material-image img {
+  object-fit: cover;
+}
+
+.workshop-material-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.workshop-material-topic {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.workshop-material-lecturer {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   Workshop Highlights — Bold / Vibrant SaaS-style design
+   Namespaced with .wh- so it never touches .blog-* (blog) styles.
+   ========================================================================== */
+
+.wh-page {
+  --wh-ink: #14131f;
+  --wh-muted: #5b5a72;
+  --wh-bg: #f7f6ff;
+  --wh-card: #ffffff;
+  --wh-border: rgba(11, 11, 20, 0.09);
+  --wh-primary: #4338ca;
+  --wh-primary-dark: #2e2a8f;
+  --wh-accent: #c2410c;
+  --wh-accent-2: #d4a72c;
+  --wh-pink: #be185d;
+  --wh-gradient: linear-gradient(120deg, #1e1b4b 0%, #312e81 45%, #4338ca 80%, #3730a3 100%);
+  font-family: "Inter", "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--wh-ink);
+  background: var(--wh-bg);
+}
+
+.wh-page * {
+  box-sizing: border-box;
+}
+
+/* ---------- Shared bits ---------- */
+
+.wh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 7px 14px 7px 12px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--wh-ink);
+  border-radius: 999px;
+}
+
+.wh-eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--wh-accent-2);
+}
+
+.wh-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wh-tag {
+  padding: 7px 14px;
+  font-size: 0.76rem;
+  font-weight: 750;
+  color: var(--wh-primary-dark);
+  background: #ece5ff;
+  border: 1px solid rgba(91, 33, 245, 0.18);
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   LISTING PAGE
+   ========================================================================== */
+
+.wh-index {
+  min-height: 100vh;
+  padding-bottom: 140px;
+}
+
+/* Hero */
+.wh-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 88px;
+  padding: clamp(80px, 11vw, 140px) clamp(24px, 6vw, 80px) clamp(72px, 9vw, 120px);
+  background: var(--wh-gradient);
+  isolation: isolate;
+}
+
+.wh-hero::before,
+.wh-hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(10px);
+  opacity: 0.55;
+}
+
+.wh-hero::before {
+  top: -180px;
+  right: -120px;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
+}
+
+.wh-hero::after {
+  bottom: -220px;
+  left: -140px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, #4338ca 0%, rgba(67, 56, 202, 0) 70%);
+}
+
+.wh-hero-inner {
+  position: relative;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.wh-hero .wh-eyebrow {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.wh-hero h1 {
+  max-width: 1080px;
+  margin: 26px 0 24px;
+  font-size: clamp(2.6rem, 6.4vw, 5.6rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: #fff;
+}
+
+.wh-hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, #a5b4fc, #818cf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.wh-hero-dek {
+  max-width: 640px;
+  margin: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.wh-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 5vw, 56px);
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.wh-hero-stat b {
+  display: block;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.wh-hero-stat span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Featured card */
+.wh-featured-wrap {
+  max-width: 1360px;
+  margin: 0 auto 96px;
+  padding: 0 clamp(24px, 6vw, 80px);
+}
+
+.wh-section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wh-primary);
+}
+
+.wh-section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--wh-border);
+}
+
+.wh-featured-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr);
+  min-height: 480px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--wh-ink);
+  background: var(--wh-card);
+  border-radius: 28px;
+  border: 1px solid var(--wh-border);
+  box-shadow: 0 30px 70px -30px rgba(76, 20, 200, 0.35);
+  transition: transform 260ms ease, box-shadow 260ms ease;
+}
+
+.wh-featured-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 40px 90px -30px rgba(76, 20, 200, 0.45);
+}
+
+.wh-featured-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  padding: clamp(36px, 5vw, 64px);
+}
+
+.wh-featured-copy h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.wh-featured-copy p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--wh-muted);
+  max-width: 60ch;
+}
+
+.wh-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px 24px;
+  width: fit-content;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--wh-ink);
+  border-radius: 999px;
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.wh-featured-card:hover .wh-cta,
+.wh-story-card:hover .wh-cta {
+  background: var(--wh-primary);
+  transform: translateX(3px);
+}
+
+.wh-featured-image {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  background: var(--wh-gradient);
+}
+
+.wh-featured-image img {
+  object-fit: cover;
+  object-position: center;
+  transition: transform 500ms ease;
+  object-position: top;
+}
+
+.wh-featured-card:hover .wh-featured-image img {
+  transform: scale(1.05);
+}
+
+.wh-featured-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(11, 11, 20, 0.35), transparent 45%);
+}
+
+/* Grid of remaining workshops */
+.wh-latest {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 80px);
+}
+
+.wh-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.wh-story-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 26px;
+  text-decoration: none;
+  color: var(--wh-ink);
+  background: var(--wh-card);
+  border: 1px solid var(--wh-border);
+  border-radius: 22px;
+  box-shadow: 0 14px 34px -22px rgba(11, 11, 20, 0.18);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.wh-story-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(91, 33, 245, 0.35);
+  box-shadow: 0 26px 50px -22px rgba(76, 20, 200, 0.3);
+}
+
+.wh-story-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--wh-gradient);
+}
+
+.wh-story-image img {
+  object-fit: cover;
+  object-position: top;
+}
+
+.wh-story-card h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.wh-story-card p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--wh-muted);
+  flex-grow: 1;
+}
+
+.wh-story-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.86rem;
+  font-weight: 750;
+  color: var(--wh-primary);
+}
+
+/* ==========================================================================
+   DETAIL PAGE
+   ========================================================================== */
+
+.wh-article-page {
+  min-height: 100vh;
+  padding-bottom: 120px;
+}
+
+.wh-article-hero {
+  position: relative;
+  overflow: hidden;  padding: clamp(50px, 7vw, 90px) clamp(24px, 6vw, 80px) clamp(60px, 8vw, 100px);
+  background: var(--wh-gradient);
+  isolation: isolate;
+}
+
+.wh-article-hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -200px;
+  right: -160px;
+  width: 520px;
+  height: 520px;
+  border-radius: 999px;
+  filter: blur(10px);
+  opacity: 0.4;
+  background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
+}
+
+.wh-article-hero-inner {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* The site theme forces every <header> element to position:fixed for the
+   main nav bar. Our hero is also a <header>, so it inherits that rule and
+   ends up pinned/clipped at the top of the viewport. Override it here,
+   the same way the blog article hero already does, but keep our own
+   gradient background and white text instead of making it transparent. */
+.lex-paper-site header.wh-article-hero {
+  position: relative !important;
+  inset: auto !important;
+  z-index: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  color: #fff !important;
+  background: var(--wh-gradient) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.wh-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 0.9rem;
+  font-weight: 750;
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.wh-back-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.wh-article-hero .wh-eyebrow {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+
+.wh-article-title {
+  max-width: 980px;
+  margin: 22px 0 20px;
+  font-size: clamp(2.1rem, 5vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.03;
+  color: #fff;
+}
+
+.wh-article-dek {
+  max-width: 780px;
+  margin: 0 0 28px;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.wh-article-hero .wh-tag {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.wh-share-row {
+  display: inline-flex;
+  margin-top: 32px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+/* Cover image — floats up out of the hero onto the light body */
+.wh-article-cover {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 40px auto 0;
+  padding: 0 clamp(24px, 6vw, 80px);
+}
+
+.wh-article-cover-frame {
+  position: relative;
+  overflow: hidden;
+  max-width: 640px;
+  margin: 0 auto;
+  border-radius: 24px;
+  border: 6px solid #fff;
+  box-shadow: 0 40px 80px -30px rgba(11, 11, 20, 0.4);
+  background: #f1f0fb;
+}
+
+.wh-article-cover-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Body layout */
+.wh-article-layout {
+  max-width: 1180px;
+  margin: 56px auto 0;
+  padding: 0 clamp(24px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  gap: clamp(36px, 6vw, 72px);
+}
+
+.wh-article-rail {
+  position: sticky;
+  top: calc(var(--lx-nav-h, 72px) + 24px);
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  background: var(--wh-card);
+  border: 1px solid var(--wh-border);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px -26px rgba(11, 11, 20, 0.2);
+}
+
+.wh-article-rail-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wh-primary);
+}
+
+.wh-article-rail p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--wh-muted);
+}
+
+.wh-rail-divider {
+  height: 1px;
+  background: var(--wh-border);
+}
+
+.wh-lecturer-block b {
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--wh-ink);
+}
+
+.wh-lecturer-block span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--wh-muted);
+}
+
+.wh-article-body {
+  min-width: 0;
+  font-size: clamp(1.02rem, 1.3vw, 1.12rem);
+  line-height: 1.8;
+  color: #2a2938;
+}
+
+.wh-article-body h1,
+.wh-article-body h2,
+.wh-article-body h3,
+.wh-article-body h4 {
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  color: var(--wh-ink);
+}
+
+.wh-article-body h1,
+.wh-article-body h2 {
+  margin: 2.6em 0 0.75em;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+}
+
+.wh-article-body h3 {
+  margin: 2em 0 0.6em;
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+}
+
+.wh-article-body > h1:first-child,
+.wh-article-body > h2:first-child {
+  margin-top: 0;
+}
+
+.wh-article-body p {
+  margin: 0 0 1.4em;
+}
+
+.wh-article-body strong {
+  color: var(--wh-ink);
+}
+
+.wh-article-body ul,
+.wh-article-body ol {
+  margin: 1.1em 0 1.5em;
+  padding-left: 1.3em;
+}
+
+.wh-article-body li {
+  margin-bottom: 0.6em;
+}
+
+.wh-article-body a {
+  color: var(--wh-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.wh-article-body blockquote {
+  margin: 0 0 2.4em;
+  padding: 22px 26px;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--wh-primary-dark);
+  background: #ece5ff;
+  border-left: 4px solid var(--wh-primary);
+  border-radius: 4px 14px 14px 4px;
+}
+
+.wh-article-body img {
+  width: 100%;
+  height: auto;
+  margin: 1.8em 0;
+  border-radius: 16px;
+  box-shadow: 0 18px 42px -20px rgba(11, 11, 20, 0.25);
+}
+
+/* Materials — lectures grid */
+.wh-materials {
+  max-width: 1180px;
+  margin: clamp(64px, 8vw, 100px) auto 0;
+  padding: clamp(24px, 6vw, 80px);
+  background: #1a1830;
+  border-radius: 28px;
+}
+
+.wh-materials-head {
+  max-width: 640px;
+  margin: 0 0 40px;
+}
+
+.wh-materials .wh-section-label {
+  color: var(--wh-accent-2);
+}
+
+.wh-materials .wh-section-label::after {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.wh-materials-head h2 {
+  margin: 14px 0 0;
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+
+.wh-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+.wh-material-card {
+  margin: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+
+.wh-material-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 176, 32, 0.5);
+}
+
+.wh-material-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #1a1930;
+}
+
+.wh-material-image img {
+  object-fit: contain;
+  transition: transform 400ms ease;
+}
+
+.wh-material-card:hover .wh-material-image img {
+  transform: scale(1.06);
+}
+
+.wh-material-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px 20px;
+}
+
+.wh-material-topic {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wh-accent-2);
+}
+
+.wh-material-lecturer {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Next-up band */
+.wh-article-next {
+  max-width: 1180px;
+  margin: clamp(64px, 8vw, 100px) auto 0;
+  padding: clamp(50px, 7vw, 84px) clamp(28px, 6vw, 72px);
+  text-align: center;
+  background: linear-gradient(120deg, #eef0ff, #f3eefc);
+  border-radius: 28px;
+}
+
+.wh-article-next h2 {
+  max-width: 640px;
+  margin: 14px auto 30px;
+  font-size: clamp(1.8rem, 3.6vw, 2.9rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: var(--wh-ink);
+}
+
+.wh-article-next .wh-cta {
+  margin: 0 auto;
+  background: var(--wh-ink);
+}
+
+.wh-article-next .wh-cta:hover {
+  background: var(--wh-primary);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .wh-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .wh-featured-card {
+    grid-template-columns: 1fr;
+  }
+
+  .wh-featured-image {
+    position: relative;
+    min-height: 260px;
+    overflow: hidden;
+    background: var(--wh-gradient);
+  }
+
+  .wh-article-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .wh-article-rail {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .wh-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wh-hero-stats {
+    gap: 24px;
+  }
+
+  .wh-article-cover {
+    margin-top: 0;
+  }
+
+  .wh-article-cover-frame {
+    aspect-ratio: 4 / 3;
+    border-width: 4px;
+    border-radius: 18px;
+  }
+
+  .wh-materials {
+    border-radius: 20px;
+  }
+
+  .wh-article-next {
+    border-radius: 20px;
+  }
+}
+/* FIX: the site theme forces every <header> tag to position:fixed,
+   height:58px (see ".lex-paper-site header { position: fixed !important; height: 58px !important; ... }").
+   Our workshop hero is also a <header>, so it gets squashed/pinned by that rule.
+   This override beats it (more specific selector + !important) and restores
+   our own gradient hero, in normal document flow, full height. */
+.lex-paper-site header.wh-article-hero {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  inset: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  z-index: auto !important;
+  overflow: hidden !important;
+  color: #fff !important;
+  background: var(--wh-gradient) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: none !important;
+}
+
+@media (max-width: 900px) {
+  .lex-paper-site header.wh-article-hero {
+    height: auto !important;
+  }
+}

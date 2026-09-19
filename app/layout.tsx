@@ -36,7 +36,7 @@ export default async function RootLayout({
           : "/dashboard";
 
   return (
-    <html lang={language} dir={direction}>
+    <html lang={language} dir={direction} data-scroll-behavior="smooth">
       <head>
         <script
           async

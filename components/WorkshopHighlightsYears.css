@@ -1,0 +1,459 @@
+/* components/WorkshopHighlightsYears.css
+   Everything is prefixed with .wh-years (or .wh-hero for the hero buttons)
+   so the site's global `.lex-paper-site ...` rules don't leak in. */
+
+.wh-years {
+  --y-ink: #14112e;
+  --y-indigo: #4338ca;
+  --y-deep: #1e1b4b;
+  --y-mid: #312e81;
+  --y-soft: #c7d2fe;
+  --y-muted: #6b6890;
+  --y-line: rgba(67, 56, 202, 0.14);
+
+  background: #f6f4ff;
+  padding: 88px 24px 96px;
+  /* keeps the section clear of the sticky site header when jumped to via #browse-by-year */
+  scroll-margin-top: 60px;
+}
+
+.wh-years .wh-years-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* ---- section heading ---- */
+
+.wh-years .wh-years-heading {
+  margin: 0 0 12px;
+  font-size: clamp(1.75rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--y-ink);
+}
+
+.wh-years .wh-years-hint {
+  max-width: 56ch;
+  margin: 0 0 48px;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--y-muted);
+}
+
+/* ---- row of year tiles ---- */
+
+.wh-years .wh-years-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  /* room under the tiles for the tallest dropdown (--wh-max = most workshops in a year) */
+  padding-bottom: calc(var(--wh-max, 1) * 100px + 56px);
+}
+
+.wh-years .wh-year {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 360px;
+  max-width: 100%;
+}
+
+/* ---- the year tile ---- */
+
+.wh-years .wh-year-btn {
+  appearance: none;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  min-height: 200px;
+  margin: 0;
+  padding: 28px 28px 22px;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--y-deep) 0%, var(--y-mid) 55%, var(--y-indigo) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 18px 40px -26px rgba(30, 27, 75, 0.8);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* soft light in the top-right corner, same feel as the hero */
+.wh-years .wh-year-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 92% 0%, rgba(165, 180, 252, 0.38), transparent 55%);
+  pointer-events: none;
+}
+
+.wh-years .wh-year-btn > * {
+  position: relative;
+}
+
+/* year number + topic tags */
+.wh-years .wh-year-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.wh-years .wh-year-num {
+  display: block;
+  font-family: var(--wh-font-serif, Georgia, "Times New Roman", serif);
+  font-size: clamp(2.5rem, 3.6vw, 3.25rem);
+  font-weight: 700;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: #fff;
+  background: linear-gradient(180deg, #ffffff 30%, var(--y-soft) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.wh-years .wh-year-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.wh-years .wh-year-tag {
+  max-width: 100%;
+  padding: 5px 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: #e0e7ff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wh-years .wh-year-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+/* overlapping cover thumbnails give a preview of what is inside */
+.wh-years .wh-year-covers {
+  display: flex;
+  margin-right: auto;
+}
+
+.wh-years .wh-year-covers img {
+  width: 38px;
+  height: 38px;
+  margin-left: -12px;
+  border: 2px solid var(--y-mid);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  background: var(--y-deep);
+}
+
+.wh-years .wh-year-covers img:first-child {
+  margin-left: 0;
+}
+
+.wh-years .wh-year-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  color: #fff;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.wh-years .wh-year-chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 0.2s ease;
+}
+
+/* hover / open state */
+.wh-years .wh-year:hover .wh-year-btn,
+.wh-years .wh-year.is-open .wh-year-btn {
+  transform: translateY(-3px);
+  box-shadow: 0 28px 50px -24px rgba(67, 56, 202, 0.8);
+}
+
+.wh-years .wh-year:hover .wh-year-toggle,
+.wh-years .wh-year.is-open .wh-year-toggle {
+  background: #fff;
+  color: var(--y-indigo);
+}
+
+.wh-years .wh-year.is-open .wh-year-chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.wh-years .wh-year-btn:focus-visible {
+  outline: 3px solid #a5b4fc;
+  outline-offset: 4px;
+}
+
+/* ---- the dropdown ---- */
+
+.wh-years .wh-year-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  /* transparent padding bridges the gap so hover isn't lost between tile and panel */
+  padding-top: 14px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+
+.wh-years .wh-year.is-open .wh-year-panel {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.wh-years .wh-year-panel-box {
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--y-line);
+  border-radius: 20px;
+  box-shadow: 0 28px 56px -28px rgba(30, 27, 75, 0.45);
+}
+
+.wh-years .wh-year-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wh-years .wh-year-list li {
+  margin: 0;
+  padding: 0;
+}
+
+.wh-years .wh-year-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border-radius: 14px;
+  color: var(--y-ink);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.wh-years .wh-year-link:hover {
+  background: #f1efff;
+}
+
+.wh-years .wh-year-link:focus-visible {
+  outline: none;
+  background: #f1efff;
+  box-shadow: inset 0 0 0 2px var(--y-indigo);
+}
+
+.wh-years .wh-year-thumb {
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  object-fit: cover;
+  object-position: top center;
+  background: #e0e7ff;
+}
+
+.wh-years .wh-year-link-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wh-years .wh-year-link-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--y-indigo);
+}
+
+.wh-years .wh-year-link-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--y-ink);
+}
+
+.wh-years .wh-year-link-go {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-top: 2px solid var(--y-indigo);
+  border-right: 2px solid var(--y-indigo);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.wh-years .wh-year-link:hover .wh-year-link-go {
+  transform: translateX(3px) rotate(45deg);
+}
+
+/* ---- mobile: dropdown opens inline under the tile ---- */
+
+@media (max-width: 720px) {
+  .wh-years {
+    padding: 56px 20px 64px;
+  }
+
+  .wh-years .wh-years-hint {
+    margin-bottom: 32px;
+  }
+
+  .wh-years .wh-years-row {
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 0;
+  }
+
+  .wh-years .wh-year {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .wh-years .wh-year-btn {
+    flex: 0 0 auto;
+  }
+
+  .wh-years .wh-year-panel {
+    position: static;
+    display: none;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .wh-years .wh-year.is-open .wh-year-panel {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wh-years .wh-year-btn,
+  .wh-years .wh-year-toggle,
+  .wh-years .wh-year-chevron,
+  .wh-years .wh-year-panel,
+  .wh-years .wh-year-link,
+  .wh-years .wh-year-link-go {
+    transition: none;
+  }
+}
+
+/* =====================================================================
+   Hero buttons (replace the old stats row)
+   Double-class selectors keep them safe from global `.lex-paper-site a` rules.
+   ===================================================================== */
+
+.wh-hero .wh-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.wh-hero .wh-hero-actions .wh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.wh-hero .wh-hero-actions .wh-btn:focus-visible {
+  outline: 3px solid #a5b4fc;
+  outline-offset: 3px;
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-primary {
+  background: #fff;
+  border-color: #fff;
+  box-shadow: 0 16px 32px -18px rgba(0, 0, 0, 0.7);
+  color: #312e81;
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-primary:hover {
+  background: #e0e7ff;
+  border-color: #e0e7ff;
+  transform: translateY(-2px);
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.38);
+  color: #fff;
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 520px) {
+  .wh-hero .wh-hero-actions .wh-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* smooth scroll for the "Browse by year" button (only on this page) */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.wh-index) {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wh-hero .wh-hero-actions .wh-btn {
+    transition: none;
+  }
+}
