@@ -6,8 +6,7 @@ aiModels: []
 category: "Guides"
 publisher: "LexData"
 readTime: "11 min read"
-coverImage: "/blog/
-rag-basics-vector-rag-bm25-graphrag-sag-pageindex/Pic1.jpg"
+coverImage: "/blog/rag-basics-vector-rag-bm25-graphrag-sag-pageindex/Pic1.jpg"
 ---
 
 You've probably read many articles about RAG, each presenting some new technique or idea and claiming it will “kill RAG”.
