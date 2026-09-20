@@ -1,0 +1,395 @@
+/* components/WorkshopHighlightsArticle.css
+   Workshop detail page (/workshop-highlights/[slug]), styled to match the
+   LexData homepage and the Workshop Highlights index: dark hero with a
+   torn-paper edge, cream body, light serif headings (Fraunces), paper cards.
+
+   Everything is scoped to .wh-page.wh-article-page, so it wins over the older
+   .wh-* rules without needing !important. Colours come from the site's own
+   tokens (--paper, --ink, --card, --peri ...), with fallbacks. */
+
+.wh-page.wh-article-page {
+  --wh-night: #23232a; /* same dark as the index hero: tweak in both files */
+  --a-ink: var(--ink, #21203a);
+  --a-paper: var(--paper, #fbf6ed);
+  --a-card: var(--card, #fffdf8);
+  --a-peri: var(--peri, #8b93f8);
+  --a-peri-soft: var(--peri-soft, #c9cdfb);
+  --a-coral: var(--coral, #f0876c);
+  --a-butter: var(--butter, #f8d66b);
+  --a-dim: var(--paper-dim, #4c4b66);
+  --a-muted: var(--paper-muted, #6b6a85);
+  --a-kicker: #c2543a; /* darker coral so small labels stay readable */
+  --a-line: rgba(33, 32, 58, 0.14);
+  --a-line-strong: rgba(33, 32, 58, 0.3);
+
+  background: var(--a-paper);
+  color: var(--a-ink);
+}
+
+/* =====================================================================
+   HERO
+   The element is now a <div> (not <header>) so the site-wide
+   `.lex-paper-site header { position: fixed ... }` rule no longer applies.
+   ===================================================================== */
+
+.wh-article-page .wh-article-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(40px, 5vw, 64px) clamp(24px, 6vw, 80px) clamp(104px, 11vw, 140px);
+  background: var(--wh-night);
+  color: #fff;
+  text-align: center;
+}
+
+/* remove the old glowing blob */
+.wh-article-page .wh-article-hero::before {
+  display: none;
+}
+
+/* torn-paper edge into the cream body */
+.wh-article-page .wh-article-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: clamp(28px, 4vw, 46px);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 44' preserveAspectRatio='none'%3E%3Cpath fill='%23fbf6ed' d='M0 44V22C50 8 90 30 150 20S260 6 330 22 450 32 520 18 640 6 700 22 820 32 890 18 1010 6 1070 22 1160 28 1200 16V44Z'/%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+.wh-article-page .wh-back-link {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 36px 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+  text-underline-offset: 5px;
+}
+
+.wh-article-page .wh-back-link:hover {
+  color: #fff;
+  text-decoration-color: #fff;
+}
+
+/* quiet kicker instead of the old pill */
+.wh-article-page .wh-article-hero .wh-eyebrow {
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.wh-article-page .wh-article-title {
+  max-width: 900px;
+  margin: 20px auto;
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4.6vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  color: #fff;
+}
+
+.wh-article-page .wh-article-dek {
+  max-width: 62ch;
+  margin: 0 auto 28px;
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.wh-article-page .wh-article-hero .wh-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.wh-article-page .wh-article-hero .wh-tag {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 500;
+}
+
+.wh-article-page .wh-share-row {
+  margin-top: 30px;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  backdrop-filter: none;
+}
+
+/* =====================================================================
+   COVER: the poster sits on the cream page like a paper print
+   ===================================================================== */
+
+.wh-article-page .wh-article-cover {
+  margin: 28px auto 0;
+}
+
+.wh-article-page .wh-article-cover-frame {
+  max-width: 600px;
+  padding: 10px;
+  background: var(--a-card);
+  border: 1px solid var(--a-line-strong);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(33, 32, 58, 0.06), 0 30px 50px -30px rgba(33, 32, 58, 0.5);
+  transform: rotate(-1deg);
+}
+
+.wh-article-page .wh-article-cover-img {
+  border-radius: 8px;
+}
+
+/* =====================================================================
+   BODY: side card + article text
+   ===================================================================== */
+
+.wh-article-page .wh-article-layout {
+  margin-top: 56px;
+}
+
+.wh-article-page .wh-article-rail {
+  padding: 22px;
+  background: var(--a-card);
+  border: 1px solid var(--a-line-strong);
+  border-radius: 16px;
+  box-shadow: 0 1px 0 rgba(33, 32, 58, 0.06), 0 20px 34px -26px rgba(33, 32, 58, 0.4);
+}
+
+.wh-article-page .wh-article-rail-label {
+  color: var(--a-kicker);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.wh-article-page .wh-article-rail p {
+  color: var(--a-dim);
+}
+
+.wh-article-page .wh-rail-divider {
+  height: 0;
+  background: none;
+  border-top: 1px dashed var(--a-line-strong);
+}
+
+.wh-article-page .wh-lecturer-block b {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--a-ink);
+}
+
+.wh-article-page .wh-lecturer-block span {
+  color: var(--a-muted);
+}
+
+.wh-article-page .wh-article-body {
+  font-size: clamp(1.02rem, 1.3vw, 1.1rem);
+  line-height: 1.75;
+  color: var(--a-dim);
+}
+
+.wh-article-page .wh-article-body h1,
+.wh-article-page .wh-article-body h2,
+.wh-article-page .wh-article-body h3,
+.wh-article-page .wh-article-body h4 {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--a-ink);
+}
+
+.wh-article-page .wh-article-body h1,
+.wh-article-page .wh-article-body h2 {
+  margin: 2.2em 0 0.7em;
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+}
+
+.wh-article-page .wh-article-body h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+.wh-article-page .wh-article-body > h1:first-child,
+.wh-article-page .wh-article-body > h2:first-child {
+  margin-top: 0;
+}
+
+.wh-article-page .wh-article-body strong {
+  color: var(--a-ink);
+}
+
+.wh-article-page .wh-article-body li::marker {
+  color: var(--a-coral);
+}
+
+.wh-article-page .wh-article-body a {
+  color: var(--a-ink);
+  text-decoration-color: var(--a-coral);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.wh-article-page .wh-article-body blockquote {
+  color: var(--a-ink);
+  background: rgba(248, 214, 107, 0.22);
+  border-left: 3px solid var(--a-ink);
+  border-radius: 4px 12px 12px 4px;
+}
+
+.wh-article-page .wh-article-body img {
+  border: 1px solid var(--a-line);
+  border-radius: 12px;
+  box-shadow: 0 18px 34px -24px rgba(33, 32, 58, 0.45);
+}
+
+/* section labels: small tracked kicker, like the homepage */
+.wh-article-page .wh-section-label {
+  color: var(--a-kicker);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.wh-article-page .wh-section-label::after {
+  background: var(--a-line);
+}
+
+/* =====================================================================
+   MATERIALS: dark section, like the homepage's dark bands
+   ===================================================================== */
+
+.wh-article-page .wh-materials {
+  padding: clamp(28px, 5vw, 64px);
+  background: var(--wh-night);
+  border-radius: 20px;
+}
+
+.wh-article-page .wh-materials .wh-section-label {
+  color: var(--a-peri-soft);
+}
+
+.wh-article-page .wh-materials .wh-section-label::after {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.wh-article-page .wh-materials-head h2 {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.wh-article-page .wh-material-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+}
+
+.wh-article-page .wh-material-card:hover {
+  border-color: var(--a-peri);
+}
+
+.wh-article-page .wh-material-image {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.wh-article-page .wh-material-topic {
+  color: var(--a-peri-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.wh-article-page .wh-material-lecturer {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* =====================================================================
+   NEXT BAND: paper card with a black pill button, like the site header
+   ===================================================================== */
+
+.wh-article-page .wh-article-next {
+  background: var(--a-card);
+  border: 1px solid var(--a-line-strong);
+  border-radius: 20px;
+  box-shadow: 0 1px 0 rgba(33, 32, 58, 0.06), 0 24px 40px -28px rgba(33, 32, 58, 0.4);
+}
+
+.wh-article-page .wh-article-next .wh-section-label::after {
+  display: none;
+}
+
+.wh-article-page .wh-article-next h2 {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--a-ink);
+}
+
+.wh-article-page .wh-article-next .wh-cta {
+  padding: 14px 28px;
+  background: var(--a-ink);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wh-article-page .wh-article-next .wh-cta:hover {
+  background: var(--a-peri);
+  color: var(--a-ink);
+  transform: translateY(-2px);
+}
+
+.wh-article-page .wh-article-next .wh-cta:focus-visible,
+.wh-article-page .wh-back-link:focus-visible {
+  outline: 3px solid var(--a-peri);
+  outline-offset: 4px;
+}
+
+/* =====================================================================
+   MOBILE
+   ===================================================================== */
+
+@media (max-width: 640px) {
+  .wh-article-page .wh-article-hero {
+    padding-bottom: 96px;
+  }
+
+  /* show the whole poster instead of cropping it to 4:3 */
+  .wh-article-page .wh-article-cover-frame {
+    aspect-ratio: auto;
+    padding: 8px;
+    border-width: 1px;
+    border-radius: 12px;
+  }
+
+  .wh-article-page .wh-materials,
+  .wh-article-page .wh-article-next {
+    border-radius: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wh-article-page .wh-material-card,
+  .wh-article-page .wh-article-next .wh-cta {
+    transition: none;
+  }
+}

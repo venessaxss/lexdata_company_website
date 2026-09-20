@@ -237,6 +237,10 @@ export default function EllipsusNav({
                     <b>W</b>
                     <span>Workshops</span>
                   </Link>
+                  <Link href="/workshop-highlights" onClick={closeMenus}>
+                    <b>H</b>
+                    <span>Workshop Highlights</span>
+                  </Link>
                   <Link href="/#cases" onClick={closeMenus}>
                     <b>C</b>
                     <span>Research cases</span>
@@ -414,6 +418,7 @@ export default function EllipsusNav({
             {mobileSection === "library" ? (
               <div className="lx-mobile-accordion-panel">
                 <Link href="/workshops" onClick={closeAll}>Workshops</Link>
+                 <Link href="/workshop-highlights" onClick={closeAll}>Workshop Highlights</Link>
                 <Link href="/#cases" onClick={closeAll}>Research cases</Link>
                 <Link href="/#notifications" onClick={closeAll}>Notifications</Link>
               </div>

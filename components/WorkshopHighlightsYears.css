@@ -1,0 +1,581 @@
+/* components/WorkshopHighlightsYears.css
+   Workshop Highlights index page (hero + year tiles), styled to match the
+   LexData homepage: dark hero with a torn-paper edge, cream sections,
+   light serif headings (Fraunces), paper cards.
+
+   Colours come from the site's own tokens (--paper, --ink, --card, --peri,
+   --coral, --paper-muted defined on .lex-paper-site), with fallbacks.
+   Everything is scoped to .wh-years / .wh-index so nothing leaks. */
+
+/* =====================================================================
+   HERO
+   ===================================================================== */
+
+.wh-index .wh-hero {
+  /* the homepage hero's dark colour: change this one value to fine-tune */
+  --wh-night: #23232a;
+
+  margin: 0;
+  padding: clamp(72px, 9vw, 120px) clamp(24px, 6vw, 80px) clamp(112px, 12vw, 150px);
+  background: var(--wh-night);
+  text-align: center;
+}
+
+/* remove the old glowing blobs */
+.wh-index .wh-hero::before {
+  display: none;
+}
+
+/* torn-paper edge into the cream section (replaces the old blob) */
+.wh-index .wh-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: auto;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: clamp(28px, 4vw, 46px);
+  border-radius: 0;
+  filter: none;
+  opacity: 1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 44' preserveAspectRatio='none'%3E%3Cpath fill='%23fbf6ed' d='M0 44V22C50 8 90 30 150 20S260 6 330 22 450 32 520 18 640 6 700 22 820 32 890 18 1010 6 1070 22 1160 28 1200 16V44Z'/%3E%3C/svg%3E")
+    center bottom / 100% 100% no-repeat;
+}
+
+/* quiet kicker instead of the old pill */
+.wh-index .wh-hero .wh-eyebrow {
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.wh-index .wh-hero h1 {
+  max-width: 900px;
+  margin: 22px auto 24px;
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.3rem, 5.2vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+/* accent phrase in the site's periwinkle, like "creative" on the homepage */
+.wh-index .wh-hero h1 em {
+  font-style: normal;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--peri, #8b93f8);
+  -webkit-text-fill-color: currentColor;
+}
+
+.wh-index .wh-hero .wh-hero-dek {
+  max-width: 46ch;
+  margin: 0 auto;
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* one small hand-drawn doodle, like the paper plane on the homepage */
+.wh-index .wh-hero .wh-doodle {
+  position: absolute;
+  top: 8px;
+  right: 3%;
+  width: 64px;
+  height: 64px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+
+/* ---- hero actions: white pill + quiet text link ---- */
+
+.wh-hero .wh-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px 26px;
+  margin-top: 34px;
+}
+
+.wh-hero .wh-hero-actions .wh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.wh-hero .wh-hero-actions .wh-btn:focus-visible {
+  outline: 3px solid var(--peri, #8b93f8);
+  outline-offset: 4px;
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-primary {
+  padding: 14px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink, #21203a);
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-primary:hover {
+  background: var(--peri-soft, #c9cdfb);
+  transform: translateY(-2px);
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-ghost {
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-underline-offset: 6px;
+}
+
+.wh-hero .wh-hero-actions .wh-btn.wh-btn-ghost:hover {
+  color: #fff;
+  text-decoration-color: #fff;
+}
+
+@media (max-width: 720px) {
+  .wh-index .wh-hero .wh-doodle {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .wh-hero .wh-hero-actions .wh-btn.wh-btn-primary {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* gentle bob, same idea as the site's floating doodles */
+@media (prefers-reduced-motion: no-preference) {
+  .wh-index .wh-hero .wh-doodle {
+    animation: wh-doodle-bob 6s ease-in-out infinite;
+  }
+
+  /* smooth scroll for the "Browse by year" button (only on this page) */
+  html:has(.wh-index) {
+    scroll-behavior: smooth;
+  }
+}
+
+@keyframes wh-doodle-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(8deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wh-hero .wh-hero-actions .wh-btn {
+    transition: none;
+  }
+}
+
+/* =====================================================================
+   YEARS SECTION (cream, paper cards)
+   ===================================================================== */
+
+.wh-years {
+  --y-ink: var(--ink, #21203a);
+  --y-paper: var(--paper, #fbf6ed);
+  --y-card: var(--card, #fffdf8);
+  --y-peri: var(--peri, #8b93f8);
+  --y-muted: var(--paper-muted, #6b6a85);
+  --y-line: rgba(33, 32, 58, 0.14);
+  --y-line-strong: rgba(33, 32, 58, 0.3);
+
+  background: var(--y-paper);
+  padding: 40px 24px 96px;
+  /* keeps the section clear of the sticky site header when jumped to via #browse-by-year */
+  scroll-margin-top: 60px;
+}
+
+.wh-years .wh-years-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* ---- section heading ---- */
+
+.wh-years .wh-years-heading {
+  margin: 0 0 12px;
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--y-ink);
+}
+
+.wh-years .wh-years-hint {
+  max-width: 56ch;
+  margin: 0 0 48px;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--y-muted);
+}
+
+/* ---- row of year tiles ---- */
+
+.wh-years .wh-years-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  /* room under the tiles for the tallest dropdown (--wh-max = most workshops in a year) */
+  padding-bottom: calc(var(--wh-max, 1) * 100px + 56px);
+}
+
+.wh-years .wh-year {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 360px;
+  max-width: 100%;
+}
+
+/* ---- the year tile: a paper card, slightly tilted like the homepage cards ---- */
+
+.wh-years .wh-year:nth-child(odd) .wh-year-btn {
+  --tilt: -1deg;
+}
+
+.wh-years .wh-year:nth-child(even) .wh-year-btn {
+  --tilt: 1deg;
+}
+
+.wh-years .wh-year-btn {
+  appearance: none;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  min-height: 200px;
+  margin: 0;
+  padding: 26px 26px 20px;
+  background: var(--y-card);
+  border: 1px solid var(--y-line-strong);
+  border-radius: 16px;
+  box-shadow: 0 1px 0 rgba(33, 32, 58, 0.06), 0 20px 34px -26px rgba(33, 32, 58, 0.45);
+  color: var(--y-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.wh-years .wh-year-btn > * {
+  position: relative;
+}
+
+/* year number + topic tags */
+.wh-years .wh-year-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.wh-years .wh-year-num {
+  display: block;
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 3vw, 2.75rem);
+  font-weight: 500;
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--y-ink);
+}
+
+.wh-years .wh-year-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.wh-years .wh-year-tag {
+  max-width: 100%;
+  padding: 5px 12px;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid var(--y-line-strong);
+  border-radius: 999px;
+  color: var(--y-ink);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wh-years .wh-year-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--y-line-strong);
+}
+
+/* overlapping cover thumbnails give a preview of what is inside */
+.wh-years .wh-year-covers {
+  display: flex;
+  margin-right: auto;
+}
+
+.wh-years .wh-year-covers img {
+  width: 38px;
+  height: 38px;
+  margin-left: -12px;
+  border: 2px solid var(--y-card);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--y-line-strong);
+  object-fit: cover;
+  object-position: top center;
+  background: #e7e2d6;
+}
+
+.wh-years .wh-year-covers img:first-child {
+  margin-left: 0;
+}
+
+.wh-years .wh-year-toggle {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  background: var(--y-ink);
+  border-radius: 50%;
+  color: #fff;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.wh-years .wh-year-chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-1px, -1px);
+  transition: transform 0.2s ease;
+}
+
+/* hover / open state: the card straightens up and lifts */
+.wh-years .wh-year:hover .wh-year-btn,
+.wh-years .wh-year.is-open .wh-year-btn {
+  transform: rotate(0deg) translateY(-4px);
+  border-color: var(--y-ink);
+  box-shadow: 0 1px 0 rgba(33, 32, 58, 0.06), 0 28px 44px -24px rgba(33, 32, 58, 0.5);
+}
+
+.wh-years .wh-year:hover .wh-year-toggle,
+.wh-years .wh-year.is-open .wh-year-toggle {
+  background: var(--y-peri);
+  color: var(--y-ink);
+}
+
+.wh-years .wh-year.is-open .wh-year-chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.wh-years .wh-year-btn:focus-visible {
+  outline: 3px solid var(--y-peri);
+  outline-offset: 4px;
+}
+
+/* ---- the dropdown ---- */
+
+.wh-years .wh-year-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  width: 100%;
+  /* transparent padding bridges the gap so hover isn't lost between tile and panel */
+  padding-top: 14px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+
+.wh-years .wh-year.is-open .wh-year-panel {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.wh-years .wh-year-panel-box {
+  padding: 8px;
+  background: var(--y-card);
+  border: 1px solid var(--y-line-strong);
+  border-radius: 16px;
+  box-shadow: 0 28px 48px -28px rgba(33, 32, 58, 0.5);
+}
+
+.wh-years .wh-year-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wh-years .wh-year-list li {
+  margin: 0;
+  padding: 0;
+}
+
+.wh-years .wh-year-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border-radius: 12px;
+  color: var(--y-ink);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.wh-years .wh-year-link:hover {
+  background: rgba(139, 147, 248, 0.16);
+}
+
+.wh-years .wh-year-link:focus-visible {
+  outline: none;
+  background: rgba(139, 147, 248, 0.16);
+  box-shadow: inset 0 0 0 2px var(--y-ink);
+}
+
+.wh-years .wh-year-thumb {
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--y-line);
+  border-radius: 10px;
+  object-fit: cover;
+  object-position: top center;
+  background: #e7e2d6;
+}
+
+.wh-years .wh-year-link-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.wh-years .wh-year-link-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--y-muted);
+}
+
+.wh-years .wh-year-link-title {
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--y-ink);
+}
+
+.wh-years .wh-year-link-go {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-top: 2px solid var(--y-ink);
+  border-right: 2px solid var(--y-ink);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.wh-years .wh-year-link:hover .wh-year-link-go {
+  transform: translateX(3px) rotate(45deg);
+}
+
+/* ---- mobile: dropdown opens inline under the tile ---- */
+
+@media (max-width: 720px) {
+  .wh-years {
+    padding: 24px 20px 64px;
+  }
+
+  .wh-years .wh-years-hint {
+    margin-bottom: 32px;
+  }
+
+  .wh-years .wh-years-row {
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 0;
+  }
+
+  .wh-years .wh-year {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .wh-years .wh-year-btn {
+    flex: 0 0 auto;
+  }
+
+  .wh-years .wh-year-panel {
+    position: static;
+    display: none;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .wh-years .wh-year.is-open .wh-year-panel {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wh-years .wh-year-btn,
+  .wh-years .wh-year-toggle,
+  .wh-years .wh-year-chevron,
+  .wh-years .wh-year-panel,
+  .wh-years .wh-year-link,
+  .wh-years .wh-year-link-go {
+    transition: none;
+  }
+}
