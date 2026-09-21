@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "ncbae",
+    "name": "NCBA&E",
+    "type": "Academic Partner",
+    "image": "/partners/ncbae.jpeg",
+    "description": "NCBA&E is a valued partner of LexData. Our collaboration has already brought us together on academic initiatives, including a joint workshop.",
+    "website": "https://www.ncbae.edu.pk/",
+    "workshop": {
+      "title": "Python for Language Sciences and Social Sciences",
+      "href": "/workshop-highlights/python-for-language-sciences-and-social-sciences"
+    }
+  }
+]
