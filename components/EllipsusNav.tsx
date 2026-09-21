@@ -286,10 +286,6 @@ export default function EllipsusNav({
                 onMouseLeave={() => scheduleClose("about")}
               >
                 <div className="lx-mega-list">
-                  <Link href="/about" onClick={closeMenus}>
-                    <b>O</b>
-                    <span>Who we are</span>
-                  </Link>
                   <Link href="/about#story" onClick={closeMenus}>
                     <b>S</b>
                     <span>Our story</span>
@@ -297,6 +293,10 @@ export default function EllipsusNav({
                   <Link href="/about#team" onClick={closeMenus}>
                     <b>T</b>
                     <span>Meet the team</span>
+                  </Link>
+                  <Link href="/about/partners" onClick={closeMenus}>
+                    <b>P</b>
+                    <span>Our Partners</span>
                   </Link>
                 </div>
                 <div className="lx-mega-sketch lx-sketch-portrait" aria-hidden="true">
@@ -437,9 +437,9 @@ export default function EllipsusNav({
 
             {mobileSection === "about" ? (
               <div className="lx-mobile-accordion-panel">
-                <Link href="/about" onClick={closeAll}>Who we are</Link>
                 <Link href="/about#story" onClick={closeAll}>Our story</Link>
                 <Link href="/about#team" onClick={closeAll}>Meet the team</Link>
+                <Link href="/about/partners" onClick={closeAll}>Our Partners</Link>
               </div>
             ) : null}
           </div>
