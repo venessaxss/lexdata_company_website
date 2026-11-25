@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { logoutAction } from "@/app/logout/actions";
 import { createClient } from "@/lib/supabase/client";
 
 type MenuName = "features" | "library" | "about" | null;
@@ -22,9 +23,10 @@ export default function EllipsusNav({
   const closeTimer = useRef<number | null>(null);
 
   const [open, setOpen] = useState<MenuName>(null);
-  const [loggedIn, setLoggedIn] = useState(isLoggedIn);
+  const [browserLoggedIn, setBrowserLoggedIn] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<MenuName>(null);
+  const loggedIn = isLoggedIn || browserLoggedIn;
   
  
   const clearCloseTimer = () => {
@@ -63,7 +65,7 @@ export default function EllipsusNav({
   };
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn);
+    if (!isLoggedIn) setBrowserLoggedIn(false);
   }, [isLoggedIn]);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function EllipsusNav({
 
     void supabase.auth.getSession().then(({ data }) => {
       if (active) {
-        setLoggedIn(Boolean(data.session));
+        setBrowserLoggedIn(Boolean(data.session));
       }
     });
 
@@ -80,7 +82,7 @@ export default function EllipsusNav({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (active) {
-        setLoggedIn(Boolean(session));
+        setBrowserLoggedIn(Boolean(session));
       }
     });
 
@@ -340,11 +342,17 @@ export default function EllipsusNav({
             {loggedIn ? "Dashboard" : "Log in"}
           </Link>
 
-          {!loggedIn ? (
+          {loggedIn ? (
+            <form action={logoutAction} onSubmit={closeMenus}>
+              <button type="submit" className="lx-signup-btn cursor-pointer whitespace-nowrap">
+                Log out
+              </button>
+            </form>
+          ) : (
             <Link href="/signup" className="lx-signup-btn" onClick={closeMenus}>
               Sign up
             </Link>
-          ) : null}
+          )}
         </div>
 
           <button
@@ -470,11 +478,17 @@ export default function EllipsusNav({
             {loggedIn ? "Dashboard" : "Log in"}
           </Link>
 
-          {!loggedIn ? (
+          {loggedIn ? (
+            <form action={logoutAction} onSubmit={closeAll}>
+              <button type="submit" className="lx-signup-btn cursor-pointer">
+                Log out
+              </button>
+            </form>
+          ) : (
             <Link href="/signup" className="lx-signup-btn" onClick={closeAll}>
               Sign up
             </Link>
-          ) : null}
+          )}
         </div>
         </aside>
     </>
