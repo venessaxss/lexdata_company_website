@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/logout/actions";
 import { createClient } from "@/lib/supabase/client";
 
-type MenuName = "features" | "library" | "about" | null;
+type MenuName = "features" | "library" | "services" | "about" | null;
 
 type EllipsusNavProps = {
   isLoggedIn?: boolean;
@@ -27,8 +27,7 @@ export default function EllipsusNav({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState<MenuName>(null);
   const loggedIn = isLoggedIn || browserLoggedIn;
-  
- 
+
   const clearCloseTimer = () => {
     if (closeTimer.current !== null) {
       window.clearTimeout(closeTimer.current);
@@ -40,8 +39,8 @@ export default function EllipsusNav({
     clearCloseTimer();
     setOpen(null);
   };
-  
-    const closeAll = () => {
+
+  const closeAll = () => {
     closeMenus();
     setMobileOpen(false);
     setMobileSection(null);
@@ -130,8 +129,8 @@ export default function EllipsusNav({
       window.removeEventListener("scroll", handleScroll);
     };
   }, [open]);
-  
-   useEffect(() => {
+
+  useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -144,6 +143,7 @@ export default function EllipsusNav({
 
   const isCurrent = (name: Exclude<MenuName, null>) => {
     if (name === "about") return pathname.startsWith("/about");
+    if (name === "services") return pathname.startsWith("/services");
     if (name === "library") {
       return pathname.startsWith("/workshops") || pathname.startsWith("/courses");
     }
@@ -158,218 +158,253 @@ export default function EllipsusNav({
 
   return (
     <>
-    <header ref={navRef} className="lx-site-nav">
-      <div className="lx-nav-inner">
-        <Link href="/" className="lx-logo" aria-label="LexData home" onClick={closeMenus}><Image src="/lexdata-logo.png" alt="LexData" width={170} height={54} priority /></Link>
-
-        <nav className="lx-nav-links" aria-label="Primary navigation">
-          <div
-            className="lx-nav-menu"
-            data-menu="features"
-            onMouseEnter={() => showMenu("features")}
-            onMouseLeave={() => scheduleClose("features")}
-            onBlurCapture={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                scheduleClose("features");
-              }
-            }}
-          >
-            <button
-              type="button"
-              className={menuButtonClass("features")}
-              onClick={() => setOpen(open === "features" ? null : "features")}
-              aria-expanded={open === "features"}
-            >
-              Features <span>{open === "features" ? "^" : "v"}</span>
-            </button>
-
-            {open === "features" ? (
-              <div
-                className="lx-mega lx-mega-features"
-                onMouseEnter={clearCloseTimer}
-                onMouseLeave={() => scheduleClose("features")}
-              >
-                <div className="lx-mega-list">
-                  <Link href="/#features" onClick={closeMenus}>
-                    <b>F</b>
-                    <span>Features</span>
-                  </Link>
-                  <Link href="/blog/whats-new" onClick={closeMenus}>
-                    <b>*</b>
-                    <span>What's new</span>
-                  </Link>
-                  <Link href="/blog" onClick={closeMenus}>
-                    <b>B</b>
-                    <span>Blog</span>
-                  </Link>
-                </div>
-                <div className="lx-mega-art lx-mega-art-red" aria-hidden="true" />
-              </div>
-            ) : null}
-          </div>
-
-          <div
-            className="lx-nav-menu"
-            data-menu="library"
-            onMouseEnter={() => showMenu("library")}
-            onMouseLeave={() => scheduleClose("library")}
-            onBlurCapture={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                scheduleClose("library");
-              }
-            }}
-          >
-            <button
-              type="button"
-              className={menuButtonClass("library")}
-              onClick={() => setOpen(open === "library" ? null : "library")}
-              aria-expanded={open === "library"}
-            >
-              Library <span>{open === "library" ? "^" : "v"}</span>
-            </button>
-
-            {open === "library" ? (
-              <div
-                className="lx-mega lx-mega-library"
-                onMouseEnter={clearCloseTimer}
-                onMouseLeave={() => scheduleClose("library")}
-              >
-                <div className="lx-mega-list">
-                  <Link href="/workshops" onClick={closeMenus}>
-                    <b>W</b>
-                    <span>Workshops</span>
-                  </Link>
-                  <Link href="/workshop-highlights" onClick={closeMenus}>
-                    <b>H</b>
-                    <span>Workshop Highlights</span>
-                  </Link>
-                  <Link href="/#cases" onClick={closeMenus}>
-                    <b>C</b>
-                    <span>Research cases</span>
-                  </Link>
-                  <Link href="/#notifications" onClick={closeMenus}>
-                    <b>N</b>
-                    <span>Notifications</span>
-                  </Link>
-                </div>
-                <div className="lx-mega-sketch lx-sketch-desk" aria-hidden="true">
-                  <span className="lx-sketch-page" />
-                  <span className="lx-sketch-cup">P</span>
-                  <span className="lx-sketch-crumple">o</span>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <div
-            className="lx-nav-menu"
-            data-menu="about"
-            onMouseEnter={() => showMenu("about")}
-            onMouseLeave={() => scheduleClose("about")}
-            onBlurCapture={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                scheduleClose("about");
-              }
-            }}
-          >
-            <button
-              type="button"
-              className={menuButtonClass("about")}
-              onClick={() => setOpen(open === "about" ? null : "about")}
-              aria-expanded={open === "about"}
-            >
-              About <span>{open === "about" ? "^" : "v"}</span>
-            </button>
-
-            {open === "about" ? (
-              <div
-                className="lx-mega lx-mega-about"
-                onMouseEnter={clearCloseTimer}
-                onMouseLeave={() => scheduleClose("about")}
-              >
-                <div className="lx-mega-list">
-                  <Link href="/about#story" onClick={closeMenus}>
-                    <b>S</b>
-                    <span>Our story</span>
-                  </Link>
-                  <Link href="/about#team" onClick={closeMenus}>
-                    <b>T</b>
-                    <span>Meet the team</span>
-                  </Link>
-                  <Link href="/about/partners" onClick={closeMenus}>
-                    <b>P</b>
-                    <span>Our Partners</span>
-                  </Link>
-                </div>
-                <div className="lx-mega-sketch lx-sketch-portrait" aria-hidden="true">
-                  <span>(o_o)</span>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <Link
-            href="/contact"
-            className="lx-nav-link"
-            onClick={closeMenus}
-          >
-            Contact
+      <header ref={navRef} className="lx-site-nav">
+        <div className="lx-nav-inner">
+          <Link href="/" className="lx-logo" aria-label="LexData home" onClick={closeMenus}>
+            <Image src="/lexdata-logo.png" alt="LexData" width={170} height={54} priority />
           </Link>
 
-          <Link
-            href="/privacy"
-            className="lx-nav-link"
-            onClick={closeMenus}
-          >
-            Privacy Policy
-          </Link>
+          <nav className="lx-nav-links" aria-label="Primary navigation">
+            {/* ---------- Features ---------- */}
+            <div
+              className="lx-nav-menu"
+              data-menu="features"
+              onMouseEnter={() => showMenu("features")}
+              onMouseLeave={() => scheduleClose("features")}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  scheduleClose("features");
+                }
+              }}
+            >
+              <button
+                type="button"
+                className={menuButtonClass("features")}
+                onClick={() => setOpen(open === "features" ? null : "features")}
+                aria-expanded={open === "features"}
+              >
+                Features <span>{open === "features" ? "^" : "v"}</span>
+              </button>
 
-          <Link
-            href={loggedIn ? dashboardHref : "/signup"}
-            className="lx-nav-link"
-            onClick={closeMenus}
-          >
-            Plus+
-          </Link>
-        </nav>
+              {open === "features" ? (
+                <div
+                  className="lx-mega lx-mega-features"
+                  onMouseEnter={clearCloseTimer}
+                  onMouseLeave={() => scheduleClose("features")}
+                >
+                  <div className="lx-mega-list">
+                    <Link href="/#features" onClick={closeMenus}>
+                      <b>F</b>
+                      <span>Features</span>
+                    </Link>
+                    <Link href="/blog/whats-new" onClick={closeMenus}>
+                      <b>*</b>
+                      <span>What's new</span>
+                    </Link>
+                    <Link href="/blog" onClick={closeMenus}>
+                      <b>B</b>
+                      <span>Blog</span>
+                    </Link>
+                  </div>
+                  <div className="lx-mega-art lx-mega-art-red" aria-hidden="true" />
+                </div>
+              ) : null}
+            </div>
+
+            {/* ---------- Library ---------- */}
+            <div
+              className="lx-nav-menu"
+              data-menu="library"
+              onMouseEnter={() => showMenu("library")}
+              onMouseLeave={() => scheduleClose("library")}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  scheduleClose("library");
+                }
+              }}
+            >
+              <button
+                type="button"
+                className={menuButtonClass("library")}
+                onClick={() => setOpen(open === "library" ? null : "library")}
+                aria-expanded={open === "library"}
+              >
+                Library <span>{open === "library" ? "^" : "v"}</span>
+              </button>
+
+              {open === "library" ? (
+                <div
+                  className="lx-mega lx-mega-library"
+                  onMouseEnter={clearCloseTimer}
+                  onMouseLeave={() => scheduleClose("library")}
+                >
+                  <div className="lx-mega-list">
+                    <Link href="/workshops" onClick={closeMenus}>
+                      <b>W</b>
+                      <span>Workshops</span>
+                    </Link>
+                    <Link href="/workshop-highlights" onClick={closeMenus}>
+                      <b>H</b>
+                      <span>Workshop Highlights</span>
+                    </Link>
+                    <Link href="/#cases" onClick={closeMenus}>
+                      <b>C</b>
+                      <span>Research cases</span>
+                    </Link>
+                    <Link href="/#notifications" onClick={closeMenus}>
+                      <b>N</b>
+                      <span>Notifications</span>
+                    </Link>
+                  </div>
+                  <div className="lx-mega-sketch lx-sketch-desk" aria-hidden="true">
+                    <span className="lx-sketch-page" />
+                    <span className="lx-sketch-cup">P</span>
+                    <span className="lx-sketch-crumple">o</span>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {/* ---------- Services ---------- */}
+            <div
+              className="lx-nav-menu"
+              data-menu="services"
+              onMouseEnter={() => showMenu("services")}
+              onMouseLeave={() => scheduleClose("services")}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  scheduleClose("services");
+                }
+              }}
+            >
+              <button
+                type="button"
+                className={menuButtonClass("services")}
+                onClick={() => setOpen(open === "services" ? null : "services")}
+                aria-expanded={open === "services"}
+              >
+                Services <span>{open === "services" ? "^" : "v"}</span>
+              </button>
+
+              {open === "services" ? (
+                <div
+                  className="lx-mega lx-mega-features lx-mega-services"
+                  onMouseEnter={clearCloseTimer}
+                  onMouseLeave={() => scheduleClose("services")}
+                >
+                  <div className="lx-mega-list">
+                    <Link href="/services/medquiz" onClick={closeMenus}>
+                      <b>M</b>
+                      <span>MedQuiz</span>
+                    </Link>
+                  </div>
+                  <div className="lx-mega-art lx-mega-art-red" aria-hidden="true" />
+                </div>
+              ) : null}
+            </div>
+
+            {/* ---------- About ---------- */}
+            <div
+              className="lx-nav-menu"
+              data-menu="about"
+              onMouseEnter={() => showMenu("about")}
+              onMouseLeave={() => scheduleClose("about")}
+              onBlurCapture={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  scheduleClose("about");
+                }
+              }}
+            >
+              <button
+                type="button"
+                className={menuButtonClass("about")}
+                onClick={() => setOpen(open === "about" ? null : "about")}
+                aria-expanded={open === "about"}
+              >
+                About <span>{open === "about" ? "^" : "v"}</span>
+              </button>
+
+              {open === "about" ? (
+                <div
+                  className="lx-mega lx-mega-about"
+                  onMouseEnter={clearCloseTimer}
+                  onMouseLeave={() => scheduleClose("about")}
+                >
+                  <div className="lx-mega-list">
+                    <Link href="/about#story" onClick={closeMenus}>
+                      <b>S</b>
+                      <span>Our story</span>
+                    </Link>
+                    <Link href="/about#team" onClick={closeMenus}>
+                      <b>T</b>
+                      <span>Meet the team</span>
+                    </Link>
+                    <Link href="/about/partners" onClick={closeMenus}>
+                      <b>P</b>
+                      <span>Our Partners</span>
+                    </Link>
+                  </div>
+                  <div className="lx-mega-sketch lx-sketch-portrait" aria-hidden="true">
+                    <span>(o_o)</span>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <Link href="/contact" className="lx-nav-link" onClick={closeMenus}>
+              Contact
+            </Link>
+
+            <Link href="/privacy" className="lx-nav-link" onClick={closeMenus}>
+              Privacy Policy
+            </Link>
+
+            <Link
+              href={loggedIn ? dashboardHref : "/signup"}
+              className="lx-nav-link"
+              onClick={closeMenus}
+            >
+              Plus+
+            </Link>
+          </nav>
 
           <div className="lx-nav-actions">
-          <Link
-            href={loggedIn ? dashboardHref : "/login"}
-            className="lx-login-btn"
-            onClick={closeMenus}
-          >
-            {loggedIn ? "Dashboard" : "Log in"}
-          </Link>
-
-          {loggedIn ? (
-            <form action={logoutAction} onSubmit={closeMenus}>
-              <button type="submit" className="lx-signup-btn cursor-pointer whitespace-nowrap">
-                Log out
-              </button>
-            </form>
-          ) : (
-            <Link href="/signup" className="lx-signup-btn" onClick={closeMenus}>
-              Sign up
+            <Link
+              href={loggedIn ? dashboardHref : "/login"}
+              className="lx-login-btn"
+              onClick={closeMenus}
+            >
+              {loggedIn ? "Dashboard" : "Log in"}
             </Link>
-          )}
-        </div>
+
+            {loggedIn ? (
+              <form action={logoutAction} onSubmit={closeMenus}>
+                <button type="submit" className="lx-signup-btn cursor-pointer whitespace-nowrap">
+                  Log out
+                </button>
+              </form>
+            ) : (
+              <Link href="/signup" className="lx-signup-btn" onClick={closeMenus}>
+                Sign up
+              </Link>
+            )}
+          </div>
 
           <button
-          type="button"
-          className="lx-nav-hamburger"
-          aria-label="Open menu"
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen(true)}
-        >
-          <span className="lx-hamburger-icon">
-            <span />
-            <span />
-            <span />
-          </span>
-        </button>
-      </div>
-     </header> 
+            type="button"
+            className="lx-nav-hamburger"
+            aria-label="Open menu"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen(true)}
+          >
+            <span className="lx-hamburger-icon">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
+        </div>
+      </header>
 
       <div
         className={`lx-mobile-backdrop ${mobileOpen ? "is-open" : ""}`}
@@ -377,7 +412,10 @@ export default function EllipsusNav({
         aria-hidden="true"
       />
 
-      <aside className={`lx-mobile-drawer ${mobileOpen ? "is-open" : ""}`} aria-label="Mobile navigation">
+      <aside
+        className={`lx-mobile-drawer ${mobileOpen ? "is-open" : ""}`}
+        aria-label="Mobile navigation"
+      >
         <div className="lx-mobile-drawer-head">
           <Link href="/" className="lx-logo" onClick={closeAll}>
             <Image src="/lexdata-logo.png" alt="LexData" width={140} height={44} />
@@ -394,6 +432,7 @@ export default function EllipsusNav({
         </div>
 
         <nav className="lx-mobile-drawer-links">
+          {/* Features */}
           <div className="lx-mobile-accordion">
             <button
               type="button"
@@ -413,6 +452,7 @@ export default function EllipsusNav({
             ) : null}
           </div>
 
+          {/* Library */}
           <div className="lx-mobile-accordion">
             <button
               type="button"
@@ -426,13 +466,32 @@ export default function EllipsusNav({
             {mobileSection === "library" ? (
               <div className="lx-mobile-accordion-panel">
                 <Link href="/workshops" onClick={closeAll}>Workshops</Link>
-                 <Link href="/workshop-highlights" onClick={closeAll}>Workshop Highlights</Link>
+                <Link href="/workshop-highlights" onClick={closeAll}>Workshop Highlights</Link>
                 <Link href="/#cases" onClick={closeAll}>Research cases</Link>
                 <Link href="/#notifications" onClick={closeAll}>Notifications</Link>
               </div>
             ) : null}
           </div>
 
+          {/* Services */}
+          <div className="lx-mobile-accordion">
+            <button
+              type="button"
+              className={`lx-mobile-accordion-trigger ${mobileSection === "services" ? "is-open" : ""}`}
+              onClick={() => toggleMobileSection("services")}
+              aria-expanded={mobileSection === "services"}
+            >
+              Services <span>{mobileSection === "services" ? "^" : "v"}</span>
+            </button>
+
+            {mobileSection === "services" ? (
+              <div className="lx-mobile-accordion-panel">
+                <Link href="/services/medquiz" onClick={closeAll}>MedQuiz</Link>
+              </div>
+            ) : null}
+          </div>
+
+          {/* About */}
           <div className="lx-mobile-accordion">
             <button
               type="button"
@@ -490,7 +549,7 @@ export default function EllipsusNav({
             </Link>
           )}
         </div>
-        </aside>
+      </aside>
     </>
   );
 }
