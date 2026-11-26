@@ -9,6 +9,7 @@ import InternHiringSlider from "@/components/InternHiringSlider";
 import DynamicArtisticStatement from "@/components/DynamicArtisticStatement";
 import { getPublicWorkshopNotices } from "@/lib/workshop-notices";
 import { getCurrentProfile, normalizeRole } from "@/lib/auth";
+import AppShowcase from "@/components/AppShowcase";
 
 const typingPhrases = [
   "Research like a human.",
@@ -105,14 +106,15 @@ export default async function IntegratedHomePage() {
             </div>
           </div>
         </section>
-
+            
         <section className="lx-paper-cover" id="features">
+          <AppShowcase />
           <div className="lx-wave-top" aria-hidden="true" />
           <div className="lx-paper-intro rev">
             <div className="lx-book-stack" aria-hidden="true"><span /><span /><span /></div>
             <h2>Made for <em>creative</em> researchers</h2>
           </div>
-
+            
           <div className="lx-paper-copy">
             <p className="rev">
               Plenty of tools are made for memos, notes, and to-do lists.
@@ -132,7 +134,7 @@ export default async function IntegratedHomePage() {
         <DynamicDoodleBand />
         <DynamicHomeShowcase />
       </section>
-
+       
       <section className="lx-editorial-section" id="cases">
         <div className="lx-editorial-heading rev">
           <p>Selected work</p>

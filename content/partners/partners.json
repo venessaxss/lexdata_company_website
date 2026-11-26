@@ -10,5 +10,30 @@
       "title": "Python for Language Sciences and Social Sciences",
       "href": "/workshop-highlights/python-for-language-sciences-and-social-sciences"
     }
+  },
+  {
+    "slug": "university-of-okara",
+    "name": "University of Okara",
+    "type": "Academic Partner",
+    "image": "/partners/university-of-okara.jpg",
+    "description": "The University of Okara is a valued academic partner of LexData. Together with Dr. Muhammad Afzaal, we have collaborated on research and training initiatives.",
+    "website": "https://uo.edu.pk/"
+  },
+  {
+    "slug": "khazar-university",
+    "name": "Khazar University",
+    "type": "International Academic Partner",
+    "image": "/partners/khazar-university.jpg",
+    "description": "Khazar University, Azerbaijan, is an academic partner supporting international collaboration in corpus linguistics, language research, and AI-driven language technologies.",
+    "website": "https://www.khazar.org"
+  },
+  {
+    "slug": "ucp-lahore",
+    "name": "University of Central Punjab (UCP)",
+    "type": "Academic Partner",
+    "image": "/partners/ucp-lahore.jpg",
+    "description": "The University of Central Punjab (UCP), Lahore is a valued academic partner of LexData, collaborating with us on research and training initiatives.",
+    "website": "https://ucp.edu.pk"
   }
+
 ]
